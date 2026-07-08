@@ -1,0 +1,31 @@
+# 旺财 Hermes Agent 配置 (Windows)
+# 复制到 ~/.hermes/profiles/wangcai/config.yaml
+
+provider: volcengine-agent-plan
+model: deepseek-v4-flash-260425
+
+# 飞书 Bot 凭证
+# 旺财 Bot: cli_aaaefb812938dbcd
+# ⚠️ 真实 app_secret 在部署时手动填写，不要提交到 Git 仓库
+feishu:
+  app_id: cli_aaaefb812938dbcd
+  app_secret: "__REPLACE_WITH_REAL_SECRET_ON_WINDOWS__"
+
+# Feishu WebSocket gateway
+gateway:
+  type: feishu
+  websocket: true
+
+# Windows 特有路径配置
+hermes_home: "~/.hermes"
+skills_dir: "~/.hermes/skills"
+cron_dir: "~/.hermes/cron"
+
+# 工具集配置
+toolsets:
+  - hermes-cli
+  - browser        # 自媒体自动化需要
+  - web            # 网络搜索/调研
+
+# 默认工作目录
+workdir: "C:/Users/%USERNAME%/wangcai-workspace"
