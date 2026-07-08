@@ -67,11 +67,6 @@ mkdir -p ~\.hermes\profiles\wangcai\config
 copy profile\* ~\.hermes\profiles\wangcai\memories\
 copy profile\config.yaml ~\.hermes\profiles\wangcai\
 
-# ⚠️ 重要：替换飞书 Secret！
-# 编辑 ~\.hermes\profiles\wangcai\config.yaml
-# 将 app_secret 从 "__REPLACE_WITH_REAL_SECRET_ON_WINDOWS__"
-# 改为实际的 Secret 值
-
 # 复制技能
 copy skills\wangcai-cad ~\.hermes\skills\wangcai-cad\
 copy skills\wangcai-social-media ~\.hermes\skills\wangcai-social-media\

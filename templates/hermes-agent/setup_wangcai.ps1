@@ -102,11 +102,6 @@ if (-not (Test-Path $SkillsRoot)) {
     Write-Host "  ℹ️ 技能目录已存在"
 }
 
-# 替换 Secret 占位符（部署时手动填写）
-Write-Host "  ⚠️ 请在 config.yaml 中替换飞书 Secret！"
-Write-Host "     位置: $WangcaiRoot\config.yaml"
-Write-Host "     字段: app_secret: '__REPLACE_WITH_REAL_SECRET_ON_WINDOWS__'"
-
 # ===== Step 5: 安装 Codex CLI =====
 Write-Host "[5/6] 安装 Codex CLI..." -ForegroundColor Yellow
 

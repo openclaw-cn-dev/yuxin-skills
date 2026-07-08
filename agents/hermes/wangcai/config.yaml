@@ -6,7 +6,6 @@ model: deepseek-v4-flash-260425
 
 # 飞书 Bot 凭证
 # 旺财 Bot: cli_aaaefb812938dbcd
-# ⚠️ 真实 app_secret 在部署时手动填写，不要提交到 Git 仓库
 feishu:
   app_id: cli_aaaefb812938dbcd
   app_secret: "__REPLACE_WITH_REAL_SECRET_ON_WINDOWS__"

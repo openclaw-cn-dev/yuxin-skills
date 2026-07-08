@@ -1,0 +1,39 @@
+{
+  "version": "2.0.0",
+  "updated": "2026-07-08",
+  "description": "渔芯 Agent 统一管理中心 — 所有智能体的注册表",
+  "agent_types": {
+    "hermes": {
+      "description": "Hermes Agent — 飞书 Bot, 多 profile, 任务调度",
+      "agents": [
+        {"name": "default", "role": "玉芬-团队管理员", "platform": "macOS", "status": "active", "notes": "8 profile 管理员"},
+        {"name": "maodou", "role": "产品经理+3D工程", "platform": "macOS", "status": "active", "notes": "volcengine-agent-plan"},
+        {"name": "laomo", "role": "知识库+测试", "platform": "macOS", "status": "active"},
+        {"name": "xiaobao", "role": "销售+自媒体", "platform": "macOS", "status": "active"},
+        {"name": "heidou", "role": "行政+财务+法务", "platform": "macOS", "status": "active"},
+        {"name": "afu", "role": "客服+异议处理", "platform": "macOS", "status": "active"},
+        {"name": "quant", "role": "量化研究", "platform": "macOS", "status": "active", "notes": "华哥直派"},
+        {"name": "zhenglishi", "role": "学习助手", "platform": "macOS", "status": "active", "notes": "华哥直派"},
+        {"name": "wangcai", "role": "CAD+自媒体专员", "platform": "Windows", "status": "deploying", "notes": "Windows 原生, Codex CLI 配合"}
+      ]
+    },
+    "codex_cli": {
+      "description": "Codex CLI — 编程引擎, 代码生成, CadQuery/SolidWorks 脚本",
+      "agents": [
+        {"name": "wangcai-codex", "role": "旺财编程大脑", "version": "0.142.5", "platform": "Windows", "status": "deploying"}
+      ]
+    },
+    "claude_code": {
+      "description": "Claude Code — 高级编程, 复杂重构, 架构决策",
+      "agents": [
+        {"name": "yufen-claude", "role": "玉芬编程辅助", "version": "2.1.203", "platform": "macOS", "status": "active"}
+      ]
+    },
+    "openclaw": {
+      "description": "OpenClaw — AI 网关/代理, API 路由",
+      "agents": [
+        {"name": "main-gateway", "role": "渔芯AI网关", "version": "2026.5.2", "platform": "macOS", "status": "active"}
+      ]
+    }
+  }
+}
