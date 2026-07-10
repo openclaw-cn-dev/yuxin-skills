@@ -1,0 +1,25 @@
+{
+  "id": "quality_pre_draw_check",
+  "name": "画前检查",
+  "tool": "freecad",
+  "category": "workflows",
+  "version": "1.0.0",
+  "description": "接收制图指令后，分析任务并拆分为可执行的子任务，验证输入参数是否符合知识库规则",
+  "inputs": {
+    "device_id": {"type": "string", "label": "设备ID"},
+    "domain": {"type": "string", "default": "ras", "label": "领域"},
+    "user_requirements": {"type": "string", "label": "用户需求描述"}
+  },
+  "steps": [
+    {"action": "analyze_requirements", "params": {"requirement": "$user_requirements"}},
+    {"action": "decompose_task", "params": {"device": "$device_id", "domain": "$domain"}},
+    {"action": "validate_inputs", "params": {"device": "$device_id", "domain": "$domain"}},
+    {"action": "select_skills", "params": {"task_list": "$sub_tasks", "domain": "$domain"}},
+    {"action": "check_material_knowledge", "params": {"device": "$device_id"}},
+    {"action": "check_standard_rules", "params": {"domain": "$domain"}},
+    {"action": "generate_execution_plan", "params": {}}
+  ],
+  "output": "execution_plan (JSON)",
+  "rules_applied": ["std_gbt_4458", "mat_sus304", "domain_ras"],
+  "score": 0
+}

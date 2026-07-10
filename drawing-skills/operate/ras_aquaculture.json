@@ -1,0 +1,35 @@
+{
+  "id": "domain_ras_aquaculture",
+  "category": "domain",
+  "title": "渔芯RAS循环水养殖系统设计规范",
+  "description": "RAS设备设计专用规范——设备选型、管路设计、水质要求",
+  "applies_to": ["ras"],
+  "equipment_standards": {
+    "drum_filter": {"flow_rate": "30-500 m³/h", "mesh_size": "20-60μm", "material": "SUS304/SUS316L", "backwash": "自动反冲洗，耗水<1%"},
+    "protein_skimmer": {"flow_rate": "10-50 m³/h", "retention_time": "2-5min", "air_ratio": "气水比3:1"},
+    "mbbr": {"filling_ratio": "30-50%", "media_type": "K1/K3", "retention_time": "15-30min", "aeration": "曝气量≥8m³/m²·h"},
+    "uv_sterilizer": {"dose": "30-60 mJ/cm²", "contact_time": "≥3s", "quartz_sleeve": "定期清洗"},
+    "heat_pump": {"cop": "≥4.0", "temp_control": "±0.5°C", "titanium_exchanger": "耐腐蚀"},
+    "circulation_pump": {"flow_rate": "总水量/h", "head": "3-8m（低扬程大流量）", "standby": "至少1台备用"}
+  },
+  "pipeline_design": {
+    "pipe_material": "PVC-U（冷水）/ SUS304（热水/消毒）",
+    "flow_velocity": "主管≤2m/s，支管≤1.5m/s",
+    "pipe_slope": "重力排水管坡度≥1%",
+    "valve_types": "球阀（开关）/ 蝶阀（调节）/ 止回阀（防倒流）",
+    "flange_standard": "PN10/PN16，GB/T 9119"
+  },
+  "design_rules": [
+    "所有与养殖水接触的材料必须为食品级",
+    "管路避免死角，流速不低于0.3m/s防止沉淀",
+    "设备间距≥500mm便于维护",
+    "电气控制柜防护等级≥IP54（潮湿环境）",
+    "曝气系统需独立回路（停电时备用）"
+  ],
+  "quality_requirements": {
+    "welding": "承压焊缝100%PT检测",
+    "pressure_test": "罐体水压试验0.3MPa，保压30min",
+    "surface_finish": "内表面Ra≤0.8μm（食品接触面）",
+    "leak_test": "管道系统气压试验0.2MPa"
+  }
+}

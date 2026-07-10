@@ -1,0 +1,27 @@
+{
+  "id": "design_dfm_welding",
+  "category": "design",
+  "title": "焊接件 DFM 设计原则",
+  "description": "面向制造的设计——焊接结构设计规范",
+  "applies_to": ["mechanical", "ras", "architectural"],
+  "principles": [
+    {"id": "weld_accessibility", "principle": "焊缝必须可到达，焊枪操作空间≥45°", "importance": "critical"},
+    {"id": "minimize_weld", "principle": "减少焊缝数量和长度，优先采用折弯/冲压代替焊接", "importance": "high"},
+    {"id": "weld_sequence", "principle": "对称焊接，先短后长，交替施焊以减少变形", "importance": "high"},
+    {"id": "corner_weld", "principle": "角焊缝焊脚尺寸≤薄板厚度，焊脚高度≥3mm", "importance": "high"},
+    {"id": "butt_weld_strength", "principle": "对接焊缝强度≥母材强度的90%，需全熔透", "importance": "critical"},
+    {"id": "avoid_cross_weld", "principle": "避免焊缝交叉，交叉处产生应力集中", "importance": "medium"},
+    {"id": "stiffener_design", "principle": "加劲肋厚度≤被加强件厚度，高度≥3倍厚度", "importance": "medium"}
+  ],
+  "design_rules": [
+    "焊件间距≥10mm（薄板）/≥20mm（厚板）",
+    "角焊缝最小长度≥30mm",
+    "断续焊缝间距≤150mm（密封要求除外）",
+    "圆管相贯线焊缝需开坡口"
+  ],
+  "common_mistakes": [
+    "焊缝设计在应力集中区",
+    "焊件间隙过大导致焊接变形",
+    "未考虑焊接热影响区对材料性能的影响"
+  ]
+}

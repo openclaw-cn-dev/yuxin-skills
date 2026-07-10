@@ -1,0 +1,24 @@
+{
+  "id": "freecad_create_tank",
+  "name": "养殖水箱（圆柱罐体）",
+  "tool": "freecad",
+  "category": "ras_design",
+  "version": "1.0.0",
+  "description": "RAS 设备：创建圆柱形养殖水箱，含底部半球封头",
+  "inputs": {
+    "tank_diameter": {"type": "number", "default": 2000, "unit": "mm", "label": "罐体直径"},
+    "tank_height": {"type": "number", "default": 1500, "unit": "mm", "label": "罐体高度"},
+    "wall_thickness": {"type": "number", "default": 8, "unit": "mm", "label": "壁厚"}
+  },
+  "steps": [
+    {"action": "new_document", "params": {"name": "Tank"}},
+    {"action": "activate_workbench", "params": {"name": "Part"}},
+    {"action": "create_cylinder", "params": {"radius": "$tank_diameter", "height": "$tank_height", "label": "TankBody"}},
+    {"action": "create_sphere", "params": {"radius": "$tank_diameter", "label": "Bottom"}},
+    {"action": "fuse", "params": {"obj1": "TankBody", "obj2": "Bottom", "label": "TankComplete"}},
+    {"action": "export", "params": {"obj_name": "TankComplete", "fmt": "step"}},
+    {"action": "fit_all", "params": {}}
+  ],
+  "output": "step, stl",
+  "score": 0
+}

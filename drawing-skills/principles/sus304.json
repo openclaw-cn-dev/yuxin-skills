@@ -1,0 +1,33 @@
+{
+  "id": "mat_sus304",
+  "category": "materials",
+  "title": "SUS304 不锈钢",
+  "description": "奥氏体不锈钢，渔芯RAS设备主体材料",
+  "properties": {
+    "density": 7.93,
+    "tensile_strength": 520,
+    "yield_strength": 205,
+    "hardness": "HB≤187",
+    "corrosion_resistance": "优秀（淡水/海水淡化环境）",
+    "weldability": "良好（TIG/MIG）",
+    "machinability": "中等",
+    "max_service_temp": 870,
+    "thermal_expansion": "17.3 μm/m·°C"
+  },
+  "applies_to": ["ras", "mechanical"],
+  "typical_uses": [
+    "养殖水箱罐体",
+    "管道及管件",
+    "过滤设备外壳",
+    "泵体零件",
+    "法兰连接件",
+    "支架及紧固件"
+  ],
+  "design_notes": [
+    "焊接后需酸洗钝化处理",
+    "与碳钢接触需加绝缘垫片（电偶腐蚀）",
+    "冷加工后可能带磁性",
+    "壁厚≥2mm时建议用316L代替（氯离子环境）"
+  ],
+  "standards": ["GB/T 3280", "GB/T 4237", "JIS G4304", "ASTM A240"]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "quality_post_draw_check",
+  "name": "画后评测",
+  "tool": "freecad",
+  "category": "workflows",
+  "version": "1.0.0",
+  "description": "制图完成后，对输出进行多维度质量评测：图层规范/线型/尺寸/标注/视图完整性/标准合规",
+  "inputs": {
+    "output_file": {"type": "string", "label": "输出文件路径"},
+    "domain": {"type": "string", "default": "ras", "label": "领域"},
+    "min_score": {"type": "number", "default": 80, "label": "最低达标分"}
+  },
+  "steps": [
+    {"action": "score_drawing", "params": {"file": "$output_file", "domain": "$domain"}},
+    {"action": "check_layer_compliance", "params": {"domain": "$domain"}},
+    {"action": "check_dimension_completeness", "params": {}},
+    {"action": "check_standard_compliance", "params": {"domain": "$domain"}},
+    {"action": "generate_fix_suggestions", "params": {"min_score": "$min_score"}},
+    {"action": "decide_pass_or_fix", "params": {"threshold": "$min_score"}}
+  ],
+  "output": "quality_report (JSON) + fix_suggestions",
+  "score": 0
+}

@@ -1,0 +1,25 @@
+{
+  "id": "freecad_create_pipe_joint",
+  "name": "管道连接件（法兰+管体）",
+  "tool": "freecad",
+  "category": "ras_design",
+  "version": "1.0.0",
+  "description": "RAS 设备常用：创建法兰盘 + 管道 + 融合。适用于循环水养殖设备管道系统",
+  "inputs": {
+    "pipe_diameter": {"type": "number", "default": 110, "unit": "mm", "label": "管道外径"},
+    "pipe_length": {"type": "number", "default": 300, "unit": "mm", "label": "管道长度"},
+    "flange_diameter": {"type": "number", "default": 200, "unit": "mm", "label": "法兰直径"},
+    "flange_thickness": {"type": "number", "default": 20, "unit": "mm", "label": "法兰厚度"}
+  },
+  "steps": [
+    {"action": "new_document", "params": {"name": "PipeJoint"}},
+    {"action": "activate_workbench", "params": {"name": "Part"}},
+    {"action": "create_cylinder", "params": {"radius": "$pipe_diameter", "height": "$pipe_length", "label": "Pipe"}},
+    {"action": "create_cylinder", "params": {"radius": "$flange_diameter", "height": "$flange_thickness", "label": "Flange"}},
+    {"action": "fuse", "params": {"obj1": "Pipe", "obj2": "Flange", "label": "PipeJoint"}},
+    {"action": "export", "params": {"obj_name": "PipeJoint", "fmt": "step"}},
+    {"action": "fit_all", "params": {}}
+  ],
+  "output": "step, stl",
+  "score": 0
+}

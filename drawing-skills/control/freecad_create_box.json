@@ -1,0 +1,21 @@
+{
+  "id": "freecad_create_box",
+  "name": "创建立方体",
+  "tool": "freecad",
+  "category": "part_design",
+  "version": "1.0.0",
+  "description": "在 FreeCAD Part 工作台中创建一个参数化立方体",
+  "inputs": {
+    "length": {"type": "number", "default": 100, "unit": "mm", "label": "长度"},
+    "width": {"type": "number", "default": 50, "unit": "mm", "label": "宽度"},
+    "height": {"type": "number", "default": 30, "unit": "mm", "label": "高度"}
+  },
+  "steps": [
+    {"action": "new_document", "params": {"name": "PartDesign"}},
+    {"action": "activate_workbench", "params": {"name": "Part"}},
+    {"action": "create_box", "params": {"length": "$length", "width": "$width", "height": "$height", "label": "Box"}},
+    {"action": "fit_all", "params": {}}
+  ],
+  "output": "fcstd, step, stl",
+  "score": 0
+}

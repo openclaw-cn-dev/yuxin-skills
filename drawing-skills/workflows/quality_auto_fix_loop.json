@@ -1,0 +1,23 @@
+{
+  "id": "quality_auto_fix_loop",
+  "name": "自动修正循环",
+  "tool": "freecad",
+  "category": "workflows",
+  "version": "1.0.0",
+  "description": "根据评测结果自动修正图纸，形成闭环：检查→修改→再检查→达标完成",
+  "inputs": {
+    "device_id": {"type": "string", "label": "设备ID"},
+    "domain": {"type": "string", "default": "ras", "label": "领域"},
+    "max_iterations": {"type": "number", "default": 10, "label": "最大迭代次数"}
+  },
+  "steps": [
+    {"action": "execute_drawing", "params": {"device": "$device_id"}},
+    {"action": "post_draw_check", "params": {"domain": "$domain"}},
+    {"action": "evaluate_fix_needs", "params": {}},
+    {"action": "apply_auto_fixes", "params": {"suggestions": "$fix_suggestions"}},
+    {"action": "re_check", "params": {"domain": "$domain"}},
+    {"action": "decide_loop_or_done", "params": {"max_iterations": "$max_iterations"}}
+  ],
+  "output": "final_drawing + quality_report",
+  "score": 0
+}

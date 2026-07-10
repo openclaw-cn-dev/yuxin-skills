@@ -1,0 +1,27 @@
+{
+  "id": "design_tolerance_fit",
+  "category": "design",
+  "title": "公差配合与尺寸链",
+  "description": "GB/T 1800 公差与配合标准，适用于机械加工和装配",
+  "applies_to": ["mechanical", "ras"],
+  "principles": [
+    {"id": "hole_basis", "principle": "优先采用基孔制（H），孔公差H7为基准", "importance": "high"},
+    {"id": "shaft_fit", "principle": "轴配合：间隙配合f/g，过渡配合js/k，过盈配合p/s", "importance": "high"},
+    {"id": "tolerance_grade", "principle": "一般加工IT7-IT8，精密加工IT5-IT6，铸造IT12-IT14", "importance": "high"},
+    {"id": "tolerance_stackup", "principle": "尺寸链计算：封闭环公差=各组成环公差之和", "importance": "critical"},
+    {"id": "geometric_tolerance", "principle": "形状公差<位置公差<尺寸公差（公差带包含关系）", "importance": "medium"}
+  ],
+  "design_rules": [
+    "非配合面：一般公差GB/T 1804-m级",
+    "轴承配合：内圈k6/外圈H7",
+    "密封圈配合：轴h9/孔H8",
+    "法兰螺栓孔距公差±0.5mm",
+    "管道法兰平面度≤0.5mm/m"
+  ],
+  "ras_specific": [
+    "养殖水箱法兰面平面度≤1mm/m（密封要求）",
+    "过滤器外壳同轴度≤0.3mm",
+    "泵轴径向跳动≤0.05mm",
+    "管道支座间距公差±5mm"
+  ]
+}

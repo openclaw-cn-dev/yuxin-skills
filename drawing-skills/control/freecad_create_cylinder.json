@@ -1,0 +1,20 @@
+{
+  "id": "freecad_create_cylinder",
+  "name": "创建圆柱体",
+  "tool": "freecad",
+  "category": "part_design",
+  "version": "1.0.0",
+  "description": "在 FreeCAD Part 工作台中创建一个参数化圆柱体",
+  "inputs": {
+    "radius": {"type": "number", "default": 25, "unit": "mm", "label": "半径"},
+    "height": {"type": "number", "default": 100, "unit": "mm", "label": "高度"}
+  },
+  "steps": [
+    {"action": "new_document", "params": {"name": "PartDesign"}},
+    {"action": "activate_workbench", "params": {"name": "Part"}},
+    {"action": "create_cylinder", "params": {"radius": "$radius", "height": "$height", "label": "Cylinder"}},
+    {"action": "fit_all", "params": {}}
+  ],
+  "output": "fcstd, step, stl",
+  "score": 0
+}
