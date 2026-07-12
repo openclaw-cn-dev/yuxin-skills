@@ -1,0 +1,128 @@
+model_provider = "custom"
+model = "deepseek-v4-pro"
+model_reasoning_effort = "low"
+disable_response_storage = true
+wire_api = "responses"
+model_catalog_json = "/Users/hua/.codex/arkcli.models.json"
+
+notify = ["/Users/hua/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
+[model_providers]
+[model_providers.custom]
+name = "ark_agentplan"
+base_url = "http://127.0.0.1:18888/openai"
+wire_api = "responses"
+requires_openai_auth = true
+experimental_bearer = "***"
+
+[model_providers.deepseek]
+name = "DeepSeek (via Gateway)"
+base_url = "http://127.0.0.1:18888/openai"
+wire_api = "responses"
+requires_openai_auth = true
+experimental_bearer = "***"
+
+[projects]
+[projects."/Users/hua"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Documents/New project"]
+trust_level = "trusted"
+
+[tui]
+[tui.model_availability_nux]
+"gpt-5.5" = 2
+
+[marketplaces.openai-bundled]
+last_updated = "2026-07-11T09:14:43Z"
+source_type = "local"
+source = "/Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-07-11T09:19:35Z"
+source_type = "local"
+source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[plugins."superpowers@openai-api-curated"]
+enabled = true
+
+[plugins."github@openai-api-curated"]
+enabled = true
+
+[plugins."coderabbit@openai-api-curated"]
+enabled = true
+
+[plugins."build-web-apps@openai-api-curated"]
+enabled = true
+
+[plugins."linear@openai-api-curated"]
+enabled = true
+
+[plugins."sentry@openai-api-curated"]
+enabled = true
+
+[plugins."figma@openai-api-curated"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[desktop]
+dock-icon-preference = "app-default"
+localeOverride = "zh-CN"
+followUpQueueMode = "queue"
+
+[agent]
+language = "zh-CN"
+instructions = "用中文回复，代码注释用英文"
+
+[features]
+js_repl = false
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/hua/.codex"
+CODEX_HOME = "/Users/hua/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "1491199f46178eb038259aaea144492b8a8ade32bba5d2b4843c94936be551bb,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.707.41301"
+SKY_CUA_SERVICE_PATH = "/Users/hua/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000366/Codex Computer Use.app"
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
+
+[mcp_servers.computer-use]
+command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
+args = ["mcp"]
+cwd = "."
+enabled = false
