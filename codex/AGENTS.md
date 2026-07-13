@@ -29,15 +29,14 @@
 - **Browser** — 浏览器自动化（Playwright）
 - **LLM Gateway** (`127.0.0.1:18888`) → DeepSeek V4 Pro（玉芬维护）
 
-## 插件（共 15 个）
+## 插件（共 16 个）
 
 已安装插件：
 - **代码类**：build-web-apps, coderabbit, superpowers
 - **设计类**：figma
 - **协作类**：github, linear, sentry
-- **桌面类**：browser, computer-use, visualize
+- **桌面类**：browser, chrome, computer-use, visualize
 - **文档类**：documents, pdf, spreadsheets, presentations, template-creator
-- **未装**：chrome（需要桌面 Chrome）
 
 ## 模型
 

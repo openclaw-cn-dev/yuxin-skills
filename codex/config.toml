@@ -29,6 +29,9 @@ trust_level = "trusted"
 [projects."/Users/hua/Documents/New project"]
 trust_level = "trusted"
 
+[projects."/Users/hua/6-产品研发/23-AI培训教程"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
@@ -86,6 +89,9 @@ enabled = true
 enabled = true
 
 [plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
 enabled = true
 
 [desktop]

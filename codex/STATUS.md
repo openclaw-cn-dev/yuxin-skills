@@ -1,5 +1,5 @@
 # Codex 状态快照
-> 导出时间: 2026-07-12 08:00:33
+> 导出时间: 2026-07-13 10:01:24
 
 ## 版本
 codex-cli 0.144.1
@@ -20,7 +20,7 @@ Marketplace `openai-bundled`
 
 PLUGIN                            STATUS              VERSION       PATH                                                                                
 browser@openai-bundled            installed, enabled  26.707.41301  /Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled/plugins/browser          
-chrome@openai-bundled             not installed                     /Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled/plugins/chrome           
+chrome@openai-bundled             installed, enabled  26.707.41301  /Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled/plugins/chrome           
 computer-use@openai-bundled       installed, enabled  1.0.1000366   /Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled/plugins/computer-use     
 record-and-replay@openai-bundled  not installed                     /Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled/plugins/record-and-replay
 latex@openai-bundled              not installed                     /Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled/plugins/latex            
