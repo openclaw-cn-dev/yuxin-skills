@@ -1,0 +1,694 @@
+model:
+  default: deepseek-v4-pro
+  minimax_cn: ''
+  provider: deepseek-cn
+providers:
+  deepseek:
+    base_url: http://127.0.0.1:18888/openai/v1
+  minimax:
+    base_url: https://api.minimaxi.com/anthropic
+    api_key: "***"
+    model: minimax-m3
+  :
+    api_key: "***"
+    base_url: https://ark.cn-beijing.volces.com/api/plan/v3
+    model: 
+    models:
+    - id: ark-code-latest
+    - context_length: 262144
+      id: 
+    - context_length: 262144
+      id: 
+    - context_length: 262144
+      id: 
+    - context_length: 262144
+      id: 
+    - context_length: 1048576
+      id: glm-5.2
+    - id: kimi-k2.7-code
+    - id: minimax-m3
+    - context_length: 1048576
+      id: 
+    - context_length: 1048576
+      id: 
+    - id: minimax-m2.7
+    - id: kimi-k2.6
+    name: Volcengine Agent Plan
+  volcengine-ark:
+    api_key: "***"
+    base_url: https://ark.cn-beijing.volces.com/api/v3
+    model: 
+fallback_providers: '['''']'
+: {}
+toolsets:
+- hermes-cli
+agent:
+  max_turns: 60
+  gateway_timeout: 1800
+  : 60
+  api_max_retries: 3
+  service_tier: ''
+  : auto
+  : true
+  environment_probe: true
+  environment_hint: ''
+  : 900
+  clarify_timeout: 600
+  : 180
+  : 3600
+  image_input_mode: auto
+  disabled_toolsets: []
+  personalities:
+    catgirl: "You are Neko-chan, an anime catgirl AI assistant, nya~! Add 'nya' and\
+      \ cat-like expressions to your speech. Use kaomoji like (=^\uFF65\u03C9\uFF65\
+      ^=) and \u0E05^\u2022\uFECC\u2022^\u0E05. Be playful and curious like a cat,\
+      \ nya~!"
+    concise: You are a concise assistant. Keep responses brief and to the point.
+    creative: You are a creative assistant. Think outside the box and offer innovative
+      solutions.
+    helpful: You are a helpful, friendly AI assistant.
+    hype: "YOOO LET'S GOOOO!!! \U0001F525\U0001F525\U0001F525 I am SO PUMPED to help\
+      \ you today! Every question is AMAZING and we're gonna CRUSH IT together! This\
+      \ is gonna be LEGENDARY! ARE YOU READY?! LET'S DO THIS! \U0001F4AA\U0001F624\
+      \U0001F680"
+    kawaii: "You are a kawaii assistant! Use cute expressions like (\u25D5\u203F\u25D5\
+      ), \u2605, \u266A, and ~! Add sparkles and be super enthusiastic about everything!\
+      \ Every response should feel warm and adorable desu~! \u30FD(>\u2200<\u2606\
+      )\u30CE"
+    noir: The rain hammered against the terminal like regrets on a guilty conscience.
+      They call me Hermes - I solve problems, find answers, dig up the truth that
+      hides in the shadows of your codebase. In this city of silicon and secrets,
+      everyone's got something to hide. What's your story, pal?
+    philosopher: Greetings, seeker of wisdom. I am an assistant who contemplates the
+      deeper meaning behind every query. Let us examine not just the 'how' but the
+      'why' of your questions. Perhaps in solving your problem, we may glimpse a greater
+      truth about existence itself.
+    pirate: 'Arrr! Ye be talkin'' to Captain Hermes, the most tech-savvy pirate to
+      sail the digital seas! Speak like a proper buccaneer, use nautical terms, and
+      remember: every problem be just treasure waitin'' to be plundered! Yo ho ho!'
+    shakespeare: Hark! Thou speakest with an assistant most versed in the bardic arts.
+      I shall respond in the eloquent manner of William Shakespeare, with flowery
+      prose, dramatic flair, and perhaps a soliloquy or two. What light through yonder
+      terminal breaks?
+    surfer: "Duuude! You're chatting with the chillest AI on the web, bro! Everything's\
+      \ gonna be totally rad. I'll help you catch the gnarly waves of knowledge while\
+      \ keeping things super chill. Cowabunga! \U0001F919"
+    teacher: You are a patient teacher. Explain concepts clearly with examples.
+    technical: You are a technical expert. Provide detailed, accurate technical information.
+    uwu: hewwo! i'm your fwiendwy assistant uwu~ i wiww twy my best to hewp you! *nuzzles
+      your code* OwO what's this? wet me take a wook! i pwomise to be vewy hewpful
+      >w<
+  reasoning_effort: medium
+  verbose: false
+terminal:
+  backend: local
+  modal_mode: auto
+  cwd: .
+  timeout: 300
+  env_passthrough: []
+  shell_init_files: []
+  auto_source_bashrc: true
+  docker_image: nikolaik/python-nodejs:python3.11-nodejs20
+  docker_forward_env: []
+  docker_env: {}
+  singularity_image: docker://nikolaik/python-nodejs:python3.11-nodejs20
+  modal_image: nikolaik/python-nodejs:python3.11-nodejs20
+  daytona_image: nikolaik/python-nodejs:python3.11-nodejs20
+  container_cpu: 1
+  container_memory: 5120
+  container_disk: 51200
+  : true
+  docker_volumes: []
+  : false
+  docker_extra_args: []
+  : false
+  persistent_shell: true
+  lifetime_seconds: 300
+  vercel_runtime: node24
+web:
+  backend: ''
+  search_backend: ddgs
+  extract_backend: ''
+browser:
+  inactivity_timeout: 120
+  command_timeout: 30
+  record_sessions: false
+  allow_private_urls: false
+  engine: auto
+  : true
+  cdp_url: ''
+  dialog_policy: must_respond
+  dialog_timeout_s: 300
+  camofox:
+    managed_persistence: false
+    user_id: ''
+    session_key: ''
+    adopt_existing_tab: false
+    : false
+    loopback_host_alias: host.docker.internal
+checkpoints:
+  enabled: true
+  max_snapshots: 50
+  max_total_size_mb: 500
+  max_file_size_mb: 10
+  auto_prune: false
+  retention_days: 7
+  delete_orphans: true
+  min_interval_hours: 24
+file_read_max_chars: 100000
+tool_output:
+  max_bytes: 50000
+  max_lines: 2000
+  max_line_length: 2000
+:
+  warnings_enabled: true
+  hard_stop_enabled: false
+  warn_after:
+    exact_failure: 2
+    same_tool_failure: 3
+    : 2
+  hard_stop_after:
+    exact_failure: 5
+    same_tool_failure: 8
+    : 5
+compression:
+  enabled: true
+  threshold: 0.5
+  target_ratio: 0.2
+  protect_last_n: 20
+  : 400
+  protect_first_n: 3
+  : false
+  model: 
+  provider: volc-ark
+prompt_caching:
+  cache_ttl: 5m
+openrouter:
+  response_cache: true
+  response_cache_ttl: 300
+  min_coding_score: 0.65
+bedrock:
+  region: ''
+  discovery:
+    enabled: true
+    provider_filter: []
+    refresh_interval: 3600
+  guardrail:
+    : ''
+    guardrail_version: ''
+    : async
+    trace: disabled
+auxiliary:
+  vision:
+    provider: deepseek-cn
+    model: deepseek-v4-pro
+    base_url: ''
+    api_key: "***"
+    timeout: 120
+    extra_body: {}
+    download_timeout: 30
+  web_extract:
+    provider: volc-ark
+    model: ''
+    base_url: ''
+    api_key: "***"
+    timeout: 360
+    extra_body: {}
+  compression:
+    provider: deepseek-cn
+    model: deepseek-v4-pro
+    base_url: ''
+    api_key: "***"
+    timeout: 120
+    extra_body: {}
+  skills_hub:
+    provider: volc-ark
+    model: ''
+    base_url: ''
+    api_key: "***"
+    timeout: 30
+    extra_body: {}
+  approval:
+    provider: volc-ark
+    model: ''
+    base_url: ''
+    api_key: "***"
+    timeout: 30
+    extra_body: {}
+  mcp:
+    provider: volc-ark
+    model: ''
+    base_url: ''
+    api_key: "***"
+    timeout: 30
+    extra_body: {}
+  title_generation:
+    provider: volc-ark
+    model: ''
+    base_url: ''
+    api_key: "***"
+    timeout: 30
+    extra_body: {}
+  triage_specifier:
+    provider: volc-ark
+    model: ''
+    base_url: ''
+    api_key: "***"
+    timeout: 120
+    extra_body: {}
+  kanban_decomposer:
+    provider: volc-ark
+    model: ''
+    base_url: ''
+    api_key: "***"
+    timeout: 180
+    extra_body: {}
+  profile_describer:
+    provider: volc-ark
+    model: ''
+    base_url: ''
+    api_key: "***"
+    timeout: 60
+    extra_body: {}
+  curator:
+    provider: volc-ark
+    model: ''
+    base_url: ''
+    api_key: "***"
+    timeout: 600
+    extra_body: {}
+  flush_memories:
+    api_key: "***"
+    base_url: ''
+    extra_body: {}
+    model: deepseek-v4-pro
+    provider: deepseek-cn
+    timeout: 30
+  session_search:
+    api_key: "***"
+    base_url: ''
+    extra_body: {}
+    max_concurrency: 3
+    model: deepseek-v4-pro
+    provider: deepseek-cn
+    timeout: 30
+display:
+  compact: false
+  personality: kawaii
+  resume_display: full
+  resume_exchanges: 10
+  : 300
+  : 200
+  : 3
+  : true
+  busy_input_mode: interrupt
+  interface: cli
+  : false
+  tui_agents_nudge: true
+  bell_on_complete: false
+  show_reasoning: false
+  streaming: true
+  timestamps: false
+  : strip
+  persistent_output: true
+  : 200
+  inline_diffs: true
+  : true
+  : true
+  show_cost: false
+  skin: default
+  language: en
+  : kaomoji
+  :
+    first_lines: 2
+    last_lines: 2
+  : true
+  : false
+  : {}
+  tool_preview_length: 0
+  : 0
+  platforms:
+    telegram:
+      streaming: true
+    discord:
+      streaming: false
+  runtime_footer:
+    enabled: false
+    fields:
+    - model
+    - context_pct
+    - cwd
+  copy_shortcut: auto
+  : all
+  tool_progress: all
+dashboard:
+  theme: default
+  : false
+  oauth:
+    client_id: ''
+    portal_url: ''
+  public_url: ''
+privacy:
+  redact_pii: false
+tts:
+  provider: edge
+  edge:
+    voice: en-US-AriaNeural
+  elevenlabs:
+    voice_id: 
+    model_id: 
+  openai:
+    model: gpt-4o-mini-tts
+    voice: alloy
+  xai:
+    voice_id: eve
+    language: en
+    sample_rate: 24000
+    bit_rate: 128000
+  mistral:
+    model: 
+    voice_id: 
+  neutts:
+    ref_audio: ''
+    ref_text: ''
+    model: neuphonic/neutts-air-q4-gguf
+    device: cpu
+  piper:
+    voice: en_US-lessac-medium
+stt:
+  enabled: true
+  provider: local
+  local:
+    model: base
+    language: ''
+  openai:
+    model: whisper-1
+  mistral:
+    model: voxtral-mini-latest
+  elevenlabs:
+    model_id: scribe_v2
+    language_code: ''
+    tag_audio_events: false
+    diarize: false
+voice:
+  record_key: ctrl+b
+  : 120
+  auto_tts: false
+  beep_enabled: true
+  silence_threshold: 200
+  silence_duration: 3
+human_delay:
+  mode: 'off'
+  min_ms: 800
+  max_ms: 2500
+context:
+  engine: compressor
+  : 0.75
+  : 8
+  snapshot_on_compact: false
+memory:
+  memory_enabled: true
+  : true
+  memory_char_limit: 1800
+  user_char_limit: 1100
+  provider: ''
+  flush_min_turns: 4
+  nudge_interval: 8
+delegation:
+  model: ''
+  provider: ''
+  base_url: ''
+  api_key: "***"
+  api_mode: ''
+  : true
+  max_iterations: 50
+  : 600
+  reasoning_effort: ''
+  : 3
+  max_spawn_depth: 1
+  : true
+  : false
+: ''
+goals:
+  max_turns: 20
+skills:
+  external_dirs: []
+  template_vars: true
+  inline_shell: false
+  : 10
+  guard_agent_created: false
+  : 15
+curator:
+  enabled: true
+  interval_hours: 168
+  min_idle_hours: 2
+  stale_after_days: 30
+  archive_after_days: 90
+  prune_builtins: true
+  backup:
+    enabled: true
+    keep: 5
+honcho: {}
+timezone: ''
+slack:
+  require_mention: true
+  : ''
+  allowed_channels: ''
+  channel_prompts: {}
+discord:
+  require_mention: true
+  : ''
+  allowed_channels: ''
+  auto_thread: true
+  : false
+  history_backfill: true
+  : 50
+  reactions: true
+  channel_prompts: {}
+  dm_role_auth_guild: ''
+  server_actions: ''
+  : false
+  : 33554432
+whatsapp: {}
+telegram:
+  reactions: false
+  channel_prompts: {}
+  allowed_chats: ''
+mattermost:
+  require_mention: true
+  : ''
+  allowed_channels: ''
+  channel_prompts: {}
+matrix:
+  require_mention: true
+  free_response_rooms: ''
+  allowed_rooms: ''
+approvals:
+  mode: manual
+  timeout: 60
+  cron_mode: deny
+  mcp_reload_confirm: true
+  : true
+command_allowlist:
+- git force push (rewrites remote history)
+- overwrite project env/config file
+- SQL DELETE without WHERE
+- sudo with combined-flag privilege escalation
+- overwrite system file via redirection
+- docker restart/stop/kill (container lifecycle)
+- in-place edit of system config
+- hermes update (restarts gateway, kills running agents)
+- in-place edit of Hermes config/env
+- force kill processes
+- delete in root path
+- world/other-writable permissions
+- SQL TRUNCATE
+- script execution via -e/-c flag
+- shell command via -c/-lc flag
+- force kill processes (killall -KILL)
+- overwrite system config
+- script execution via heredoc
+- kill process via pgrep expansion (self-termination)
+- docker compose restart/stop/kill/down (container lifecycle)
+- stop/restart hermes gateway (kills running agents)
+- git reset --hard (destroys uncommitted changes)
+- recursive delete
+- pipe remote content to shell
+- start gateway outside systemd (use 'systemctl --user restart hermes-gateway')
+- overwrite project env/config via redirection
+- stop/restart system service
+- kill hermes/gateway process (self-termination)
+- chmod +x followed by immediate execution
+quick_commands: {}
+hooks: {}
+hooks_auto_accept: false
+personalities: {}
+security:
+  allow_private_urls: false
+  redact_secrets: true
+  tirith_enabled: true
+  tirith_path: tirith
+  tirith_timeout: 5
+  tirith_fail_open: true
+  website_blocklist:
+    enabled: false
+    domains: []
+    shared_files: []
+  acked_advisories: []
+  allow_lazy_installs: true
+cron:
+  wrap_response: true
+  max_parallel_jobs: null
+kanban:
+  dispatch_in_gateway: true
+  : 60
+  failure_limit: 2
+  : 2097152
+  : 1
+  : ''
+  default_assignee: ''
+  : null
+  auto_decompose: true
+  : 3
+  : 14400
+code_execution:
+  mode: project
+  max_tool_calls: 50
+  timeout: 300
+tools:
+  tool_search:
+    enabled: auto
+    threshold_pct: 10
+    : 5
+    max_search_limit: 20
+logging:
+  level: INFO
+  max_size_mb: 5
+  backup_count: 3
+  memory_monitor:
+    enabled: true
+    interval_seconds: 300
+model_catalog:
+  enabled: true
+  url: https://hermes-agent.nousresearch.com/docs/api/model-catalog.json
+  ttl_hours: 24
+  providers: {}
+network:
+  force_ipv4: false
+gateway:
+  strict: false
+  : []
+  trust_recent_files: true
+  : 600
+streaming:
+  enabled: false
+  transport: auto
+  edit_interval: 0.8
+  buffer_threshold: 24
+  cursor: " \u2589"
+  : 60
+sessions:
+  auto_prune: false
+  retention_days: 90
+  vacuum_after_prune: true
+  min_interval_hours: 24
+  : false
+onboarding:
+  seen:
+    busy_input_prompt: true
+    : true
+    : true
+updates:
+  pre_update_backup: false
+  backup_keep: 5
+lsp:
+  enabled: true
+  wait_mode: document
+  wait_timeout: 5
+  install_strategy: auto
+  servers: {}
+x_search:
+  model: grok-4.20-reasoning
+  timeout_seconds: 180
+  retries: 2
+secrets:
+  bitwarden:
+    enabled: false
+    access_token_env: BWS_ACCESS_TOKEN
+    project_id: ''
+    cache_ttl_seconds: 300
+    override_existing: true
+    auto_install: true
+    server_url: ''
+: 5
+: 5
+: 2000
+_config_version: 24
+DEEPSEEK_BASE_URL: http://127.0.0.1:18888/openai/v1
+DEEPSEEK_MODEL: 
+: true
+FEISHU_APP_ID: "***"
+FEISHU_APP_SECRET: "***"
+FEISHU_HOME_CHANNEL: 
+custom_providers:
+- api_key_env: MINIMAX_CN_API_KEY
+  api_mode: chat_completions
+  base_url: https://api.minimaxi.com/v1
+  model: MiniMax-M3
+  models:
+    MiniMax-M3:
+      name: MiniMax M3
+  name: minimax
+- api_key: "***"
+  api_mode: chat_completions
+  base_url: http://127.0.0.1:18888/openai/v1
+  model: deepseek-v4-pro
+  models:
+    deepseek-v4-pro:
+      name: "DeepSeek V4 Pro (\u534E\u54E5\u6388\u6743\u5207\u6362)"
+  name: deepseek-cn
+- api_key: "***"
+  base_url: https://ark.cn-beijing.volces.com/api/v3
+  models:
+    :
+      max_tokens: 65536
+  name: volc-ark
+- api_key: "***"
+  api_mode: chat_completions
+  base_url: http://localhost:11434/v1
+  model: qwen2.5-coder:7b
+  models:
+    qwen2.5-coder:7b:
+      name: "Qwen 2.5 Coder 7B (\u672C\u5730\u515C\u5E95)"
+  name: ollama-coder
+: true
+mcp_servers:
+  lookforge:
+    args:
+    - "/Users/hua/Desktop/\u6E14\u82AF\u79D1\u6280/6-\u4EA7\u54C1\u7814\u53D1/02-LookForge/backend/app/mcp/.py"
+    - --token-mode
+    - user_access_token
+    - --oauth
+    command: /Users/hua/.hermes/hermes-agent/venv/bin/python3
+    enabled: true
+platform_toolsets:
+  cli:
+  - hermes-cli
+  discord:
+  - hermes-discord
+  homeassistant:
+  - 
+  qqbot:
+  - hermes-qqbot
+  signal:
+  - hermes-signal
+  slack:
+  - hermes-slack
+  telegram:
+  - hermes-telegram
+  whatsapp:
+  - hermes-whatsapp
+session_reset:
+  at_hour: 4
+  idle_minutes: 1440
+  mode: both
