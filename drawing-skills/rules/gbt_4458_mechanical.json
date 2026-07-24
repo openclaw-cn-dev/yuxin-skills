@@ -1,0 +1,19 @@
+{
+  "id": "std_gbt_4458_mechanical_drafting",
+  "category": "standards",
+  "title": "GB/T 4458 机械制图标准",
+  "description": "机械制图国家标准系列，涵盖尺寸注法、装配图、公差配合、剖视图",
+  "source": "GB/T 4458.1-4458.6",
+  "applies_to": ["mechanical", "ras"],
+  "rules": [
+    {"id": "dimension_placement", "rule": "尺寸线距轮廓线不小于7mm，平行尺寸线间距不小于10mm", "validation": "check_dimension_spacing", "severity": "error"},
+    {"id": "centerline_required", "rule": "圆形/圆柱体必须绘制中心线，中心线超出轮廓2-5mm", "validation": "check_centerline", "severity": "error"},
+    {"id": "section_hatch", "rule": "剖面线角度45°，间距不大于3mm，同一零件剖面线方向一致", "validation": "check_hatch", "severity": "warning"},
+    {"id": "text_height", "rule": "尺寸文字高度不小于3.5mm，标题栏文字不小于5mm", "validation": "check_text", "severity": "error"},
+    {"id": "scale_marking", "rule": "图纸必须标注比例，常用比例1:1/1:2/1:5/1:10", "validation": "check_scale", "severity": "error"},
+    {"id": "view_placement", "rule": "主视图在左上，俯视图在正下方，左视图在正右方（第三角法除外）", "validation": "check_view_position", "severity": "warning"},
+    {"id": "line_weight", "rule": "轮廓线0.5-0.7mm，中心线/虚线0.25mm，尺寸线0.25mm", "validation": "check_line_weight", "severity": "warning"},
+    {"id": "bom_required", "rule": "装配图必须包含明细栏(BOM)，序号顺时针排列", "validation": "check_bom", "severity": "error"}
+  ],
+  "application_context": "机械零件图、装配图；渔芯RAS设备制造图"
+}

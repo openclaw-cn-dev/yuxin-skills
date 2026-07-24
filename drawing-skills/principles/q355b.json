@@ -1,0 +1,30 @@
+{
+  "id": "mat_q355b",
+  "category": "materials",
+  "title": "Q355B 低合金高强度结构钢",
+  "description": "建筑钢结构主材，替代原Q345B",
+  "properties": {
+    "density": 7.85,
+    "tensile_strength": 470,
+    "yield_strength": 355,
+    "elongation": "≥22%",
+    "weldability": "良好（CO2气保焊/埋弧焊）",
+    "corrosion_resistance": "需防腐涂装",
+    "common_sections": ["H400x400x13x21", "H500x200x10x16", "C200x70x20x3", "L100x10"]
+  },
+  "applies_to": ["architectural", "steel"],
+  "typical_uses": [
+    "厂房钢柱/钢梁",
+    "门式刚架",
+    "檩条及支撑",
+    "柱脚底板",
+    "加劲肋"
+  ],
+  "design_notes": [
+    "焊接预热温度≥100°C（板厚>30mm）",
+    "表面处理：喷砂Sa2.5级+环氧富锌底漆+聚氨酯面漆",
+    "高强螺栓摩擦面抗滑移系数≥0.45",
+    "耐火极限通过防火涂料实现（非材料本身）"
+  ],
+  "standards": ["GB/T 1591-2018", "GB/T 11263-2017"]
+}

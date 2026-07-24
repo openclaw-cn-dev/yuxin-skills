@@ -1,0 +1,18 @@
+{
+  "id": "std_gb_50017_steel_structure",
+  "category": "standards",
+  "title": "GB/T 50017 钢结构设计标准",
+  "description": "建筑钢结构设计规范，涵盖荷载、截面选型、连接节点、焊缝设计",
+  "source": "GB/T 50017-2017",
+  "applies_to": ["architectural", "steel"],
+  "rules": [
+    {"id": "column_spacing", "rule": "厂房柱距宜为6m/7.5m/9m，优先6m经济柱距", "validation": "check_column_spacing", "severity": "warning"},
+    {"id": "roof_slope", "rule": "屋面坡度1:10~1:20，南方多雨取1:10", "validation": "check_roof_slope", "severity": "warning"},
+    {"id": "bracing_required", "rule": "两端开间必须设置柱间支撑，纵向设系杆", "validation": "check_bracing", "severity": "error"},
+    {"id": "beam_column_joint", "rule": "梁柱连接优先采用端板连接，高强螺栓M20/M24", "validation": "check_joint", "severity": "error"},
+    {"id": "purlin_spacing", "rule": "檩条间距1.5m，截面C型/C200x70x20x3", "validation": "check_purlin", "severity": "warning"},
+    {"id": "weld_quality", "rule": "重要焊缝设计要求：角焊缝焊脚高度≥6mm，对接焊缝全熔透", "validation": "check_weld", "severity": "error"},
+    {"id": "section_label", "rule": "构件编号格式: GZ(钢柱)/GL(钢梁)/ZC(支撑)/LT(檩条) + 序号", "validation": "check_labels", "severity": "warning"}
+  ],
+  "application_context": "工业厂房钢结构施工图，渔芯RAS车间钢构"
+}
