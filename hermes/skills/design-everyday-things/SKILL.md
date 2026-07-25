@@ -406,16 +406,6 @@ Observation → Idea Generation → Prototyping → Testing → (iterate)
 
 **Key principle:** The design process is iterative. You'll go through multiple cycles, each time refining the design based on what you learn.
 
-## Design Sprint Method
-
-For a structured **5-day process** to prototype, test, and validate product ideas with real users, see `references/design-sprint.md`.
-
-**Trigger:** "design sprint", "validate in a week", "rapid prototype", "test with users", "GV sprint", "prototype testing"
-
-**When to use Design Sprint vs. iterative HCD:**
-- **Design Sprint**: Critical product decision, stakeholder disagreement, or risky idea to de-risk before building
-- **HCD iterative process**: Ongoing product refinement, incremental improvements
-
 ## Common Mistakes
 
 | Mistake | Why It Fails | Fix |

@@ -1,50 +1,45 @@
 ---
 name: bugfix
-description: "Library/framework bug fixes and version-compatibility workarounds — ChromaDB 0.4.x issues (NumPy 2.x, seq_id BLOB, Pydantic v2), and other session-specific bug fixes that don't fit a normal 'use the library' workflow. Load when a known third-party library throws an error that doesn't match current docs — first check this hub for known fixes before reinventing."
+description: Library of reproduction recipes for real bug-fix sessions — primarily ChromaDB 0.4.x runtime issues and other MLOps dependencies. Each entry under references/ is a self-contained "what broke, why, exact fix, verification" record. Load this skill when debugging ChromaDB startup / API / persistence errors or when working with Pydantic v1/v2 interop in Python RAG stacks.
 version: 1.0.0
-author: Hermes Agent
-license: MIT
 metadata:
   hermes:
-    tags: [bugfix, workaround, chromadb, compatibility, python, troubleshooting]
+    tags: [bugfix, chromadb, rag, troubleshooting, runtime-fixes]
 ---
 
-# Bugfix & Compatibility Workarounds
+# Bugfix Library
 
-Session-specific bug fixes and version-compatibility workarounds for third-party libraries. Each entry is a named, reproducible problem + a verified workaround. When you hit a third-party library error that doesn't match current docs, **check this hub first**.
+Class-level umbrella for **real bug-fix sessions** — not theory, not docs links, but exact reproductions we hit in production.
 
-## Quick Routing
+## When to use this skill
 
-| Symptom / Library Version | Reference |
-|---------------------------|-----------|
-| ChromaDB 0.4.x + NumPy 2.x → `AttributeError: np.float_`/`np.int_` (Apple Silicon / Docker) | → `references/chromadb-numpy2-applesilicon-fix.md` |
-| ChromaDB 0.4.x → `query()`/`peek()`/`count()` all fail with seq_id BLOB | → `references/chromadb-seq-id-blob-fix.md` |
-| ChromaDB Settings + Pydantic v2 → "extra fields not permitted" | → `references/pydantic-v1-v2-chromadb-fix.md` |
+- ChromaDB container fails to start (NumPy 2.x alias removed)
+- ChromaDB 0.4.x `query()`/`peek()`/`count()` returns InternalError / BLOB type mismatch
+- Pydantic v1 vs v2 conflict with ChromaDB Settings
+- Any future runtime bug in the MLOps stack (HuggingFace, llama-cpp, vLLM, etc.)
 
-## Scripts
+**NOT for**: theoretical docs, library API references, generic "how to use ChromaDB" content. This is a *bug recipe library* — load only when you have a specific failure signature matching one of the entries.
 
-- `scripts/chromadb-rebuild-from-sqlite.py` — Rebuild a ChromaDB collection from raw SQLite when seq_id BLOB lockout blocks `query()`/`peek()`/`count()`.
+## Reference index
 
-## Common Patterns
+Each `references/*.md` file is a complete fix recipe. Load the one matching your error signature:
 
-### Diagnose a ChromaDB Failure
+### ChromaDB family (most common)
 
-Before reinventing a fix, check the three most likely categories:
+- `references/chromadb-numpy2-applesilicon-fix.md` — Container dies with `np.float_ was removed in the NumPy 2.0 release`. Build a patched image.
+- `references/chromadb-seq-id-blob-fix.md` — `query()/peek()/count()` all fail with Rust/SQLite type mismatch on `seq_id`. Rebuild collection by extracting from SQLite directly.
+- `references/pydantic-v1-v2-chromadb-fix.md` — `pydantic.v1.error_wrappers.ValidationError: extra fields not permitted` on `chromadb.PersistentClient`. Drop the `settings` parameter.
 
-1. **NumPy 2.x alias removal** — fixes the import error after `pip install -U numpy`. Affects ChromaDB ≤ 0.4.22 on Apple Silicon or Linux Docker with NumPy ≥ 2.0.
-2. **seq_id BLOB** — query() returns empty even though embeddings are in SQLite. Fixed by `scripts/chromadb-rebuild-from-sqlite.py` extracting raw rows and rebuilding the collection with a fresh embedding function.
-3. **Pydantic v2** — `extra fields not permitted` when ChromaDB's `Settings` inherits pydantic v1 in a pydantic-v2 project.
+## Recipe format
 
-### Apply a Fix
+Every reference file follows the same skeleton so you can scan it fast under pressure:
 
-Each reference file has: symptom → version table → exact diff/patch → verification step.
+1. **Symptom** — the exact error string or observable behavior
+2. **Root cause** — why it happens
+3. **Fix** — copy-paste-ready commands or code
+4. **Verification** — how to confirm it worked
+5. **Failed approaches** — what NOT to try (saves time)
 
-## How to Add a New Fix
+## Adding new entries
 
-When you hit a NEW reproducible third-party bug and have a verified workaround:
-
-1. Create `references/<library>-<symptom>.md` with the recipe (problem, version table, fix, verify).
-2. Add a row to the Quick Routing table above.
-3. (Optional) Add scripts under `scripts/` for statically-runnable workarounds.
-
-This keeps each fix one-click-findable without bloating a single mega-file.
+When you hit a bug that takes more than 30 minutes to resolve and the fix is non-obvious, write a new `references/<bug-name>.md` following the recipe format above. Do not create a new top-level skill — add to this umbrella.

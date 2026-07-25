@@ -1,3 +1,0 @@
-*.db
-jobs.json
-output
