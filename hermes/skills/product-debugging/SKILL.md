@@ -1,39 +1,104 @@
 ---
 name: product-debugging
-description: Project-specific debugging playbooks for LookForge, 鱼乐宝 (FishSim), and other 渔芯科技 internal products. Each entry is a hard-won debugging methodology for a specific component — load only when working on that product.
+description: "Product-specific debugging playbooks — issue triage and root-cause analysis for 渔芯 (Yuxin) products including Fish Sim, LookForge, and ChromaDB integrations."
 version: 1.0.0
+author: 渔芯科技
+platforms: [linux, macos]
 metadata:
   hermes:
-    tags: [debugging, lookforge, fishsim, 渔芯科技, project-specific]
+    tags: [debugging, yuxin, fish-sim, lookforge, chromadb, triage, root-cause]
 ---
 
-# Product Debugging Playbooks
+# Product Debugging
 
-Class-level umbrella for **project-specific debugging methodologies** we've built up across 渔芯科技 products. These are NOT general debugging guides — they're tailored to a specific codebase's quirks.
+Issue triage and root-cause analysis playbooks for 渔芯 products.
 
-## When to use this skill
+## When to Use
 
-- You're debugging a LookForge backend issue (PhaseOrchestrator, SkillDispatcher, ChromaDB integration, etc.)
-- You're debugging a 鱼乐宝 simulation calculation (growth model, FCR, feeding logic)
-- You're hitting a known recurring issue in a 渔芯 product that has a documented fix here
+- 鱼乐宝 (Fish Sim) simulation results unexpected — growth, FCR, feeding anomalies
+- LookForge PhaseOrchestrator/SkillDispatcher/KnowledgeBase integration issues
+- LookForge ChromaDB Docker deployment, version compatibility, or data sync problems
 
-**NOT for**: generic Python debugging, general ChromaDB errors (use `bugfix` umbrella instead), generic software-development methodology (use `software-development/` umbrella).
+## Fish Sim (鱼乐宝) — simulation_core.py
 
-## Reference index
+### Quick Verification
 
-- `references/lookforge-debug.md` — LookForge Phase2/3/6 backend integration: PhaseOrchestrator, SkillDispatcher, KnowledgeBase hooks, dead code detection, Phase6 hardware workflow.
-- `references/lookforge-chromadb-debug.md` — LookForge ChromaDB-specific issues: Docker deployment, volume mounts, version compatibility, Schema migration, healthcheck fixes. **Note**: For generic ChromaDB 0.4.x runtime bugs (numpy 2.x, seq_id BLOB), see `bugfix` umbrella instead.
-- `references/fish-sim-debug.md` — 鱼乐宝 `simulation_core.py`: growth calculation, FCR anomalies, feeding anomalies.
-- `references/lookforge-knowledge-health.md` — LookForge ChromaDB 知识库健康度监控 (`get_health_score()`, 盲区发现, query_log).
+Validate growth calculations, FCR, and health across all three fish species:
 
-## Recipe format
+```bash
+cd /Users/hua/Desktop/渔芯科技/6-产品研发/01-鱼乐宝/backend
+python3 -c "
+import sys; sys.path.insert(0, '.')
+import warnings; warnings.filterwarnings('ignore')
+from app.api.v1.simulation_core import SimSession, CreateSessionRequest
 
-Each reference follows:
-1. **Symptom** — what you observe in production
-2. **Diagnostic steps** — how to confirm it's this issue (not something else)
-3. **Fix** — code or config change
-4. **Verification** — confirm it works
+configs = [
+    ('F001', 1.0, 25.0, 60, 1000),
+    ('F003', 10.0, 500.0, 90, 1000),
+    ('F005', 50.0, 1500.0, 180, 500),
+]
+for fid, iw, tw, days, fc in configs:
+    req = CreateSessionRequest(fish_id=fid, fish_count=fc, init_weight=iw,
+        target_weight=tw, total_days=days, tank_volume=100.0,
+        feed_price=15.0, fish_price=50.0)
+    s = SimSession(req)
+    s.step(hours=days*24)
+    r = s.generate_report()
+    status = 'PASS' if r['growth_achieved'] >= 0.80 else 'FAIL'
+    print(f'{fid} {iw}g->{r[\"final_weight\"]:.1f}g (target {tw}g) [{status}] '
+          f'FCR={r[\"FCR\"]} Health={r[\"final_health\"]:.2f} '
+          f'Survival={r[\"avg_survival\"]*100:.1f}%')
+"
+```
 
-## Adding new entries
+**Acceptance criteria:** 3/3 PASS, FCR 0.2–1.5, health ≥ 0.3.
 
-When you spend >1 hour debugging a specific 渔芯 product and the fix is non-obvious, add a `references/<project>-<component>-debug.md` file. Don't create a new top-level skill.
+### Key Files
+
+| File | Role |
+|------|------|
+| `app/api/v1/simulation_core.py` | Core simulation engine |
+| `app/models/fish_profile.py` | Fish species growth curves + parameters |
+| `app/models/feeding.py` | Feeding rate calculations |
+
+### Common Issues
+
+- **FCR anomalies** → check temperature curve alignment with feeding rate formula
+- **Health drops too fast** → verify oxygen demand calculation in `_update_water_quality()`
+- **Growth too slow/fast** → check species-specific growth curve parameters in `fish_profile.py`
+- **Negative values** → overflow in accumulated metrics, check `int` → `float` conversions
+
+## LookForge — PhaseOrchestrator / SkillDispatcher
+
+### Core Diagnostic Checklist
+
+1. **SkillDispatcher knowledge injection** — check `_build_prompt()` for ChromaDB query:
+   ```python
+   knowledge_context = self._retrieve_knowledge(skill_name, context)
+   ```
+   If only project/profile/research_report are present → knowledge disconnected.
+
+2. **`generate_development_details()` dead code** — outputs generic templates ("简约现代/科技硬核/可爱亲和") not extracted from `research_report.competitors[].features`.
+
+3. **PhaseOrchestrator ChromaDB call chain** — trace: `run_phase2()` → `_build_prompt()` → `_retrieve_knowledge()` → ChromaDB `.query()`.
+
+### Verification
+
+```bash
+cd /Users/hua/Desktop/渔芯科技/LookForge
+# Check if knowledge base is reachable
+python3 -c "from app.services.knowledge_base import KnowledgeBase; kb = KnowledgeBase(); print(kb.collection.count())"
+# Expected: > 0 documents
+```
+
+## LookForge — ChromaDB Docker Debug
+
+Full debugging playbook for LookForge's ChromaDB Docker deployment. See `references/lookforge-chromadb.md` for the complete reference covering:
+
+- Architecture (containers + shared volume)
+- Common failure patterns (NumPy/onnxruntime incompatibility, version pinning)
+- Health check restoration recipe
+- Schema migration (0.4.x → 0.6.x)
+- Volume mount verification
+- Snapshot backup/restore
+- Docker Compose configuration reference

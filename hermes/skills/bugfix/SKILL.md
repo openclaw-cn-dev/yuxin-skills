@@ -1,45 +1,101 @@
 ---
 name: bugfix
-description: Library of reproduction recipes for real bug-fix sessions — primarily ChromaDB 0.4.x runtime issues and other MLOps dependencies. Each entry under references/ is a self-contained "what broke, why, exact fix, verification" record. Load this skill when debugging ChromaDB startup / API / persistence errors or when working with Pydantic v1/v2 interop in Python RAG stacks.
+description: "Bugfix recipes — known-issue remediation patches for specific library/framework version conflicts. Each child documents one concrete bug, root cause, and tested fix."
 version: 1.0.0
+author: Hermes Agent (consolidation)
+platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [bugfix, chromadb, rag, troubleshooting, runtime-fixes]
+    tags: [bugfix, chromadb, numpy, pydantic, known-issues, patches]
 ---
 
-# Bugfix Library
+# Bugfix Recipes
 
-Class-level umbrella for **real bug-fix sessions** — not theory, not docs links, but exact reproductions we hit in production.
+Known-issue remediation patches. Each entry documents a specific bug, its root
+cause, and a tested fix. Use these when you encounter the exact error signature
+described.
 
-## When to use this skill
+## ChromaDB 0.4.x Fixes
 
-- ChromaDB container fails to start (NumPy 2.x alias removed)
-- ChromaDB 0.4.x `query()`/`peek()`/`count()` returns InternalError / BLOB type mismatch
-- Pydantic v1 vs v2 conflict with ChromaDB Settings
-- Any future runtime bug in the MLOps stack (HuggingFace, llama-cpp, vLLM, etc.)
+ChromaDB 0.4.x has known compatibility issues with NumPy 2.x and Pydantic v2
+in modern Python environments. Three separate bugs are documented below.
 
-**NOT for**: theoretical docs, library API references, generic "how to use ChromaDB" content. This is a *bug recipe library* — load only when you have a specific failure signature matching one of the entries.
+### 1. NumPy 2.x Compatibility (Apple Silicon / Mac Docker)
 
-## Reference index
+**Error signature:**
+```
+AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead.
+```
+Variants: onnxruntime `_ARRAY_API not found`, HTTP 502 for localhost:8001 (unrelated proxy issue).
 
-Each `references/*.md` file is a complete fix recipe. Load the one matching your error signature:
+**Root cause:** ChromaDB 0.4.22 uses `np.float_/np.int_/np.uint` (NumPy 1.x aliases removed in NumPy 2.x). The Docker entrypoint re-installs chroma-hnswlib on every boot, pulling in NumPy 2.x regardless of pinning.
 
-### ChromaDB family (most common)
+**Fix (Docker-based):** Patch `docker_entrypoint.sh` to pin numpy AFTER the hnswlib reinstall:
+```bash
+# Inside the container or Dockerfile patching:
+sed -i '/pip install.*chroma-hnswlib/a\
+pip install "numpy<2" --force-reinstall --no-cache-dir' docker_entrypoint.sh
+```
 
-- `references/chromadb-numpy2-applesilicon-fix.md` — Container dies with `np.float_ was removed in the NumPy 2.0 release`. Build a patched image.
-- `references/chromadb-seq-id-blob-fix.md` — `query()/peek()/count()` all fail with Rust/SQLite type mismatch on `seq_id`. Rebuild collection by extracting from SQLite directly.
-- `references/pydantic-v1-v2-chromadb-fix.md` — `pydantic.v1.error_wrappers.ValidationError: extra fields not permitted` on `chromadb.PersistentClient`. Drop the `settings` parameter.
+**Fix (non-Docker):** Pin in requirements or environment:
+```bash
+pip install "numpy<2" chromadb==0.4.22
+```
 
-## Recipe format
+### 2. seq_id BLOB Error
 
-Every reference file follows the same skeleton so you can scan it fast under pressure:
+**Error signature:**
+```
+chromadb.errors.InternalError: Error reading from metadata segment reader:
+mismatched types; Rust type `u64` (INTEGER) is not compatible with SQL type `BLOB`
+```
+All of count(), peek(), query() fail.
 
-1. **Symptom** — the exact error string or observable behavior
-2. **Root cause** — why it happens
-3. **Fix** — copy-paste-ready commands or code
-4. **Verification** — how to confirm it worked
-5. **Failed approaches** — what NOT to try (saves time)
+**Root cause:** ChromaDB 0.4.x `_decode_seq_id()` expects INTEGER but SQLite column is BLOB. Data is intact in SQLite.
 
-## Adding new entries
+**Fix — rebuild from SQLite:**
+```python
+import sqlite3, chromadb
+from chromadb.utils import embedding_functions
 
-When you hit a bug that takes more than 30 minutes to resolve and the fix is non-obvious, write a new `references/<bug-name>.md` following the recipe format above. Do not create a new top-level skill — add to this umbrella.
+DATA_DIR = '/path/to/data/chroma'
+OLD_NAME = 'lookforge_knowledge'
+
+# Extract all records via SQLite
+conn = sqlite3.connect(f'{DATA_DIR}/chroma.sqlite3')
+rows = conn.execute('''
+    SELECT e.id, e.embedding_id, e.string_value, d.dimension
+    FROM embedding_metadata e
+    JOIN embeddings d ON e.embedding_id = d.embedding_id
+''').fetchall()
+conn.close()
+
+# Rebuild collection with embedding function
+ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name='all-MiniLM-L6-v2')
+client = chromadb.PersistentClient(path=DATA_DIR)
+collection = client.create_collection(name=f'{OLD_NAME}_rebuilt', embedding_function=ef)
+documents = [r[2] for r in rows if r[2]]
+ids = [r[0] for r in rows if r[2]]
+if ids:
+    collection.add(documents=documents, ids=ids)
+```
+
+### 3. Pydantic v1/v2 Settings Conflict
+
+**Error signature:**
+```
+pydantic.v1.error_wrappers.ValidationError: extra fields not permitted
+```
+Triggered when passing `Settings(...)` to `chromadb.PersistentClient()`.
+
+**Root cause:** ChromaDB 0.4.x `Settings` inherits from pydantic v1, but a modern env has both pydantic v1 and v2. Pydantic v2 validation rejects v1 fields.
+
+**Fix — omit settings parameter:**
+```python
+# DON'T pass settings:
+_client = chromadb.PersistentClient(path=persist_dir, settings=Settings(...))  # ❌
+
+# DO:
+_client = chromadb.PersistentClient(path=persist_dir)  # ✅
+```
+Let ChromaDB use its internal defaults. If you need `anonymized_telemetry=False`, the correct field name is `anonymized_telemetry` (NOT `anonymized_telemetry_reporting`), but still avoid passing it — the pydantic conflict persists regardless.

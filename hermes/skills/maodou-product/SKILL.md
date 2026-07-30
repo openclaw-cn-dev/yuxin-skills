@@ -157,12 +157,6 @@ app.include_router(simulation.router, prefix="/api/projects")  # → /api/projec
 **SaaS免费转付费转化路径**（`references/saas-conversion-path.md`）：
 eFishery信任建立模式、3档触发点设计、LTV/CAC指标、LookForge订阅管理嵌入方式。
 
-**任务队列排错经验**（`references/maodu-task-queue-debug.md`）：
-任务归属错误、重复任务、并发写入损坏的诊断与修复。当任务领取结果不符合预期时加载。
-
-**Cron 工作流注意事项**（`references/maodu-workflow-cron.md`）：
-毛豆在无用户交互的 cron 环境中运行时 scanner.py 可能返回空结果，需要直接查询 TaskQueue 数据库。当 cron job 执行 maodu-workflow 行为异常时加载。
-
 **硬件开发任务子任务参考**（task_hw_05041523_*）：
 - task_hw_05041523_1: 需求定义标准化（老莫）
 - task_hw_05041523_2: 方案设计标准化（毛豆）
@@ -338,4 +332,94 @@ Cron：`*/15 * * * *`，每次检查所有Agent最后活跃时间，超过30分�
 **增量汇报模板**：
 - ✅ 新完成：[任务名]（负责人）
 - 🔄 新进行：[任务名]（负责人）
+
+---
+
+## maodu-Workflow — TaskQueue Automation Workflow
+
+For the full maodu-workflow skill, see `references/maodu-workflow.md`. Summary:
+
+### TaskQueue 三步工作流
+```python
+q = TaskQueue()
+# 第1步：创建（status=pending）
+q.create_task(task_id="task_xxx", title="...", assignee="毛豆", ...)
+# 第2步：认领（assignee变更，status仍是pending）
+q.claim_task("task_xxx", "毛豆")
+# 第3步：开始（status改为in_progress）⭐ 必须单独调用！
+q.start_task("task_xxx", "毛豆")
+```
+
+### execute_code 沙盒限制
+`from task_queue import TaskQueue` 在 `execute_code` 沙盒中不可用（ModuleNotFoundError）。使用原生 sqlite3：
+```python
+import sqlite3
+from datetime import datetime
+conn = sqlite3.connect('/Users/hua/Desktop/渔芯科技/团队协作/tasks.db')
+```
+
+---
+
+## maodu-Task-Queue-Debug — TaskQueue 调试经验
+
+For the full debug skill, see `references/maodu-task-queue-debug.md`. Summary:
+
+### 核心教训
+
+**教训1：task_id后缀 ≠ 实际负责人**
+任务归属只看 `assignee` 字段，不看 task_id 后缀。
+```python
+c.execute("SELECT task_id, title, assignee, status FROM tasks WHERE assignee='毛豆' AND status='in_progress'")
+```
+
+**教训2：重复任务清理**
+清理前先确认产出物是否存在：
+```python
+import os
+if os.path.exists(file_path):
+    # 确认文件存在 → 标记重复任务为completed
+```
+
+**教训3：MEMORY.md并发写入损坏**
+症状：残缺内容、多段拼接、文件异常变长。修复：覆盖全部内容，不用patch。
+
+---
+
+## maodu-Workflow-Cron — Cron 环境注意事项
+
+For the full cron workflow skill, see `references/maodu-workflow-cron.md`. Summary:
+
+### 已知问题：scanner.py 在 cron 环境下返回空
+
+直接使用 TaskQueue API：
+```python
+import sys
+sys.path.insert(0, '/Users/hua/Desktop/渔芯科技/团队协作')
+from task_queue import TaskQueue
+q = TaskQueue()
+my_tasks = q.get_my_tasks('毛豆')
+```
+
+### 毛豆核心开发文件
+- `phase_orchestrator.py` (793行)
+- `skill_dispatcher.py` (155行)
+- `knowledge.py` (334行)
+
+---
+
+## maodu-Task-Status-Reporter — 增量汇报 Cron
+
+For the full task status reporter skill, see `references/maodu-task-status-reporter.md`. Summary:
+
+### Hash 计算方式（关键！）
+Hash 必须从原始 task_id 计算，不做 normalize/deduplicate：
+```python
+current_raw_ids = sorted(set(r[0] for r in completed_rows))
+current_hash = hashlib.md5(','.join(current_raw_ids).encode()).hexdigest()
+```
+
+**易犯错误**：对 task_id 做 normalize 会导致 Hash 与 checkpoint 不匹配。
+
+### 正确对比流程
+先比较两个 completed 列表（set 差集），而非直接比较 hash。
 - 📋 进行中：共N个任务

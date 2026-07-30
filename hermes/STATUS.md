@@ -1,9 +1,9 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-07-26 12:21:43
+> 导出时间: 2026-07-30 12:39:53
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 74
+- Skills: 59
 - Profiles: 0
 - Scripts: 0
 0
@@ -20,44 +20,39 @@ Update available: 2659 commits behind — run 'hermes update'
 ## Profiles
 
 ## Skills 清单
+- algorithmic-art
 - apple
 - aquaculture
 - autonomous-ai-agents
-- blue-ocean-strategy
+- baoyu-visual-content
 - brand-guidelines
 - bugfix
 - canvas-design
 - claude-api
+- coding-agents
 - creative
-- cro-methodology
-- crossing-the-chasm
 - data-science
 - design-everyday-things
 - design-sprint
 - devops
 - diagramming
 - doc-coauthoring
-- docx
+- dogfood
 - domain
 - drive-motivation
 - email
 - feeds
 - feishu
-- frontend-design
 - frontend-ui
 - gaming
 - gifs
 - github
-- heidou-admin
 - hermes-ecosystem-entry.md
 - hooked-ux
 - inference-sh
-- influence-psychology
 - internal-comms
 - ios-hig-design
-- jobs-to-be-done
 - knowledge-base
-- laomo-knowledge
 - lean-startup
 - made-to-stick
 - maodou-product
@@ -67,14 +62,10 @@ Update available: 2659 commits behind — run 'hermes update'
 - module
 - negotiation
 - note-taking
-- pdf
-- pptx
 - predictable-revenue
-- product
 - product-debugging
 - productivity
 - red-teaming
-- refactoring-ui
 - research
 - scorecard-marketing
 - skill-creator
@@ -82,15 +73,9 @@ Update available: 2659 commits behind — run 'hermes update'
 - smart-home
 - social-media
 - software-development
-- storybrand-messaging
 - testing
 - theme-factory
 - top-design
-- traction-eos
-- ux-heuristics
 - web-artifacts-builder
 - web-typography
-- webapp-testing
-- xiaobao-sales
-- xlsx
 - yuanbao
