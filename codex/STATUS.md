@@ -1,12 +1,11 @@
 # Codex 状态快照
-> 导出时间: 2026-07-30 12:08:50
+> 导出时间: 2026-07-30 12:09:49
 > 🤖 自动同步自 Hermes/玉芬 · Codex 自进化模块
 
 ## 版本
 - 当前: `codex-cli 0.146.0`
-- npm 最新: `npm error config prefix cannot be changed from project config: /Users/hua/.npmrc.
-0.146.0`
-- 状态: `update_available`
+- npm 最新: `0.146.0`
+- 状态: `up_to_date`
 
 ## 公司专属 Skills (yuxin-*)
 - 文件: 13 个
