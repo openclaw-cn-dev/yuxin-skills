@@ -1,0 +1,6 @@
+{
+  "scanned_at": "2026-07-30T12:07:09",
+  "cache_sources": [],
+  "data_sources": [],
+  "note": "manifest-only, 不上传插件二进制 (避免污染 GitHub)"
+}
