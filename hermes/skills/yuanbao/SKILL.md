@@ -2,7 +2,6 @@
 name: yuanbao
 description: "Yuanbao (元宝) groups: @mention users, query info/members."
 version: 1.0.0
-platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [yuanbao, mention, at, group, members, 元宝, 派, 艾特]
@@ -11,7 +10,13 @@ metadata:
 
 # Yuanbao Group Interaction
 
-## CRITICAL: How Messaging Works
+## CRITICAL: Yuanbao ≠ Feishu
+
+**Yuanbao (元宝) is a separate system from Feishu (飞书).**
+- Yuanbao group codes look like `328306697` (numeric)
+- Feishu chat IDs look like `oc_2db3b5373825567c3681d1ca580e0143` (prefixed with `oc_`)
+- When the target has a `feishu:` prefix or an `oc_` chat ID, do NOT use Yuanbao tools — use the `feishu-api-notify` skill instead
+- Yuanbao tools (`yb_send_dm`, `yb_query_group_members`) only work within the Yuanbao/MiniMax ecosystem
 
 **Your text reply IS the message sent to the group/user.** The gateway automatically delivers your response text to the chat. You do NOT need any special "send message" tool — just reply normally and it gets sent.
 

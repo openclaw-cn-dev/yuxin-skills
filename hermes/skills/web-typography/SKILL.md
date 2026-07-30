@@ -391,6 +391,20 @@ Publisher: A Book Apart (2014)
 ISBN: 978-1937557065
 [Amazon](https://www.amazon.com/Web-Typography-Jason-Santa-Maria/dp/1937557065?tag=wondelai00-20)
 
+## Artifact Building for Typography Projects
+
+For building complex multi-component frontend artifacts (React + Tailwind + shadcn/ui) to demonstrate typography work, see `scripts/`.
+
+**Stack:** React 18 + TypeScript + Vite + Parcel + Tailwind CSS + shadcn/ui
+
+**Workflow:**
+1. `bash scripts/init-artifact.sh <name>` — scaffold project
+2. Edit the generated React files
+3. `bash scripts/bundle-artifact.sh` — bundle to single HTML
+4. Share the `bundle.html` as an artifact
+
+**Design guidelines:** Avoid "AI slop" — centered layouts, purple gradients, uniform rounded corners, Inter font.
+
 ## About the Author
 
 **Jason Santa Maria** is a graphic designer, creative director, and educator whose work has shaped how the industry thinks about typography on the web. He served as Creative Director at Typekit (now Adobe Fonts), where he helped bring high-quality type to web designers at scale. He co-founded A Book Apart, the publisher of brief books for people who make websites, and has been a leading voice in web standards and design education. Santa Maria teaches at the School of Visual Arts (SVA) in New York City and has art-directed publications including A List Apart. His work bridges the gap between traditional typographic craft and the practical realities of designing for screens, and "On Web Typography" distills his deep expertise into an accessible, opinionated guide for working web designers.
