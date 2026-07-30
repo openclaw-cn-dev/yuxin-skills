@@ -1,21 +1,25 @@
 # Codex 状态快照
-> 导出时间: 2026-07-30 12:07:14
+> 导出时间: 2026-07-30 12:08:50
 > 🤖 自动同步自 Hermes/玉芬 · Codex 自进化模块
 
 ## 版本
 - 当前: `codex-cli 0.146.0`
-- npm 最新: `0.146.0`
-- 状态: `up_to_date`
+- npm 最新: `npm error config prefix cannot be changed from project config: /Users/hua/.npmrc.
+0.146.0`
+- 状态: `update_available`
 
 ## 公司专属 Skills (yuxin-*)
-- 文件: 0 个
-- 目录: 0 个
+- 文件: 13 个
+- 目录: 1 个
 
 ## 插件来源 (cache/)
-- (无)
+- `openai-api-curated`
+- `openai-bundled`
+- `openai-primary-runtime`
+- `sisyphuslabs`
 
 ## 数据源 (data/)
-- (无)
+- `omo-sisyphuslabs`
 
 ## 同步策略
 - 仅同步 `yuxin-*` 前缀的 skills (公司专属资产)

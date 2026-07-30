@@ -1,6 +1,13 @@
 {
-  "scanned_at": "2026-07-30T12:07:09",
-  "cache_sources": [],
-  "data_sources": [],
+  "scanned_at": "2026-07-30T12:08:46",
+  "cache_sources": [
+    "openai-api-curated",
+    "openai-bundled",
+    "openai-primary-runtime",
+    "sisyphuslabs"
+  ],
+  "data_sources": [
+    "omo-sisyphuslabs"
+  ],
   "note": "manifest-only, 不上传插件二进制 (避免污染 GitHub)"
 }
