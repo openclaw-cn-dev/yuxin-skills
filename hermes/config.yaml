@@ -1,32 +1,11 @@
-model: MiniMax-M3
-providers:
-  deepseek:
-    base_url: http://127.0.0.1:18888/openai/v1
-  minimax-custom:
-    base_url: https://api.minimaxi.com/v1
-    model: MiniMax-M3
-    api_key: "***"
-fallback_providers:
-- deepseek-cn
-: {}
-toolsets:
-- hermes-cli
+: true
+_config_version: 22
 agent:
-  max_turns: 60
-  gateway_timeout: 1800
-  : 60
   api_max_retries: 3
-  service_tier: ''
-  : auto
-  : true
-  environment_probe: true
-  environment_hint: ''
-  : 900
-  clarify_timeout: 600
   : 180
-  : 3600
-  image_input_mode: auto
-  disabled_toolsets: []
+  gateway_timeout: 1800
+  : 900
+  max_turns: 90
   personalities:
     catgirl: You are Neko-chan, an anime catgirl AI assistant, nya~! Add 'nya' and
       cat-like expressions to your speech. Use kaomoji like (=^･ω･^=) and ฅ^•ﻌ•^ฅ.
@@ -65,96 +44,81 @@ agent:
       your code* OwO what's this? wet me take a wook! i pwomise to be vewy hewpful
       >w<
   reasoning_effort: medium
+  : 60
+  service_tier: ''
+  : auto
   verbose: false
-terminal:
-  backend: local
-  modal_mode: auto
-  cwd: .
-  timeout: 300
-  env_passthrough: []
-  shell_init_files: []
-  auto_source_bashrc: true
-  docker_image: nikolaik/python-nodejs:python3.11-nodejs20
-  docker_forward_env: []
-  docker_env: {}
-  singularity_image: docker://nikolaik/python-nodejs:python3.11-nodejs20
-  modal_image: nikolaik/python-nodejs:python3.11-nodejs20
-  daytona_image: nikolaik/python-nodejs:python3.11-nodejs20
-  container_cpu: 1
-  container_memory: 5120
-  container_disk: 51200
-  : true
-  docker_volumes: []
-  : false
-  docker_extra_args: []
-  : false
-  persistent_shell: true
-  lifetime_seconds: 300
-  vercel_runtime: node24
-web:
-  backend: ''
-  search_backend: ddgs
-  extract_backend: ''
-browser:
-  inactivity_timeout: 120
-  command_timeout: 30
-  record_sessions: false
-  allow_private_urls: false
-  engine: auto
-  : true
-  cdp_url: ''
-  dialog_policy: must_respond
-  dialog_timeout_s: 300
-  camofox:
-    managed_persistence: false
-    user_id: ''
-    session_key: ''
-    adopt_existing_tab: false
-    : false
-    loopback_host_alias: host.docker.internal
-checkpoints:
-  enabled: true
-  max_snapshots: 50
-  max_total_size_mb: 500
-  max_file_size_mb: 10
-  auto_prune: false
-  retention_days: 7
-  delete_orphans: true
-  min_interval_hours: 24
-file_read_max_chars: 100000
-tool_output:
-  max_bytes: 50000
-  max_lines: 2000
-  max_line_length: 2000
-:
-  warnings_enabled: true
-  hard_stop_enabled: false
-  warn_after:
-    exact_failure: 2
-    same_tool_failure: 3
-    : 2
-  hard_stop_after:
-    exact_failure: 5
-    same_tool_failure: 8
-    : 5
-compression:
-  enabled: true
-  threshold: 0.5
-  target_ratio: 0.2
-  protect_last_n: 20
-  : 400
-  protect_first_n: 3
-  : false
-  model: 
-  provider: deepseek-cn
-prompt_caching:
-  cache_ttl: 5m
-openrouter:
-  response_cache: true
-  response_cache_ttl: 300
-  min_coding_score: 0.65
+approvals:
+  cron_mode: deny
+  mode: manual
+  timeout: 60
+auxiliary:
+  approval:
+    api_key: "***"
+    base_url: ''
+    extra_body: {}
+    model: ''
+    provider: auto
+    timeout: 30
+  compression:
+    api_key: "***"
+    base_url: ''
+    extra_body: {}
+    model: ''
+    provider: volc-ark
+    timeout: 120
+  flush_memories:
+    api_key: "***"
+    base_url: ''
+    extra_body: {}
+    model: ''
+    provider: auto
+    timeout: 30
+  mcp:
+    api_key: "***"
+    base_url: ''
+    extra_body: {}
+    model: ''
+    provider: auto
+    timeout: 30
+  session_search:
+    api_key: "***"
+    base_url: ''
+    extra_body: {}
+    max_concurrency: 3
+    model: ''
+    provider: auto
+    timeout: 30
+  skills_hub:
+    api_key: "***"
+    base_url: ''
+    extra_body: {}
+    model: ''
+    provider: auto
+    timeout: 30
+  title_generation:
+    api_key: "***"
+    base_url: ''
+    extra_body: {}
+    model: ''
+    provider: auto
+    timeout: 30
+  vision:
+    api_key: "***"
+    base_url: ''
+    download_timeout: 30
+    extra_body: {}
+    model: ''
+    provider: auto
+    timeout: 120
+  web_extract:
+    api_key: "***"
+    base_url: ''
+    extra_body: {}
+    model: ''
+    provider: auto
+    timeout: 360
 bedrock:
-  region: ''
   discovery:
     enabled: true
     provider_filter: []
@@ -164,475 +128,131 @@ bedrock:
     guardrail_version: ''
     : async
     trace: disabled
-auxiliary:
-  vision:
-    provider: deepseek-cn
-    model: deepseek-v4-pro
-    base_url: ''
-    api_key: "***"
-    timeout: 120
-    extra_body: {}
-    download_timeout: 30
-  web_extract:
-    provider: deepseek-cn
-    model: ''
-    base_url: ''
-    api_key: "***"
-    timeout: 360
-    extra_body: {}
-  compression:
-    provider: deepseek-cn
-    model: deepseek-v4-pro
-    base_url: ''
-    api_key: "***"
-    timeout: 120
-    extra_body: {}
-  skills_hub:
-    provider: deepseek-cn
-    model: ''
-    base_url: ''
-    api_key: "***"
-    timeout: 30
-    extra_body: {}
-  approval:
-    provider: deepseek-cn
-    model: ''
-    base_url: ''
-    api_key: "***"
-    timeout: 30
-    extra_body: {}
-  mcp:
-    provider: deepseek-cn
-    model: ''
-    base_url: ''
-    api_key: "***"
-    timeout: 30
-    extra_body: {}
-  title_generation:
-    provider: deepseek-cn
-    model: ''
-    base_url: ''
-    api_key: "***"
-    timeout: 30
-    extra_body: {}
-  triage_specifier:
-    provider: deepseek-cn
-    model: ''
-    base_url: ''
-    api_key: "***"
-    timeout: 120
-    extra_body: {}
-  kanban_decomposer:
-    provider: deepseek-cn
-    model: ''
-    base_url: ''
-    api_key: "***"
-    timeout: 180
-    extra_body: {}
-  profile_describer:
-    provider: deepseek-cn
-    model: ''
-    base_url: ''
-    api_key: "***"
-    timeout: 60
-    extra_body: {}
-  curator:
-    provider: deepseek-cn
-    model: ''
-    base_url: ''
-    api_key: "***"
-    timeout: 600
-    extra_body: {}
-  flush_memories:
-    api_key: "***"
-    base_url: ''
-    extra_body: {}
-    model: deepseek-v4-pro
-    provider: deepseek-cn
-    timeout: 30
-  session_search:
-    api_key: "***"
-    base_url: ''
-    extra_body: {}
-    max_concurrency: 3
-    model: deepseek-v4-pro
-    provider: deepseek-cn
-    timeout: 30
-display:
-  compact: false
-  personality: kawaii
-  resume_display: full
-  resume_exchanges: 10
-  : 300
-  : 200
-  : 3
+  region: ''
+browser:
+  allow_private_urls: false
+  camofox:
+    managed_persistence: false
+  cdp_url: ''
+  command_timeout: 30
+  dialog_policy: must_respond
+  dialog_timeout_s: 300
+  inactivity_timeout: 120
+  record_sessions: false
+checkpoints:
+  enabled: true
+  max_snapshots: 50
+code_execution:
+  max_tool_calls: 50
+  mode: project
+  timeout: 300
+command_allowlist:
+- force kill processes
+- in-place edit of system config
+- start gateway outside systemd (use 'systemctl --user restart hermes-gateway')
+- script execution via -e/-c flag
+- script execution via heredoc
+- SQL DELETE without WHERE
+- overwrite system config
+- delete in root path
+- kill hermes/gateway process (self-termination)
+- recursive delete
+compression:
+  enabled: true
+  protect_last_n: 20
+  target_ratio: 0.2
+  threshold: 0.5
+context:
+  engine: compressor
+: {}
+cron:
+  max_parallel_jobs: null
+  wrap_response: true
+dashboard:
+  theme: default
+delegation:
+  api_key: "***"
+  base_url: ''
+  : 600
   : true
-  busy_input_mode: interrupt
-  interface: cli
+  : 3
+  max_iterations: 50
+  max_spawn_depth: 1
+  model: ''
+  : true
+  provider: ''
+  reasoning_effort: ''
   : false
-  tui_agents_nudge: true
+discord:
+  allowed_channels: ''
+  auto_thread: true
+  channel_prompts: {}
+  : ''
+  reactions: true
+  require_mention: true
+  server_actions: ''
+display:
+  : all
   bell_on_complete: false
-  show_reasoning: false
-  streaming: true
-  timestamps: false
+  busy_input_mode: interrupt
+  compact: false
   : strip
-  persistent_output: true
-  : 200
   inline_diffs: true
   : true
-  : true
+  personality: kawaii
+  platforms: {}
+  resume_display: full
   show_cost: false
+  show_reasoning: false
   skin: default
-  language: en
-  : kaomoji
+  streaming: true
+  tool_preview_length: 0
+  tool_progress: all
+  : false
+  : {}
   :
     first_lines: 2
     last_lines: 2
-  : true
-  : false
-  : {}
-  tool_preview_length: 0
-  : 0
-  platforms:
-    telegram:
-      streaming: true
-    discord:
-      streaming: false
-  runtime_footer:
-    enabled: false
-    fields:
-    - model
-    - context_pct
-    - cwd
-  copy_shortcut: auto
-  : all
-  tool_progress: all
-dashboard:
-  theme: default
-  : false
-  oauth:
-    client_id: ''
-    portal_url: ''
-  public_url: ''
-privacy:
-  redact_pii: false
-tts:
-  provider: edge
-  edge:
-    voice: en-US-AriaNeural
-  elevenlabs:
-    voice_id: 
-    model_id: 
-  openai:
-    model: gpt-4o-mini-tts
-    voice: alloy
-  xai:
-    voice_id: eve
-    language: en
-    sample_rate: 24000
-    bit_rate: 128000
-  mistral:
-    model: 
-    voice_id: 
-  neutts:
-    ref_audio: ''
-    ref_text: ''
-    model: neuphonic/neutts-air-q4-gguf
-    device: cpu
-  piper:
-    voice: en_US-lessac-medium
-stt:
-  enabled: true
-  provider: local
-  local:
-    model: base
-    language: ''
-  openai:
-    model: whisper-1
-  mistral:
-    model: voxtral-mini-latest
-  elevenlabs:
-    model_id: scribe_v2
-    language_code: ''
-    tag_audio_events: false
-    diarize: false
-voice:
-  record_key: ctrl+b
-  : 120
-  auto_tts: false
-  beep_enabled: true
-  silence_threshold: 200
-  silence_duration: 3
-human_delay:
-  mode: 'off'
-  min_ms: 800
-  max_ms: 2500
-context:
-  engine: compressor
-  : 0.75
-  : 8
-  snapshot_on_compact: false
-memory:
-  memory_enabled: true
-  : true
-  memory_char_limit: 1800
-  user_char_limit: 1100
-  provider: ''
-  flush_min_turns: 4
-  nudge_interval: 8
-delegation:
-  model: ''
-  provider: ''
-  base_url: ''
-  api_key: "***"
-  api_mode: ''
-  : true
-  max_iterations: 50
-  : 600
-  reasoning_effort: ''
-  : 3
-  max_spawn_depth: 1
-  : true
-  : false
-: ''
-goals:
-  max_turns: 20
-skills:
-  external_dirs: []
-  template_vars: true
-  inline_shell: false
-  : 10
-  guard_agent_created: false
-  : 15
-curator:
-  enabled: true
-  interval_hours: 168
-  min_idle_hours: 2
-  stale_after_days: 30
-  archive_after_days: 90
-  prune_builtins: true
-  backup:
-    enabled: true
-    keep: 5
+fallback_providers: []
+feishu:
+  require_mention: false
+file_read_max_chars: 100000
+: true
 honcho: {}
-timezone: ''
-slack:
-  require_mention: true
-  : ''
-  allowed_channels: ''
-  channel_prompts: {}
-discord:
-  require_mention: true
-  : ''
-  allowed_channels: ''
-  auto_thread: true
-  : false
-  history_backfill: true
-  : 50
-  reactions: true
-  channel_prompts: {}
-  dm_role_auth_guild: ''
-  server_actions: ''
-  : false
-  : 33554432
-whatsapp: {}
-telegram:
-  reactions: false
-  channel_prompts: {}
-  allowed_chats: ''
-mattermost:
-  require_mention: true
-  : ''
-  allowed_channels: ''
-  channel_prompts: {}
-matrix:
-  require_mention: true
-  free_response_rooms: ''
-  allowed_rooms: ''
-approvals:
-  mode: manual
-  timeout: 60
-  cron_mode: deny
-  mcp_reload_confirm: true
-  : true
-command_allowlist:
-- in-place edit of Hermes config/env
-- SQL DELETE without WHERE
-- shell command via -c/-lc flag
-- git reset --hard (destroys uncommitted changes)
-- sudo with combined-flag privilege escalation
-- start gateway outside systemd (use 'systemctl --user restart hermes-gateway')
-- overwrite project env/config via redirection
-- SQL DROP
-- chmod +x followed by immediate execution
-- script execution via heredoc
-- overwrite system file via redirection
-- stop/restart hermes gateway (kills running agents)
-- script execution via -e/-c flag
-- overwrite system config
-- kill hermes/gateway process (self-termination)
-- force kill processes
-- find -delete
-- overwrite project env/config file
-- in-place edit of system config
-- SQL TRUNCATE
-- kill process via pgrep expansion (self-termination)
-- hermes update (restarts gateway, kills running agents)
-- stop/restart system service
-- world/other-writable permissions
-- pipe remote content to shell
-- docker compose restart/stop/kill/down (container lifecycle)
-- git force push (rewrites remote history)
-- recursive delete
-- force kill processes (killall -KILL)
-- delete in root path
-- docker restart/stop/kill (container lifecycle)
-quick_commands: {}
 hooks: {}
 hooks_auto_accept: false
-personalities: {}
-security:
-  allow_private_urls: false
-  redact_secrets: true
-  tirith_enabled: true
-  tirith_path: tirith
-  tirith_timeout: 5
-  tirith_fail_open: true
-  website_blocklist:
-    enabled: false
-    domains: []
-    shared_files: []
-  acked_advisories: []
-  allow_lazy_installs: true
-cron:
-  wrap_response: true
-  max_parallel_jobs: null
-kanban:
-  dispatch_in_gateway: true
-  : 60
-  failure_limit: 2
-  : 2097152
-  : 1
-  : ''
-  default_assignee: ''
-  : null
-  auto_decompose: true
-  : 3
-  : 14400
-code_execution:
-  mode: project
-  max_tool_calls: 50
-  timeout: 300
-tools:
-  tool_search:
-    enabled: auto
-    threshold_pct: 10
-    : 5
-    max_search_limit: 20
+human_delay:
+  max_ms: 2500
+  min_ms: 800
+  mode: 'off'
 logging:
+  backup_count: 3
   level: INFO
   max_size_mb: 5
-  backup_count: 3
-  memory_monitor:
-    enabled: true
-    interval_seconds: 300
-model_catalog:
-  enabled: true
-  url: https://hermes-agent.nousresearch.com/docs/api/model-catalog.json
-  ttl_hours: 24
-  providers: {}
+mattermost:
+  channel_prompts: {}
+mcp_servers:
+  lookforge:
+    args:
+    - /Users/hua/Desktop/渔芯科技/6-产品研发/02-LookForge/backend/app/mcp/.py
+    command: /Users/hua/.hermes/hermes-agent/venv/bin/python3
+memory:
+  flush_min_turns: 6
+  memory_char_limit: 2200
+  memory_enabled: true
+  nudge_interval: 10
+  provider: ''
+  user_char_limit: 1375
+  : true
+model: MiniMax-M3
 network:
   force_ipv4: false
-gateway:
-  strict: false
-  : []
-  trust_recent_files: true
-  : 600
-streaming:
-  enabled: false
-  transport: auto
-  edit_interval: 0.8
-  buffer_threshold: 24
-  cursor: ' ▉'
-  : 60
-sessions:
-  auto_prune: false
-  retention_days: 90
-  vacuum_after_prune: true
-  min_interval_hours: 24
-  : false
 onboarding:
   seen:
     busy_input_prompt: true
     : true
     : true
-updates:
-  pre_update_backup: false
-  backup_keep: 5
-lsp:
-  enabled: true
-  wait_mode: document
-  wait_timeout: 5
-  install_strategy: auto
-  servers: {}
-x_search:
-  model: grok-4.20-reasoning
-  timeout_seconds: 180
-  retries: 2
-secrets:
-  bitwarden:
-    enabled: false
-    access_token_env: BWS_ACCESS_TOKEN
-    project_id: ''
-    cache_ttl_seconds: 300
-    override_existing: true
-    auto_install: true
-    server_url: ''
-: 5
-: 5
-: 2000
-_config_version: 24
-DEEPSEEK_BASE_URL: http://127.0.0.1:18888/openai/v1
-DEEPSEEK_MODEL: 
-: true
-FEISHU_APP_ID: "***"
-FEISHU_APP_SECRET: "***"
-FEISHU_HOME_CHANNEL: 
-custom_providers:
-- api_mode: chat_completions
-  base_url: http://127.0.0.1:18888/openai/v1
-  model: deepseek-v4-pro
-  models:
-    MiniMax-M3:
-      name: MiniMax M3
-  name: minimax
-  api_key: "***"
-- api_key: "***"
-  api_mode: chat_completions
-  base_url: http://127.0.0.1:18888/openai/v1
-  model: deepseek-v4-pro
-  models:
-    deepseek-v4-pro:
-      name: DeepSeek V4 Pro (华哥授权切换)
-  name: deepseek-cn
-- api_key: "***"
-  api_mode: chat_completions
-  base_url: http://localhost:11434/v1
-  model: qwen2.5-coder:7b
-  models:
-    qwen2.5-coder:7b:
-      name: Qwen 2.5 Coder 7B (本地兜底)
-  name: ollama-coder
-: true
-mcp_servers:
-  lookforge:
-    args:
-    - /Users/hua/Desktop/渔芯科技/6-产品研发/02-LookForge/backend/app/mcp/.py
-    - --token-mode
-    - user_access_token
-    - --oauth
-    command: /Users/hua/.hermes/hermes-agent/venv/bin/python3
-    enabled: true
+personalities: {}
 platform_toolsets:
   cli:
   - hermes-cli
@@ -650,8 +270,148 @@ platform_toolsets:
   - hermes-telegram
   whatsapp:
   - hermes-whatsapp
+: ''
+privacy:
+  redact_pii: false
+prompt_caching:
+  cache_ttl: 5m
+provider: minimax-custom
+providers:
+  deepseek-cn:
+    api_key: "***"
+    base_url: http://127.0.0.1:18888/openai/v1
+    model: deepseek-v4-pro
+  :
+    api_key: "***"
+    base_url: https://ark.cn-beijing.volces.com/api/plan/v3
+    model: deepseek-v4-pro
+    models:
+    - id: ark-code-latest
+    - context_length: 262144
+      id: 
+    - context_length: 262144
+      id: 
+    - context_length: 262144
+      id: 
+    - context_length: 262144
+      id: 
+    - context_length: 1048576
+      id: glm-5.2
+    - id: kimi-k2.7-code
+    - id: minimax-m3
+    - context_length: 1048576
+      id: 
+    - context_length: 1048576
+      id: 
+    - id: minimax-m2.7
+    - id: kimi-k2.6
+  minimax-custom:
+    base_url: https://api.minimaxi.com/v1
+    model: MiniMax-M3
+    api_key: "***"
+quick_commands: {}
+security:
+  allow_private_urls: false
+  redact_secrets: true
+  tirith_enabled: true
+  tirith_fail_open: true
+  tirith_path: tirith
+  tirith_timeout: 5
+  website_blocklist:
+    domains: []
+    enabled: false
+    shared_files: []
 session_reset:
   at_hour: 4
   idle_minutes: 1440
   mode: both
-provider: minimax-custom
+sessions:
+  auto_prune: false
+  min_interval_hours: 24
+  retention_days: 90
+  vacuum_after_prune: true
+skills:
+  : 15
+  external_dirs: []
+  guard_agent_created: false
+  inline_shell: false
+  : 10
+  template_vars: true
+slack:
+  channel_prompts: {}
+streaming:
+  enabled: false
+stt:
+  enabled: true
+  local:
+    language: ''
+    model: base
+  mistral:
+    model: voxtral-mini-latest
+  openai:
+    model: whisper-1
+  provider: local
+telegram:
+  channel_prompts: {}
+terminal:
+  auto_source_bashrc: true
+  backend: local
+  container_cpu: 1
+  container_disk: 51200
+  container_memory: 5120
+  : true
+  cwd: .
+  daytona_image: nikolaik/python-nodejs:python3.11-nodejs20
+  docker_env: {}
+  docker_forward_env: []
+  docker_image: nikolaik/python-nodejs:python3.11-nodejs20
+  : false
+  docker_volumes: []
+  env_passthrough: []
+  lifetime_seconds: 300
+  modal_image: nikolaik/python-nodejs:python3.11-nodejs20
+  modal_mode: auto
+  persistent_shell: true
+  shell_init_files: []
+  singularity_image: docker://nikolaik/python-nodejs:python3.11-nodejs20
+  timeout: 180
+timezone: ''
+tool_output:
+  max_bytes: 50000
+  max_line_length: 2000
+  max_lines: 2000
+toolsets:
+- hermes-cli
+tts:
+  edge:
+    voice: en-US-AriaNeural
+  elevenlabs:
+    model_id: 
+    voice_id: 
+  mistral:
+    model: 
+    voice_id: 
+  neutts:
+    device: cpu
+    model: neuphonic/neutts-air-q4-gguf
+    ref_audio: ''
+    ref_text: ''
+  openai:
+    model: gpt-4o-mini-tts
+    voice: alloy
+  provider: edge
+  xai:
+    bit_rate: 128000
+    language: en
+    sample_rate: 24000
+    voice_id: eve
+voice:
+  auto_tts: false
+  beep_enabled: true
+  : 120
+  record_key: ctrl+b
+  silence_duration: 3.0
+  silence_threshold: 200
+whatsapp: {}
+web:
+  search_backend: ddgs
