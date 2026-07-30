@@ -196,6 +196,15 @@ codex plugin install <name>
 
 ## 自动进化
 
-- Cron: 每日凌晨 2:00 执行 `~/.hermes/scripts/codex_self_evolution.py`
-- 内容: 检查 Codex 版本更新、插件更新、skills 同步
-- 玉芬负责维护
+- **每日 2:00** — `~/.hermes/scripts/codex_self_evolution.py` 跑 5 步：版本检查、skills 同步、插件检查、会话清理、GitHub 同步
+- **每小时** — `codex_github_sync.sh` (cron `6dfcbdeac7bf`) 跑轻量增量同步 (`--sync-only`)，只跑 GitHub 同步
+- **GitHub 同步目标**: `openclaw-cn-dev/yuxin-skills` 的 `codex/` 子目录（仿 `claude-code/` 结构）
+  - `codex/AGENTS.md`（全文）
+  - `codex/config.toml`（脱敏：token/secret/bearer 字段值替换为 `<REDACTED>`）
+  - `codex/skills/yuxin-*`（**仅公司专属**，13 个 .md + 1 个目录）
+  - `codex/plugins.json`（cache/data 清单）
+  - `codex/STATUS.md`（自动生成版本快照）
+- **同步缓存**: `/tmp/yuxin-skills-codex-sync/`（pull + 增量 copy + commit + push）
+- **SSH 通道**: 端口 22 直连 `git@github.com`（实测可用，无 token）
+- **失败兜底**: GitHub 同步失败不影响 step 1-5 主流程；写入 `~/.hermes/logs/codex_github_sync.log`
+- **玉芬负责维护**
