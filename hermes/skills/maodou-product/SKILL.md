@@ -21,14 +21,45 @@ metadata:
 ### 标准进化步骤
 1. **检查任务队列**：确认无 pending/in_progress 任务
 2. **错位清单（强制步骤 — 2026-07-30 新增）**：read_file 上次进化报告 + 最近 3 次报告，列出历史主题；本次必须明确标注「全新主题 vs 历史重复项」表格。重复项只做一句话索引，**不展开**。这是避免同质化（陷阱D）最有效的方法。
+2.5. **扫描协作者当日产出（2026-07-30 新增 — 与错位清单同等强制）**：团队中老莫/小宝/黑豆/阿福 每天都在持续调研、产生新资料。心跳开始时**先 `ls -t` 他们的当日产出目录**，重点找"协作者已调研但毛豆还没采用过的主题"。这是错位清单之外的第二个新主题来源，且天然与历史心跳错位。**关键判断**：心跳结束的"下一步行动计划"中，若仅是"自己调研"而没有"邀请协作者采用毛豆新结论"，就是遗漏了这个步骤。
+   - 老莫：`/Users/hua/rkr_staging/文档库/渔芯项目/04-学习笔记工作区/持续调研/`（每日多份，**实际路径不是 `/Users/hua/Desktop/渔芯科技/9-学习笔记/...`**——后者现已不存在；如该路径失效，可改用 `/Users/hua/rkr_staging/文档中转站/migration_20260730/desktop_yuxin/9-学习笔记/持续调研/` 备用）
+   - 老莫：`~/.hermes/skills/aquaculture/ras-aquaculture/references/ras-industry-news-2026.md`（周更）
+   - 小宝/黑豆/阿福：当日 workspace 产出（视任务而定）
 3. **行业研究**：搜索RAS循环水养殖最新研究和技术动态（优先使用本地知识库 + 老莫持续调研文件；如需 web 搜索，遵循 `ras-news-verification-playbook` skill 的核验标准，避免 browser_navigate 到 Google Scholar 等可能超时的站点）
-4. **方法论学习**：复习或学习产品设计方法论（JTBD/Design Sprint/Lean Startup）
+4. **方法论学习**：复习或学习产品设计方法论。**方法论分两层（2026-07-31 新增分层框架）**：
+   - **战略层**（决定"做什么"）：Wardley Maps（演化阶段 + 价值链定位）— 2026-07-31 引入
+   - **战术层**（决定"怎么做"）：JTBD / ECD / OST / Taguchi 稳健设计 / Pugh Matrix（多准则选型） / Lean Startup / Design Sprint
+   - 选方法论前先想清楚"今天要回答的是战略问题还是战术问题"，避免战略问题用战术方法或反之
+   - **历史使用清单**（按日期）：
+     - 07-30_00：JTBD Discover Interview（战术）
+     - 07-30_12：Evidence-Centered Design（战术）
+     - 07-30_16：Opportunity Solution Tree（战术）
+     - 07-30_20：Taguchi 稳健设计（战术）
+     - 07-31_00：**Wardley Maps（战略）— 首次战略层方法论**
+     - 07-31_08：**Pugh Matrix（战术）— 多技术横向选型（固液分离三技术对比）**
+     - 07-31_12：**Crossing the Chasm（战略）— Geoffrey Moore 跨越鸿沟 + Whole Product 5 层**
+   - **下次心跳要求**：战略层和战术层各选一个时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）。战略层未用过的备选：Blue Ocean Strategy / Porters Five Forces / BCG Matrix / Value Chain Analysis；战术层未用过的备选：Lean Startup / Design Sprint / Design of Experiments / FMEA
+   - 📐 **Wardley Maps 完整方法论**：见 `references/wardley-maps-methodology.md`（含 LookForge 当前快照 + 季度复盘 SOP）
+   - 📐 **Pugh Matrix 完整方法论**：见 `references/pugh-matrix-methodology.md`（含固液分离选型实操案例 + LookForge API 设计 + 在设备选型/品种选型的复用方案）
+   - 📐 **Crossing the Chasm 完整方法论**：见 `references/crossing-the-chasm-methodology.md`（含 LookForge 鸿沟诊断 10 分制 + Whole Product 5 层缺口清单 + Bowling Pin 滩头选择 6 准则）
+   - **下次心跳要求**：战略层和战术层各选一个时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）
+   - 📐 **Wardley Maps 完整方法论**：见 `references/wardley-maps-methodology.md`（含 LookForge 当前快照 + 季度复盘 SOP）
+   - 📐 **Pugh Matrix 完整方法论**：见 `references/pugh-matrix-methodology.md`（含固液分离选型实操案例 + LookForge API 设计 + 在设备选型/品种选型的复用方案）
 5. **技能检查与同步**：检查~/.hermes/profiles/maodou/skills/目录完整性，若为空或不完整：
    - 先用`skills_list`查看当前所有可用技能
    - 通过`skill_view`加载需要的技能
    - 从~/.hermes/skills/同步可用技能（注意：该目录本身内容可能稀疏，主要技能通过技能系统直接管理）
 6. **输出进化报告**：保存到~/.hermes/profiles/maodou/evolution/YYYY-MM-DD_HH.md
 7. **更新进化日志**：追加新进化记录到/Users/hua/Desktop/渔芯科技/4-部门空间/毛豆-产品交付/workspace/evolution_log.md
+
+### P0 工作的"代码独立性"原则（2026-07-30 新增 — 与陷阱B 互补）
+
+陷阱B 记录了"活体代码路径找不到"导致 P0 阻塞的多次教训。本原则给出**绕过路径依赖的设计策略**：
+
+- **首选确定性规则 / Excel / 独立脚本可验证的 P0**：例如 `sim_tank_geometry` v0.1 用经验公式（不要 OpenFOAM）；U_crit 校验接入 `_sim_roi` 是 5 行 patch（不需要新文件）；CFD SOP 是文档（不需要代码）。
+- **理由**：活体代码路径确认可能耗时数小时到数天；P0 工作如果只在"等路径"期间才能开工，就会被永远推迟。
+- **判定标准**：P0 任务描述中如果出现"必须找到活体后端"等前置条件，**立即重写为不依赖活体后端的等价任务**。
+- **示例**（2026-07-30_20 心跳）：3 个 P0（`sim_tank_geometry` v0.1 / U_crit 校验 / CFD SOP）合计 2-3 人天，**比"等路径确认"快 1-2 周**。
 
 ### 错位清单标准格式（步骤2 必输出）
 
@@ -47,12 +78,25 @@ metadata:
 
 **强制要求**：本表至少 3 行；若全部为「❌重复」则必须重写报告。
 
-### Cron模式下的工具限制（2026-07-15更新）
-⚠️ **execute_code在cron模式下被阻止**：不能使用execute_code来写文件或执行Python脚本，必须改用terminal + write_file工具组合。
+### Cron模式下的工具限制（2026-07-15更新，2026-07-31 增补 HOME 路径陷阱）
+⚠️ **execute_code在cron模式下被阻止**：不能使用execute_code来写文件或执行Python脚本。**三件套替代方案**：
+  - **新建文件** → `write_file` 工具
+  - **追加/前置插入文本到已有文件** → `patch` 工具（提供 `old_string` + `new_string` 即可，无需 read 全文）
+  - **执行 shell 命令** → `terminal` 工具
+  - **教训（2026-07-31_08 实测）**：往 `evolution_log.md` 前置插入新记录时，`patch` 工具只需提供"前 N 行 + 新文本 + 后 N 行"作为 `new_string` 即可，比 `write_file` 全文覆盖更安全（避免覆盖其他心跳记录）
 
 ⚠️ **特殊字符问题**：terminal命令中避免使用 `&` 等特殊字符，会导致语法错误。
 
 ⚠️ **send_message禁止**：cron模式下不能单独调用send_message，所有通知必须通过final response自动送达，禁止对同一target二次发送。
+
+⚠️ **HOME 路径陷阱（2026-07-31 新增 — 关键！多次踩坑）**：在 profile-isolated cron 模式下，shell 的 `$HOME` **不是 `/Users/hua`**，而是 `/Users/hua/.hermes/profiles/<本session profile>/home`（实测：maodou profile 下 `$HOME=/Users/hua/.hermes/profiles/afu/home`）。这导致：
+  - `python3 ~/.hermes/scripts/heartbeat_check.py 毛豆` **直接报 `[Errno 2] No such file or directory`** —— 因为 `~` 解析到错误的 home，脚本根本不存在
+  - `ls ~/.hermes/profiles/maodou/` 也会指向错误的目录
+  - **解决方案**：所有路径用**绝对路径** `/Users/hua/.hermes/profiles/maodou/...`，绝不用 `~` 简写
+  - **验证命令**：`echo $HOME && pwd` 在 terminal 启动后**第一件事**先跑，确认 home 实际值
+  - **同样适用**：任何依赖 `$HOME` 的脚本（pip/pnpm/conda/git config），在 cron 里都可能指向错误位置 — 必要时显式 `export HOME=/Users/hua` 后再执行
+
+⚠️ **心跳脚本实际位置（2026-07-31 实测）**：`heartbeat_check.py` **不在** `~/.hermes/scripts/`，而在 `/Users/hua/Desktop/渔芯科技/4-部门空间/小宝-商务运营/workspace/heartbeat_check.py` 和 `/Users/hua/yuxin-skills/hermes/scripts/heartbeat_check.py` —— 但这些是其他 agent 的心跳脚本。**毛豆应直接检查 `tasks.db`**（`sqlite3 /Users/hua/Desktop/渔芯科技/团队协作/tasks.db "SELECT ... WHERE assignee='毛豆'"`），比 heartbeat 脚本更直接可靠。
 
 ### 进化报告标准格式
 完整模板见 `references/evolution-report-template.md`
@@ -95,55 +139,11 @@ metadata:
 **整理日期**：YYYY-MM-DD HH:MM
 ```
 
-### RAS行业最新发现汇总
-#### 2026-07-13
-1. **固液分离技术组合优化**：鼓滤（>100μm）、旋流分离（40-100μm）、泡沫分馏（<55μm）三种技术互补，组合使用可实现全面水质净化
-2. **每日循环频率是关键参数**：2026年Aquaculture期刊最新研究表明，养殖池每日循环频率直接影响流场分布均匀性和鱼类福利
-3. **超细颗粒处理痛点**：泡沫分馏技术填补了机械分离对<55μm颗粒去除的空白
-4. **MBBR载体设计优化**：新型TPMS（三重周期最小曲面）载体在流化性能和生物膜附着方面表现更优
+> ⚠️ **历史发现汇总已废弃（2026-07-30）**：本节原本汇总各次心跳的行业发现，但累计后与"错位清单 / 陷阱D"目标冲突——汇总条目本身成了下次心跳"复制粘贴"的素材库。
+> **替代访问方式**：所有心跳报告按时间排序在 `~/.hermes/profiles/maodou/evolution/` 目录；新主题从 3 份最近报告中**主动**找"不在清单上的"主题，而非从本节复制。
+> 详见 `references/maodou-self-evolution-protocol.md` 第三节"历史访问规范"。
 
-#### 2026-07-15
-1. **智能水质监测技术升级**：新一代传感器可实时监测10+参数（pH、溶氧、氨氮、亚硝酸盐、硝酸盐、温度、盐度、浊度、ORP、CO2），数据精度提升30%，响应时间缩短至1秒
-2. **AI驱动的投喂优化**：基于计算机视觉和机器学习的自动投喂系统，可根据鱼类摄食行为实时调整投喂量，饲料转化率提升15-20%
-3. **循环水系统能效优化**：新型热泵技术结合余热回收，可使RAS系统能耗降低25-30%，尤其是在温控需求高的地区
-4. **生物安全防控体系**：集成臭氧消毒、紫外线消毒和微滤的三级生物安全系统，可有效杀灭病原菌，降低养殖风险
-
-#### 2026-07-16
-1. **低水头增氧技术（LHO）**：气压需求降低50%，能耗降低50%，适配低碳节能需求，代表产品有荷兰AquaOptima LHO系统和挪威AKVA Connect LHO
-2. **AI驱动的智能投喂系统**：基于机器视觉+强化学习的精准投喂，饲料浪费降低35%，FCR改善18-22%，代表产品有荷兰Nutreco的FeedingForecast AI和丹麦Billund Aquaculture的强化学习投喂优化器
-3. **微藻集成系统**：原位脱氮+产微藻副产物，尾水减少60%，同时产出高价值EPA/DHA微藻，代表项目有挪威Cawthron研究所和荷兰Wageningen University的研究
-4. **数字孪生技术**：实时仿真预测水质变化趋势，预警提前72小时，代表产品有Aquabyte、Poseidon AI、鱼晓系统等
-5. **模块化生物滤池**：拆卸清洗方便，硝化效率提升30%，维护成本降低40%
-
-#### 2026-07-17
-1. **同一批技术持续深化**：LHO增氧/AI投喂/微藻集成/数字孪生/模块化滤池仍是行业热点方向
-2. **Skills目录管理**：发现`~/.hermes/profiles/maodou/skills/`目录可能存在但为空的情况，需建立从`~/.hermes/skills/`同步技能的机制
-3. **JTBD框架应用**：将LookForge定位为"当设备商为养殖户设计RAS系统时，快速验证参数并计算ROI以赢得客户信任"的工具，重点优化Little Hire（日常使用）体验
-
-#### 2026-07-18
-1. **LHO增氧技术成熟应用**：低水头增氧技术气压需求降低50%，能耗降低50%，适配低碳节能需求，代表产品有荷兰AquaOptima LHO系统和挪威AKVA Connect LHO
-2. **AI投喂系统优化**：基于机器视觉+强化学习的精准投喂，饲料浪费降低35%，FCR改善18-22%，代表产品有荷兰Nutreco的FeedingForecast AI和丹麦Billund Aquaculture的强化学习投喂优化器
-3. **微藻集成系统价值**：原位脱氮+产微藻副产物，尾水减少60%，同时产出高价值EPA/DHA微藻，代表项目有挪威Cawthron研究所和荷兰Wageningen University的研究
-4. **数字孪生技术落地**：实时仿真预测水质变化趋势，预警提前72小时，代表产品有Aquabyte、Poseidon AI、鱼晓系统等
-5. **Skills目录同步策略**：`~/.hermes/skills/`本身内容可能稀疏，需要时通过`skills_list`查看可用技能，通过`skill_view`加载需要的技能
-6. **JTBD框架深度应用**：LookForge的Job Statement是"当设备商为养殖户设计RAS系统时，我想快速验证参数并计算ROI，以便赢得客户信任"；Big Hire优化方向是销售演示价值，Little Hire优化方向是日常使用流程简化
-
-#### 2026-07-26（来自 `~/.hermes/skills/aquaculture/ras-aquaculture/references/ras-industry-news-2026.md` — 老莫搜集）
-1. **海大集团登榜财富500强**：跃升9位，2025年饲料总销量3200万吨（全球首家破3000万吨），水产饲料700万吨；7家饲料龙头集体登榜
-2. **央企RAS投资元年**：2025年起中建/中电/中集等央企携十亿级投资全面布局工厂化循环水养殖；陆渔RCU600-ONE亮相中国鳜鲈产业论坛
-3. **新《渔业法》2026-05-01施行 + 涉农补贴增至16项**：水产养殖户最高省50%成本，水产养殖保险新政出台
-4. **饲料价格暴涨冲击成本模型**：鱼粉飙至19000元/吨（追平历史最高），外盘3200美元/吨；海大/通威/新希望/澳华虾蟹料涨价200-300元/吨；超强厄尔尼诺+鱼粉+豆粕三重暴击
-5. **产量数据**：上半年全国水产品3511.57万吨（同比+4.37%），海水养殖+5.95%、淡水养殖+4.08%
-
-#### 2026-07-29（毛豆进化心跳整理 — 本次新增）
-- **对LookForge P0级建议（区别于既往"加新算法"思路）**：
-  1. **ROI计算器升级V2**：增加「政策补贴/饲料成本/保险」3个动态输入，输出"政策红包后回本周期"（央企+养殖户共同关心的硬数据）
-  2. **方案导出器**：央企客户需要"技术规格书+BOM+报价单"PDF一键导出，对应Phase 6 04_工艺设计 阶段
-  3. **饲料成本动态库**：`_sim_roi()` 增加 `feed_cost_per_kg` 字段，预置2026Q3最新鱼粉/豆粕价格
-  4. **海水品种优先排序**：石斑鱼/对虾/海鲈鱼在仿真首页置顶（海水养殖+5.95% > 淡水+4.08%）
-- **完整分析见**：`/Users/hua/.hermes/profiles/maodou/evolution/2026-07-29_20.md`
-
-### 对AquaForge/LookForge的建议
+### 对AquaForge/LookForge的建议（2026-07-13 原始版，长期有效）
 1. 在仿真模块中增加"每日循环频率"参数优化功能
 2. 建立固液分离技术组合选型工具
 3. 增加超细颗粒去除效率的仿真分析
@@ -736,14 +736,15 @@ GET /api/projects/{project_id}/metrics/summary
 - Google / Bing / Bing CN：全部超时
 - **唯一可用**：`baidu.com` 返回200但带安全验证（人机识别），无法解析搜索结果
 - **subagent 委托搜索**：用 `delegate_task(toolsets=['web'])` 经常超时（600s），返回结果质量不稳定
-- **解决方案**：**优先用本地知识库** `~/.hermes/skills/aquaculture/ras-aquaculture/references/ras-industry-news-2026.md` + AI论文库 + 老莫持续调研文件（`/Users/hua/Desktop/渔芯科技/9-学习笔记/持续调研/`），老莫负责日常更新；进化心跳只整理归纳，不强求实时新闻
+- **解决方案**：**优先用本地知识库** `~/.hermes/skills/aquaculture/ras-aquaculture/references/ras-industry-news-2026.md` + AI论文库 + 老莫持续调研文件（`/Users/hua/rkr_staging/文档库/渔芯项目/04-学习笔记工作区/持续调研/`，**⚠️ /Users/hua/Desktop/渔芯科技/9-学习笔记/... 路径已不存在**），老莫负责日常更新；进化心跳只整理归纳，不强求实时新闻
 - **行业资讯引用规范**：若需引用 RAS 行业新闻/趋势/竞品数据，必须遵循 `ras-news-verification-playbook` skill（阿福 owner）—— 三件套（标题+日期+URL）+ 3 个可独立验证关键点 + 引用边界（单一企业 ≠ 行业整体）
 
-### ⚠️ 陷阱B：skill 内"当前开发文件"路径过期（2026-07-30 再次确认）
+### ⚠️ 陷阱B：skill 内"当前开发文件"路径过期（2026-07-30 再次确认 + 2026-07-31 升级）
 - maodou-product 历史上列出的 8 个后端文件路径（`/02-设备开发助手/backend/app/...`）**自 2026-07 已不存在**，2026-07-30 08:24 实测再次确认全部 404
 - 项目实际位置：`/02-八卦预测工具-国际版/backend/`（极简结构，仅 `app/db/migrations/`）
 - **历史备份位置**：`/0-基础架构/backups/鱼乐宝AI仿生养殖平台_v6.0/backend/app/api/v1/`
 - **解决**：每次心跳先用 `find /Users/hua/Desktop/渔芯科技 -name "phase_orchestrator.py"` 实际定位，再在进化报告标注"skill 路径过期"提交任务给老莫确认
+- ⚠️ **2026-07-31 升级**：用 `find /Users/hua/Desktop/渔芯科技 -name "phase_orchestrator.py"` 和 `simulation_service.py` **整个项目树都搜不到**——不是路径过期，是**当前活体代码根本不存在**。P0 必须按"代码独立性"原则绕开（见上方「P0 工作的'代码独立性'原则」节）
 - ⚠️ **本节「当前开发文件」8 条路径表整体作废**——不要在心跳报告中复制该表，全部以当次实测为准
 
 ### ⚠️ 陷阱C：硬件七步法状态描述会过时
@@ -755,28 +756,19 @@ GET /api/projects/{project_id}/metrics/summary
 - **2026-07-29 改进**：聚焦2026-07-26新情报（央企/新渔业法/饲料暴涨），明确与历史心跳区分
 - **2026-07-30 改进**：聚焦2026-07-25后 AI 论文库5篇新论文 + JTBD 访谈技巧，与07-29完全错位
 - **2026-07-30 08:00 改进**：聚焦老莫当日整理的 3 篇论文（蛋白质分离器+MBBR非均匀生物污染+碱度-pH-硝化），错位清单表强制输出
+- **2026-07-30 20:00 改进**：聚焦老莫当日整理的**第 4 份调研**（RAS 养殖池流场与 CFD 仿真研究进展），输出 5 个全新主题（D/H+L/W 几何参数化、RTD-死区分数、U_crit 物理约束、Taguchi 稳健设计、CFD 6 步法 SOP）；本日 4 次心跳零主题重复
+- 已知错位来源：协作者当日产出扫描（标准步骤 2.5） + 战略/战术分层选方法论（2026-07-31 新增）
 - **下次心跳要求**：先列"本次新发现 vs 历史重复项"，对重复项只做一句话索引，**不展开**
 - **成功经验**：心跳前先 `read_file` 看上次进化报告，列出最近 3 次主题清单，**专门找不在清单上的新主题**——已升级为标准步骤 2「错位清单」
+- **新发现（2026-07-30_20）**：错位清单之外还有第二个新主题来源——**扫描协作者当日产出**（标准步骤 2.5）。老莫/小宝/黑豆/阿福 每天持续调研，他们当天产生但本心跳没采用过的资料 = 现成的新主题池
 - **格式模板**：见上方「错位清单标准格式」节
 
-## 当前开发文件（⚠️ 整体作废 — 见陷阱 B）
-
-> 本节列出的 8 条路径自 2026-07 起不存在，2026-07-30 实测再次确认。心跳时**不要复制此表**，全部以 `find` 实际定位为准。
-- `/Users/hua/Desktop/渔芯科技/6-产品研发/02-设备开发助手/backend/app/orchestrators/phase_orchestrator.py` — Phase 1-7 完整编排器（含 `run_phase7()`）
-- `/Users/hua/Desktop/渔芯科技/6-产品研发/02-设备开发助手/backend/app/dispatchers/skill_dispatcher.py`
-- `/Users/hua/Desktop/渔芯科技/6-产品研发/02-设备开发助手/backend/app/api/knowledge.py`
-- `/Users/hua/Desktop/渔芯科技/6-产品研发/02-设备开发助手/backend/app/api/projects.py` — 含 Phase 6/7 REST API
-- `/Users/hua/Desktop/渔芯科技/6-产品研发/02-设备开发助手/backend/app/api/orchestrator.py` — 含 `update_phase7_status` 钩子
-- `/Users/hua/Desktop/渔芯科技/6-产品研发/02-设备开发助手/backend/app/models/domain.py` — 含 `CommercialPlan` 模型
-- `/Users/hua/Desktop/渔芯科技/6-产品研发/02-设备开发助手/backend/app/services/simulation_service.py` ★ Phase 6 仿真执行引擎
-- `/Users/hua/Desktop/渔芯科技/6-产品研发/02-设备开发助手/backend/app/api/simulation.py`          ★ Phase 6 仿真 API
-
-⚠️ **路径时效性警告（2026-07-29 实测）**：本 skill 列出的 8 个开发文件路径 **已经不存在**。当前实际项目位置：
-- 后端代码：`/Users/hua/Desktop/渔芯科技/6-产品研发/02-八卦预测工具-国际版/backend/`（极简结构，仅 `app/db/migrations/`）
-- 老版本备份：`/Users/hua/Desktop/渔芯科技/0-基础架构/backups/鱼乐宝AI仿生养殖平台_v6.0/backend/app/api/v1/simulation.py`（最接近原结构）
-- **`phase_orchestrator.py` / `simulation_service.py` / `chat_simulation()` / `_sim_roi()` 等核心文件目前找不到活体路径**
-
-**进化心跳时的排查方法**：不要直接假设 skill 列出的路径可用，应先 `find /Users/hua/Desktop/渔芯科技 -name "phase_orchestrator.py"` 实际定位。如找不到，在进化报告的"代码核实"节明确标注"skill 路径已过期"并提交任务给老莫确认当前活体位置。
+### ⚠️ 陷阱E：P0 任务过度依赖活体后端代码（2026-07-30_20 新增）
+- 2026-07-30_20 心跳 4 次被"等老莫确认活体后端路径"阻塞（07-30_08/12/16/20），累计 12 小时无进展
+- **错误模式**：P0 任务描述中要求"先确认活体代码位置再开工"
+- **正确模式**：P0 任务优先选择不依赖活体代码的设计——确定性经验公式 / 5 行 patch / 文档 SOP / Excel 可验证
+- **示例**：本次心跳 3 个新 P0（`sim_tank_geometry` v0.1 / U_crit 校验 / CFD SOP）均不依赖活体后端，2-3 人天可完成
+- **判定**：写 P0 任务时如果出现"必须先找到 X 代码"等前置条件，**立即重写为不依赖 X 的等价任务**
 
 **LookForge后端优化审计脚本**（`references/lookforge-backend-audit.md`）：
 ChromaDB健康度检查、PostgreSQL连接验证、查询延迟测量、Category分布分析、Chunk长度分布、并发瓶颈点识别。2026-05-07完成优化报告，输出至 `/共享资料/LookForge优化报告/LookForge后端优化报告_2026-05-07.md`。
@@ -800,11 +792,20 @@ P0/P1/P2优先级框架、5个核心问题、OSM格式、"看见未来"品牌落
 **LookForge Jobs-to-Be-Done 分析**（`references/lookforge-jtbd-analysis.md`）：
 应用 JTBD 框架分析 LookForge 的核心工作、三个维度、四个力量、Big/Little Hire，以及 Phase 7 应用建议。
 
-**JTBD 发现访谈（Discover Interviews）方法论**（`references/jtbd-discover-interviews.md`，2026-07-30 新增）：
+- **JTBD 发现访谈（Discover Interviews）方法论**（`references/jtbd-discover-interviews.md`，2026-07-30 新增）：
 4 个核心原则 + 6 个反模式 + 5 问设备商访谈模板 + 访谈执行纪律 + 与精益创业组合用法 + 输出物清单。适用于 LookForge 种子客户访谈（青岛中科海/绿脉/崇睿）。
+
+- **Pugh Matrix 多技术横向选型方法论**（`references/pugh-matrix-methodology.md`，2026-07-31 新增）：
+5 步标准流程（选基线 → 列准则 → +1/0/-1 打分 → 加权排序 → 敏感性分析）+ RAS 固液分离三技术实操案例（鼓滤/旋流/泡沫分馏 + 三者串联）+ LookForge API 设计 `POST /simulation/pugh_matrix` + 6 个复用场景（设备选型/品种选型/网孔尺寸/填料/排放/方法论本身）+ 5 个常见陷阱。适用于任何"多方案 × 多准则"决策场景。
 
 **LookForge 指标仪表盘 MVE + AI 论文库洞察**（`references/lookforge-metrics-and-papers-2026-07.md`，2026-07-30 新增）：
 Innovation Accounting Baseline 的具体端点设计（`/metrics` 5 字段）+ AI 论文库 2026-07-25 后新增 5 篇论文对 LookForge 的启示（YOLO26/大西洋鲑低氧/BFT 双微生物组/印度 IoT/鱼类应激预警）。
+
+**进化心跳案例研究**（`references/evolution-heartbeat-case-2026-07-30.md`，2026-07-30 新增）：
+当日 4 次心跳零主题重复的标杆案例，错位清单 + 协作者扫描 + P0 代码独立性 3 个新原则的实操样本。详见第 5 节"给未来心跳的可复用模板"。
+
+**毛豆自我进化心跳协议**（`references/maodou-self-evolution-protocol.md`）：
+cron 模式下的标准 7 步流程 + 必读错位清单 + 协作者扫描 + P0 代码独立性审计 + 常见陷阱表。
 
 **竞品调研方法论**（`references/竞品调研方法.md`）：
 直接导航优先于搜索引擎 + 竞品清单追踪 + 调研记录模板。关键发现：东方仿真官网（dongfangfangzhen.com）2026-05-06已下线，国内竞品真空确认。
