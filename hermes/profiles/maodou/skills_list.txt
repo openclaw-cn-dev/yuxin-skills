@@ -13,6 +13,7 @@ data-science
 design-everyday-things
 design-sprint
 devops
+diagram-creation
 diagramming
 doc-coauthoring
 dogfood
@@ -33,6 +34,7 @@ hardware
 heidou-admin
 hermes-ecosystem-entry.md
 hermes-feishu-credential-update
+hermes-internals
 hooked-ux
 inference-sh
 internal-comms
@@ -63,6 +65,7 @@ slack-gif-creator
 smart-home
 social-media
 software-development
+terminal-ascii-art
 testing
 theme-factory
 top-design

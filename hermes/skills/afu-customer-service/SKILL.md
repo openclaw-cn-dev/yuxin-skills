@@ -1096,13 +1096,33 @@ ERRC框架重新定义价值主张。
 4. 客户赢了才算赢
 
 ## 参考资料
+
+### 7大核心技巧原理（Cialdini 经典 6 + Kahneman 框架）
+- `references/reciprocity-principle.md` — Reciprocity 互惠原理 (Cialdini)，先给予再获取 (2026-07-31)
+- `references/commitment-consistency.md` — Commitment & Consistency 承诺一致性原理 (Cialdini)，让客户主动做出持续承诺 (2026-07-31)
+- `references/scarcity-principle.md` — Scarcity Principle 稀缺原理：真实期限/排期/名额的伦理应用
+- `references/social-proof-principle.md` — Social Proof 社会认同原理，相似群体选择背书，必须真实可核验 (2026-07-31)
+- `references/authority-principle.md` — Authority 权威原理，借专家/资质/标准背书，多种权威缺一不可 (2026-07-31)
+- `references/liking-principle.md` — **Liking 喜好原理 🆕 (2026-07-31 16:05)** — 完成 Cialdini 经典六大原则全部本地沉淀（6/6）🎉；相似性 > 熟悉度 > 真诚赞美 > 共同战斗 > 仪表（让客户从"买一次"变成"买一辈子"）
+- `references/anchoring-effect.md` — Anchoring Effect 锚定效应 (Kahneman & Tversky)，首个数字决定谈判基准
+
+### 行业资讯（按时间排序）
 - `references/ras-industry-2026-july.md` — RAS循环水养殖行业动态（2026年7月），含政策补贴、竞品动态、客服应答速查表
+- `references/ras-industry-2026-07-30.md` — 7/30 补抓版
+- `references/ras-industry-2026-07-31.md` — 7/31 12:00 抓取版 ⭐ Nernst 200万美元种子轮 / EUSeA Blue Foods / BIO-UV €2010万 / CSIRO 4个月热浪预报
+- `references/ras-industry-2026-07-31-afternoon.md` — 7/31 16:00 抓取版（15:00-16:30 CST 窗口） 🆕 挪威 Ode 鳕鱼首次盈利 / 章鱼 RAS 撤资伦理案例 / BIO-UV 售后+10%
+
+### 客服话术演练与自检
 - `references/技巧选择矩阵盲测.md` — 12道技巧选择矩阵盲测题，用于技能锐度自检（覆盖8大客户场景，附参考答案和得分卡）
-- `references/全链条多轮对话演练.md` — 3场景×13轮全链条模拟对话演练，练习多轮对话中的技巧链配合（2026-07-26新增）
+- `references/全链条多轮对话演练.md` — 3场景×13轮全链条模拟对话演练，练习多轮对话中的技巧链配合 (2026-07-26)
 - `references/pre-suasion-principle.md` — Pre-suasion 预说服原理 (Cialdini)，决定"说什么之前说什么" (2026-07-25)
 - `references/peak-end-rule.md` — Peak-End Rule 峰终定律 (Kahneman)，决定"对话的峰值和结尾怎么设计" (2026-07-30)
-- `references/scarcity-principle.md` — Scarcity Principle 稀缺原理：真实期限/排期/名额的伦理应用与发布前核验清单
-- `references/commitment-consistency.md` — Commitment & Consistency 承诺一致性原理 (Cialdini)，让客户主动做出持续承诺 (2026-07-31)
+- `references/cron-evolution-cadence.md` — **🆕 自我进化节奏手册**（N+18 更新至 6/6 Cialdini 闭环 + 跨 Profile 同步坑）
+- `references/nvc-four-step.md` — NVC 四步法（非暴力沟通），事实→情绪→需求→具体行动请求
+
+### 完成度仪表板
+- **Cialdini 经典六大原则本地沉淀**：6/6 ✅ 全部完成（互惠/承诺/稀缺/社会认同/权威/喜好）
+- **下一轮目标**：Cialdini 2016 新版第七原则 — Unity（共识原理），完成 7/7 全闭环
 
 ## 触发关键词
 "客户"、"投诉"、"售后"、"服务"、"满意度"、"回访"、"客诉"、"异议"、"问题解决"
