@@ -11,17 +11,17 @@ from datetime import datetime
 
 def get_kanban_db_path():
     """获取kanban.db路径 - 支持多profile环境"""
-    # 优先使用当前profile目录下的kanban.db
+    # 系统默认 kanban.db 是真源（profile 下的通常是空壳）
+    default_kanban = "/Users/hua/.hermes/kanban.db"
+    if os.path.exists(default_kanban):
+        return default_kanban
+
+    # fallback：profile 下的 kanban.db
     profile_home = os.path.expanduser("~")
     profile_kanban = os.path.join(profile_home, ".hermes", "kanban.db")
     if os.path.exists(profile_kanban):
         return profile_kanban
-    
-    # fallback 到系统默认路径
-    default_kanban = "/Users/hua/.hermes/kanban.db"
-    if os.path.exists(default_kanban):
-        return default_kanban
-    
+
     return None
 
 def get_tasks_db_path():

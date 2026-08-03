@@ -321,13 +321,28 @@ Run as a cron job every Monday. The workflow:
 4. Mark ~5 stale jobs as `expired` (update status + updated_at)
 5. Report: new count, expired count, active count, category breakdown
 
-### Anti-Bot Challenges
+### Anti-Bot Challenges (verified 2026-08-03)
 
-Chinese job sites (BOSS直聘, 猎聘, 51job, 拉勾) aggressively block automated access:
-- Canvas rendering, captchas, IP blocking, JavaScript-only content
-- **Workaround**: Use 36kr (36氪) search for industry hiring news, then cross-reference with company career pages and market knowledge. The 36kr site is accessible and provides real hiring intelligence (e.g., "DeepSeek大规模招聘").
-- When browser tools fail, curl-based attempts to job APIs also fail (IP banned, captcha redirects).
-- Do NOT waste time retrying blocked sites — pivot to news sources immediately.
+Status of major Chinese job/news sites when scraped by Hermes browser tools in default local mode (no residential proxy):
+
+| Site | Status | Notes |
+|------|--------|-------|
+| **猎聘 liepin.com** | ✅ **WORKS** | Job cards render to real DOM (`a[data-nick="job-detail-job-info"]`), full JD text visible on detail pages (`/job/<id>.shtml`), update date stamped in body. First-choice source. |
+| **36kr.com** | ✅ **WORKS** | Article search `/search/articles/<kw>?sort=date` returns dated cards; article detail pages expose full text via `document.body.innerText`. Best for market-trend intelligence (e.g., "具身智能招聘市场热"). |
+| **BOSS直聘 zhipin.com** | ❌ **BLOCKED** | Canvas rendering, security-check overlay, encrypts job IDs. No DOM access without residential proxy + cookie replay. Skip entirely in cron mode. |
+| **百度搜索 baidu.com** | ❌ **BLOCKED** | Returns CAPTCHA wall (`wappass.baidu.com/static/captcha/...`). Even simple site-restricted searches fail. |
+| **Google 搜索** | ❌ **BLOCKED** | DNS / connection timeout from current network. Not reachable from cron environment. |
+
+**Strategy**: 猎聘 (real jobs w/ salaries) + 36kr (market trends & company expansion news) is sufficient for one weekly update. Do NOT spend tool budget on blocked sites — confirm block once, then move on.
+
+**Pitfall — tool budget**: A full weekly update must complete within ~25-30 browser tool calls. Budget breakdown that fits:
+- 1 call: search/listings page → extract job URLs from DOM in one `browser_console` call
+- 3-4 calls: open detail pages for the top candidates (one `browser_navigate` + one `browser_console` extract per job)
+- 1 call: final DB write via `terminal python3 -c "..."` heredoc
+- Reserve 2-3 calls for verification + retries
+If you find yourself doing more than 5 sequential `browser_navigate` calls into detail pages, you are over-budget — write the rows from listing-page data only and note which need JD enrichment next week.
+
+See `references/job-scraping-recipes.md` for concrete selectors and extraction patterns.
 
 ### Cron-Mode Constraints
 
