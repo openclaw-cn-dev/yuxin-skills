@@ -93,12 +93,13 @@ Codex 当前 `danger-full-access` 仅允许：
 
 ## 当前配置
 
-- **版本**: codex-cli 0.144.5 (npm 全局安装)
-- **模型**: deepseek-v4-pro (DeepSeek V4 Pro 推理模型)
-- **Provider**: custom → 公司 LLM Gateway `http://127.0.0.1:18888/openai`
+- **版本**: codex-cli 0.146.0 (npm 全局安装 · 2026-08-03 巡检更新)
+- **模型**: MiniMax-M2.7 (MiniMax M2.7)
+- **Provider**: custom → 公司 LLM Gateway `http://127.0.0.1:15721/v1`
 - **Wire API**: responses (SSE 流式)
 - **沙箱**: danger-full-access (本机开发)
 - **CC Switch**: 华哥独立使用 Codex 时自行通过 CC Switch 切模型
+- **历史 Gateway**: 18888 端口 (deepseek-v4-pro) 当前空闲备用，实测健康但 Codex 已不路由至此
 
 ## 通用规范
 
