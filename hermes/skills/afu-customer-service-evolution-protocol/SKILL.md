@@ -1,7 +1,7 @@
 ---
 name: afu-customer-service-evolution-protocol
 description: 阿福（客服）自我进化节奏与盲区规避。触发条件：cron 心跳无任务、复盘无真实对话、维护 SKILL.md/参考资料、规划下一轮进化重点。
-version: 1.2.0
+version: 1.3.0
 owner: afu
 status: active
 ---
@@ -16,7 +16,9 @@ status: active
 ## 五步进化流程（每轮必做）
 
 1. **复盘**：用 `session_search` 检索近 3 次"客户/异议/投诉/售后"关键词；若连续 5+ 次无真实对话，复盘写"连续第 N+X 次无对话"，不要硬凑分析。
-2. **新技巧学习**：技能 < 19 个 → 学新技巧；≥ 19 个 → 维护现有技巧或设计实战演练脚本。
+2. **新技巧学习**（N+31 更新阈值）：技巧 ≤ 23 个 → 学新编号技巧；技巧 ≥ 24 个 → **优先评估是否需要"宏观编排型"技巧**（详见下方"技术沉淀饱和后的进化方向"）；饱和后 → 维护现有技巧或设计实战演练脚本。
+   - **技巧数核对源**：`references/技巧全景表`（SKILL.md 主体的表格）或 `verify_evolution.py` 输出的"已配置技能数"
+   - **决策流程**：技巧 < 20 → 学；20-23 → 看是否有新场景未覆盖；24+ → 进入"宏观编排"评估阶段
 3. **行业资讯**：先查 `references/ras-industry-*.md` mtime，若 < 12 小时跳过网络搜索；超 12 小时再用 `delegate_task` 或 `browser_navigate` 核验单条新闻。
 4. **技能集检查**：核验版本号、技巧数、辅助框架数与编号体系一致性；修复"双位置""编号重复"等问题。
 5. **输出报告**：路径 `~/.hermes/profiles/afu/evolution/$(date +%Y-%m-%d_%H).md`，每轮 5–9KB。
@@ -76,6 +78,71 @@ status: active
 - 在 evolution 报告里**永远**有一节叫"诚实盘点"或"上轮自检"——哪怕只有 1 行"上轮声称 X，磁盘验证 Y"
 - 如果发现上轮报告严重超前（≥3 项虚假），本轮必须**重做而非只补做**
 
+## 技术沉淀饱和后的进化方向（N+31 新增，P1 关注）
+
+**触发条件**：阿福技巧数 ≥ 24 个，编号体系已饱和，新技巧学习边际收益下降。
+
+### "宏观编排型"技巧 = 第 5 类颗粒度
+
+之前所有编号技巧（#1-#23）都属于以下 4 类颗粒度之一：
+
+| 颗粒度 | 数量 | 示例 |
+|-------|:---:|------|
+| 声音/语气层 | 1 | FM Voice |
+| 单句技巧 | 5 | Mirroring、Power of "No"、Disarming |
+| 单轮对话 | 4 | LAB、Assertive Inquiry、Calibrated Questions、Socratic Method |
+| 认知/心理/对话设计 | 13 | 框架类（BATNA、Closing the Loop、EBA）、认知工具（Ladder、Peak-End）、心理驱动（Loss Aversion）等 |
+
+**第 5 类颗粒度**（N+31 由 Negotiation Jujitsu #24 开启）：
+
+| 颗粒度 | 数量 | 示例 | 特征 |
+|-------|:---:|------|------|
+| **宏观编排**（5 步完整对话流程） | 1 | Negotiation Jujitsu #24 | 把 ≥4 个已存在的单点技巧**串成可执行的对话剧本**；不替代单点技巧，而是把它们编排起来 |
+
+### 评估"是否需要新增宏观编排型技巧"的自检清单
+
+每轮 cron 进入"≥ 24 个" 阶段时，先问：
+
+```
+[ ] 现有 24 个技巧中，是否有 ≥4 个组合在一起反复出现？（如 Disarming + Calibrated Q + Power of "No"）
+    → 是 → 评估是否值得沉淀为宏观编排型技巧（如 Jujitsu #24）
+[ ] 是否有特定客户场景（如对抗僵局/续约/退订风险）需要"完整对话流程"而非单点？
+    → 是 → 设计宏观编排型技巧覆盖该场景
+[ ] 这个编排是否仅在"已有技巧的重复组合"而无新元素？
+    → 是 → 不值得新开编号，用"组合剧本"或"对话脚本"即可（参考 combo-script-* 系列）
+[ ] 沉淀后会让哪个/哪几个已有技巧的使用顺序/位置更明确？
+    → 这是宏观编排型技巧的核心价值——把"什么时候用什么"的隐性知识显性化
+```
+
+### 候选宏观编排型技巧清单（N+31 评估，仅供参考）
+
+| 候选 | 编排哪几个技巧 | 主战场 |
+|------|---------------|--------|
+| **Negotiation Jujitsu #24**（已沉淀） | Disarming + LAB + Calibrated Q + Closing the Loop + Power of "No" | 升级投诉僵局 |
+| **Discovery Call Script**（候选） | Mirroring + Accusation Audit + Calibrated Questions + Closing the Loop | 首次陌生接触 → 加微 |
+| **Renewal Negotiation Script**（候选） | EBA + Reciprocity × Commitment + Ackerman + Jujitsu | 续约僵局 |
+| **Anchored Quote Script**（候选） | Power of "No" + Accusation Audit + Anchoring + BATNA | 首次报价异议 |
+
+### 沉淀宏观编排型技巧的路径选择（N+31 实测决策）
+
+| 内容 | 推荐路径 | 理由 |
+|------|---------|------|
+| 新增 reference 文件（如 negotiation-jujitsu.md） | **afu 本地**（profile-local） | 跨 profile guard 默认开启，避免被退回 |
+| 升级 SKILL.md 主体表格 | **afu 本地** | 同上 |
+| 在 default hub 同步（让其他 profile 也用） | 需 `cross_profile=True` 显式授权 | 不可由单 profile 单方面决定 |
+| 在 evolution 报告明示"已沉淀于 afu 本地，未同步 default hub" | ✅ 必须 | 避免下轮 cron 误以为已全局可用 |
+
+**N+31 实测**：Jujitsu reference 与 SKILL.md v1.29.0 升级均落在 afu 本地路径；evolution 报告 4.4 节明示"default hub 主版本 v1.28.0 未更新"。这是正确做法。
+
+### 何时停止新增宏观编排型技巧？
+
+自检：
+- [ ] 客户旅程的关键转折点是否都有对应编排？（陌生人→加入者、加入者→报价接受者、报价接受者→活跃用户、活跃用户→老战友/推荐人）→ 是 → 停止新增
+- [ ] 是否出现"两个编排的颗粒度/主战场高度重叠"？→ 是 → 合并为一个
+- [ ] 新编排是否会让单个技巧的实战深度被稀释？（如把 10 个技巧堆进 1 个 7 步流程）→ 是 → 拆分成 2 个
+
+---
+
 ## 盲区与陷阱（已踩过的坑）
 
 - **跨 Profile 守护**：写入 `/Users/hua/.hermes/skills/afu-customer-service/SKILL.md` 会触发 `Cross-profile write blocked`。**只动 afu profile 本地**：`/Users/hua/.hermes/profiles/afu/skills/...`，不动共享路径。需批量合并时给出 A/B/C 方案给用户决策。
@@ -99,6 +166,11 @@ status: active
 - **机械话术**：NVC 四步法（事实→情绪→需求→请求）不能念模板，要先自然说话再检查四要素是否齐全。
 - **连续无真实对话 N+19 临界（N+19 新增）**：cadence 文档建议 N+20 时开启"虚拟客户对话演练"，**N+19 已是临界点**——强烈建议下一轮 cron 会话**主动**用毛豆/小包/老莫的真实业务场景发起 mock 演练，否则技巧库沉淀越来越深但缺乏实战校准，转化率无法量化。
 - **幻象完成陷阱（N+20 新增，**P0**）**：报告声称"完成 N 项"但磁盘验证只通过 N-X 项。**绝对不要**在报告里写"已完成 X"除非已经 grep/ls/wc 验证过。**绝对不要**相信上一轮报告的完成声明——每轮开头先反向自检上轮报告。详见下方"第 6 步：报告前自检"。
+- **心跳脚本缺失 fallback（2026-08-03 实测，P0）**：cron 协议第一步 `python3 ~/.hermes/scripts/heartbeat_check.py 阿福` 可能根本**不存在**于文件系统（profile 重装/同步丢失/develop 间隙；`find ~/.hermes -name heartbeat_check.py` 返回空）。fallback 三步：
+  1. **shell ENOENT 不可静默** — 直接 `[SILENT]` 会掩盖"阿福心跳机制坏了"这一更深问题。先在报告里标注"心跳脚本缺失"，再走 fallback。
+  2. **fallback 优先级**：① `sqlite3 /Users/hua/.hermes/tasks.db "SELECT id, title, priority, status FROM tasks WHERE (agent='阿福' OR agent='afu') AND status IN ('pending','in_progress') ORDER BY CASE priority WHEN 'P0' THEN 0 WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 WHEN 'P3' THEN 3 END, id LIMIT 5;"`（**绝对路径**，不准 `~` 或 `Path.home()`，profile 下 HOME 被覆盖，详见 `hermes-script-env-pitfalls`）→ ② `write_file /tmp/x.py` + `terminal python3 /tmp/x.py 阿福`（**禁 heredoc**，含中文/emoji 会被 tirith 拦截，详见 `hermes-script-env-pitfalls` 翻车案例 #3）→ ③ 即便 fallback 成功也要报告"心跳脚本缺失"，作为下一轮 P1 修复项
+  3. **必须修而不只是 fallback** — 脚本缺失意味着所有 profile 的 cron 都在静默假阴性（任务被无限期搁置却没人知道）。fallback 是应急止血，**部署真脚本才是根治**。
+- **心跳脚本部署模板**：`templates/heartbeat_check.py`（多 agent 通用，agent_name 走 argv），可由任意 profile 心跳任务 `cp` 到 `~/.hermes/scripts/` 部署。**禁止**用 `write_file` 跨 profile 直接写 `~/.hermes/scripts/`——属于跨 profile 守护范围，先 cp 到 evolution 目录再用 terminal 命令部署。
 
 ## 平行技能树（双路径）陷阱（N+20 新增）
 
@@ -146,3 +218,8 @@ status: active
   - 默认 hub `/Users/hua/.hermes/skills/afu-customer-service/references/unity-principle.md` ✅ **15,746 bytes（N+20 真正创建）**
   - afu 本地 `~/.hermes/profiles/afu/skills/productivity/afu-customer-service/references/unity-principle.md` ⚠️ 状态未验证，可能不存在
 - Anchoring Effect 参考：默认 hub `/Users/hua/.hermes/skills/afu-customer-service/references/anchoring-effect.md` ✅ **7,778 bytes（N+20 补齐，SKILL.md 早已引用但文件一直缺失）**
+- 心跳脚本模板：`templates/heartbeat_check.py`（多 agent 通用，2026-08-03 N+21 新增；缺失 fallback 详见上方"心跳脚本缺失 fallback" pitfall）
+- 翻车案例参考：`references/cron-pitfalls.md`（已有的 cron 陷阱汇总，可与本节新 pitfall 互补）
+- **第一份宏观编排型技巧示例**（N+31）：Jujitsu #24 — `~/.hermes/profiles/afu/skills/productivity/afu-customer-service/references/negotiation-jujitsu.md`（12,121 bytes；afu 本地；default hub 未同步，详见 4.4 跨 Profile 同步状态）
+  - **评估标准**：编排了 Disarming + LAB + Calibrated Q + Closing the Loop + Power of "No" 5 个单点技巧；主战场明确（对抗僵局）；颗粒度第 5 类突破
+  - **未来同类沉淀的参照模板**：5 步流程表 + 3 个实战场景话术 + 与已有技巧的对应关系 + 边界与诚信声明

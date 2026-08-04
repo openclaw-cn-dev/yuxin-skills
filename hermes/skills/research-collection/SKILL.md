@@ -4,7 +4,7 @@ description: '渔芯资料收集技能 — 高效搜集行业信息、公司情�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.0.16"
+  version: "1.0.17"
 ---
 
 ## 参考资料库
@@ -12,6 +12,8 @@ metadata:
 当收集的资料有长期参考价值时，将精华内容保存到 `references/` 目录：
 - `references/政府项目拓展指南.md` — 政府智慧农业/渔业项目类型、采购流程、中标关键因素（2026-06-05）
 - `references/大客户销售策略.md` — ToB大客户销售流程、LTV/CAC模型、定价策略（2026-06-05）
+- `references/sogou_search_extraction_pitfalls.md` — **Sogou 搜索 HTML 解析踩坑**（hintidx 内部重链 vs 真实外链，公众号文章保留规则；Bing 对照 parser；2026-08-03 16:42 实测）
+- `references/gtm_b2b_sales_sources.md` — **GTM/B2B Sales 方法论文献 cron 可用性速查**（Common Room 全文已核验 12,549 字符 / Gartner 403 / ChiliPiper Apollo 404 / Revue 停更；A-B-C 三级引用规则，2026-08-03 16:42 实测）
 - `references/api-research-quickref.md` — **GitHub/arxiv/HF API 抓取速查**（curl 模板 + 解析脚本 + tirith 绕过 + 超时处理 + description null 坑 + 多 query 串行模式 + Releases API 多版本抓取 + Stars 增量对比 + 多日暴涨检测启发式 + 生态系统监控模式 + README 二次验证 + awesome 变更检测 + arXiv 版本检测 + arXiv rate-limit 恢复 + Search API 兜底 + 串行 curl 链式调用 + confusable_text 规避 + query 精度陷阱 + HF 超时→正式放弃 + 多 prong 搜索策略 + arXiv AND 组合查询 + arXiv 3D/3DGS 查询注意事项 + cron 多 terminal() 并行抓取 + **GitHub OR 语法陷阱** + **arXiv underwater 查询精度修复** + **TRELLIS.2 in:name 监控模式** + **3DGS arXiv 双引号修复验证**, 2026-08-02）
 
 *最后更新：2026-07-29（新增 Crossref API DOI 元数据验证兜底 — Nature/MDPI 等出版商反爬拦截时的第三验证源；与 arXiv/OpenAlex 协作流程已验证）*
@@ -98,3 +100,44 @@ metadata:
 - **terminal heredoc 中文字 + emoji 被 confusable_text 拦截**（2026-07-05 验证）：`cat > /tmp/msg.txt << 'EOF' ... EOF` 在内容含中文 + emoji（🧊🔥📋）时触发 `tirith:confusable_text` HIGH。**修复**：飞书消息脚本用 `write_file` 工具写入，消息内容用纯 ASCII（→ 改为 `->`，中文引号省略，emoji 去掉）。feishu-api-notify skill 的 Pitfall #8 和 #12a 提供完整指南。
 
 - **串行 curl 链式调用模式**（2026-07-05 验证）：`curl -s -o /tmp/a.json 'URL1' && echo "done1" && curl -s -o /tmp/b.json 'URL2' && echo "done2"` — 每个 curl 完成后打印标记便于定位失败点。搜索类批量请求放第一批（search API 配额独立），个别仓库请求放第二批（间隔 3-5 秒防限）。
+
+## 外部资料分级框架（A-B-C 三级 · 2026-08-03 16:42 沉淀）
+
+任何方法论 / 研究报告引用外部资料时，必须先按下面的等级标注来源：
+
+| 等级 | 含义 | 引用规则 | 典型例 |
+|---|---|---|---|
+| **A · 已核验** | HTTP 200 + 全文抓到 + 关键概念已提取 | 可在方法论中引用具体观点和原句 | Common Room 12,549 字符（2026-08-03 16:42 实测） |
+| **B · 存在性参考** | HTTP 200 但内容残缺 / 403 付费墙 / 404 找不到 | 只能标注"该源存在"，不引用具体结论 | Gartner Customer Success（403）、ChiliPiper /signal-based-selling（404） |
+| **C · 失败源** | curl 6 DNS / 521 origin down / 反爬 captcha | 不引用 | Google News RSS（28 timeout）、sousuo.gov.cn（6 DNS）、Baidu 搜索（captcha） |
+
+**强制规则**：
+1. 方法论只能引用 A 级源的具体观点；B 级源只能"作为存在性参考"标注；C 级源不提。
+2. 每引用一个 A 级源，必须在 reference 里写明：URL（完整）、抓取日期、抓取状态（HTTP code + bytes）、抓取脚本 / 命令（可复现）。
+3. 不要把厂商方法指南当成独立因果研究。即使是 A 级，也要在边界段注明"是软件供应商 / 文章属厂商方法指南"。
+4. 找不到第二独立信源时，明确写"暂无"。比硬凑一个 B 级信源更可信。
+5. 详细的 GTM/B2B 销售方法论源 cron 可用性速查见 `references/gtm_b2b_sales_sources.md`。
+
+## Pitfall: Sogou 搜索 HTML 几乎全是噪声（2026-08-03 16:42 实测）
+
+**问题**：`curl -L 'https://www.sogou.com/web?query=...'` 返回 400KB+ HTML，但其中：
+- 所有真实搜索结果 URL 都是 `/web?ie=utf8&query=...&sessiontime=...` 这种相对路径（指向 Sogou 自己）
+- 大部分 `<a href="...">` 是 `javascript:void(0)`（导航按钮）
+- 外链非常罕见，且往往被埋在"推荐您搜索"区块
+- 公众号文章 `mp.weixin.qq.com/s?...` 是仅有的中文一手源，URL 中 `signature` 参数被脱敏但 `timestamp` + `ver` 仍可作为唯一标识
+
+**错误做法**：用通用 HTMLParser 抓所有 `<a>` 的 `href + text`，再 `if href.startswith('/'): continue` 过滤 → 过滤掉了全部真实结果，留下空集。
+
+**正确做法**：
+- **搜索引擎优先级**（cron 抓中文时）：Bing → 微信公众号专项 → 学术 arXiv → GitHub。**不要**首选 Sogou 普通搜索（噪声比 > 80%）。
+- **Bing parser**（实测可用，~25 条外链 / 99KB）：
+  ```python
+  pattern = re.compile(r'<a[^>]+href="(https?://[^"]+)"[^>]*>([\s\S]*?)</a>', flags=re.I)
+  raw = re.sub(r'<script[\s\S]*?</script>', ' ', raw, flags=re.I)
+  raw = re.sub(r'<style[\s\S]*?</style>', ' ', raw, flags=re.I)
+  for m in pattern.finditer(raw):
+      href, text = m.group(1), re.sub(r'<[^>]+>', ' ', m.group(2))
+      text = re.sub(r'\s+', ' ', unescape(text)).strip()
+      if not text or len(text) < 6: continue
+  ```
+- 详细分类、URL 形态分级、公众号保留规则见 `references/sogou_search_extraction_pitfalls.md`。

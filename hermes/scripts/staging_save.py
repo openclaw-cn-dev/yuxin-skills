@@ -36,8 +36,24 @@ from pathlib import Path
 from typing import Optional
 
 # ── 全局常量 ──────────────────────────────────────────────
-STAGING_DIR = Path(os.path.expanduser("~/rkr_staging/文档中转站"))
-KNOWLEDGE_LIB = Path(os.path.expanduser("~/rkr_staging/文档库"))
+# 修复(2026-08-04):改用绝对路径,防止 Hermes profile 启动时 $HOME 被劫持
+# 而写错位置。原代码:
+#   STAGING_DIR = Path(os.path.expanduser("~/rkr_staging/文档中转站"))
+# 问题:zhenglishi 等 profile 启动时 $HOME=~/.hermes/profiles/zhenglishi/home/,
+# 导致 `~` 展开为 profile 镜像 home,写到了错地方。
+# 现在用绝对路径,profile 无关,所有 agent 都写到真中转站。
+STAGING_DIR = Path("/Users/hua/rkr_staging/文档中转站")
+KNOWLEDGE_LIB = Path("/Users/hua/rkr_staging/文档库")
+
+# $HOME 防御性检查 — 如果启动时 $HOME 不是 /Users/hua,警告(但仍用绝对路径)
+_HOME = os.environ.get("HOME", "")
+if _HOME != "/Users/hua":
+    # 不阻断(可能 cron 进程 $HOME 是其他路径),只打印警告到 stderr
+    print(
+        f"⚠️ [staging_save] $HOME={_HOME!r} (非 /Users/hua),"
+        f"已强制使用绝对路径 {STAGING_DIR},请确认环境正确。",
+        file=sys.stderr,
+    )
 
 # 中转站子分类（按 agent 来源划分）
 AGENT_SUBDIRS = {

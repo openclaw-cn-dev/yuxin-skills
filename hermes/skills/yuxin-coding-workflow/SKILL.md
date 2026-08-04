@@ -8,24 +8,52 @@ tags: [玉芬, 编码, 工作流, claude-code, 偏好, 端到端验证]
 
 # 玉芬编码任务工作流
 
-## ⚠️ 铁律 1:直接写,不绕路
+## ⚠️ 铁律 1(2026-08-03 修订):代码开发必须经 Claude Code/Codex,**不绕路但要走对门**
 
-华哥明确偏好(2026-06-28 验证):**当任务是"写代码/实现功能"时,玉芬直接用 Hermes 工具链写完,不要生成"给 CC SWITCH/Claude Code 跑的开工指令包"。**
+> **本铁律 2026-08-03 被华哥重新明确,与 2026-06-28 版本(直接写)冲突时,以新版为准。**
+> 详见 `yuxin-code-iron-law` 完整规则。本节只讲**与本 skill 直接相关的执行细节**。
 
-华哥原话:"不行你就自己写代码吧,你自己也是写代码的专家。相信你。"
+**核心**:玉芬不自写业务代码。代码/脚本/工具开发 → 默认调 Claude Code → 失败调 Codex → 两次都失败才自写 + TODO 标注 + 飞书登记技术债。
 
-**错误模式**(本 session 翻车过):
-1. 华哥派发"v3 技术方案实装"任务
-2. 玉芬提议"我打包 prompt → 你复制 → 粘到 CC → 转回结果"
-3. 华哥觉得麻烦,反复问"CC 怎么操作"、"我不在本机"、"要打开 CC SWITCH"
-4. 华哥最后说"你自己写吧,相信你"
-5. 玉芬才转去直接用 `write_file` / `patch` / `terminal` 写
+**自动豁免**(可自写,不算违规):
+- Markdown / AGENTS.md / SKILL.md(本 skill 内文档)
+- 纯 JSON/YAML/TOML 配置文件
+- Dashboard 元数据 JSON
+- 单行 shell/print 调试
+- 数据迁移/批处理
 
-**正确模式**:
-1. 收到编码任务 → 直接用 `write_file` + `patch` 写代码
-2. 用 `terminal` 跑测试/启动服务
-3. 用 `read_file` 查参考文档(v3 方案、技术栈决策表)
-4. 跑通后汇报华哥
+### 执行模式(按场景选)
+
+| 场景 | 模式 | 命令模板 |
+|---|---|---|
+| 华哥本人在终端,接受手动按 y 批准 | `pty=true` 交互 | `terminal(command="claude -p '...'", pty=true, timeout=600)` |
+| 飞书/无人值守,需要 CC 改文件 | `delegate_task` 委派(推荐) | `delegate_task(goal="用 Write 工具重写 <path>,需求:...", toolsets=["terminal","file"])` |
+| Claude Code `--allowedTools` 白名单 | 可能跳过权限 | `claude -p "..." --allowedTools "Read,Write,Edit,Bash"` |
+| Claude Code 信任场景 | 完全跳过 | `claude -p "..." --allow-dangerously-skip-permissions` |
+| 真正明确失败 | 自写兜底 | 加 `# TODO(tech-debt)` + 飞书 |
+
+### 验证子 agent 是否真的改了文件
+```bash
+md5 /path/to/file  # 对比改前改后
+python3 -c "import ast; ast.parse(open('/path/to/file').read())"  # Python 语法
+wc -l /path/to/file  # 行数变化
+```
+
+### 玉芬 + CC SWITCH 关系(明确边界,2026-08-03 仍适用)
+
+| 角色 | 工具 | 谁负责 |
+|---|---|---|
+| 华哥 | CC SWITCH / Claude Code(本机开) | 华哥自己在终端开 |
+| 玉芬 | Hermes 工具链 + delegate_task 委派 CC/Codex | 玉芬调度 |
+| 派发同事 Agent | 飞书云盘 + 任务文件 | 玉芬调度 |
+
+**玉芬不直接操作 CC SWITCH**——这是另一个独立 session,在华哥本机终端上。**玉芬不写"给 CC 跑的开工 prompt"**——华哥已明确偏好"玉芬直接调 CC,不要让华哥复制粘贴"。
+
+### 旧版铁律 1(2026-06-28)的归档历史
+
+> 原版:"当任务是'写代码/实现功能'时,玉芬直接用 Hermes 工具链写完,不要生成'给 CC SWITCH/Claude Code 跑的开工指令包'。"
+>
+> 适用场景仅剩:**单行 shell / Markdown / 配置文件 / 元数据 JSON**(自动豁免范围)。**业务代码(.py/.js/.ts/.sh)已不再适用此条**。
 
 ## ⚠️ 铁律 2:启动服务 ≠ 完成(2026-06-29 实测踩坑新增)
 
@@ -131,6 +159,37 @@ python3.11 -m venv .venv  # 必须用 3.11
 
 ## 关键陷阱(本 session 踩过的)
 
+### ⚠️ TODO(tech-debt) 标注规约(2026-08-03 铁律兜底产物标准)
+
+**何时用**:Code Iron Law 的"两次都失败"分支,玉芬自写时**必须**给文件加技术债标记,飞书通知华哥登记。
+
+**Python 标注模板**(文件首 5 行):
+```python
+# TODO(tech-debt): 改由 Claude Code/Codex 重写
+# 原因: <为什么绕过铁律,例如 "Claude Code pty 超时 + Codex 不在 trusted dir">
+# 失败记录: <2026-08-03 claude -p 进入交互, codex exec 报 not trusted>
+# 计划: <YYYY-MM-DD 之前由 Claude Code/Codex 重写,玉芬只做需求澄清>
+```
+
+**JSON 数据源标注**(在 `_meta` 加字段):
+```json
+{
+  "_meta": {
+    "tech_debt": "玉芬 <日期> 自写,违反代码铁律 v1,等 Claude Code/Codex 重写",
+    "rewrite_by": "2026-08-04"
+  }
+}
+```
+
+**登记路径**:
+- 飞书通知华哥(channel `oc_2db3b5373825567c3681d1ca580e0143`)
+- 复盘到 `~/hermes/reports/yuxin_self_criticism/<日期>_<主题>.md`
+
+**反模式**:
+- ❌ 写 `# TODO` 但不解释原因和计划
+- ❌ 只标文件,没飞书通知华哥(等于没登记)
+- ❌ JSON 数据源只改一个文件,其他 4 个没标(必须全部补)
+
 ### ⚠️ Python 3.9 + Pydantic v2.13 不兼容
 - 症状:`Optional[X] = Field(None)` 解析成 `annotation=NoneType`
 - 根因:Pydantic v2.13 + Python 3.9 typing 模块冲突
@@ -173,7 +232,36 @@ python3.11 -m venv .venv  # 必须用 3.11
   /usr/bin/python3 -c "import urllib.request; print(urllib.request.urlopen('http://localhost:PORT/api/health', timeout=3).read().decode())"
   ```
 - **额外提示**:如果连 `head` 都没有,Python 字符串截断做:`body[:300]` 替代 `head -c 300`
-### ⚠️ `execute_code` 在 cron 模式 / 飞书会话中均被 BLOCKED（2026-07-10 修正，2026-08-03 加料）
+### ⚠️ Claude Code / Codex CLI 在 Hermes 非交互场景会卡权限确认(2026-08-03 实测新增)
+
+**症状**:
+- `claude -p "请用 Write 工具改 X 文件"` → 300s 超时 或 返回 `DONE` 但 `md5` 文件未变
+- `codex exec "请用 Edit 工具改 X 文件" --sandbox danger-full-access` → `Not inside a trusted directory` 或 BLOCKED
+- 两者都会触发 `BLOCKED: Command timed out without user response`
+
+**根因**:Claude Code / Codex 写文件时默认要求用户在终端按 y 批准权限,无人值守场景(飞书/cron)无人批准 → 工具要么超时,要么回声输出 `DONE` 假装完成。
+
+**正确方案**(按场景选,详见 `yuxin-code-iron-law` 完整方案表):
+
+| 场景 | 用什么 |
+|---|---|
+| 华哥本人在终端,接受手动按 y | `terminal(command="claude -p '...'", pty=true, timeout=600)` |
+| 飞书/无人值守 | **`delegate_task(goal="用 Write 工具重写 <path>", toolsets=["terminal","file"])`** ← 推荐默认 |
+| 信任场景可跳过 | `claude -p "..." --allow-dangerously-skip-permissions` |
+
+**验证子 agent 真改文件**(必做):
+```bash
+md5 /path/to/file  # 改前改后对比
+python3 -c "import ast; ast.parse(open('/path/to/file').read())"  # Python 语法
+wc -l /path/to/file  # 行数
+```
+
+**反模式**:
+- ❌ 看到 `DONE` 输出就以为写成功(必须 md5 验证)
+- ❌ 反复重试同一条 `claude -p` 命令(触发 `[Tool loop warning]`)
+- ❌ 飞书场景强行用 `pty=true`(用户不在终端,卡死 Hermes)
+
+### ⚠️ `execute_code` 在 cron 模式 / 飞书会话中均被 BLOCKED(2026-07-10 修正,2026-08-03 加料)
 
 **症状（一字不漏）**：
 ```
@@ -434,6 +522,7 @@ for path in ['/api/health', '/api/qigua?method=time']:
 
 ## 关联
 
+- **代码铁律本体**:`yuxin-code-iron-law` — 2026-08-03 华哥明确,优先级最高,触发条件 + 兜底 + TODO 标注规约
 - **玉芬核心 skill**:`yuxin-self-evolution` — Signal Scan → Plan → Execute → Reflect
 - **代码风格**:项目内一致命名(本项目用 `app/core/`、`tests/unit/`)
 - **测试先行**:`test-driven-development` — RED-GREEN-REFACTOR
@@ -441,5 +530,7 @@ for path in ['/api/health', '/api/qigua?method=time']:
 
 ## 参考
 
+- `references/unified-project-path-2026-07-17.md` — 项目路径统一规范
 - `references/pydantic-v213-python39-trap.md` — Pydantic v2.13 + Python 3.9 兼容性陷阱
 - `references/hexagram-binary-index-trap.md` — 卦象 binary 索引"双重反向"约定 + 互卦计算公式 + 5 个易错点
+- `references/hermes-tooling-gotchas.md` — Hermes 工具调用常见坑(`execute_code` BLOCKED、`$HOME` 劫持等)

@@ -3,9 +3,11 @@ apple
 aquaculture
 arxiv
 autonomous-ai-agents
+baoyu-visual-content
 brand-guidelines
 canvas-design
 claude-api
+coding-agent-delegation
 creative
 cro-methodology
 data-science
@@ -18,6 +20,7 @@ dogfood
 domain
 drive-motivation
 email
+engineering-workflow
 feeds
 frontend-ui
 gaming
@@ -27,9 +30,11 @@ heidou-admin
 heidou-workflow
 hermes-ecosystem-entry.md
 hooked-ux
+html-design
 inference-sh
 internal-comms
 ios-hig-design
+kanban
 laomo-knowledge
 lean-startup
 made-to-stick
@@ -37,7 +42,9 @@ maodou-product
 mcp
 media
 mlops
+mlops-toolkit
 module
+music-audio
 negotiation
 note-taking
 predictable-revenue
@@ -45,6 +52,7 @@ product-debugging
 productivity
 research
 research-collection
+research-workflow
 scorecard-marketing
 skill-creator
 slack-gif-creator

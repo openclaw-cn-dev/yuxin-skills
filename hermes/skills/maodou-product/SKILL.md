@@ -14,6 +14,8 @@ metadata:
 | **产品开发期（当前）** | ✅ 全员支援产品开发 | 核心开发：LookForge仿真/HW量产/机制标准化 |
 | **产品上线后** | 销售+运营 | 届时调整 |
 
+> ⚠️ **华哥代码铁律（2026-08-03 全公司生效，优先级最高）**：任何代码/脚本/工具开发（Python/JS/TS/Shell/CAD macro/Streamlit/Vue/React）必须经 Claude Code（首选）或 Codex CLI（第二选择）；两次都失败时才允许自写（须首行加 `# TODO(tech-debt): 改由 Claude Code/Codex 重写` + 飞书通知华哥）。本规则**不适用于**：Markdown 文档/AGENTS.md/skill 文本/纯配置文件/一行命令/数据迁移/Streamlit 布局文件/Dashboard 元数据 JSON。**毛豆自我进化心跳报告（Markdown）不触发此铁律**；但任何代码类 P0（如 `daily_circulation_frequency` 独立脚本）必须先走 `claude -p "..."`，失败才走 codex，最后才考虑自写。
+
 ## 毛豆自我进化流程（2026-07-13新增）
 
 当毛豆无待处理任务时，自动进入自我进化模式：
@@ -40,11 +42,15 @@ metadata:
      - 07-31_12：**Crossing the Chasm（战略）— Geoffrey Moore 跨越鸿沟 + Whole Product 5 层**
      - 07-31_16：**FMEA（战术）— 故障模式与影响分析 + RPN 评分 + RAS 可靠性建模**
      - 08-01_00：**BCG Matrix（战略）— 12 仿真用例象限分布 + 资源 60%/收割/选择性投资分配 + 3 项反模式警示**
+     - 08-01_08：**EOS  Entrepreneurial Operating System（战术）— 季度 Rocks + 周 Scorecard + IDS 会议**
+     - 08-03_20：**Value Chain Analysis 波特价值链分析（战略）— 9 环节价值创造结构 + 价值洼地识别（服务/出料后勤）+ Q3 资源从 50%生产运营降至 35%，新增 15% 投服务+出料后勤**
+   - **下次心跳要求**：战略层和战术层各选一个时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）。战略层未用过的备选：Blue Ocean Strategy / Porters Five Forces / Value Chain Analysis；战术层未用过的备选：Lean Startup / Design Sprint / Design of Experiments
    - **下次心跳要求**：战略层和战术层各选一个时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）。战略层未用过的备选：Blue Ocean Strategy / Porters Five Forces / Value Chain Analysis；战术层未用过的备选：Lean Startup / Design Sprint / Design of Experiments
    - 📐 **Wardley Maps 完整方法论**：见 `references/wardley-maps-methodology.md`（含 LookForge 当前快照 + 季度复盘 SOP）
    - 📐 **Pugh Matrix 完整方法论**：见 `references/pugh-matrix-methodology.md`（含固液分离选型实操案例 + LookForge API 设计 + 在设备选型/品种选型的复用方案）
    - 📐 **Crossing the Chasm 完整方法论**：见 `references/crossing-the-chasm-methodology.md`（含 LookForge 鸿沟诊断 10 分制 + Whole Product 5 层缺口清单 + Bowling Pin 滩头选择 6 准则）
    - 📐 **BCG Matrix 完整方法论**：见 `references/bcg-matrix-methodology.md`（含 12 仿真用例象限分布实操 + 季度评审 SOP + 3 项反模式警示 + 4 象限资源分配公式）
+   - 📐 **Value Chain Analysis 完整方法论**：见 `references/value-chain-analysis-methodology.md`（含 LookForge 9 环节价值创造结构 + 价值洼地识别 + Q3 资源从 50%生产运营降至 35% + 与 BCG 协同用法 + 6 个复用场景 + 3 项反模式警示）
    - **下次心跳要求**：战略层和战术层各选一个时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）
    - 📐 **Wardley Maps 完整方法论**：见 `references/wardley-maps-methodology.md`（含 LookForge 当前快照 + 季度复盘 SOP）
    - 📐 **Pugh Matrix 完整方法论**：见 `references/pugh-matrix-methodology.md`（含固液分离选型实操案例 + LookForge API 设计 + 在设备选型/品种选型的复用方案）
@@ -53,7 +59,7 @@ metadata:
    - 通过`skill_view`加载需要的技能
    - 从~/.hermes/skills/同步可用技能（注意：该目录本身内容可能稀疏，主要技能通过技能系统直接管理）
 6. **输出进化报告**：保存到~/.hermes/profiles/maodou/evolution/YYYY-MM-DD_HH.md
-7. **更新进化日志**：追加新进化记录到 `/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/workspace/evolution_log.md`（**2026-07-30 路径迁移后实际位置**；旧 `/Users/hua/Desktop/渔芯科技/4-部门空间/...` 已不存在 —— 见陷阱F）
+7. **更新进化日志**：追加新进化记录到 `/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆-产品交付/workspace/evolution_log.md`（**2026-08-03 实测路径**——见陷阱F第二次迁移；旧 `/Users/hua/Desktop/渔芯科技/4-部门空间/...` 和 `/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/...` 均已不存在）
 
 ### P0 工作的"代码独立性"原则（2026-07-30 新增 — 与陷阱B 互补）
 
@@ -532,8 +538,8 @@ Phase 7 不是"功能堆砌"，而是**商业验证冲刺**——回答"卖什�
 当 `in_progress=0` 且 `pending=0` 时，扫描硬件目录找缺口：
 ```python
 import os
-# 2026-07-30 路径迁移：旧 /Users/hua/Desktop/渔芯科技/4-部门空间/... 已不存在，实际在 rkr_staging 下
-base = "/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/"
+# 2026-08-03 实测路径：4-部门空间已迁移到 3-公司项目资料/301-智能体
+base = "/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆-产品交付/"
 devices = ["HW-001_滚筒微滤机", "HW-002_蛋白质分离器", "HW-003_生物移动床反应器"]
 for dev in devices:
     for step in range(1, 8):
@@ -545,7 +551,7 @@ for dev in devices:
 **本 session 实操结果（2026-07-29 核实更新）**：HW-001~HW-009 **全部9个设备的7个阶段均完整**（每个子目录至少1个md文件）。HW-001 仍是范本（每个阶段≥2个文件）；HW-002~HW-009 均为标准7文件结构。批量检查命令：
 ```bash
 for hw in HW-001_滚筒微滤机 HW-002_蛋白质分离器 HW-003_生物移动床反应器 HW-004_增氧曝气系统 HW-005_温控设备 HW-006_自动投喂设备 HW-007_循环水泵 HW-008_消毒设备 HW-009_配电柜; do
-  base="/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/$hw"  # 2026-07-30 路径迁移
+  base="/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆-产品交付/$hw"  # 2026-08-03 第二次迁移
   for step in 01_需求定义 02_方案设计 03_仿真验证 04_工艺设计 05_生产测试 06_量产导入 07_差异化; do
     [ ! -d "$base/$step" ] && echo "$hw 缺失:$step"
   done
@@ -774,23 +780,25 @@ GET /api/projects/{project_id}/metrics/summary
 - **示例**：本次心跳 3 个新 P0（`sim_tank_geometry` v0.1 / U_crit 校验 / CFD SOP）均不依赖活体后端，2-3 人天可完成
 - **判定**：写 P0 任务时如果出现"必须先找到 X 代码"等前置条件，**立即重写为不依赖 X 的等价任务**
 
-### ⚠️ 陷阱F：workspace 目录已迁移到 rkr_staging（2026-07-30 实测 — 高频踩坑）
-- **2026-07-30 路径迁移**：毛豆交付目录从 `/Users/hua/Desktop/渔芯科技/4-部门空间/毛豆-产品交付/` 迁移到 `/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/`
-- **同步迁移的路径**：
-  - `evolution_log.md` 实际位置：`/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/workspace/evolution_log.md`
-  - HW-001~009 设备目录：`/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/HW-XXX_*/`
-  - 老莫持续调研目录（已正确）：`/Users/hua/rkr_staging/文档库/渔芯项目/04-学习笔记工作区/持续调研/`
+### ⚠️ 陷阱F：workspace 目录已多次迁移到 rkr_staging（2026-07-30 实测 + 2026-08-03 第二次迁移）
+- **第一次迁移（2026-07-30）**：毛豆交付目录从 `/Users/hua/Desktop/渔芯科技/4-部门空间/毛豆-产品交付/` 迁移到 `/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/`
+- **第二次迁移（2026-08-03 实测发现）**：交付目录再次迁移到 **`/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆-产品交付/`** —— 注意"4-部门空间"已变成"301-智能体"，"渔芯项目"已变成"3-公司项目资料"
+- **`evolution_log.md` 当前位置（2026-08-03 实测）**：`/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆-产品交付/workspace/evolution_log.md`
+- **HW-001~009 设备目录当前路径**：`/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆-产品交付/HW-XXX_*/`
+- **协作者对应路径已同步迁移**（小宝/老莫/黑豆/阿福均在 `3-公司项目资料/301-智能体/<agent>-*/workspace/` 下）
+- **老莫持续调研目录路径（未迁移）**：`/Users/hua/rkr_staging/文档库/1-通用知识/114-项目开发与调研/持续调研/`
 - **已不存在的旧路径**：
-  - `/Users/hua/Desktop/渔芯科技/4-部门空间/毛豆-产品交付/`（整个目录已迁移）
-  - `/Users/hua/Desktop/渔芯科技/9-学习笔记/...`（已不存在，老莫路径已迁到 rkr_staging）
-- **历史教训**：本 skill SKILL.md 在 2026-07-30 之前有 4 处旧路径（步骤 7、进化日志格式要求、主动缺口识别 Python 代码、批量检查 bash 命令）—— 2026-08-01 全部 patch 修正。**未来若再发现旧路径，按本陷阱模式立刻 patch**
-- **预防性检查命令**（每次心跳第一步）：
+  - `/Users/hua/Desktop/渔芯科技/4-部门空间/毛豆-产品交付/`（已不存在）
+  - `/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/`（第二次迁移后也不存在——**之前 SKILL.md 记录的路径已过期**）
+  - `/Users/hua/Desktop/渔芯科技/9-学习笔记/...`（已不存在）
+- **核心教训**：本目录至少已迁移 2 次。**任何引用"4-部门空间"或"渔芯项目/4-部门空间"的路径都应立即用 `find` 重新定位**。SKILL.md 的步骤 7 + 进化日志格式要求 + 主动缺口识别 Python 代码 + 批量检查 bash 命令这 4 处路径描述需要随每次心跳实测更新。
+- **预防性检查命令（每次心跳第一步）**：
   ```bash
   # 验证活体路径仍然存在
-  ls /Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/workspace/evolution_log.md 2>/dev/null && echo "✅ evolution_log 活体" || echo "⚠️ 路径又迁了"
-  ls /Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/HW-001_滚筒微滤机/ 2>/dev/null >/dev/null && echo "✅ HW-001 活体" || echo "⚠️ 路径又迁了"
+  find /Users/hua/rkr_staging -name "evolution_log.md" -path "*毛豆*" 2>/dev/null | head -1
+  find /Users/hua/rkr_staging -name "HW-001_滚筒微滤机" -type d 2>/dev/null | head -1
   ```
-- **不要再相信旧路径**——直接 `ls` 验证，所有对路径的"我记得是这样"都是陷阱
+- **不要再相信旧路径**——直接 `find` 验证，所有对路径的"我记得是这样"都是陷阱
 
 **LookForge后端优化审计脚本**（`references/lookforge-backend-audit.md`）：
 ChromaDB健康度检查、PostgreSQL连接验证、查询延迟测量、Category分布分析、Chunk长度分布、并发瓶颈点识别。2026-05-07完成优化报告，输出至 `/共享资料/LookForge优化报告/LookForge后端优化报告_2026-05-07.md`。
@@ -998,7 +1006,7 @@ conn.close()
 
 ## 进化日志格式要求（每次必读）
 
-进化日志路径：`/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/毛豆-产品交付/workspace/evolution_log.md`（**2026-07-30 路径迁移后实际位置**——见陷阱F；旧 `/Users/hua/Desktop/渔芯科技/4-部门空间/...` 已不存在）
+进化日志路径：`/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆-产品交付/workspace/evolution_log.md`（**2026-08-03 第二次迁移后实测位置**——见陷阱F；旧 `/Users/hua/Desktop/渔芯科技/4-部门空间/...` 和 `/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/...` 均已不存在）
 
 **输出格式（简洁优先）：**
 ```markdown
