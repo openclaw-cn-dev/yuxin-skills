@@ -1,9 +1,9 @@
 # Codex 状态快照
-> 导出时间: 2026-08-06 10:46:58
+> 导出时间: 2026-08-06 11:48:15
 > 🤖 自动同步自 Hermes/玉芬 · Codex 自进化模块
 
 ## 版本
-- 当前: `/bin/sh: codex: command not found`
+- 当前: `codex-cli 0.146.0`
 - npm 最新: `0.146.1`
 - 状态: `update_available`
 
