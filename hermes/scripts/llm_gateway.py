@@ -165,6 +165,7 @@ async def notify_recovered(route, name):
 # Codex 内部模型名 → 后端期望的模型名
 MODEL_ALIASES = {
     "deepseek": "deepseek-v4-pro",  # deepseek 系列统一
+    "MiniMax-M3": "deepseek-v4-pro",  # 全局默认模型名适配
     "gpt-5.6-luna": "deepseek-v4-pro",  # Codex 内部标题生成用
     "gpt-5.5": "deepseek-v4-pro",
     "gpt-5.4": "deepseek-v4-pro",
@@ -1088,6 +1089,30 @@ async def handle(request: web.Request):
 
     body = await request.read() if request.method in ("POST", "PUT", "PATCH") else None
     headers = dict(request.headers)
+
+    # ── 多模态检测：/openai 路由检测到图片 → 强制切 DeepSeek ──
+    if route == "/openai" and body and which == "primary":
+        try:
+            body_json = json.loads(body)
+            messages = body_json.get("messages", [])
+            has_image = False
+            for msg in messages:
+                content = msg.get("content", "")
+                if isinstance(content, list):
+                    for c in content:
+                        if isinstance(c, dict) and c.get("type") == "image_url":
+                            has_image = True
+                            break
+                if has_image:
+                    break
+            if has_image:
+                ds_backend = BACKENDS.get("ds-openai")
+                if ds_backend:
+                    log(f"MULTIMODAL: /openai 检测到图片 → DeepSeek(OpenAI)")
+                    backend = ds_backend
+                    which = "ds-openai"
+        except Exception:
+            pass
 
     # ── 所有 POST/PUT/PATCH 请求：统一改写模型名（Codex 内部模型名 → 后端模型名） ──
     if body and not is_responses:

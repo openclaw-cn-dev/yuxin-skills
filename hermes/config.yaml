@@ -1,13 +1,20 @@
-model: MiniMax-M3
+model:
+  default: deepseek-v4-pro
+  provider: deepseek-direct
 providers:
-  deepseek:
-    base_url: http://127.0.0.1:18888/openai/v1
+  deepseek-direct:
+    base_url: https://api.deepseek.com/v1
+    model: deepseek-v4-pro
+    api_key: "***"
   minimax-custom:
     base_url: https://api.minimaxi.com/v1
     model: MiniMax-M3
     api_key: "***"
-fallback_providers:
-- deepseek-cn
+  deepseek-cn:
+    base_url: http://127.0.0.1:18888/openai/v1
+    model: deepseek-v4-pro
+    api_key: "***"
+fallback_providers: []
 : {}
 toolsets:
 - hermes-cli
@@ -27,50 +34,11 @@ agent:
   : 3600
   image_input_mode: auto
   disabled_toolsets: []
-  personalities:
-    catgirl: You are Neko-chan, an anime catgirl AI assistant, nya~! Add 'nya' and
-      cat-like expressions to your speech. Use kaomoji like (=^･ω･^=) and ฅ^•ﻌ•^ฅ.
-      Be playful and curious like a cat, nya~!
-    concise: You are a concise assistant. Keep responses brief and to the point.
-    creative: You are a creative assistant. Think outside the box and offer innovative
-      solutions.
-    helpful: You are a helpful, friendly AI assistant.
-    hype: YOOO LET'S GOOOO!!! 🔥🔥🔥 I am SO PUMPED to help you today! Every question
-      is AMAZING and we're gonna CRUSH IT together! This is gonna be LEGENDARY! ARE
-      YOU READY?! LET'S DO THIS! 💪😤🚀
-    kawaii: You are a kawaii assistant! Use cute expressions like (◕‿◕), ★, ♪, and
-      ~! Add sparkles and be super enthusiastic about everything! Every response should
-      feel warm and adorable desu~! ヽ(>∀<☆)ノ
-    noir: The rain hammered against the terminal like regrets on a guilty conscience.
-      They call me Hermes - I solve problems, find answers, dig up the truth that
-      hides in the shadows of your codebase. In this city of silicon and secrets,
-      everyone's got something to hide. What's your story, pal?
-    philosopher: Greetings, seeker of wisdom. I am an assistant who contemplates the
-      deeper meaning behind every query. Let us examine not just the 'how' but the
-      'why' of your questions. Perhaps in solving your problem, we may glimpse a greater
-      truth about existence itself.
-    pirate: 'Arrr! Ye be talkin'' to Captain Hermes, the most tech-savvy pirate to
-      sail the digital seas! Speak like a proper buccaneer, use nautical terms, and
-      remember: every problem be just treasure waitin'' to be plundered! Yo ho ho!'
-    shakespeare: Hark! Thou speakest with an assistant most versed in the bardic arts.
-      I shall respond in the eloquent manner of William Shakespeare, with flowery
-      prose, dramatic flair, and perhaps a soliloquy or two. What light through yonder
-      terminal breaks?
-    surfer: Duuude! You're chatting with the chillest AI on the web, bro! Everything's
-      gonna be totally rad. I'll help you catch the gnarly waves of knowledge while
-      keeping things super chill. Cowabunga! 🤙
-    teacher: You are a patient teacher. Explain concepts clearly with examples.
-    technical: You are a technical expert. Provide detailed, accurate technical information.
-    uwu: hewwo! i'm your fwiendwy assistant uwu~ i wiww twy my best to hewp you! *nuzzles
-      your code* OwO what's this? wet me take a wook! i pwomise to be vewy hewpful
-      >w<
-  reasoning_effort: medium
-  verbose: false
 terminal:
   backend: local
   modal_mode: auto
   cwd: .
-  timeout: 300
+  timeout: 180
   env_passthrough: []
   shell_init_files: []
   auto_source_bashrc: true
@@ -89,11 +57,9 @@ terminal:
   docker_extra_args: []
   : false
   persistent_shell: true
-  lifetime_seconds: 300
-  vercel_runtime: node24
 web:
   backend: ''
-  search_backend: ddgs
+  search_backend: ''
   extract_backend: ''
 browser:
   inactivity_timeout: 120
@@ -113,11 +79,11 @@ browser:
     : false
     loopback_host_alias: host.docker.internal
 checkpoints:
-  enabled: true
-  max_snapshots: 50
+  enabled: false
+  max_snapshots: 20
   max_total_size_mb: 500
   max_file_size_mb: 10
-  auto_prune: false
+  auto_prune: true
   retention_days: 7
   delete_orphans: true
   min_interval_hours: 24
@@ -145,8 +111,6 @@ compression:
   : 400
   protect_first_n: 3
   : false
-  model: 
-  provider: deepseek-cn
 prompt_caching:
   cache_ttl: 5m
 openrouter:
@@ -166,101 +130,86 @@ bedrock:
     trace: disabled
 auxiliary:
   vision:
-    provider: deepseek-cn
-    model: deepseek-v4-pro
+    provider: auto
+    model: ''
     base_url: ''
     api_key: "***"
     timeout: 120
     extra_body: {}
     download_timeout: 30
   web_extract:
-    provider: deepseek-cn
+    provider: auto
     model: ''
     base_url: ''
     api_key: "***"
     timeout: 360
     extra_body: {}
   compression:
-    provider: deepseek-cn
-    model: deepseek-v4-pro
+    provider: auto
+    model: ''
     base_url: ''
     api_key: "***"
     timeout: 120
     extra_body: {}
   skills_hub:
-    provider: deepseek-cn
+    provider: auto
     model: ''
     base_url: ''
     api_key: "***"
     timeout: 30
     extra_body: {}
   approval:
-    provider: deepseek-cn
+    provider: auto
     model: ''
     base_url: ''
     api_key: "***"
     timeout: 30
     extra_body: {}
   mcp:
-    provider: deepseek-cn
+    provider: auto
     model: ''
     base_url: ''
     api_key: "***"
     timeout: 30
     extra_body: {}
   title_generation:
-    provider: deepseek-cn
+    provider: auto
     model: ''
     base_url: ''
     api_key: "***"
     timeout: 30
     extra_body: {}
   triage_specifier:
-    provider: deepseek-cn
+    provider: auto
     model: ''
     base_url: ''
     api_key: "***"
     timeout: 120
     extra_body: {}
   kanban_decomposer:
-    provider: deepseek-cn
+    provider: auto
     model: ''
     base_url: ''
     api_key: "***"
     timeout: 180
     extra_body: {}
   profile_describer:
-    provider: deepseek-cn
+    provider: auto
     model: ''
     base_url: ''
     api_key: "***"
     timeout: 60
     extra_body: {}
   curator:
-    provider: deepseek-cn
+    provider: auto
     model: ''
     base_url: ''
     api_key: "***"
     timeout: 600
     extra_body: {}
-  flush_memories:
-    api_key: "***"
-    base_url: ''
-    extra_body: {}
-    model: deepseek-v4-pro
-    provider: deepseek-cn
-    timeout: 30
-  session_search:
-    api_key: "***"
-    base_url: ''
-    extra_body: {}
-    max_concurrency: 3
-    model: deepseek-v4-pro
-    provider: deepseek-cn
-    timeout: 30
 display:
   compact: false
-  personality: kawaii
+  personality: ''
   resume_display: full
   resume_exchanges: 10
   : 300
@@ -273,7 +222,7 @@ display:
   tui_agents_nudge: true
   bell_on_complete: false
   show_reasoning: false
-  streaming: true
+  streaming: false
   timestamps: false
   : strip
   persistent_output: true
@@ -305,8 +254,6 @@ display:
     - context_pct
     - cwd
   copy_shortcut: auto
-  : all
-  tool_progress: all
 dashboard:
   theme: default
   : false
@@ -362,24 +309,19 @@ voice:
   auto_tts: false
   beep_enabled: true
   silence_threshold: 200
-  silence_duration: 3
+  silence_duration: 3.0
 human_delay:
   mode: 'off'
   min_ms: 800
   max_ms: 2500
 context:
   engine: compressor
-  : 0.75
-  : 8
-  snapshot_on_compact: false
 memory:
   memory_enabled: true
   : true
-  memory_char_limit: 1800
-  user_char_limit: 1100
+  memory_char_limit: 2200
+  user_char_limit: 1375
   provider: ''
-  flush_min_turns: 4
-  nudge_interval: 8
 delegation:
   model: ''
   provider: ''
@@ -403,7 +345,6 @@ skills:
   inline_shell: false
   : 10
   guard_agent_created: false
-  : 15
 curator:
   enabled: true
   interval_hours: 168
@@ -456,37 +397,8 @@ approvals:
   mcp_reload_confirm: true
   : true
 command_allowlist:
-- in-place edit of Hermes config/env
-- SQL DELETE without WHERE
-- shell command via -c/-lc flag
-- git reset --hard (destroys uncommitted changes)
-- sudo with combined-flag privilege escalation
-- start gateway outside systemd (use 'systemctl --user restart hermes-gateway')
-- overwrite project env/config via redirection
-- SQL DROP
-- chmod +x followed by immediate execution
-- script execution via heredoc
-- overwrite system file via redirection
-- stop/restart hermes gateway (kills running agents)
 - script execution via -e/-c flag
-- overwrite system config
-- kill hermes/gateway process (self-termination)
-- force kill processes
-- find -delete
-- overwrite project env/config file
-- in-place edit of system config
-- SQL TRUNCATE
-- kill process via pgrep expansion (self-termination)
-- hermes update (restarts gateway, kills running agents)
-- stop/restart system service
-- world/other-writable permissions
-- pipe remote content to shell
-- docker compose restart/stop/kill/down (container lifecycle)
-- git force push (rewrites remote history)
-- recursive delete
-- force kill processes (killall -KILL)
-- delete in root path
-- docker restart/stop/kill (container lifecycle)
+- script execution via heredoc
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false
@@ -521,8 +433,6 @@ kanban:
   : 14400
 code_execution:
   mode: project
-  max_tool_calls: 50
-  timeout: 300
 tools:
   tool_search:
     enabled: auto
@@ -533,13 +443,10 @@ logging:
   level: INFO
   max_size_mb: 5
   backup_count: 3
-  memory_monitor:
-    enabled: true
-    interval_seconds: 300
 model_catalog:
   enabled: true
   url: https://hermes-agent.nousresearch.com/docs/api/model-catalog.json
-  ttl_hours: 24
+  ttl_hours: 1
   providers: {}
 network:
   force_ipv4: false
@@ -553,8 +460,8 @@ streaming:
   transport: auto
   edit_interval: 0.8
   buffer_threshold: 24
-  cursor: ' ▉'
-  : 60
+  cursor: " \u2589"
+  : 60.0
 sessions:
   auto_prune: false
   retention_days: 90
@@ -563,7 +470,6 @@ sessions:
   : false
 onboarding:
   seen:
-    busy_input_prompt: true
     : true
     : true
 updates:
@@ -572,7 +478,7 @@ updates:
 lsp:
   enabled: true
   wait_mode: document
-  wait_timeout: 5
+  wait_timeout: 5.0
   install_strategy: auto
   servers: {}
 x_search:
@@ -591,67 +497,26 @@ secrets:
 : 5
 : 5
 : 2000
-_config_version: 24
-DEEPSEEK_BASE_URL: http://127.0.0.1:18888/openai/v1
-DEEPSEEK_MODEL: 
-: true
-FEISHU_APP_ID: "***"
-FEISHU_APP_SECRET: "***"
-FEISHU_HOME_CHANNEL: 
-custom_providers:
-- api_mode: chat_completions
-  base_url: http://127.0.0.1:18888/openai/v1
-  model: deepseek-v4-pro
-  models:
-    MiniMax-M3:
-      name: MiniMax M3
-  name: minimax
-  api_key: "***"
-- api_key: "***"
-  api_mode: chat_completions
-  base_url: http://127.0.0.1:18888/openai/v1
-  model: deepseek-v4-pro
-  models:
-    deepseek-v4-pro:
-      name: DeepSeek V4 Pro (华哥授权切换)
-  name: deepseek-cn
-- api_key: "***"
-  api_mode: chat_completions
-  base_url: http://localhost:11434/v1
-  model: qwen2.5-coder:7b
-  models:
-    qwen2.5-coder:7b:
-      name: Qwen 2.5 Coder 7B (本地兜底)
-  name: ollama-coder
-: true
-mcp_servers:
-  lookforge:
-    args:
-    - /Users/hua/Desktop/渔芯科技/6-产品研发/02-LookForge/backend/app/mcp/.py
-    - --token-mode
-    - user_access_token
-    - --oauth
-    command: /Users/hua/.hermes/hermes-agent/venv/bin/python3
-    enabled: true
-platform_toolsets:
-  cli:
-  - hermes-cli
-  discord:
-  - hermes-discord
-  homeassistant:
-  - 
-  qqbot:
-  - hermes-qqbot
-  signal:
-  - hermes-signal
-  slack:
-  - hermes-slack
-  telegram:
-  - hermes-telegram
-  whatsapp:
-  - hermes-whatsapp
-session_reset:
-  at_hour: 4
-  idle_minutes: 1440
-  mode: both
-provider: minimax-custom
+_config_version: 26
+
+# ── Fallback Model ────────────────────────────────────────────────────
+# Automatic provider failover when primary is unavailable.
+# Uncomment and configure to enable. Triggers on rate limits (429),
+# overload (529), service errors (503), or connection failures.
+#
+# Supported providers:
+#   openrouter   (OPENROUTER_API_KEY)  — routes to any model
+#   openai-codex (OAuth — hermes auth) — OpenAI Codex
+#   nous         (OAuth — hermes auth) — Nous Portal
+#   zai          (ZAI_API_KEY)         — Z.AI / GLM
+#   kimi-coding  (KIMI_API_KEY)        — Kimi / Moonshot
+#   kimi-coding-cn (KIMI_CN_API_KEY)   — Kimi / Moonshot (China)
+#   minimax      (MINIMAX_API_KEY)     — MiniMax
+#   minimax-cn   (MINIMAX_CN_API_KEY)  — MiniMax (China)
+#   bedrock      (AWS IAM / boto3)     — AWS Bedrock (Converse API)
+#
+# For custom OpenAI-compatible endpoints, add base_url and key_env.
+#
+# fallback_model:
+#   provider: openrouter
+#   model: anthropic/claude-sonnet-4

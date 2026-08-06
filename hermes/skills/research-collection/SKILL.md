@@ -4,7 +4,7 @@ description: '渔芯资料收集技能 — 高效搜集行业信息、公司情�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.0.17"
+  version: "1.0.18"
 ---
 
 ## 参考资料库
@@ -16,7 +16,7 @@ metadata:
 - `references/gtm_b2b_sales_sources.md` — **GTM/B2B Sales 方法论文献 cron 可用性速查**（Common Room 全文已核验 12,549 字符 / Gartner 403 / ChiliPiper Apollo 404 / Revue 停更；A-B-C 三级引用规则，2026-08-03 16:42 实测）
 - `references/api-research-quickref.md` — **GitHub/arxiv/HF API 抓取速查**（curl 模板 + 解析脚本 + tirith 绕过 + 超时处理 + description null 坑 + 多 query 串行模式 + Releases API 多版本抓取 + Stars 增量对比 + 多日暴涨检测启发式 + 生态系统监控模式 + README 二次验证 + awesome 变更检测 + arXiv 版本检测 + arXiv rate-limit 恢复 + Search API 兜底 + 串行 curl 链式调用 + confusable_text 规避 + query 精度陷阱 + HF 超时→正式放弃 + 多 prong 搜索策略 + arXiv AND 组合查询 + arXiv 3D/3DGS 查询注意事项 + cron 多 terminal() 并行抓取 + **GitHub OR 语法陷阱** + **arXiv underwater 查询精度修复** + **TRELLIS.2 in:name 监控模式** + **3DGS arXiv 双引号修复验证**, 2026-08-02）
 
-*最后更新：2026-07-29（新增 Crossref API DOI 元数据验证兜底 — Nature/MDPI 等出版商反爬拦截时的第三验证源；与 arXiv/OpenAlex 协作流程已验证）*
+*最后更新：2026-08-05（新增：arXiv 查询精度优化 — 避免 "diffusion" 噪声 + GitHub+arXiv 双通道新品发现 + WAT3R 命名约定 + 路径验证 rkr_staging 备选 + 延续追踪子章节模板）*
 
 ## 报告格式模板
 
@@ -50,8 +50,9 @@ metadata:
 
 **推荐子章节**（追加到增量研究中）：
 - `### 核心项目星数对比` — 当跟踪多个核心项目时，用表格对比当前星数、上次 push 日期、活跃度评级。有助于快速判断生态迁移方向。
+- `### {项目名} 代码追踪（continuation from YYYY-MM-DD）` — 当某个论文/项目在连续多期报告中都需要追踪开源进度时，建立延续章节。包含：论文链接、代码状态（已开源/未开源）、时间线、周边发现。每次增量更新时直接替换该章节内容，保持追踪连续性。实例：WAT3R 水下 3D 重建代码追踪（07-25→08-02→08-05）。
 
-**路径验证**：写入前务必确认目标目录存在。任务指令中的路径（如 `~/Desktop/知识库 /AI/`）可能因环境迁移而失效，优先用 `find ~/Desktop -name "*关键词*"` 定位实际路径，找不到则创建到 `~/Desktop/渔芯科技/` 下。
+**路径验证**：写入前务必确认目标目录存在。任务指令中的路径（如 `~/Desktop/知识库 /AI/`）可能因环境迁移而失效，优先用 `find ~/Desktop -name "*关键词*"` 定位实际路径，找不到则创建到 `~/Desktop/渔芯科技/` 下。备选路径：`~/rkr_staging/文档库/通用知识库/` 也可能存放历史研究报告（2026-08-05 验证）。
 
 **飞书汇报**：cron 模式下 `send_message` 不可用，最终响应即为汇报内容，系统自动投递。非 cron 模式用 `feishu-api-notify` skill。
 
