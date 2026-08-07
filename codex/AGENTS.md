@@ -93,7 +93,7 @@ Codex 当前 `danger-full-access` 仅允许：
 
 ## 当前配置
 
-- **版本**: codex-cli 0.146.0 (npm 全局安装 · 2026-08-03 巡检更新)
+- **版本**: codex-cli 0.147.0 (npm 全局安装 · 2026-08-07 巡检更新)
 - **模型**: MiniMax-M2.7 (MiniMax M2.7)
 - **Provider**: custom → 公司 LLM Gateway `http://127.0.0.1:15721/v1`
 - **Wire API**: responses (SSE 流式)
