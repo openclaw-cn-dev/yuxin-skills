@@ -1,6 +1,4 @@
-model:
-  default: deepseek-v4-pro
-  provider: deepseek-direct
+model: deepseek-v4-pro
 providers:
   deepseek-direct:
     base_url: https://api.deepseek.com/v1
@@ -14,6 +12,26 @@ providers:
     base_url: http://127.0.0.1:18888/openai/v1
     model: deepseek-v4-pro
     api_key: "***"
+  gemini-free:
+    base_url: https://generativelanguage.googleapis.com/v1beta/openai
+    model: gemini-2.5-flash
+    api_key_env: GOOGLE_API_KEY
+  groq-free:
+    base_url: https://api.groq.com/openai/v1
+    model: llama-4-maverick
+    api_key_env: GROQ_API_KEY
+  mistral-free:
+    base_url: https://api.mistral.ai/v1
+    model: 
+    api_key_env: MISTRAL_API_KEY
+  glm-free:
+    base_url: https://open.bigmodel.cn/api/paas/v4
+    model: glm-4-flash
+    api_key_env: ZHIPUAI_API_KEY
+  openrouter-nemotron:
+    base_url: https://openrouter.ai/api/v1
+    model: nvidia/:free
+    api_key_env: OPENROUTER_API_KEY
 fallback_providers: []
 : {}
 toolsets:
@@ -397,6 +415,7 @@ approvals:
   mcp_reload_confirm: true
   : true
 command_allowlist:
+- kill hermes/gateway process (self-termination)
 - script execution via -e/-c flag
 - script execution via heredoc
 quick_commands: {}
@@ -460,7 +479,7 @@ streaming:
   transport: auto
   edit_interval: 0.8
   buffer_threshold: 24
-  cursor: " \u2589"
+  cursor: ' ▉'
   : 60.0
 sessions:
   auto_prune: false
@@ -472,6 +491,7 @@ onboarding:
   seen:
     : true
     : true
+    busy_input_prompt: true
 updates:
   pre_update_backup: false
   backup_keep: 5
@@ -498,25 +518,4 @@ secrets:
 : 5
 : 2000
 _config_version: 26
-
-# ── Fallback Model ────────────────────────────────────────────────────
-# Automatic provider failover when primary is unavailable.
-# Uncomment and configure to enable. Triggers on rate limits (429),
-# overload (529), service errors (503), or connection failures.
-#
-# Supported providers:
-#   openrouter   (OPENROUTER_API_KEY)  — routes to any model
-#   openai-codex (OAuth — hermes auth) — OpenAI Codex
-#   nous         (OAuth — hermes auth) — Nous Portal
-#   zai          (ZAI_API_KEY)         — Z.AI / GLM
-#   kimi-coding  (KIMI_API_KEY)        — Kimi / Moonshot
-#   kimi-coding-cn (KIMI_CN_API_KEY)   — Kimi / Moonshot (China)
-#   minimax      (MINIMAX_API_KEY)     — MiniMax
-#   minimax-cn   (MINIMAX_CN_API_KEY)  — MiniMax (China)
-#   bedrock      (AWS IAM / boto3)     — AWS Bedrock (Converse API)
-#
-# For custom OpenAI-compatible endpoints, add base_url and key_env.
-#
-# fallback_model:
-#   provider: openrouter
-#   model: anthropic/claude-sonnet-4
+provider: deepseek-direct

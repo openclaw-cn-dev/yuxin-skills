@@ -24,6 +24,31 @@ import subprocess
 from pathlib import Path
 from datetime import datetime
 
+# ── 多模型智能调度框架 ──
+_MODEL_POOL_LOADED = False
+try:
+    # Gateway 进程可能不在 scripts/ 目录下
+    import os as _os
+    _scripts_dir = str(Path(_os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))) / "scripts")
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "llm_model_pool", 
+        f"{_scripts_dir}/llm_model_pool.py"
+    )
+    if spec and spec.loader:
+        _pool = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(_pool)
+        MODEL_REGISTRY = _pool.MODEL_REGISTRY
+        select_model = _pool.select_model
+        QuotaTracker = _pool.QuotaTracker
+        get_quota_tracker = _pool.get_quota_tracker
+        detect_request_type = _pool.detect_request_type
+        model_cost_rank = _pool.model_cost_rank
+        _MODEL_POOL_LOADED = True
+except Exception as e:
+    import traceback
+    print(f"[WARN] llm_model_pool load failed: {e}", file=sys.stderr)
+
 HERMES_HOME = Path(os.environ.get("HERMES_HOME", Path.home() / ".hermes"))
 LOG_DIR = HERMES_HOME / "logs"
 STATE_FILE = HERMES_HOME / "scripts" / ".llm_gateway_state.json"
@@ -74,6 +99,13 @@ def build_backends():
     if not mm_key:
         mm_key = cfg.get("providers", {}).get("minimax-custom", {}).get("api_key", "")
 
+    # ── 免费模型 pool ──
+    gemini_key = env.get("GOOGLE_API_KEY", "") or env.get("GEMINI_API_KEY", "")
+    glm_key = env.get("ZHIPUAI_API_KEY", "")
+    qwen_key = env.get("DASHSCOPE_API_KEY", "")
+    doubao_key = env.get("ARK_API_KEY", "")  # 复用火山 Agent Plan key
+    groq_key = env.get("GROQ_API_KEY", "")
+
     backends = {}
     if ark_key:
         backends["volc-anthropic"] = {"name": "火山引擎(Anthropic)", "url": "https://ark.cn-beijing.volces.com/api/plan", "key": ark_key, "auth": "x-api-key"}
@@ -85,6 +117,16 @@ def build_backends():
         backends["ds-openai"] = {"name": "DeepSeek(OpenAI)", "url": "https://api.deepseek.com", "key": ds_key, "auth": "Authorization", "prefix": "Bearer "}
     if mm_key:
         backends["minimax-openai"] = {"name": "MiniMax(OpenAI)", "url": "https://api.minimaxi.com", "key": mm_key, "auth": "Authorization", "prefix": "Bearer "}
+    if gemini_key:
+        backends["gemini-openai"] = {"name": "Gemini(OpenAI兼容)", "url": "https://generativelanguage.googleapis.com/v1beta/openai", "key": gemini_key, "auth": "Authorization", "prefix": "Bearer "}
+    if glm_key:
+        backends["glm-openai"] = {"name": "智谱GLM(OpenAI)", "url": "https://open.bigmodel.cn/api/paas/v4", "key": glm_key, "auth": "Authorization", "prefix": "Bearer "}
+    if qwen_key:
+        backends["qwen-openai"] = {"name": "通义千问(OpenAI)", "url": "https://dashscope.aliyuncs.com/compatible-mode/v1", "key": qwen_key, "auth": "Authorization", "prefix": "Bearer "}
+    if doubao_key:
+        backends["doubao-openai"] = {"name": "豆包Seed(OpenAI)", "url": "https://ark.cn-beijing.volces.com/api/v3", "key": doubao_key, "auth": "Authorization", "prefix": "Bearer "}
+    if groq_key:
+        backends["groq-openai"] = {"name": "Groq(OpenAI)", "url": "https://api.groq.com/openai/v1", "key": groq_key, "auth": "Authorization", "prefix": "Bearer "}
     return backends
 
 BACKENDS = build_backends()
@@ -132,6 +174,15 @@ def log(msg, level="INFO"):
             f.write(f"[{datetime.now().isoformat()}] [{level}] {msg}\n")
     except Exception:
         pass
+
+# ── 初始化 Quota Tracker（必须在 log() 定义之后）──
+_quota_tracker = None
+if _MODEL_POOL_LOADED:
+    try:
+        _quota_tracker = get_quota_tracker()
+        log(f"MODEL-POOL: loaded ({len(MODEL_REGISTRY)} models)", "INFO")
+    except Exception as e:
+        log(f"MODEL-POOL: QuotaTracker init failed: {e}", "WARN")
 
 # ─── 飞书通知 ──────────────────────────────────────────────
 
@@ -1090,29 +1141,26 @@ async def handle(request: web.Request):
     body = await request.read() if request.method in ("POST", "PUT", "PATCH") else None
     headers = dict(request.headers)
 
-    # ── 多模态检测：/openai 路由检测到图片 → 强制切 DeepSeek ──
-    if route == "/openai" and body and which == "primary":
+    # ── 智能路由：模型池自动选模型（替代硬编码 primary/fallback）──
+    if route == "/openai" and _MODEL_POOL_LOADED and body:
         try:
             body_json = json.loads(body)
             messages = body_json.get("messages", [])
-            has_image = False
-            for msg in messages:
-                content = msg.get("content", "")
-                if isinstance(content, list):
-                    for c in content:
-                        if isinstance(c, dict) and c.get("type") == "image_url":
-                            has_image = True
-                            break
-                if has_image:
-                    break
-            if has_image:
-                ds_backend = BACKENDS.get("ds-openai")
-                if ds_backend:
-                    log(f"MULTIMODAL: /openai 检测到图片 → DeepSeek(OpenAI)")
-                    backend = ds_backend
-                    which = "ds-openai"
-        except Exception:
-            pass
+            if messages:
+                selected_mid, reason, warning = select_model(
+                    messages, route=route,
+                    backends_exists=lambda mid: mid in BACKENDS,
+                    quota_tracker=_quota_tracker,
+                )
+                new_backend = BACKENDS.get(selected_mid)
+                if new_backend and new_backend != backend:
+                    log(f"SMART-ROUTE: {which} → {selected_mid} ({reason})")
+                    backend = new_backend
+                    which = selected_mid
+                if warning:
+                    log(f"SMART-ROUTE-WARN: {warning}", "WARN")
+        except Exception as e:
+            log(f"SMART-ROUTE error: {e}", "WARN")
 
     # ── 所有 POST/PUT/PATCH 请求：统一改写模型名（Codex 内部模型名 → 后端模型名） ──
     if body and not is_responses:
@@ -1168,21 +1216,66 @@ async def handle(request: web.Request):
         status_code, resp_body, resp_headers = await forward(
             session, backend, rest, request.method, headers, body)
 
-    # Fallback 判断
-    if status_code in (429, 402, 500, 502, 503, 504) and which == "primary":
-        fb = BACKENDS.get(cfg["fallback"])
-        if fb:
-            log(f"FALLBACK: {route} {backend['name']} → {fb['name']} (HTTP {status_code})")
-            rs["active"] = "fallback"
-            rs["since"] = time.time()
-            rs["failures"] += 1
-            state["stats"]["fallbacks"] += 1
-            save_state()
-            await notify_fallback(route, backend["name"], fb["name"], status_code)
+    # ─── 智能 Fallback：失败模型置黑 → 池子里重选下一个 ───
+    if status_code in (429, 402, 500, 502, 503, 504):
+        retry_backend = None
+        retry_which = None
 
+        if _MODEL_POOL_LOADED and _quota_tracker and which != "fallback":
+            # 阻塞失败模型
+            _quota_tracker.block_model(which, f"HTTP {status_code}")
+            log(f"SMART-FB: blocked {which} ({backend['name']}) — HTTP {status_code}")
+
+            # 从模型池重选
+            try:
+                body_json = json.loads(body)
+                messages = body_json.get("messages", [])
+            except Exception:
+                messages = []
+            selected_mid, reason, warning = select_model(
+                messages, route=route,
+                backends_exists=lambda mid: mid in BACKENDS,
+                quota_tracker=_quota_tracker,
+            )
+            retry_backend = BACKENDS.get(selected_mid)
+            retry_which = selected_mid
+            if retry_backend and retry_backend != backend:
+                log(f"SMART-FB: → {selected_mid} ({retry_backend['name']}) — {reason}")
+                await notify_fallback(route, backend["name"], retry_backend["name"], status_code)
+            else:
+                log(f"SMART-FB: no alternative, using ds-openai", "WARN")
+                retry_backend = BACKENDS.get("ds-openai")
+                retry_which = "ds-openai"
+
+        # 旧逻辑兼容：无模型池时用固定 fallback
+        elif status_code in (429, 402, 500, 502, 503, 504) and which == "primary":
+            fb = BACKENDS.get(cfg["fallback"])
+            if fb:
+                log(f"FALLBACK: {route} {backend['name']} → {fb['name']} (HTTP {status_code})")
+                rs["active"] = "fallback"
+                rs["since"] = time.time()
+                rs["failures"] += 1
+                state["stats"]["fallbacks"] += 1
+                save_state()
+                await notify_fallback(route, backend["name"], fb["name"], status_code)
+                retry_backend = fb
+                retry_which = "fallback"
+
+        # 执行重试
+        if retry_backend and retry_backend != backend:
             async with aiohttp.ClientSession() as session:
                 status_code, resp_body, resp_headers = await forward(
-                    session, fb, rest, request.method, headers, body)
+                    session, retry_backend, rest, request.method, headers, body)
+            which = retry_which
+            backend = retry_backend
+
+    # ─── 记录 token 消耗（估算）──
+    if _MODEL_POOL_LOADED and _quota_tracker and status_code == 200:
+        try:
+            est_tokens = len(resp_body or b"") // 3  # 粗略估算：~3 bytes/token
+            _quota_tracker.record_usage(which, max(est_tokens, 1))
+        except Exception:
+            pass
 
     resp = web.StreamResponse(status=status_code)
     resp.headers["X-Gateway-Route"] = route

@@ -8,4 +8,4 @@ export VIRTUAL_ENV="/Users/hua/.hermes/hermes-agent/venv"
 
 exec /Users/hua/.hermes/hermes-agent/venv/bin/python \
   -m hermes_cli.main gateway run \
-  --profile "$PROFILE" --replace
+  --profile "$PROFILE"
