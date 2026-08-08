@@ -1,11 +1,11 @@
 # Codex 状态快照
-> 导出时间: 2026-08-08 09:23:24
+> 导出时间: 2026-08-08 10:06:56
 > 🤖 自动同步自 Hermes/玉芬 · Codex 自进化模块
 
 ## 版本
-- 当前: `/bin/sh: codex: command not found`
+- 当前: `codex-cli 0.147.0`
 - npm 最新: `0.147.0`
-- 状态: `update_available`
+- 状态: `up_to_date`
 
 ## 公司专属 Skills (yuxin-*)
 - 文件: 13 个
