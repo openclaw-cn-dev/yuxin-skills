@@ -14,9 +14,9 @@ metadata:
 - `references/大客户销售策略.md` — ToB大客户销售流程、LTV/CAC模型、定价策略（2026-06-05）
 - `references/sogou_search_extraction_pitfalls.md` — **Sogou 搜索 HTML 解析踩坑**（hintidx 内部重链 vs 真实外链，公众号文章保留规则；Bing 对照 parser；2026-08-03 16:42 实测）
 - `references/gtm_b2b_sales_sources.md` — **GTM/B2B Sales 方法论文献 cron 可用性速查**（Common Room 全文已核验 12,549 字符 / Gartner 403 / ChiliPiper Apollo 404 / Revue 停更；A-B-C 三级引用规则，2026-08-03 16:42 实测）
-- `references/api-research-quickref.md` — **GitHub/arxiv/HF API 抓取速查**（curl 模板 + 解析脚本 + tirith 绕过 + 超时处理 + description null 坑 + 多 query 串行模式 + Releases API 多版本抓取 + Stars 增量对比 + 多日暴涨检测启发式 + 生态系统监控模式 + README 二次验证 + awesome 变更检测 + arXiv 版本检测 + arXiv rate-limit 恢复 + Search API 兜底 + 串行 curl 链式调用 + confusable_text 规避 + query 精度陷阱 + HF 超时→正式放弃 + 多 prong 搜索策略 + arXiv AND 组合查询 + arXiv 3D/3DGS 查询注意事项 + cron 多 terminal() 并行抓取 + **GitHub OR 语法陷阱** + **arXiv underwater 查询精度修复** + **TRELLIS.2 in:name 监控模式** + **3DGS arXiv 双引号修复验证**, 2026-08-02）
+- `references/api-research-quickref.md` — **GitHub/arxiv/HF API 抓取速查**（curl 模板 + 解析脚本 + tirith 绕过 + 超时处理 + description null 坑 + 多 query 串行模式 + Releases API 多版本抓取 + Stars 增量对比 + 多日暴涨检测启发式 + 生态系统监控模式 + README 二次验证 + awesome 变更检测 + arXiv 版本检测 + arXiv rate-limit 恢复 + Search API 兜底 + 串行 curl 链式调用 + confusable_text 规避 + query 精度陷阱 + HF 超时→正式放弃 + 多 prong 搜索策略 + arXiv AND 组合查询 + arXiv 3D/3DGS 查询注意事项 + cron 多 terminal() 并行抓取 + **GitHub OR 语法陷阱** + **arXiv underwater 查询精度修复** + **TRELLIS.2 in:name 监控模式** + **3DGS arXiv 双引号修复验证** + **通用 null-safe 解析模式（stargazers_count/forks/pushed_at 全字段）**, 2026-08-08）
 
-*最后更新：2026-08-07（新增：tirith variation_selector emoji 拦截 + GitHub 仓库更名/迁移 404 恢复 + 相邻领域论文迁移方法论 + Awesome-Gaussian-Skills 永久入口）*
+*最后更新：2026-08-08（新增：GitHub API 通用 null-safe 解析模式 — stargazers_count/forks/pushed_at 等字段在 API 返回错误时全部可能为 None，全字段 .get() + or '?' 防御）*
 
 ## 报告格式模板
 

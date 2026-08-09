@@ -4,9 +4,10 @@ description: '黑豆（行政财务法务+合规）核心技能集 — 谈判、
 license: MIT
 metadata:
   author: 渔芯科技
-  version: '1.4.1'
+  version: '1.4.2'
 changelog:
-  - '1.4.1 (2026-08-03): 新增合同模板库路径审计的“表格字段优先”校验，排除正文中的路径规范示例和占位符误报；新增税务分类字段与合同审核门槛落地复盘指针'
+  - '1.4.2 (2026-08-08): 坑12路径表更新——第二次路径迁移（渔芯项目→3-公司项目资料/301-智能体）+ 新增路径漂移自愈机制（find fallback）。批量替换 skill 中6处 Desktop 旧路径引用（坑1/坑6/Ghost识别/无进展检测/中断检测/冗余检测）为当前权威路径。'
+  - '1.4.1 (2026-08-03): 新增合同模板库路径审计的"表格字段优先"校验，排除正文中的路径规范示例和占位符误报；新增税务分类字段与合同审核门槛落地复盘指针'
   - '1.3.8 (2026-07-31): 新增4个已踩坑章节（作战日午间作战）：（1）跳步+作战日午间强制升级模式（<12h 但 3 个时间窗失效叠加 = 触发第 5 次升级）/（2）自办纪律连续 2 次失败临界点（第 3 次自接前必须停盘 = 升级主体为 CEO 致华哥正式信函）/（3）资源严重不足区（实工作 < 4.5h）+ 战时决策收口模式（4h 内必须提供决策包）/（4）CEO 致华哥正式信函升级主体模板（4 项决策 + 12:50 回复 deadline + 默认决策框架）'
   - '1.3.7 (2026-07-31): 新增4个已踩坑章节：（1）Cron报告中的"自接任务"不会自动执行（自办纪律执行失败新坑） / （2）跳步模式下"时间窗期望失效"作为第四次升级信号（早会节点已过类） / （3）08-15科小资质 实质截止日第二案例 / （4）实工作窗口需扣减早会时间0.5h'
   - '1.3.6 (2026-07-30): 新增2个Cron任务启动须知坑：execute_code在cron模式被强制block / patch tool不支持append模式（实战确认）'
@@ -155,10 +156,10 @@ python3 ~/.hermes/scripts/heartbeat_check.py 黑豆
 ```
 此脚本可能不存在。**fallback**：直接用 sqlite3 查询共享 tasks.db：
 ```bash
-sqlite3 /Users/hua/Desktop/渔芯科技/团队协作/tasks.db \
+sqlite3 /Users/hua/rkr_staging/文档库/3-公司项目资料/团队协作/tasks.db \
   "SELECT task_id, title, status FROM tasks WHERE assignee='黑豆' AND status IN ('pending','in_progress');"
 ```
-共享 tasks.db 路径固定为 `/Users/hua/Desktop/渔芯科技/团队协作/tasks.db`（含 tasks 和 team_log 两张表）。
+共享 tasks.db 路径固定为 `/Users/hua/rkr_staging/文档库/3-公司项目资料/团队协作/tasks.db`（含 tasks 和 team_log 两张表）。旧路径 `/Users/hua/Desktop/渔芯科技/团队协作/tasks.db` 已失效。
 
 ### 坑2：evolution 目录需要手动创建
 进化报告路径为 `~/.hermes/evolution/$(date +%Y-%m-%d_%H).md`，但 evolution 目录可能不存在。
@@ -262,8 +263,9 @@ patch(
 **验证检查**（每次 cron 必做）：
 ```bash
 # 检查上次报告中"自接任务"对应的文件是否实际生成
-SINCE_TIME=$(ls -t ~/.hermes/evolution/ | grep -v evolution_log | sed -n '2p' | sed 's/.md//')
-find /Users/hua/Desktop/渔芯科技/4-部门空间/黑豆-行政财务法务/workspace/knowledge/ \
+SINCE_TIME=$(ls -t /Users/hua/.hermes/profiles/heidou/evolution/ | grep -v evolution_log | sed -n '2p' | sed 's/.md//')
+WS=$(find /Users/hua/rkr_staging -maxdepth 5 -type d -name "黑豆-行政财务法务" 2>/dev/null | head -1)
+find "$WS/workspace/knowledge/" \
   -name "*.md" -newermt "$SINCE_TIME" -type f 2>/dev/null
 ```
 
@@ -436,7 +438,9 @@ SOP/文档类任务常出现"幽灵副本"（ghost copy）——TaskQueue显示i
 
 **第一步：查workspace文件系统**
 ```bash
-ls -la /Users/hua/Desktop/渔芯科技/4-部门空间/黑豆-行政财务法务/workspace/ | grep SOP
+# 注意：路径可能已迁移，先用 find 定位实际位置
+WS=$(find /Users/hua/rkr_staging -maxdepth 5 -type d -name "黑豆-行政财务法务" 2>/dev/null | head -1)
+ls -la "$WS/workspace/" | grep SOP
 ```
 看文件大小/行数判断哪个是完整版。**最高版本号（v1.2 > v1.1 > v1.0）通常最完整**；短小的单日期文件（如`SOP_2026-05-06.md`，139行）往往是摘要或中间版本，而非最终版。
 
@@ -817,9 +821,9 @@ but the agent is running under profile 'heidou'.
 
 ```bash
 # 检查当天是否已有审计报告
-ls -la /Users/hua/.hermes/evolution/ | grep "$(date +%Y-%m-%d)"
+ls -la /Users/hua/.hermes/profiles/heidou/evolution/ | grep "$(date +%Y-%m-%d)"
 # 检查最近一次审计时间
-ls -t /Users/hua/.hermes/evolution/ | head -3
+ls -t /Users/hua/.hermes/profiles/heidou/evolution/ | head -3
 ```
 
 1. **距上次审计<12小时** → 跳过完整审计，仅输出一句"距上次审计X小时，无实质性变化"的简要确认报告，不重新计算超期天数
@@ -864,8 +868,8 @@ ls -t /Users/hua/.hermes/evolution/ | head -3
 
 ```bash
 # 检测中断时长（小时）
-LAST_REPORT=$(ls -t /Users/hua/.hermes/evolution/ | grep -v evolution_log | head -1)
-LAST_TIME=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M" "/Users/hua/.hermes/evolution/$LAST_REPORT")
+LAST_REPORT=$(ls -t /Users/hua/.hermes/profiles/heidou/evolution/ | grep -v evolution_log | head -1)
+LAST_TIME=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M" "/Users/hua/.hermes/profiles/heidou/evolution/$LAST_REPORT")
 NOW=$(date "+%Y-%m-%d %H:%M")
 GAP_HOURS=$(( ($(date -j -f "%Y-%m-%d %H:%M" "$NOW" "+%s") - $(date -j -f "%Y-%m-%d %H:%M" "$LAST_TIME" "+%s")) / 3600 ))
 echo "距上次报告 $GAP_HOURS 小时"
@@ -1011,11 +1015,12 @@ fi
 ```bash
 # 距上次报告 N 小时内 tasks.db 有无更新
 SINCE_TIME="2026-07-30 12:45"
-sqlite3 /Users/hua/Desktop/渔芯科技/团队协作/tasks.db \
+sqlite3 /Users/hua/rkr_staging/文档库/3-公司项目资料/团队协作/tasks.db \
   "SELECT COUNT(*) FROM tasks WHERE updated_at > '$SINCE_TIME';"
 # 距上次报告 N 小时内 knowledge 有无写入
-find /Users/hua/Desktop/渔芯科技/4-部门空间/黑豆-行政财务法务/workspace/knowledge/ \
-  -name "*.md" -newer /Users/hua/.hermes/evolution/2026-07-30_12.md
+WS=$(find /Users/hua/rkr_staging -maxdepth 5 -type d -name "黑豆-行政财务法务" 2>/dev/null | head -1)
+find "$WS/workspace/knowledge/" \
+  -name "*.md" -newer /Users/hua/.hermes/profiles/heidou/evolution/2026-07-30_12.md
 ```
 
 **判断矩阵**：
@@ -1039,35 +1044,44 @@ find /Users/hua/Desktop/渔芯科技/4-部门空间/黑豆-行政财务法务/wo
 
 ---
 
-### 坑12：workspace 路径迁移后 skill 仍引用旧路径（2026-08-01 实测发现）
+### 坑12：workspace 路径多次迁移 — skill 路径表需持续更新（2026-08-01→08-08 两次迁移）
 
-**现象**：2026-07-31 渔芯项目整体从 `/Users/hua/Desktop/渔芯科技/` 迁移到 `/Users/hua/rkr_staging/文档库/渔芯项目/`。但本 skill 及 heidou-workflow 大量位置仍写死 `/Users/hua/Desktop/渔芯科技/4-部门空间/黑豆-行政财务法务/...`，导致：
-- `ls -la` 找文件失败
-- 自我提升模式写文件落到错误位置
-- 进化报告中的路径引用与实际不符
+**现象**：渔芯项目经历了**两次**路径迁移：
+1. **第一次迁移**（2026-07-31）：`~/Desktop/渔芯科技/` → `~/rkr_staging/文档库/渔芯项目/`
+2. **第二次迁移**（约2026-08-04前后）：`~/rkr_staging/文档库/渔芯项目/4-部门空间/` → `~/rkr_staging/文档库/3-公司项目资料/301-智能体/`
 
-**路径迁移对照表**（强制记忆）：
+第二次迁移**无人通知 cron agent**，导致 08-08 唤醒审计时 `test -d` 硬验证发现路径 BROKEN。
 
-| 旧路径（已失效） | 新路径（唯一权威） |
+**当前权威路径（2026-08-08 验证）**：
+
+| 资源 | 当前路径 |
 |---|---|
-| `/Users/hua/Desktop/渔芯科技/4-部门空间/黑豆-行政财务法务/workspace/knowledge/` | `/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/黑豆-行政财务法务/workspace/knowledge/` |
-| `/Users/hua/Desktop/渔芯科技/4-部门空间/黑豆-行政财务法务/workspace/` | `/Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/黑豆-行政财务法务/workspace/` |
-| `~/.hermes/evolution/` | `/Users/hua/.hermes/profiles/heidou/evolution/`（他 profile cron 中 `~` 解析不可信，**必须绝对路径**） |
-| `/Users/hua/Desktop/渔芯科技/团队协作/` | 仍为有效 symlink（仅这一项无需迁移） |
+| workspace/knowledge | `/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/黑豆-行政财务法务/workspace/knowledge/` |
+| workspace/ | `/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/黑豆-行政财务法务/workspace/` |
+| tasks.db | `/Users/hua/rkr_staging/文档库/3-公司项目资料/团队协作/tasks.db` |
+| evolution | `/Users/hua/.hermes/profiles/heidou/evolution/`（绝对路径，cron 中 `~` 解析不可信） |
 
 **正确做法（cron 启动前硬验证 3 步，不可跳）**：
-1. `test -d /Users/hua/rkr_staging/文档库/渔芯项目/4-部门空间/黑豆-行政财务法务/workspace/knowledge && echo OK || echo BROKEN`
+1. `test -d /Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/黑豆-行政财务法务/workspace/knowledge && echo OK || echo BROKEN`
 2. `test -d /Users/hua/.hermes/profiles/heidou/evolution || mkdir -p /Users/hua/.hermes/profiles/heidou/evolution`
 3. 写任何文件前先 `ls -d <绝对路径>` 确认父目录存在
 
+**路径漂移自愈机制（🆕 2026-08-08）**：当硬验证发现 BROKEN 时，不要假设路径"一定在某处"，而是：
+```bash
+# 用 find 定位实际路径（宽松搜索，避免卡在 skill 记录的过时路径）
+find /Users/hua/rkr_staging -maxdepth 5 -type d -name "黑豆-行政财务法务" 2>/dev/null | head -5
+```
+此命令应在 **每次 cron 启动时**作为 fallback 执行（当 step 1 返回 BROKEN 时）。
+
 **反面案例**：
-- 2026-08-01 cron 中首次执行时仍引用 Desktop 路径，自我提升模式 `os.path.exists(workspace/knowledge/...)` 全部假阴性，写文件落到 `/Users/hua/workspace/knowledge/...`（错误位置）
-- evolution 路径用 `~/.hermes/evolution/`，cron HOME 解析为 `.../profiles/afu/home`，导致目录不存在 / 写到错误 profile
+- 2026-08-01 cron：引用第一次迁移路径，但实际已发生第二次迁移 → 路径 BROKEN
+- 2026-08-08 cron：唤醒审计发现路径 BROKEN，`find` 定位到 `文档库/3-公司项目资料/301-智能体/` 下才发现第二次迁移
+- 5天中断期间（08-04 → 08-08），无人更新 skill 路径表 → 每次 cron 都会 BROKEN
 
 **根治方案**：
-- 本 skill（heidou profile 副本 v1.3.9）已替换为绝对路径
-- **default profile 副本（`~/.hermes/skills/heidou-admin/SKILL.md`）仍含旧路径**，需手动同步或等待下次 curator 同步
-- 任何引用上述路径的文档/脚本/进化报告，统一以本表"新路径"为准
+- **每当路径迁移发生，华哥或项目负责人需通知所有 agent 更新 skill 路径表**
+- **每次 cron 启动第一步 = 硬验证 + BROKEN fallback find**
+- 任何引用上述路径的文档/脚本/进化报告，统一以本表"当前路径"为准
 
 ### 坑13：政策信息无"官方原文+文号+日期" = 不可用于业务决策（2026-08-01 实战发现）
 

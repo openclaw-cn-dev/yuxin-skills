@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 心跳检查脚本 - 检查指定Agent是否有待处理任务
-同时扫描两个任务源：kanban.db（新真源）和 tasks.db（历史遗留）
+同时扫描三个任务源：kanban.db（新真源）、桌面tasks.db（历史遗留）、hermes tasks.db（创业项目）
 用法: python3 heartbeat_check.py <agent_name>
 """
 import os
@@ -27,6 +27,10 @@ def get_kanban_db_path():
 def get_tasks_db_path():
     """获取桌面tasks.db路径（历史遗留）"""
     return "/Users/hua/Desktop/渔芯科技/团队协作/tasks.db"
+
+def get_hermes_tasks_db_path():
+    """获取hermes内置tasks.db路径（创业项目等任务）"""
+    return "/Users/hua/.hermes/tasks.db"
 
 def query_kanban_tasks(agent_name, db_path):
     """查询kanban.db中的待处理任务"""
@@ -72,6 +76,30 @@ def query_desktop_tasks(agent_name, db_path):
     conn.close()
     return tasks
 
+def query_hermes_tasks(agent_name, db_path):
+    """查询hermes tasks.db中的待处理任务（创业项目等）"""
+    if not os.path.exists(db_path) or os.path.getsize(db_path) == 0:
+        return []
+    
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id, title, priority, status, 'hermes' as source
+        FROM tasks 
+        WHERE assigned_to = ? AND status IN ('pending', 'in_progress')
+        ORDER BY CASE priority 
+            WHEN 'P0' THEN 1 
+            WHEN 'P1' THEN 2 
+            WHEN 'P2' THEN 3 
+            ELSE 4 
+        END, created_at ASC
+        LIMIT 5
+    ''', (agent_name,))
+    
+    tasks = cursor.fetchall()
+    conn.close()
+    return tasks
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python3 heartbeat_check.py <agent_name>")
@@ -79,9 +107,10 @@ def main():
     
     agent_name = sys.argv[1]
     
-    # 查询两个数据源
+    # 查询三个数据源
     kanban_tasks = query_kanban_tasks(agent_name, get_kanban_db_path())
     desktop_tasks = query_desktop_tasks(agent_name, get_tasks_db_path())
+    hermes_tasks = query_hermes_tasks(agent_name, get_hermes_tasks_db_path())
     
     # 合并并排序（P0优先）
     all_tasks = []
@@ -91,6 +120,9 @@ def main():
         all_tasks.append((t[0], t[1], priority, t[3], t[4]))
     
     for t in desktop_tasks:
+        all_tasks.append((t[0], t[1], t[2], t[3], t[4]))
+    
+    for t in hermes_tasks:
         all_tasks.append((t[0], t[1], t[2], t[3], t[4]))
     
     # 按优先级排序

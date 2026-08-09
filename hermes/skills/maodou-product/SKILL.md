@@ -4,7 +4,7 @@ description: '毛豆（产品经理）核心技能集 — 产品设计冲刺、�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 ## 公司当前阶段策略（2026-05-08）
@@ -24,7 +24,7 @@ metadata:
 1. **检查任务队列**：确认无 pending/in_progress 任务
 2. **错位清单（强制步骤 — 2026-07-30 新增）**：read_file 上次进化报告 + 最近 3 次报告，列出历史主题；本次必须明确标注「全新主题 vs 历史重复项」表格。重复项只做一句话索引，**不展开**。这是避免同质化（陷阱D）最有效的方法。
 2.5. **扫描协作者当日产出（2026-07-30 新增 — 与错位清单同等强制）**：团队中老莫/小宝/黑豆/阿福 每天都在持续调研、产生新资料。心跳开始时**先 `ls -t` 他们的当日产出目录**，重点找"协作者已调研但毛豆还没采用过的主题"。这是错位清单之外的第二个新主题来源，且天然与历史心跳错位。**关键判断**：心跳结束的"下一步行动计划"中，若仅是"自己调研"而没有"邀请协作者采用毛豆新结论"，就是遗漏了这个步骤。
-   - 老莫：`/Users/hua/rkr_staging/文档库/渔芯项目/04-学习笔记工作区/持续调研/`（每日多份，**实际路径不是 `/Users/hua/Desktop/渔芯科技/9-学习笔记/...`**——后者现已不存在；如该路径失效，可改用 `/Users/hua/rkr_staging/文档中转站/migration_20260730/desktop_yuxin/9-学习笔记/持续调研/` 备用）
+   - 老莫：`/Users/hua/rkr_staging/文档库/1-通用知识/114-项目开发与调研/持续调研/`（每日多份，**2026-08-09 实测路径**——注意不是旧 `/Users/hua/rkr_staging/文档库/渔芯项目/04-学习笔记工作区/...` 也不是 `/Users/hua/Desktop/渔芯科技/9-学习笔记/...`；如该路径也失效，用 `find /Users/hua/rkr_staging -name "持续调研" -type d` 定位）
    - 老莫：`~/.hermes/skills/aquaculture/ras-aquaculture/references/ras-industry-news-2026.md`（周更）
    - 小宝/黑豆/阿福：当日 workspace 产出（视任务而定）
 3. **行业研究**：搜索RAS循环水养殖最新研究和技术动态（优先使用本地知识库 + 老莫持续调研文件；如需 web 搜索，遵循 `ras-news-verification-playbook` skill 的核验标准，避免 browser_navigate 到 Google Scholar 等可能超时的站点）
@@ -44,16 +44,16 @@ metadata:
      - 08-01_00：**BCG Matrix（战略）— 12 仿真用例象限分布 + 资源 60%/收割/选择性投资分配 + 3 项反模式警示**
      - 08-01_08：**EOS  Entrepreneurial Operating System（战术）— 季度 Rocks + 周 Scorecard + IDS 会议**
      - 08-03_20：**Value Chain Analysis 波特价值链分析（战略）— 9 环节价值创造结构 + 价值洼地识别（服务/出料后勤）+ Q3 资源从 50%生产运营降至 35%，新增 15% 投服务+出料后勤**
-   - **下次心跳要求**：战略层和战术层各选一个时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）。战略层未用过的备选：Blue Ocean Strategy / Porters Five Forces / Value Chain Analysis；战术层未用过的备选：Lean Startup / Design Sprint / Design of Experiments
-   - **下次心跳要求**：战略层和战术层各选一个时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）。战略层未用过的备选：Blue Ocean Strategy / Porters Five Forces / Value Chain Analysis；战术层未用过的备选：Lean Startup / Design Sprint / Design of Experiments
+     - 08-09_00：**Design of Experiments 实验设计（战术）— 因子设计+响应面方法+功效分析三件套 + 与 Taguchi 形成「优化-验证」闭环 + CCD 中心复合设计 20 组标定模板**
+     - 08-09_H2：**Blue Ocean Strategy 蓝海战略（战略）— ERRC 四行动框架 + Strategy Canvas 战略布局图 + 三层非客户 + 六路径框架 + LookForge 在央企入局时代的蓝海定位**
+   - **下次心跳要求**：战略层和战术层交替使用时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）。当前状态：08-09_H2 战略层后，**下次强制回到战术层**。战略层未用过的备选：Porter's Five Forces（唯一未用战略层方法论，Blue Ocean Strategy 已于 08-09_H2 使用）；战术层未用过的备选：Lean Startup / Design Sprint
    - 📐 **Wardley Maps 完整方法论**：见 `references/wardley-maps-methodology.md`（含 LookForge 当前快照 + 季度复盘 SOP）
    - 📐 **Pugh Matrix 完整方法论**：见 `references/pugh-matrix-methodology.md`（含固液分离选型实操案例 + LookForge API 设计 + 在设备选型/品种选型的复用方案）
    - 📐 **Crossing the Chasm 完整方法论**：见 `references/crossing-the-chasm-methodology.md`（含 LookForge 鸿沟诊断 10 分制 + Whole Product 5 层缺口清单 + Bowling Pin 滩头选择 6 准则）
    - 📐 **BCG Matrix 完整方法论**：见 `references/bcg-matrix-methodology.md`（含 12 仿真用例象限分布实操 + 季度评审 SOP + 3 项反模式警示 + 4 象限资源分配公式）
    - 📐 **Value Chain Analysis 完整方法论**：见 `references/value-chain-analysis-methodology.md`（含 LookForge 9 环节价值创造结构 + 价值洼地识别 + Q3 资源从 50%生产运营降至 35% + 与 BCG 协同用法 + 6 个复用场景 + 3 项反模式警示）
-   - **下次心跳要求**：战略层和战术层各选一个时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）
-   - 📐 **Wardley Maps 完整方法论**：见 `references/wardley-maps-methodology.md`（含 LookForge 当前快照 + 季度复盘 SOP）
-   - 📐 **Pugh Matrix 完整方法论**：见 `references/pugh-matrix-methodology.md`（含固液分离选型实操案例 + LookForge API 设计 + 在设备选型/品种选型的复用方案）
+   - 📐 **Design of Experiments 完整方法论**：见 `references/doe-methodology.md`（含因子设计+响应面方法+功效分析三件套 + Taguchi-DOE 闭环 + CCD 20 组标定模板 + 3 项反模式警示 + LookForge 仿真参数标定实操案例）
+   - 📐 **Blue Ocean Strategy 完整方法论**：见 `references/blue-ocean-strategy-methodology.md`（含 ERRC 四行动框架 + Strategy Canvas 模板 + 三层非客户 + 六路径框架 + LookForge 实操 + 季度评审 SOP + 3 项反模式警示）
 5. **技能检查与同步**：检查~/.hermes/profiles/maodou/skills/目录完整性，若为空或不完整：
    - 先用`skills_list`查看当前所有可用技能
    - 通过`skill_view`加载需要的技能
@@ -746,7 +746,7 @@ GET /api/projects/{project_id}/metrics/summary
 - Google / Bing / Bing CN：全部超时
 - **唯一可用**：`baidu.com` 返回200但带安全验证（人机识别），无法解析搜索结果
 - **subagent 委托搜索**：用 `delegate_task(toolsets=['web'])` 经常超时（600s），返回结果质量不稳定
-- **解决方案**：**优先用本地知识库** `~/.hermes/skills/aquaculture/ras-aquaculture/references/ras-industry-news-2026.md` + AI论文库 + 老莫持续调研文件（`/Users/hua/rkr_staging/文档库/渔芯项目/04-学习笔记工作区/持续调研/`，**⚠️ /Users/hua/Desktop/渔芯科技/9-学习笔记/... 路径已不存在**），老莫负责日常更新；进化心跳只整理归纳，不强求实时新闻
+- **解决方案**：**优先用本地知识库** `~/.hermes/skills/aquaculture/ras-aquaculture/references/ras-industry-news-2026.md` + AI论文库 + 老莫持续调研文件（`/Users/hua/rkr_staging/文档库/1-通用知识/114-项目开发与调研/持续调研/`，**⚠️ 2026-08-09 实测路径**；旧 `/Users/hua/Desktop/渔芯科技/9-学习笔记/...` 和 `/Users/hua/rkr_staging/文档库/渔芯项目/04-学习笔记工作区/...` 均已不存在），老莫负责日常更新；进化心跳只整理归纳，不强求实时新闻
 - **行业资讯引用规范**：若需引用 RAS 行业新闻/趋势/竞品数据，必须遵循 `ras-news-verification-playbook` skill（阿福 owner）—— 三件套（标题+日期+URL）+ 3 个可独立验证关键点 + 引用边界（单一企业 ≠ 行业整体）
 
 ### ⚠️ 陷阱B：skill 内"当前开发文件"路径过期（2026-07-30 再次确认 + 2026-07-31 升级）
@@ -799,6 +799,21 @@ GET /api/projects/{project_id}/metrics/summary
   find /Users/hua/rkr_staging -name "HW-001_滚筒微滤机" -type d 2>/dev/null | head -1
   ```
 - **不要再相信旧路径**——直接 `find` 验证，所有对路径的"我记得是这样"都是陷阱
+
+### ⚠️ 陷阱G：老莫持续调研无新产出时的「深度挖掘」策略（2026-08-09_H2 新增）
+- 08-09_H2 心跳时老莫 08-02 后已 7 天无新调研产出，传统做法是「略过行业研究节」——但这会使心跳退化为纯方法论学习，错位清单缩水
+- **正确策略**：当老莫无新产出时，退回到**更早期的未吸收内容**：
+  - 扫描 7-14 天前的调研文件（如 07-31 固液分离对比），查找**被后续心跳跳过的论文/数据**
+  - 判断标准：论文 DOI 是否在任何心跳报告中出现过 → 未出现 = 可吸收
+  - 08-09_H2 实操：从 07-31 老莫调研中发现了 Pfeiffer 2024（低盐度泡沫分馏）和 Gregersen 2024（鼓滤网孔五级定量）2 篇从未被任何心跳吸收的论文
+- **不要**：在没有新产出的情况下强行编造行业动态 or 重复使用已多次引用的行业新闻（海大/央企/饲料）
+- **检查命令**：
+  ```bash
+  # 找 7-14 天前的调研文件
+  find /Users/hua/rkr_staging/文档库/1-通用知识/114-项目开发与调研/持续调研/ -name "*.md" -mtime +7 -mtime -21 | sort
+  # 逐一检查每篇论文 DOI 是否在心跳报告中出现过
+  grep -l "DOI" ~/.hermes/profiles/maodou/evolution/2026-08-*.md
+  ```
 
 **LookForge后端优化审计脚本**（`references/lookforge-backend-audit.md`）：
 ChromaDB健康度检查、PostgreSQL连接验证、查询延迟测量、Category分布分析、Chunk长度分布、并发瓶颈点识别。2026-05-07完成优化报告，输出至 `/共享资料/LookForge优化报告/LookForge后端优化报告_2026-05-07.md`。

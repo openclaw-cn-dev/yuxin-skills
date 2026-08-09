@@ -73,14 +73,15 @@ allowed-tools: terminal, file, cron, skills, todo, send_message
 4. 行业专业（RAS / AI 赋能 / Agritech）
 5. 宏观视野（中国经济 / 制造升级 / 出海）
 
-**信息源优先级（2026-07-19 更新）**：
-1. ✅ **arXiv 学术论文** → 技术前沿、最新算法、benchmark（AI Agent、智慧农业、计算机视觉等主题搜索效果极好）
-2. ✅ **中国政府网（gov.cn）** → 政策/宏观研究首选（首页直接浏览最新要闻和政策解读，不需深链）。实测：首页可获取讲话全文、政策文件库、经济数据速览等一手权威信息。注意 gov.cn 链接常重定向回首页（JS路由），优先用文本搜索框而非点击链接。
-3. ✅ 渔芯产品代码库扫描 → 找产品空白，产出可落地提案
-4. ✅ zhe 调研金矿索引 → 高 ROI 已筛选资料
-5. ✅ 行业公开常识 + 已有笔记 → 网络搜索失败时的 fallback
-6. ⚠️ 浏览器搜索（Bing）→ **English 商业/管理术语用国际版**（国内版会将 "lean management" 混淆为 Lean 编程语言），中文政策术语用国内版。优先跳转到具体文章页获取完整内容。
-7. ⚠️ `terminal` + `curl` 搜索 → Google 常超时、DuckDuckGo 结果稀疏，优先用 `browser_navigate` 方案
+**信息源优先级（2026-08-08 更新）**：
+1. ✅ **delegate_task 子代理调研**（2026-08-08 新增★）→ 并行派发 2-3 个调研子代理（各带 web/search toolsets），产出结构化报告。**实测效果最好**：子代理知识库深厚，即使实时搜索受限也能产出深度分析。比直接 `browser_navigate` 更快（无超时风险），比 `curl` 更丰富。详见 `references/delegate-task-research-pattern.md`
+2. ✅ **arXiv 学术论文** → 技术前沿、最新算法、benchmark（AI Agent、智慧农业、计算机视觉等主题搜索效果极好）
+3. ✅ **中国政府网（gov.cn）** → 政策/宏观研究首选（首页直接浏览最新要闻和政策解读，不需深链）。实测：首页可获取讲话全文、政策文件库、经济数据速览等一手权威信息。注意 gov.cn 链接常重定向回首页（JS路由），优先用文本搜索框而非点击链接。
+4. ✅ 渔芯产品代码库扫描 → 找产品空白，产出可落地提案
+5. ✅ zhe 调研金矿索引 → 高 ROI 已筛选资料
+6. ✅ 行业公开常识 + 已有笔记 → 网络搜索失败时的 fallback
+7. ⚠️ 浏览器搜索（Bing）→ **English 商业/管理术语用国际版**（国内版会将 "lean management" 混淆为 Lean 编程语言），中文政策术语用国内版。优先跳转到具体文章页获取完整内容。**cron模式下 Google 大概率超时**（60s），优先用 delegate_task 替代。
+8. ⚠️ `terminal` + `curl` 搜索 → Google 常超时、DuckDuckGo 结果稀疏（macOS grep 无 -P 支持），优先用 delegate_task 方案
 
 **6 段式笔记模板**（这是 6-22 验证过的结构）：
 1. **学习主题 + 信息源 + 关联业务**（30 字：写清从哪来、给谁用）
@@ -187,7 +188,7 @@ allowed-tools: terminal, file, cron, skills, todo, send_message
 | `execute_code` | ❌ 拦截（BLOCKED: cron jobs run without user to approve） | 用 `terminal` 单次执行，或拆成多个小步骤 |
 | `memory` tool | ❌ 不可用（"Memory is not available"） | 沉淀到笔记 / 写本地 memory_store L2 |
 | `send_message` | ❌ 自动交付被压制 | 最终响应就是汇报 |
-| `browser_navigate` | ⚠️ 可能慢/超时 | 优先 `terminal` + `curl`，arXiv 访问稳定可用 |
+| `browser_navigate` | ⚠️ 可能慢/超时（Google 60s 超时已验证） | 优先 delegate_task 子代理调研（见 `references/delegate-task-research-pattern.md`） |
 
 **✅ 已验证可用工具（2026-07-16 更新）**：
 - `todo` → 完全可用，适合追踪学习任务进度

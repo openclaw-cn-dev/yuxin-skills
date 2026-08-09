@@ -4,7 +4,7 @@ description: '老莫（知识库+测试）核心技能集 — 文档协作、产
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.21.0"
+  version: "1.24.0"
 ---
 
 # 老莫知识库核心技能
@@ -642,6 +642,74 @@ curl "https://api.openalex.org/concepts?search=aquaculture"
 - 已知领域 + 追踪新论文 → 用 `sort=publication_date:desc` + concept filter
 - 未知领域 + 试探性 → `per_page=10` + 关键词过滤后保留 top 3
 
+#### 3.5.5 含 `water quality` 关键词的 OpenAlex 污染陷阱（2026-08-09 第 12 轮实证）
+
+**问题**：`multi-parameter water quality prediction deep learning aquaculture` 在 OpenAlex 返回 2,424 条结果，但 **top 5 全部是非水产论文**：
+- 植物病害检测（AI Review, fwci=333）
+- 遥感水质监测（Sustainability）
+- 通用水质分类（J. Hydroinformatics）
+
+**根因**：`water quality` + `prediction` + `deep learning` 是计算机科学/环境科学的高频论文关键词，OpenAlex 的 `relevance_score` 排序在这些大领域论文上被拉高，导致真正的水产水质论文被推到 10+ 之后。
+
+**✅ 解决方案**：
+1. **必须加 `aquaculture` 限定词**（而非仅含在 search query 中）— 在脚本后过滤层做双条件判定
+2. **改用更细分的关键词**：「dissolved oxygen prediction RAS」「ammonia nitrogen forecasting aquaculture」比通用「water quality prediction」精准
+3. **缩小 per_page + 关键词后过滤**：`per_page=15`，然后在 top 15 中做 aqua+AI 双条件过滤，而非仅看 top 3
+4. **备选方向**：彻底避开 `water quality` 通用词，改用「DO prediction」「ammonia monitoring」「pH forecasting」等更细分的词汇
+
+**经验**（2026-08-09 验证）：
+- 第 12 轮 4 组关键词中，含 `water quality` 的查询 0/3 命中水产论文 → 该方向在 OpenAlex 上已严重污染
+- 改用 `stocking density`/`biofilter`/`cryptocaryoniasis` 等细分词汇后命中率恢复到 50%+
+- **建议**：未来避免在 OpenAlex 使用 `water quality` 作为主要搜索词，除非与 `RAS` 或 `recirculating` 等强限定词组合
+
+#### 3.5.6 「RAS」缩写污染陷阱（2026-08-09 第 13 轮实证）
+
+**问题**：`RAS predictive maintenance AI sensor` 在 OpenAlex 返回 2,036 条结果，但 **top 5 全部是非水产论文**：
+- 癌症 RAS 基因抑制药物（RMC-6236, fwci=333）
+- 工业数字孪生（Autonomous Digital Twins）
+- 可穿戴外骨骼传感器
+- 污水处理 AI
+
+**根因**：「RAS」在医学（Renin-Angiotensin System / 癌症 RAS 基因）、工业（Reliability/Availability/Serviceability）、环境科学（wastewater）都是极高频缩写。OpenAlex 无法区分缩写的领域上下文。
+
+**✅ 解决方案**：
+1. **始终使用全称**：`"recirculating aquaculture system"` 而非 `RAS`
+2. **或加限定词**：`RAS + aquaculture` / `RAS + recirculating` — 强制在搜索词中包含水产限定
+3. **脚本后过滤必须检查标题+概念**：即使 URL 用了全称，OpenAlex 仍可能返回非水产论文，必须在后过滤层做 aqua+AI 双条件判定（§3.5.3）
+
+**经验**（2026-08-09 第 13 轮验证）：
+- 4 组关键词中，含 `RAS` 缩写的查询 0/5 命中水产论文 → **RAS standalone 已完全不可用**
+- 改用 `recirculating aquaculture` 全称后命中率恢复到正常水平
+- **建议**：在 OpenAlex 查询中永远用 `"recirculating aquaculture"` 全称，仅在已限定 `+ aquaculture` 的情况下用 `RAS`
+
+#### 3.5.7 OpenAlex 极细分水产子领域覆盖盲区（2026-08-09 第 15 轮实证）
+
+**问题**：某些极细分的水产养殖子领域在 OpenAlex 上几乎没有论文覆盖。作为对比，通用方向（如 fish disease CV）返回 36 条结果，但极细分方向结果极少或为零。
+
+**实证数据（2026-08-09）**：
+| 查询关键词 | OpenAlex total | top 5 命中 | 水产相关 |
+|---|---|---|---|
+| `dissolved oxygen prediction DL recirculating aquaculture` | 15 | 2 relevant | ✅ 正常 |
+| `stocking density optimization ML fish farming` | 18 | 1 relevant | ⚠️ 稀疏 |
+| `fish disease detection DL CV aquaculture` | 36 | 3 relevant | ✅ 正常 |
+| `biofilter nitrification monitoring ML recirculating aquaculture` | **0** | — | ❌ 盲区 |
+
+**根因**：
+- 「biofilter nitrification + AI」是极细分交叉领域——水产工程（小领域）× 机器学习（大领域）的子子方向
+- OpenAlex 收录的论文主要来自主流期刊，这类超细分主题的论文可能只在会议论文集或极少数专业期刊出现
+- 「stocking density + AI」同理——养殖密度优化是实操话题，学术界 AI 论文聚焦在更通用的「生长预测」「水质预测」上
+
+**✅ 应对策略**：
+1. **发散搜索**：biofilter → 改用 nitrification + water treatment + ML（去掉 aquaculture 限定，扩大领域）
+2. **概念回溯**：stocking density → 回溯到 growth prediction（密度本质影响生长），用已有论文覆盖
+3. **接受盲区**：如果发散搜索仍未命中，标记该子领域为「OpenAlex 盲区」，在报告中注明而非反复重试
+4. **备选源**：极细分主题可尝试 Semantic Scholar（覆盖会议论文更全），但需容忍 S2 限流风险
+
+**判定阈值**：
+- OpenAlex total < 20 → 该子领域稀疏，降低期望
+- OpenAlex total = 0 → 盲区，换发散关键词或标记跳过
+- 连续 2 轮同一子领域 0 命中 → 标记为「已验证盲区」，3 个月内不重试
+
 #### 3.5.3 水产+AI 相关性过滤的进阶判定（避免假命中）
 
 **早期版（§3.3）**只检查论文是否包含水产关键词：
@@ -722,6 +790,17 @@ def is_relevant(work):
 | 疲劳 | 1-2 轮关键词重复 | 切换关键词（同方向）| Day 3-4 OpenAlex |
 | 方向饱和 | 2 轮方向全 0 命中 | 切换研究方向 | 第 10 轮 8 个新方向验证 |
 | 周期性低谷 | 跨源跨方向全 0 命中 | 标记 + 跳过 + 等 8 月 | 第 10 轮 8 方向 0 命中 |
+
+**🔄 低谷恢复信号（2026-08-08 第 11 轮实证）**：
+
+第 10 轮（08-01）标记"周期性低谷"后等待 7 天，第 11 轮（08-08）重启检索：
+- 4 个混合方向 → 4/4 方向有命中 → 10 篇新论文（Crossref 全部 200 OK）
+- **恢复判定信号**：
+  1. ✅ 间隔 ≥7 天（跨过欧洲暑期窗口）
+  2. ✅ 换用混合方向关键词（不局限于前轮覆盖区）
+  3. ✅ 首选源健康（OpenAlex 4/4 查询无 400/429）
+  4. ✅ 新命中的 fwci 分布正常（均值 >5，有 >10 的高影响力论文）
+- **经验**：低谷不是工具问题，是**学术出版周期**。标记低落后不应连续重试，应等待 ≥7 天后以混合方向重启。恢复时 4 方向中 ≥2 有命中即算恢复成功。
 
 ### 4. jupyter-live-kernel（数据分析）
 使用Jupyter进行数据探索、实验分析、可视化。
@@ -1442,6 +1521,44 @@ Walk-Forward（滚动）  : 训练始终在测试之前 -> 无信息泄漏 -> �
 
 > 📁 详细方法论笔记见 `references/walk-forward-validation.md`
 
+### 20. 影子模式测试 (Shadow Mode Testing)
+
+AI/ML 模型升级时的安全验证：新模型与生产模型并行运行，接收相同真实流量，但新模型的输出不返回给用户——仅记录差异用于对比。用户完全无感知。
+
+- **核心理念**：传统测试用历史数据评估模型（离线），影子测试用真实生产流量评估（在线，覆盖长尾分布）
+- **与 A/B 测试的区别**：A/B 分流用户 + 用户可见；影子测试全部流量双跑 + 用户不可见
+- **适用场景**：AquaSmart 预测模型升级、LookForge 仿真算法替换、AquaLink 异常检测模型迭代
+
+**渔芯推荐优先级**：
+  - 🔴 **P0**：AquaSmart DO/氨氮预测模型升级（bge-m3 → 新 embedding）— 验证预测值偏差分布、异常值一致性
+  - 🔴 **P0**：LookForge 投喂仿真算法升级（DDPG → PPO）— 验证投喂建议差异率、关键边界条件
+  - 🟡 **P1**：AquaLink 异常检测模型迭代（阈值法 → ML 分类器）— 验证告警重合率、漏报/误报变化
+  - 🟢 **P2**：鱼乐宝投喂建议 LLM prompt/模型切换 — 验证建议文本相似度、关键参数一致性
+
+**五大安全约束**：
+1. **影子失败不影响生产**：新模型异常/超时必须被 try/except 捕获，永不传播到用户
+2. **影子延迟不计入生产响应时间**：影子调用在返回生产结果后异步执行
+3. **采样率控制风险**：首次用 `sample_rate=0.1`，逐步提升到 1.0
+4. **差异阈值分场景**：水质预测 5%（物理连续值），投喂建议 10%（离散动作容差）
+5. **影子数据隔离**：影子结果写入独立日志/DB，不污染生产监控指标
+
+**发布门禁**：
+- `match_rate > 0.95` + `shadow_errors == 0` → READY（可 A/B 或全量切换）
+- `match_rate > 0.90` + `shadow_errors < 1%` → REVIEW（需人工审核差异案例）
+- `match_rate < 0.90` 或 `shadow_errors > 1%` → BLOCKED（不可发布）
+
+**与已有测试体系的结合**：
+```
+滚动回测     --- 离线，用历史数据验证外推能力（开发期）
+影子模式测试 --- 在线，用真实流量验证输出一致性（预发布期）  ← NEW
+A/B 测试     --- 在线，分流用户验证业务指标变化（灰度期）
+——三步递进：先滚动回测通过 → 再影子测试验证 → 最后 A/B 或全量切换
+```
+
+> **原则**：影子测试的核心价值在于「用真实流量发现离线测试看不到的问题」——长尾输入分布、生产延迟下的行为、与上下游的交互副作用。必须先通过离线测试再进入影子阶段。
+
+> 📁 详细方法论笔记见 `references/shadow-mode-testing.md`
+
 ## 关键陷阱与注意事项
 
 ### 1. 子Agent伪造研究数据
@@ -1625,6 +1742,30 @@ done
 - `failed` 涨，`uploaded` 同时降 → **worker 在跑但失败率高**（Ollama/downstream 问题）⚠️
 - `vectorized` 涨，`failed` 不变 → 健康
 - 数值突增 >5,000/4h → 必须在本轮进化报告中告警
+
+**⚠️ uploaded 积压判定阈值（2026-08-08 第 11 轮实证）**：
+
+| uploaded 数值 | 判定 | 应对 |
+|---|---|---|
+| <5,000 | ✅ 正常积压（Celery 消化中） | 无需关注 |
+| 5,000-15,000 | ⚠️ 偏高 | 检查 Celery worker 状态和 Ollama 可用性 |
+| >15,000 | 🔴 积压严重 | 必须在本轮报告告警 + 监控消化速率 |
+
+**NULL embedding_model 诊断模式（2026-08-08 第 11 轮新发现）**：
+
+当 `vectors.embedding_model IS NULL` 的 count >0 时，检查数学关系：
+```sql
+-- 验证公式：chunks - vectors = NULL embedding_model chunks
+SELECT
+  (SELECT COUNT(*) FROM document_chunks) as total_chunks,
+  (SELECT COUNT(*) FROM vectors) as total_vectors,
+  (SELECT COUNT(*) FROM vectors WHERE embedding_model IS NULL) as null_model,
+  (SELECT COUNT(*) FROM document_chunks) - (SELECT COUNT(*) FROM vectors) as diff;
+```
+- **若 `diff ≈ null_model`** → 这些 chunks 从未被生成向量（Celery worker 跳过或未触发）
+- **若 `diff > null_model`** → 部分 chunks 没有对应 vector 记录（数据完整性问题）
+- **根因**：Celery embedding worker 在某些文档类型上停止处理（如文件过大、格式不支持），但未正确标记 failed
+- **应对**：检查 Celery worker 日志中是否有跳过特定文档的模式，必要时手动触发重处理
 
 ### 11.1 failed 暴增的「OPC v2.x 孤儿记录」根因（2026-07-31 04:30 进化验证，**必须先排查**）
 

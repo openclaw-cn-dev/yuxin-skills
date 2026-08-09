@@ -1,10 +1,10 @@
 ---
 name: xiaobao-sales
-description: '小宝（销售+自媒体）核心技能集 — 49个B2B销售方法论（SPIN/Challenger/MEDDIC/JOLT/Sandler/Trusted Advisor/Eat Their Lunch/Sales Differentiation/Sales Acceleration Formula/CLRS/Narrative Economics/Compliance Cliff/政策窗口叠加/联合行动计划MAP/三段式决策节奏/Three Costs框架/Day-2跟进矩阵/央企下沉差异化/高鱼价对冲等）、RAS设备销售、B2B客户转化、自媒体内容运营、竞品应对、差异化策略、合规驱动销售、央国企生态合作、Cron 自我进化工作流、24小时紧急内容模板。触发条件：小宝执行销售跟进、客户转化、内容创作、自媒体运营、竞品分析、差异化策略、新法规解读（养殖尾水/环保/食品安全等）相关任务。'
+description: '小宝（销售+自媒体）核心技能集 — 50个B2B销售方法论（SPIN/Challenger/MEDDIC/JOLT/Sandler/Trusted Advisor/Eat Their Lunch/Sales Differentiation/Sales Acceleration Formula/CLRS/Narrative Economics/Compliance Cliff/政策窗口叠加/联合行动计划MAP/三段式决策节奏/Three Costs框架/Day-2跟进矩阵/央企下沉差异化/高鱼价对冲/Buyer Enablement等）、RAS设备销售、B2B客户转化、自媒体内容运营、竞品应对、差异化策略、合规驱动销售、央国企生态合作、Cron 自我进化工作流、24小时紧急内容模板。触发条件：小宝执行销售跟进、客户转化、内容创作、自媒体运营、竞品分析、差异化策略、新法规解读（养殖尾水/环保/食品安全等）相关任务。'
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.50.0"
+  version: "1.53.0"
 ---
 
 # 小宝销售+自媒体核心技能
@@ -105,6 +105,105 @@ metadata:
 - 不为保日更而凑数——按真实节奏
 
 
+
+---
+
+## 🆕 v1.52.0 升级（2026-08-08 20:51 cron 晚间进化 — Buyer Enablement + 国际源扫描路径）
+
+> 本轮定位：距离 8/3 午间档已过 5 天。① 学习并沉淀 Buyer Enablement（买家赋能）为第 50 个方法论；② 发现 cron 环境下国际水产源（Aquaculture Alliance / The Fish Site）适合用 python3 urllib 直连，国内搜索引擎（百度/搜狗）JS 渲染不可用。
+
+### 方法论 50：Buyer Enablement（买家赋能 / 内部推销官体系）
+
+**核心洞察**：B2B 复杂销售中，76% 的购买决策发生在你不在场的内部会议上。与其拼命说服客户，不如武装客户，让他替你说服他的老板和同事。
+
+**5 大框架**（每个均有 RAS 场景落地）：
+
+| # | 框架 | 一句话 | RAS 落地 |
+|---|------|--------|---------|
+| 1 | 买家作战手册 | 一页纸内部提案模板，对接人可"照读" | 土塘 vs RAS 亩产对比 + 水质/病害数据 → 打印带进老板办公室 |
+| 2 | 多角色价值地图 | 同一套产品翻译成不同角色关心的语言 | 老板=产值翻番 / 财务=2.5年回本 / 技术=水质稳定 / 运营=一人管多池 |
+| 3 | 异议预答工具包 | 预判 5-7 个反对意见 + 有数据的秒回话术 | 微信一页长图：太贵→回本表 / 太难→培训方案 / 坏了→质保 / 没用→同行案例 / 等巨头→少赚X万 |
+| 4 | 决策加速器（ROI计算器） | 填真实数据→自动生成盈亏平衡曲线 | 传统 vs RAS 三年 TCO Excel 模型，现场和客户一起填 |
+| 5 | 试点降低门槛 | 先上 1-2 池做对比，3 个月用数据说话 | 驻场指导 + 约定成功标准（存活率/生长速度）→ 达标全厂升级 |
+
+**社交金句**：
+- "最好的销售，不是你把产品卖给客户，而是你让客户帮你在他们公司内部卖你的产品。"
+- "顶级销售不靠口才说服，靠给客户递武器——让他在你不在的会议室里，照样打赢。"
+
+**与既有方法接力**：Buyer Enablement 的作战手册可作为三段式决策节奏（45th）启动档的"带走材料"；试点降低门槛是 Day-2 跟进矩阵（47th）D 类观望客户的标准动作。
+
+详见 `references/buyer_enablement_ras_guide.md`（含五大框架完整说明 + 异议预答话术表 + 试点合同要素）。
+
+### 工具：AI 短视频自动工厂（清单 #1）
+
+> 一句话→成品视频全自动 pipeline，日产 50 条短视频用于流量分成与带货。四阶段：脚本→配音→画面→mp4 合成，约 16s/条。详见 `references/ai_short_video_factory.md`。小宝工作目录：`小宝-商务运营/AI短视频工厂/pipeline.py`。
+
+### Cron 网络扫描·国际源可用路径（8/8 实测）
+
+> 本轮发现：cron 环境下 **python3 urllib 直连国际水产站点**比 curl 搜国内搜索引擎更可靠。
+
+| 源 | 方法 | 结果 | 说明 |
+**推荐工作流（cron 行业扫描）** （v1.53.0 更新优先级）：
+1. **优先**: `python3 urllib` 直连 **IntraFish** (`intrafish.com/aquaculture/`) — 商业信号最强（融资/审批/盈利）
+2. **次选**: Aquaculture Alliance / The Fish Site — 技术科普类
+3. 国内新闻降级用 8/2-8/3 已验证的 AKVA / Nofitech / 通威状态（标注"上次核验日期"）
+4. 如 delegate_task 子代理，在 context 中显式列出 curl 命令 + 明确要求真实执行（不可编造）
+5. 诚实标注：本轮未获取国内新动态时，优先尝试"**国际信号→国内映射**"模式（把国际 RAS 信号翻译为对国内养殖户的意义），仅当国际源也无增量时才用"诚实 0 新增"公式
+
+### 本轮内容产出（已存档）
+
+- `content/douyin/2026-08-08_ras_energy_saving_60s.md`：基于 Aquaculture Alliance 8 月研究的 RAS 节能 60s 脚本（6 段式，含 A/B 备选钩子）
+- `content/douyin/2026-08-08_ras_energy_saving_toolkit.md`：CTA 配套工具（国际研究摘要 + 三栏对比能量卡 + 私信承接话术）
+
+---
+
+## 🆕 v1.53.0 升级（2026-08-09 08:36 cron 早间档 — IntraFish 商业信号源 + 国际→国内映射模式）
+
+> 本轮三大发现：① IntraFish 是 cron 环境下**RAS 商业信号最强的免费国际源**（融资/审批/盈利，17 条可解析标题）；② "国际信号→国内映射"是比"诚实 0 新增"更优的降级策略；③ JOLT Effect 的 FOMU（搞砸恐惧）概念与 Buyer Enablement（方法 50）形成互补接力。
+
+### 新增 cron 扫描源：IntraFish（优先级 #1）
+
+| 对比项 | IntraFish 🥇 | Aquaculture Alliance 🥈 | The Fish Site 🥉 |
+|--------|------------|------------------------|-----------------|
+| 可解析性 | ✅ 17 条标题 | ⚠️ 部分 JS 渲染 | ✅ 少量科普标题 |
+| 内容类型 | **商业/融资/审批/盈利** | 技术科普 | 产业故事 |
+| 销售信号价值 | **高**（银行放款=资本投票，盈利=技术成熟度） | 中（技术趋势） | 低（科普） |
+| 访问 URL | `intrafish.com/aquaculture/` | `globalseafood.org/advocate/` | `thefishsite.com/` |
+
+详见 `references/intrafish_cron_scanning_guide.md`（含抓取命令、信号→内容映射表、国际→国内话术速查）
+
+**8/9 抓取到的关键信号**（用于内容创作）：
+- "Land-based farmer receives environmental authorization" → 环保审批绿灯
+- "Second cod farmer reports profitable year" → 鳕鱼 RAS 盈利拐点
+- "Land-based farmer secures $10 million loan" → 资本注入验证
+- "Ode becomes first ASC-certified cod farmer" → 认证体系覆盖 RAS
+- "Kingfish 'grateful' for Maine land-based farm's extension" → 缅因州陆基扩产
+
+### 新增内容策略：国际信号→国内映射
+
+**背景**：v1.51.0 的"诚实 0 新增"公式用于国内源 0 增量的场景。v1.53.0 发现：当国际源有新信号时，先尝试"**国际→国内映射**"比直接降级到"0 新增"产出更高。
+
+**映射逻辑**：
+1. 国际 RAS 信号 → 翻译为对国内养殖户的意义（"别人在过环保关→我们也会走到这一步"）
+2. 不编造国内对等事件，而是用"趋势+时间差"叙事（"他们现在走到这一步，我们 2-3 年内也会面对"）
+3. 配合 CTA 配套工具（如"RAS 全球成熟度对照表"）让客户对照自己的品种/阶段
+
+**8/9 实战验证**：基于 IntraFish 3 条信号（环保审批/盈利拐点/资本投票）产出了 A/B 双稿 60s 脚本 + RAS 全球成熟度对照表——比单纯的"本轮无国内新闻"更有销售力，也绝对诚实。
+
+### JOLT Effect 二次深化（补充 FOMU + 犹豫亚型二分法）
+
+**已有基础**：`references/jolt_effect_ras_guide.md`（v7/18）已覆盖完整 JOLT 四步框架。
+
+**本轮补充**：
+1. **FOMU（Fear of Messing Up，搞砸恐惧）** — 中国 RAS 养殖户"再想想"的心理锚点不是价格，是"全塘鱼死了谁负责"
+2. **犹豫亚型二分法**：评估型（选项间比较）→ JOLT 的 O+L；行动型（害怕犯错）→ JOLT 的 T
+3. **JOLT + Buyer Enablement 组合**：JOLT 破解犹豫 → Buyer Enablement 武装内部冠军
+
+### 本轮内容产出（已存档）
+
+- `content/douyin/2026-08-09_ras_global_validation_60s.md`：A/B 双稿，基于 IntraFish 三大信号
+- `content/douyin/2026-08-09_RAS全球成熟度对照表.md`：7 品种 × 5 信号 × 4 阶段行动指南
+- 进化报告：`evolution/2026-08-09_08.md`
 
 ---
 
