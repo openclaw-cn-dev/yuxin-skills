@@ -34,6 +34,10 @@ providers:
     base_url: https://openrouter.ai/api/v1
     model: nvidia/:free
     api_key_env: OPENROUTER_API_KEY
+  minimax-cn:
+    base_url: https://api.minimaxi.com/anthropic
+    model: MiniMax-M3
+    api_key_env: MINIMAX_API_KEY
 fallback_providers: []
 : {}
 toolsets:
@@ -150,13 +154,14 @@ bedrock:
     trace: disabled
 auxiliary:
   vision:
-    provider: auto
-    model: ''
-    base_url: ''
+    provider: zhipu-vision
+    model: glm-4.6v-flash
+    base_url: https://open.bigmodel.cn/api/paas/v4
     api_key: "***"
     timeout: 120
     extra_body: {}
     download_timeout: 30
+    api_key_env: ZHIPU_API_KEY
   web_extract:
     provider: auto
     model: ''
@@ -482,7 +487,7 @@ streaming:
   transport: auto
   edit_interval: 0.8
   buffer_threshold: 24
-  cursor: " \u2589"
+  cursor: ' ▉'
   : 60.0
 sessions:
   auto_prune: false
@@ -521,25 +526,5 @@ secrets:
 : 5
 : 2000
 _config_version: 26
-
-# ── Fallback Model ────────────────────────────────────────────────────
-# Automatic provider failover when primary is unavailable.
-# Uncomment and configure to enable. Triggers on rate limits (429),
-# overload (529), service errors (503), or connection failures.
-#
-# Supported providers:
-#   openrouter   (OPENROUTER_API_KEY)  — routes to any model
-#   openai-codex (OAuth — hermes auth) — OpenAI Codex
-#   nous         (OAuth — hermes auth) — Nous Portal
-#   zai          (ZAI_API_KEY)         — Z.AI / GLM
-#   kimi-coding  (KIMI_API_KEY)        — Kimi / Moonshot
-#   kimi-coding-cn (KIMI_CN_API_KEY)   — Kimi / Moonshot (China)
-#   minimax      (MINIMAX_API_KEY)     — MiniMax
-#   minimax-cn   (MINIMAX_CN_API_KEY)  — MiniMax (China)
-#   bedrock      (AWS IAM / boto3)     — AWS Bedrock (Converse API)
-#
-# For custom OpenAI-compatible endpoints, add base_url and key_env.
-#
-# fallback_model:
-#   provider: openrouter
-#   model: anthropic/claude-sonnet-4
+replicate:
+  token: "***"

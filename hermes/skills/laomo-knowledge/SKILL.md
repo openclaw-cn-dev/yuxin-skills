@@ -4,7 +4,7 @@ description: '老莫（知识库+测试）核心技能集 — 文档协作、产
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.24.0"
+  version: "1.27.0"
 ---
 
 # 老莫知识库核心技能
@@ -286,9 +286,16 @@ elif fwci and fwci >= 1.5:
 **注意事项**：
 - 新论文 fwci 可能为 None 或 0（数据未更新），不能因 fwci 缺失就排除
 - fwci 仅在 OpenAlex 有完整数据时才有；Crossref 无此字段
-- 排序策略：`fwci DESC` 比 `cited_by_count DESC` 更能发现高质量新工作
+- **排序策略**：`fwci DESC` 比 `cited_by_count DESC` 更能发现高质量新工作
 
-### 3.1.1 新刊识别扩展场景（2026-08-01 验证）
+**⚠️ fwci-review 偏差（2026-08-09 第16轮实证）**：在水产+AI 学术检索中，fwci>10 的论文**100%为综述性质**（本轮 fwci=49.26/30.94/20.09/11.65 的4篇全是综述），而高原创性研究往往 fwci 在 1.5-5 区间。如果仅按 fwci 排序，可能导致检索结果严重偏向综述文献，遗漏有价值的原创研究。
+
+**✅ 应对**：
+1. fwci 与 `cited_by_count` 联合排序：`fwci DESC NULLS LAST, cited_by_count DESC NULLS LAST`
+2. 标记综述类（title 含 "review"/"survey"/"advances"/"opportunities"）与原创研究分开评估
+3. 每轮检索后检查综述占比；若 >50% 则补充一次 `sort=publication_date:desc` 的原创研究扫描
+
+### 3.1.1 新刊识别扩展场景
 
 OpenAlex / Semantic Scholar 偶尔返回**全新 OA 期刊**的文章，所有 4 项鉴别法都通过，但期刊本身缺乏 IF 引用记录。JOSRAR（Journal of Science Research and Reviews，2024 年新刊）即此类型 — Crossref 已收录、作者真实、摘要技术细节清晰，但期刊 IF 未稳定。
 
@@ -486,7 +493,8 @@ KDOI = set(Path("/tmp/laomo_known_dois.txt").read_text().strip().split("\n"))
 - 每次新论文归档时 append 到 `/tmp/laomo_known_dois.txt`，避免下轮重复
 - 季度清理（每月 1 日）去除孤儿（30 天内未在检索集出现的 DOI）
 
-> 📁 论文发现记录见 `references/arxiv-papers-2026-07-31.md`（最新）、`references/arxiv-papers-2026-07-30.md`、`references/arxiv-papers-2026-07-26.md`
+> 📁 论文发现记录见 `references/arxiv-papers-2026-08-10.md`（最新，2026-08-10 R13 双桶策略）、`references/arxiv-papers-2026-07-31.md`、`references/arxiv-papers-2026-07-30.md`、`references/arxiv-papers-2026-07-26.md`
+> 🔧 可重用脚本：`scripts/openalex-ras-search.py`（双桶策略 + 双条件过滤 + None 防御）、`scripts/crossref-batch-verify.py`（Top N 批量验证）、`scripts/pgvector-health-check.py`（直连 PostgreSQL 知识库健康检查，绕过 RKR token 过期）
 > 📁 跨日 DOI 去重模式（2026-07-31 12:00 验证）见 `references/openalex-cross-day-dedupe.md`
 > 📁 OpenAlex 搜索精炼技巧 + 4 步饱和诊断法（2026-08-01 20:30 验证）见 `references/openalex-search-refinements.md`
 
@@ -499,6 +507,7 @@ KDOI = set(Path("/tmp/laomo_known_dois.txt").read_text().strip().split("\n"))
 - `"edge computing" + aquaculture + IoT`（❌ arXiv 0结果，2026-07-25验证 — 该方向论文集中在 OpenAlex，arXiv搜索可跳过）
 - `"YOLO" + aquaculture + "edge deployment"`（✅ 2026-07-25新发现 — YOLO系列是水产养殖视觉检测活跃方向，arXiv+OpenAlex均有产出）
 - `"underwater sensor" + "energy efficient" + aquaculture`
+- `"Cryptocaryon irritans" OR "white spot disease" + "machine learning" + aquaculture`（✅ 2026-08-09 验证 80% 命中率；2026-08-10 R13 再验证 71% = 5/7 — **双轮稳定，最值得作为主力关键词组**）
 
 > **注意**：多次重复查询后若返回相同论文（无新结果），应切换关键词或搜索方向，避免重复劳动。
 
@@ -520,6 +529,8 @@ KDOI = set(Path("/tmp/laomo_known_dois.txt").read_text().strip().split("\n"))
 | Day 5+ | 痛点方向 | `disease detection + fish + early warning` | OpenAlex | S2 |
 | Day 5+ | 痛点方向 | `feeding optimization + aquaculture + AI` | OpenAlex | S2 |
 | Day 5+ | 痛点方向 | `equipment failure + RAS + prediction` | OpenAlex | S2 |
+| **Day 7+** | **痛点方向（主力）** | `Cryptocaryon irritans + early warning + ML + aquaculture` | **OpenAlex** ✅ | — |
+| **Day 7+** | **痛点方向（细分）** | `biofilter nitrification + AI + recirculating aquaculture` | **OpenAlex** ✅ | — |
 | 宽泛兜底 | 综述方向 | `aquaculture + deep learning + review 2024-2026` | OpenAlex | arXiv（每月1-2次）|
 
 > **⚠️ 2026-08-01 升级**：Day 5+ 痛点方向首选源从 **S2 改为 OpenAlex**。S2 限流持续收紧（第 1 查询即 429），不再适合作为生产首选。S2 仅在 OpenAlex 0 命中时作为兜底（"last resort"）。如未来 S2 限流缓解，重新评估后恢复原策略。
@@ -565,7 +576,22 @@ KDOI = set(Path("/tmp/laomo_known_dois.txt").read_text().strip().split("\n"))
 - RAS robotic monitoring autonomous underwater   # RAS 机器人监测
 - edge AI aquaculture TinyML sensor data         # 边缘 AI（实测低命中，备选）
 - fish weight estimation regression underwater   # 体重回归估计
+- Cryptocaryon irritans early warning ML aquaculture  # 白点病早期预警（✅ 2026-08-09 验证：80%命中率；2026-08-10 R13 再验证：71% = 5/7，双轮验证稳定）
+- uneaten feed detection CV aquaculture          # 残饵视觉检测（precision-feeding 替代词，避开 OpenAlex 污染）
 ```
+
+**新增细分领域关键词组（2026-08-10 R13 验证高命中）**：
+- `feeding behavior monitoring AI fish farming` → 投喂行为监测（OpenAlex 2,761 条大词但精准命中 1 篇，建议作为辅助词组）
+- `biofilter nitrification AI recirculating aquaculture` → 极细分领域，81 条但精准命中 1 篇 RAS 直接相关
+
+**双轮稳定验证的关键词组**（连续 2 轮 cron 中命中率 ≥ 70% 的关键词组，可作为后续轮次的"主力关键词组"，无需轮转）：
+| 关键词组 | R12 命中率 | R13 命中率 | R14 命中率 | 稳定性 |
+|---|---|---|---|---|
+| Cryptocaryon irritans + ML | 80% | 71% | —（R14 未跑，503/429） | 🟢 稳定 |
+| biofilter nitrification + AI | — | 100% (1/1) | 100% (1/1) | 🟢 R14 验证通过，已稳定 |
+| RAS predictive maintenance AI sensor | — | — | 2/2 (top 5 内) | 🟡 待 R15 再验证 |
+
+> **稳定关键词组定义**：连续 2 轮 cron 中命中率 ≥ 70% 的关键词组，可作为后续轮次的"主力关键词组"，无需轮转。
 
 **经验法则**：
 1. **新关键词组 ROI 高于同方向近义词**：从「disease detection fish」换到「disease detection fish + early warning + multi-symptom」不如直接跳到「biofilter nitrification AI」
@@ -710,7 +736,201 @@ curl "https://api.openalex.org/concepts?search=aquaculture"
 - OpenAlex total = 0 → 盲区，换发散关键词或标记跳过
 - 连续 2 轮同一子领域 0 命中 → 标记为「已验证盲区」，3 个月内不重试
 
-#### 3.5.3 水产+AI 相关性过滤的进阶判定（避免假命中）
+#### 3.5.8 含 `precision feeding` 关键词的 OpenAlex 污染陷阱（2026-08-09 第 16 轮实证）
+
+**问题**：`precision feeding optimization aquaculture AI` 在 OpenAlex 返回 3,453 条结果，但 **top 5 100% 非水产**：
+- 精准农业（precision agriculture, edge computing, wireless sensor networks）
+- 食品完整性（food integrity, blockchain traceability）
+- 纳米材料传感（nanomaterials for food sensing）
+- 牛乳检测（dairy cow precision feeding）
+- 微藻生物燃料（microalgae cultivation optimization）
+
+**根因**：`precision feeding` + `optimization` + `AI` 是精准农业/食品工程的高频论文关键词，这两个领域远超水产养殖的学术产出量，OpenAlex 的 `relevance_score` 完全被跨领域论文淹没。同等查询用 `sort=publication_date:desc` 结果相同——该方向主流文献不在水产 AI 领域。
+
+**✅ 解决方案**：
+1. **废弃当前关键词**：`precision feeding optimization aquaculture AI` 在 OpenAlex 上 0% 命中水产，直接跳过
+2. **使用替代关键词**（更聚焦水产上下文）：
+   - `uneaten feed detection CV fish` → 残饵视觉检测（CV 方向，水产专属）
+   - `feeding behavior monitoring aquaculture` → 投喂行为监测
+   - `appetite detection fish farming AI` → 食欲检测
+3. **概念回溯**：precision feeding 本质是 feed conversion ratio (FCR) 优化的子问题 → 回溯到 `FCR prediction aquaculture`（已验证 4/5 命中）
+4. **接受盲区**：若替代词仍 0 命中，标记为「OpenAlex 盲区」——该方向的水产 AI 论文集中在 FCR/生长预测等上层主题
+
+**经验**（2026-08-09 第 16 轮验证）：
+- 3,453 条结果中 aqua+AI 双条件过滤后 0 篇幸存 → **precision-feeding 在 OpenAlex 上完全不可用**
+- 5 组关键词中仅此方向 0 命中，其他方向（growth-prediction/ammonia/cryptocaryon）均正常产出 → 排除 API 故障
+- **建议**：未来彻底避免 `precision feeding` 作为 OpenAlex 搜索词，改用 FCR/残饵/投喂行为等更细分的词汇
+
+#### 3.5.9 fwci 综述/原创研究分组排序法（2026-08-10 R13 验证）
+
+**问题**：fwci 排序会偏向综述（高被引导致 fwci 虚高），publication_date 排序会偏向最新论文（无论相关性）。单一排序策略无法同时兼顾「找到高质量综述」和「找到最新原创研究」。
+
+**实证（2026-08-10 R13）**：
+- 用 `fwci DESC` 排序 → 命中 fwci=30.86 综述（Processes Q1 AIoT 综述），但漏掉最新原创研究
+- 用 `publication_date DESC` 排序 → 最新 CS 通用论文霸榜，水产论文被推到 10+ 之后
+
+**✅ 推荐双桶策略**（一次检索，两种排序）：
+
+```python
+import urllib.request, json, time, urllib.parse
+
+UA = "mailto:research@yuxintech.com"
+keyword = "Cryptocaryon irritans early warning ML aquaculture"
+
+# 桶1：fwci 排序，找高质量综述 / 已被验证的研究（fwci NULLS LAST）
+url_high_impact = (
+    f"https://api.openalex.org/works?search={urllib.parse.quote(keyword)}"
+    f"&sort=relevance_score:desc,fwci:desc&per_page=5"
+    f"&filter=publication_year:2024-2026"
+)
+
+# 桶2：publication_date 排序 + relevance_score 兜底，找最新原创研究
+url_fresh = (
+    f"https://api.openalex.org/works?search={urllib.parse.quote(keyword)}"
+    f"&sort=publication_date:desc&per_page=10"  # 多取一些因为相关性会被新论文稀释
+    f"&filter=publication_year:2025-2026,from_publication_date:2025-09-01"
+)
+
+results_high, results_fresh = [], []
+for label, url in [("high_impact", url_high_impact), ("fresh", url_fresh)]:
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    data = json.loads(urllib.request.urlopen(req, timeout=20).read())
+    results = data.get("results", [])
+    filtered = [w for w in results if is_relevant(w)][:3]
+    if label == "high_impact":
+        results_high = filtered
+    else:
+        results_fresh = filtered
+    time.sleep(0.6)
+```
+
+**判定策略**：
+- 桶1命中 + 标题含 "review"/"survey"/"advances"/"opportunities" → 标 🔵 P0 综述参考
+- 桶1命中 + 标题不含综述词 + fwci>3.0 → 标 🔴 P0 原创必读
+- 桶2命中 + 桶1未命中 → 标 🟡 P1 最新原创（需进一步验证）
+- 桶1与桶2均未命中 → 跳过该关键词组
+
+**经验（2026-08-10 验证）**：
+- 单次只跑桶1（fwci 排序）+ 双条件过滤，本轮 4/4 验证通过率 100%
+- 桶2 在关键词较冷门时（如 `biofilter nitrification`，OpenAlex 仅 81 条）会自动去重，无需单独跑
+- 仅在关键词热门（OpenAlex total > 1000）时才需要桶2 兜底
+
+### 3.5.11 OpenAlex 503 「Search cluster recovers from heavy load」应对模式（2026-08-10 R14 实证）
+
+**问题**：OpenAlex 服务端在 high load 时会返回 **HTTP 503** + JSON 错误体 `{"error":"Search temporarily unavailable","message":"Anonymous search is paused while the search cluster recovers from heavy load. Please retry shortly, or use a free API key for uninterrupted access: https://openalex.org/rest-api."}`。这是 **HTTP 5xx 错误**，**不是限流（429）也不是参数错误（400）**——skill §3.5.4 仅覆盖了 400/429，没覆盖这个新错误类。
+
+**实证（2026-08-10 R14）**：
+- cron 启动后第一次 OpenAlex 查询：6 个查询**全部 HTTP 503**
+- 等待 90 秒后重试：恢复 200 OK ✅
+- 恢复后第一个查询立刻 429（限流未完全释放）→ 第二个查询 200 OK
+- 总等待成本：~120 秒 / 一轮 cron
+
+**根因（推测）**：
+- OpenAlex 共享 search cluster，anonymous（key-less）端点在负载高时优先降级
+- 与 IP/UA/搜索词无关，是平台全局策略
+- 重启后 cluster 缓存未完全 warm，限流状态延续
+
+**✅ 三阶段应对模式**：
+
+```
+阶段1（探测）
+  ↓ curl .../works?per_page=1 → 503
+阶段2（等 + 探针）
+  ↓ sleep 60-90 秒 + curl .../works?search=test&per_page=1 → 200 OK
+阶段3（轻量起步）
+  ↓ 第一个查询后 sleep 10s，避免立即进入生产查询
+  ↓ 从第 2 个查询开始按 time.sleep(0.6) 礼貌延迟正常节奏
+```
+
+**判定阈值**：
+- 单查询 503 + JSON 含 `"Search cluster recovers"` 字符串 → OpenAlex 服务端降级
+- 持续 ≤5 分钟 → 等待即可，**不要切换 S2/arXiv**（按 skill §3 指引 S2 限流更严，arXiv 月度补充）
+- 持续 >10 分钟 → 标记当日「OpenAlex 不可用」，跳过本日论文检索（异常记录到 evolution 报告）
+
+**经验法则**（2026-08-10 R14 沉淀）：
+1. **探测查询用 per_page=1**：最小成本确认服务可用性，不触发正式查询的资源消耗
+2. **不要立即重试 503 的查询**：OpenAlex cluster 需要时间恢复，连续请求会拖慢恢复
+3. **503 ≠ 周期性低谷**：与 §3.5.4 步骤 4 的"学术出版周期低谷"完全无关，是临时平台故障，不应标记 OpenAlex 不健康
+4. **503 后第一个查询预期会 429**：cluster 限流状态未完全释放，正常现象，继续 sleep 即可
+5. **fallback 路径**：503 持续时不应切到 S2（S2 已知 key-less 第 1 查询即 429），保持等待或当日跳过
+
+**完整恢复 SOP（cron 脚本模式）**：
+```python
+import time, urllib.request, json
+
+UA = "mailto:research@yuxintech.com"
+
+def probe_openalex(max_wait_sec=300, probe_interval=30):
+    """探测 OpenAlex 是否恢复，最多等 max_wait_sec"""
+    elapsed = 0
+    while elapsed < max_wait_sec:
+        try:
+            req = urllib.request.Request(
+                "https://api.openalex.org/works?search=test&per_page=1",
+                headers={"User-Agent": UA}
+            )
+            resp = urllib.request.urlopen(req, timeout=10)
+            if resp.status == 200:
+                return True
+        except urllib.error.HTTPError as e:
+            if e.code == 503:
+                # 服务端恢复中，按 §3.5.11 等待 + 重试
+                time.sleep(probe_interval)
+                elapsed += probe_interval
+                continue
+            elif e.code == 429:
+                # 限流未释放，再等
+                time.sleep(15)
+                elapsed += 15
+                continue
+            else:
+                raise
+        except Exception:
+            time.sleep(probe_interval)
+            elapsed += probe_interval
+    return False
+
+# 用法：cron 启动时
+if not probe_openalex(max_wait_sec=180, probe_interval=30):
+    # 当日跳过论文检索，记录到 evolution 报告
+    print("OpenAlex unavailable, skipping today")
+else:
+    # 第一个查询后 sleep 10s（避免 cluster 限流）
+    time.sleep(10)
+    # ... 正常执行检索
+```
+
+**历史日志**（不要重复踩）：
+- R14（2026-08-10）首次遇到 503，未在 skill 中预定义 → cron 多等 90 秒
+- 后续轮次如遇 503，**直接按本 SOP 处理**，不要再走 §3.5.4 步骤 4（标记低谷）
+
+### 3.5.10 OpenAlex `primary_location` None 防御式编程（2026-08-10 R13 实证）
+
+**问题**：OpenAlex 返回的 work 对象中，`primary_location` 字段**可能为 None**（无 DOI 的论文、未索引的预印本）。直接 `w.get("primary_location", {}).get("source", {}).get("display_name")` 会因 `NoneType.get` 抛 `AttributeError`。
+
+**实证（2026-08-10 R13）**：
+```python
+# ❌ 第一次实现（崩溃）
+venue = w.get("primary_location", {}).get("source", {}).get("display_name")
+# AttributeError: 'NoneType' object has no attribute 'get'
+```
+
+**✅ 安全写法**：
+```python
+# 方案A：链式 or 兜底（推荐，最简洁）
+venue = ((w.get("primary_location") or {}).get("source") or {}).get("display_name")
+
+# 方案B：显式 None 判断（可读性更好）
+pl = w.get("primary_location")
+venue = pl.get("source", {}).get("display_name") if pl else None
+```
+
+**经验法则**：
+- 任何 OpenAlex work 字段嵌套访问**都必须防御 None**
+- 高发 None 字段：`primary_location`、`open_access`、`authorships`、`concepts`、`best_oa_location`
+- 实战模式：批量处理 work 时用 `try/except` 包住字段提取，捕获 `AttributeError` 后跳到下一个 work（避免单个异常导致整个批次失败）
+
+### 3.5.3 水产+AI 相关性过滤的进阶判定（避免假命中）
 
 **早期版（§3.3）**只检查论文是否包含水产关键词：
 ```python
@@ -1558,6 +1778,63 @@ A/B 测试     --- 在线，分流用户验证业务指标变化（灰度期）
 > **原则**：影子测试的核心价值在于「用真实流量发现离线测试看不到的问题」——长尾输入分布、生产延迟下的行为、与上下游的交互副作用。必须先通过离线测试再进入影子阶段。
 
 > 📁 详细方法论笔记见 `references/shadow-mode-testing.md`
+
+### 21. 数据质量测试 (Data Quality Testing)
+
+验证数据本身是否可靠——填补测试金字塔中「数据层」的空白。传统测试验证「代码逻辑是否正确」，数据质量测试验证「输入数据是否可信」。在 IoT 传感器 + AI 驱动的 RAS 系统中，数据质量直接决定预测准确性和仿真可信度。
+
+- **核心工具**：Great Expectations（Python）、自定义 SQL 断言、pandas-profiling
+- **核心理念**：代码正确 ≠ 系统正确——如果输入数据本身就是脏的，再好的模型也会输出错误结果。数据质量测试是 AI/ML 系统的第一道防线。
+
+**六大数据质量维度**：
+
+| 维度 | 定义 | 渔芯检验方法 |
+|---|---|---|
+| **完整性** (Completeness) | 数据不缺失 | AquaLink 传感器心跳检测 — 每分钟应有 ≥1 条记录，缺失间隔 >5 分钟告警 |
+| **准确性** (Accuracy) | 数据反映真实值 | 传感器校准偏差检测 — DO 漂移 >0.5 mg/L/天 → 需重新校准 |
+| **一致性** (Consistency) | 跨源数据不冲突 | 同一鱼池 AquaLink 温度 vs 人工记录偏差 >2°C → 数据冲突 |
+| **时效性** (Timeliness) | 数据不过期 | 仿真输入数据时间戳 ≤7 天 → 过期数据标记为「历史参考」降权 |
+| **唯一性** (Uniqueness) | 无重复记录 | 传感器 1 秒内同一参数重复上报 → 去重保留最新值 |
+| **有效性** (Validity) | 符合业务规则 | DO 不应 >25 mg/L（过饱和上限）、pH 应在 5-10 范围、温度应在 -5~40°C |
+
+**渔芯适用场景**：
+- 🔴 **P0**：AquaLink 传感器数据管道 — 温度/DO/pH/氨氮每分钟上报，需验证完整性（是否丢包）、准确性（是否漂移）、有效性（是否超出物理极限）
+- 🔴 **P0**：LookForge 仿真参数库 — 参数来源于文献/实验，需标注来源和置信度，过时参数需标记
+- 🟡 **P1**：RKR 知识库文档 — 文档的 source/author/date 字段完整性，无来源的文档不可用于仿真参数提取
+- 🟡 **P1**：AquaSmart 预测训练数据 — 训练前执行数据质量门禁，拒绝低质量数据进入训练管线
+
+**快速实践 — Great Expectations 集成**：
+```python
+import great_expectations as ge
+
+df = ge.read_csv("sensor_data_2026-08-09.csv")
+
+# 完整性：温度字段不允许空值
+df.expect_column_values_to_not_be_null("temperature")
+
+# 有效性：温度应在 -5~40°C 范围
+df.expect_column_values_to_be_between("temperature", min_value=-5, max_value=40)
+
+# 时效性：时间戳不应超过 24h 延迟
+df.expect_column_max_to_be_between("timestamp",
+    min_value="2026-08-08T20:00:00", max_value="2026-08-09T20:00:00")
+
+# 唯一性：同一传感器+时间戳不应重复
+df.expect_compound_columns_to_be_unique(["sensor_id", "timestamp"])
+```
+
+**与已有测试体系的结合**：
+```
+数据质量测试 ─── 数据管道入口（数据采集层）    ← NEW
+属性基测试   ─── 行为不变量验证（业务逻辑层）
+蜕变测试     ─── AI/仿真无oracle场景验证
+变异测试     ─── 验证测试质量（代码层）
+混沌工程     ─── 系统韧性（基础设施层）
+```
+
+> **原则**：数据质量测试是测试金字塔的**数据层**补充——代码正确 ≠ 系统正确，如果输入数据本身就是脏的。优先从 P0 传感器管道开始，逐步扩展到仿真参数库和训练数据集。
+
+> 📁 详细方法论笔记见 `references/data-quality-testing.md`
 
 ## 关键陷阱与注意事项
 

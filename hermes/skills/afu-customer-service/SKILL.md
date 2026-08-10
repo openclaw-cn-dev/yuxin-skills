@@ -4,7 +4,7 @@ description: '阿福（客服）核心技能集 — 谈判、处理异议、说�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.28.0"
+  version: "1.32.0"
 ---
 
 ## 组合剧本战法结构（2026-08-03 N+30 沉淀 — 4 个组合技形成"客户旅程四点战法"）
@@ -1013,6 +1013,105 @@ metadata:
 
 **详细话术与 13 轮演练见**：[`references/commitment-consistency.md`](references/commitment-consistency.md)
 
+### 25. 新增：That's Right（终极认可信号）— 让客户说"你说得对"
+
+**来源**：Chris Voss《Never Split the Difference》
+
+**核心理念**：三个看似相似的词在客户嘴里天差地别——
+- "你说得对"（That's Right）= 客户在深层信念层面认同你 → 防御完全解除
+- "你是对的"（You're Right）= 客户在敷衍你 → 防御还在对话之下
+- "我知道了"（I See）= 客户在打发你 → 防御仍然完整
+
+**与已有技巧的定位差异**：
+- Mirroring #1 → 客户重复关键词
+- Labeling #2 → 客户确认情绪
+- "You're Right" #1 → 客户先获得认可
+- **"That's Right" #25 → 客户先做**总结**——比前 3 个更深一层**
+
+**渔芯实战示例**：客户对价格异议先质疑，经 DLX CAL 阶段后，被阿福精准总结："所以您最担心的是这套系统能不能在不出人命的情况下持续运行，对吗？" → 客户说 **"你说得对"** → 双方进入合作模式。
+
+**2 步流程**：
+1. **总结三阶段**：Mirroring（重复关键词）→ Labeling（标记情绪）→ Summary（总结全貌）
+2. **让客户说"你说得对"**——不是"你是对的"
+
+**核心金句**：
+- "客户说'你是对的'是敷衍，说'你说得对'才是真信。差别只在一个字，价值差一个量级。"
+- "摘要总比提问更接近'你说得对'。"
+
+**参考**：[`references/thats-right-technique.md`](references/thats-right-technique.md)
+
+### 26. 新增：Door-in-the-Face（闭门羹效应）— 先大后小的互惠让步
+
+**来源**：Cialdini et al.《Journal of Personality and Social Psychology》(1975) 原始实验
+
+**核心理念**：先提一个**故意会被拒绝的大请求**（"能不能签 5 年合同？"），客户拒绝后，再提**真正想要的小请求**（"那先做一次仿真测试？"）。客户从拒绝→同意的转换中，**感知到互惠式让步**（既然你退了一步，我也退一步）+ **感知对比**（5 年 vs 1 次仿真，1 次仿真突然变得"小"）。
+
+**与已有技巧的定位差异**：
+- Power of "No" #11 → 邀请客户说"不"获得掌控感
+- Loss Aversion #22 → 用损失驱动加速决策
+- **Door-in-the-Face #26 → 用互惠让步推进议程**——场上都是"是"，但都在变小
+
+**3 步骤流程**：
+1. **锚定大请求**："张总，这套系统如果签 5 年合作，整体价格能降到 72 万——您看怎么样？"
+2. **预期拒绝**："5 年太长了，我们先验证效果……"
+3. **后退小请求**："理解您要稳一点。那这样——我们先做一次仿真测试（完全免费），数据能让您看到效果，再谈下一步？"
+
+**5 大适用场景**：
+- 价格异议（先报整体方案，让客户拒绝"太多"，再推试点）
+- 售后套餐（先提 5 年质保加急服务，再退 2 年基础质保）
+- 仿真测试（先提付费深度定制仿真，再推免费标准仿真）
+- 升级套餐（先推全 AI 顶配，再退到基础 AI 套餐）
+- 决策推进（先提"今天签约"，再退到"今天看方案"）
+
+**伦理边界**：
+- ❌ 大请求必须是"客户能拒绝的合理方案"，不是把客户当傻子
+- ❌ 小请求必须是"你真正想要的"，不是幌子
+- ✅ 互惠让步是真的——你真把最好的条件放在小请求里
+
+**核心金句**：
+- "闭门羹的本质是'用退让换退让'——你退一步，客户退一步，双方都感觉自己赢了。"
+- "大请求和小请求之间的对比，不是数学题，是心理题。"
+
+**参考**：[`references/door-in-the-face-technique.md`](references/door-in-the-face-technique.md)
+
+### 27. 新增：Pre-Mortem（预设失败）— 用未来激活当下防御
+
+**来源**：Gary Klein *Performing a Project Premortem*, **Harvard Business Review** (2007)
+
+**核心理念**：传统提问"您想要什么？"让客户进入欲望模式；Pre-Mortem 反过来——"**假设半年后这次合作失败了，您觉得最可能的原因是什么？**"——让客户从当下跳到未来，进入"假设失败"模式，自动触发 Loss Aversion + 防御本能。这让客户**主动暴露隐性恐惧**，而不是等待他准备好"砍价话术"。
+
+**与已有技巧的定位差异**：
+- **vs Loss Aversion #22**：Loss Aversion 是"第三人称描述损失"（您每年损失 80 万）；Pre-Mortem 是"让客户自己假想失败场景"——激活更深层的隐性恐惧
+- **vs Socratic Method #20**：Socratic 探索"过去和现在"，Pre-Mortem 探索"未来"
+- **vs Ladder of Inference #19**：Ladder 帮客户从结论下到事实；Pre-Mortem 帮客户从当下跳到未来，识别尚未发生的风险
+- **vs Calibrated Questions #16**：Calibrated 提供"如何/什么"问题模板；Pre-Mortem 是"假想时间"问题模板
+
+**3 步骤流程**：
+1. **假设失败**："假设半年后这次合作失败了，您觉得最可能的原因是什么？"
+2. **列举原因**："您能想到 3 个具体的原因吗？"（让客户列举，过程即显性化）
+3. **转化为最小行动**："我们针对最担心的那个风险点，做一个最小验证，可以吗？"
+
+**6 大实战场景**：
+- 犹豫不决 / 僵局沉默 / 升级投诉 / 价格异议 / 竞品对比 / 长期客户维护
+
+**6 组合配方**：
+- Pre-Mortem × Power of "No" / 信任螺旋 / Socratic / Loss Aversion / FM Voice×Disarming / EBA
+
+**6 条避坑原则**：
+1. 不要直接问"您有什么顾虑"——客户会回避
+2. 用第三人称增加客户安全感（"您的同行圈子里的人会怎么看？"）
+3. 不要让 Pre-Mortem 变成恐吓
+4. 假设时间要近且具体（6-12 个月是黄金窗口）
+5. 一定要接 Closing the Loop 的最小行动
+6. 时间窗口不要超过 1 年（远期未来激活"乐观偏差"）
+
+**核心金句**：
+- "客户不知道自己想要什么，但他能告诉你他害怕什么。"
+- "传统的提问是'您想要什么'，Pre-Mortem 是'您假设失败的话，原因是什么'——前者激活欲望，后者激活防御本能。"
+- "所有拒绝背后都有一个未表达的未来恐惧。Pre-Mortem 是把这个恐惧从潜意识拉到饭桌上最优雅的方式。"
+
+**参考**：[`references/pre-mortem-technique.md`](references/pre-mortem-technique.md)
+
 ### 2. influence-psychology（影响力心理学）
 六原则在客服场景的应用：
 - 互惠：先提供帮助
@@ -1163,6 +1262,14 @@ ERRC框架重新定义价值主张。
 - `references/ras-industry-2026-07-31.md` — 7/31 12:00 抓取版 ⭐ Nernst 200万美元种子轮 / EUSeA Blue Foods / BIO-UV €2010万 / CSIRO 4个月热浪预报
 - `references/ras-industry-2026-07-31-afternoon.md` — 7/31 16:00 抓取版（15:00-16:30 CST 窗口） 🆕 挪威 Ode 鳕鱼首次盈利 / 章鱼 RAS 撤资伦理案例 / BIO-UV 售后+10%
 - `references/ras-industry-2026-08-03.md` — 8/3 抓取版 ⭐ Nernst 现场制氧 200 万美元种子轮 / CSIRO 海洋热浪 4 个月预警入围 Eureka 奖 / Outrigger 1 亿美元蓝色经济基金
+- `references/ras-industry-2026-08-09.md` — 8/9 抓取版 ⭐ Ventisqueros 99.4% 废物回收 / Troutlodge 三倍体鳟鱼遗传评估 / EU CATCH 平台
+- `references/ras-industry-2026-08-10.md` — 8/10 抓取版 🆕🆕🆕🆕 日本埼玉大学智能能源管理（RAS 用电 −17.8%, 碳排放 −31.9%）/ 西班牙首个 RAS 鲑鱼 Norcantabric 落成（年产 3,000 吨）/ 澳大利亚 Petuna 投 1,300 万澳元建 RAS 孵化场（99% 水循环, 州长站台）
+- `references/thats-right-technique.md` — 技巧 #25 "That's Right" 终极认可信号（08-08 沉淀）
+- `references/door-in-the-face-technique.md` — 技巧 #26 闭门羹效应（08-09 沉淀）
+- `references/pre-mortem-technique.md` — 技巧 #27 预设失败（08-10 沉淀）
+- `references/double-no-engine-drill.md` — 双「不」引擎实战演练（08-09 沉淀，PoN #11 × DITF #26 联动）
+- `references/trust-spiral-loss-aversion-drill.md` — 信任螺旋 × Loss Aversion 联合实战演练（08-09 沉淀）
+- `references/技巧选择矩阵盲测-v3.0.md` — 盲测第 3 版（08-03 沉淀，26 题含 4 个组合剧本 + Jujitsu #24）
 
 ### 组合剧本（4 个 — 客户旅程四点战法）
 - `references/combo-script-authority-unity.md` — 组合剧本 #1：Authority × Unity = "专家型战友"（陌生人 → 加入者）

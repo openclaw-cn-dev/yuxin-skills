@@ -13,6 +13,14 @@ related_skills:
 
 # 渔芯 9-Agent 集中管理（2026-08-01 整理）
 
+## 运维参考（按需加载）
+
+- `references/agent-health-scan.md` — 全员 Agent 健康码扫描：gateway PID + 飞书连接 + LLM 错误 + cron 执行，一键四维诊断（触发：检查同事是否正常）
+- `references/approval-failure-diagnosis.md` — 飞书审批按钮 Unauthorized 诊断：session 过期 → approvals.mode: smart（触发：手动批准不了 / 按钮点不了）
+- `references/cron-jobs-provider-migration.md` — cron jobs.json 批量迁移废弃 provider：deepseek-direct → deepseek-cn 模板（触发：Unknown provider 报错）
+
+---
+
 ## 一、问题背景
 
 **散落状态（2026-08-01 之前）：**

@@ -4,7 +4,7 @@ description: '毛豆（产品经理）核心技能集 — 产品设计冲刺、�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
 ## 公司当前阶段策略（2026-05-08）
@@ -46,7 +46,11 @@ metadata:
      - 08-03_20：**Value Chain Analysis 波特价值链分析（战略）— 9 环节价值创造结构 + 价值洼地识别（服务/出料后勤）+ Q3 资源从 50%生产运营降至 35%，新增 15% 投服务+出料后勤**
      - 08-09_00：**Design of Experiments 实验设计（战术）— 因子设计+响应面方法+功效分析三件套 + 与 Taguchi 形成「优化-验证」闭环 + CCD 中心复合设计 20 组标定模板**
      - 08-09_H2：**Blue Ocean Strategy 蓝海战略（战略）— ERRC 四行动框架 + Strategy Canvas 战略布局图 + 三层非客户 + 六路径框架 + LookForge 在央企入局时代的蓝海定位**
-   - **下次心跳要求**：战略层和战术层交替使用时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）。当前状态：08-09_H2 战略层后，**下次强制回到战术层**。战略层未用过的备选：Porter's Five Forces（唯一未用战略层方法论，Blue Ocean Strategy 已于 08-09_H2 使用）；战术层未用过的备选：Lean Startup / Design Sprint
+     - 08-09_16：**Design Sprint 设计冲刺（战术）— 5 天 Map-Sketch-Decide-Prototype-Test + LookForge 4 个未验证假设 Sprint 排期（H1分享/H2 ROI理解/H3碱度警报/H4央企竞标）+ 反模式警示（范围蔓延/完美原型/跳过测试/假客户）**
+     - 08-10_04：**Porter's Five Forces 波特五力（战略）— 5 力结构（供应商/购买者/进入者/替代品/现有竞争）+ LookForge 行业 3 绿 2 黄评分 + 与 BCG/VCA/Blue Ocean 形成战略方法论完整闭环 + 反模式警示（列表练习/只看现状/与SWOT混用/忽略互补品）**
+   - 08-10_08：**Lean Startup 精益创业（战术）— Build-Measure-Learn + Innovation Accounting + Pivot or Persevere + 指标仪表盘 MVE `/metrics` 端点设计（7 字段）+ 4 项 Sprint 假设重审 + 战略+战术方法论 6 层完整闭环（Porter+BCG+VCA+Blue Ocean+Design Sprint+Lean Startup）**
+   - **下次心跳要求**：战略层和战术层交替使用时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）。当前状态：08-10_08 战术层（Lean Startup）后，**下次强制回到战略层**。战术层至此全部覆盖完毕（JTBD/ECD/OST/Taguchi/Pugh/FMEA/EOS/DOE/Design Sprint/Lean Startup = 10 个战术方法论）；战略层 5 个已覆盖（Wardley/Chasm/BCG/VCA/Blue Ocean/Porter 五力），备选还有 Ansoff Matrix / GE McKinsey Matrix / ADL Matrix，或**Q3 末 Porter 五力复盘（2026-09-30 截止）**——优先做季度复盘作为战略方法论实战化。
+   - ⚠️ **战略/战术分层轮换的反模式（陷阱 H 衍生 — 2026-08-10 新增）**：备选清单中出现 N 次 ≠ 实际使用过。Porter 五力在备选清单中出现 6 次（07-31_12 / 08-01_00 / 08-03_20 / 08-09_00 / 08-09_H2 / 08-09_16），但直到 2026-08-10_04 才被首次实际应用——这意味着前 6 次心跳都被"分层原则正确"误判，实际"战略层"从未真正覆盖。**修正**：轮换原则应基于「上次实际使用过的层级」而非「上次应该去的层级」。未来分层规则改为：检查 evolution_log.md 最近 3 次心跳中**实际应用的**方法论层级，而非备选清单。
    - 📐 **Wardley Maps 完整方法论**：见 `references/wardley-maps-methodology.md`（含 LookForge 当前快照 + 季度复盘 SOP）
    - 📐 **Pugh Matrix 完整方法论**：见 `references/pugh-matrix-methodology.md`（含固液分离选型实操案例 + LookForge API 设计 + 在设备选型/品种选型的复用方案）
    - 📐 **Crossing the Chasm 完整方法论**：见 `references/crossing-the-chasm-methodology.md`（含 LookForge 鸿沟诊断 10 分制 + Whole Product 5 层缺口清单 + Bowling Pin 滩头选择 6 准则）
@@ -54,6 +58,9 @@ metadata:
    - 📐 **Value Chain Analysis 完整方法论**：见 `references/value-chain-analysis-methodology.md`（含 LookForge 9 环节价值创造结构 + 价值洼地识别 + Q3 资源从 50%生产运营降至 35% + 与 BCG 协同用法 + 6 个复用场景 + 3 项反模式警示）
    - 📐 **Design of Experiments 完整方法论**：见 `references/doe-methodology.md`（含因子设计+响应面方法+功效分析三件套 + Taguchi-DOE 闭环 + CCD 20 组标定模板 + 3 项反模式警示 + LookForge 仿真参数标定实操案例）
    - 📐 **Blue Ocean Strategy 完整方法论**：见 `references/blue-ocean-strategy-methodology.md`（含 ERRC 四行动框架 + Strategy Canvas 模板 + 三层非客户 + 六路径框架 + LookForge 实操 + 季度评审 SOP + 3 项反模式警示）
+   - 📐 **Design Sprint 完整方法论**：见 `references/design-sprint-lookforge-application.md`（含 5 天 Map-Sketch-Decide-Prototype-Test 框架 + LookForge H1-H4 四假设 Sprint 排期 + 4 项反模式警示 + 与精益创业组合用法）
+   - 📐 **Porter's Five Forces 完整方法论**：见 `references/porter-five-forces-methodology.md`（含 5 力评分表 + LookForge 3 绿 2 黄实操 + 战略方法论完整闭环图（BCG+VCA+Blue Ocean+Porter 四支柱）+ 4 项反模式警示 + 季度五力复盘 SOP）
+   - 📐 **Lean Startup 完整方法论**：见 `references/lean-startup-methodology.md`（含 Build-Measure-Learn 闭环 + Innovation Accounting 三阶段 + Pivot-or-Persevere 决策框架 + 指标仪表盘 `/metrics` 端点设计（7 字段）+ 4 项反模式警示 + 当前 4 个 Sprint 假设重审 + 战略+战术方法论 6 层完整闭环）
 5. **技能检查与同步**：检查~/.hermes/profiles/maodou/skills/目录完整性，若为空或不完整：
    - 先用`skills_list`查看当前所有可用技能
    - 通过`skill_view`加载需要的技能
@@ -669,74 +676,16 @@ grep -rn "console\.log" src/ --include="*.tsx" --include="*.ts" | grep -v node_m
 > 🔧 **管道系统架构**：管道双自动模式、断管串联、连接件端口系统、面板分离规则，参阅 `references/ras-cad-pipe-architecture.md`。
 > ⚡ **性能优化检查清单**：Post-V2 优化流程（store订阅、memo审计、console清理、CSS冲突），参阅 `references/ras-cad-optimization-checklist.md`。
 
-## 精益创业在LookForge的应用（毛豆进化2026-07-29新增）
+## 精益创业在LookForge的应用（毛豆进化2026-07-29首次引入，2026-08-10_08 首次完整方法论化）
 
-> 与JTBD互补：JTBD回答"用户雇我们做什么工作"，精益创业回答"我们怎么验证假设、最小化浪费"。LookForge当前最缺的不是更多功能，而是 **Innovation Accounting（创新会计）数据反馈循环**。
+> 与JTBD互补：JTBD回答"用户雇我们做什么工作"，精益创业回答"我们怎么验证假设、最小化浪费"。
+> **完整方法论（含 Build-Measure-Learn / Innovation Accounting / Pivot or Persevere / `/metrics` 端点设计 / 4 个 Sprint 假设重审 / 战略+战术方法论 6 层闭环）**：见 `references/lean-startup-methodology.md`。
 
-### Build-Measure-Learn 闭环（反向规划）
+### 历史脉络（保留——说明方法论是如何演进的）
 
-```
-1. 想学什么？ → 假设 H（例："设备商愿意把LookForge方案作为客户提案附件"）
-2. 如何衡量？ → 指标 M（例："分享按钮点击率 > 30%"）
-3. 最小产品？ → MVP/MVE（例：仅 chat_simulation API + Web表单）
-4. 跑实验 → 收集数据 → 验证/推翻 H → 下一轮
-```
-
-### 三种增长引擎选择（**LookForge只能用一种**）
-
-| 引擎 | 适用前提 | LookForge判断 |
-|------|----------|---------------|
-| **黏性增长**（高留存低流失） | SaaS产品 | ⚠️ 尚早，设备商使用频次未起来 |
-| **病毒式增长**（Viral>1） | C端裂变 | ❌ 不适用，LookForge是B端工具 |
-| **付费增长**（LTV>CAC） | 决策链短的B端 | ✅ **唯一现实路径** — 设备商"小决策链+高客单价"，LTV/CAC>3即可启动增长 |
-
-### Innovation Accounting 三阶段
-
-1. **Baseline（建立基线）**：LookForge当前月活设备商数、对话式仿真调用次数、ROI计算后客户转化率 — **没有Baseline无法判断后续调优**
-2. **Tune the Engine（调优引擎）**：A/B测试不同对话开场白、不同ROI展示方式、不同分享入口
-3. **Pivot or Persevere（坚持或转型）**：若3个月后设备商留存<40%，转型做"白标版本给设备商嵌入官网"
-
-### 最小可行实验（MVE）标准设计模板
-
-**假设H1**（设备商分发场景）：设备商愿意把LookForge方案作为"客户提案附件"使用。
-- **最小产品**：仅 `POST /chat` 接口 + Web表单（"我在XX想养YY，ZZ方水体，多久回本？"）+ "分享给客户"按钮
-- **指标**：设备商主动转发率（点击分享按钮的比例）
-- **判定**：>30%转发 = 验证成立；<10% = 需重新理解Job
-- **周期**：2周开发 + 2周客户测试
-
-### 对LookForge当前工作的关键启示
-
-1. **停止"功能优先"瀑布思维**：当前Phase 6开发重心在"仿真算法齐全"，但JTBD+精益创业双重视角下，**设备商最关心"快速生成客户能看懂的方案"**。下一Sprint应优先做"方案PDF导出+ROI计算升级"，**不再增加新仿真算法**
-2. **建立可衡量指标仪表盘**：在LookForge后端加 `/metrics` 端点，记录chat调用次数/品种分布/区域分布/回本周期查询次数/方案导出次数。**没有这些数据无法判断"调优引擎"是否生效**
-3. **每月1号"坚持或转型"评审**：固化机制——每月1号检查上月指标，决定"继续做"还是"调整定位"。当前已积累足够Phase 1-7文档，**缺的不是方案，而是数据反馈循环**
-
-> ⚠️ **避免进化心跳常见陷阱**：上面三条启示看起来"老生常谈"，但每次进化心跳都会重复提。真正关键的是**有具体人/具体时间/具体指标**——下次心跳必须问"上月指标涨了多少？""种子客户访谈做了吗？"，不能用"建议加强指标监控"这类空话混过去。
-
-### 指标仪表盘 MVE 设计（毛豆进化2026-07-30新增）
-
-> 配套使用：与上面"创新会计 Baseline"配套，本节给出**具体的端点设计 + 5 字段最小可用版本**。
-
-**Innovation Accounting Baseline 之所以一直建不起来，是因为没人设计最小可用端点**。下面是 2026-07-30 进化心跳确定的具体方案：
-
-```python
-# 端点 1：埋点写入
-POST /api/projects/{project_id}/metrics
-Body: { "event": "chat_completed" | "roi_queried" | "pdf_exported", "meta": {...} }
-
-# 端点 2：聚合查询
-GET /api/projects/{project_id}/metrics/summary
-→ {
-    "chat_total": int,
-    "species_distribution": {"石斑鱼": 45, "加州鲈": 32, ...},
-    "region_distribution": {"广东": 28, "福建": 22, ...},
-    "roi_queried": int,
-    "pdf_exported": int  # ← H1 假设验证关键指标
-  }
-```
-
-**工作量**：后端 0.5 人天 + 前端 1 人天 + 埋点 0.5 人天 = **总计 2 人天，可在 2026-08-01 前完成**。
-
-完整设计 + 5 字段优先级 + 配套前端 + AI 论文库 5 篇新论文洞察 → `references/lookforge-metrics-and-papers-2026-07.md`
+- **2026-07-29**：在「精益创业在LookForge的应用」章节首次引入 Lean Startup 三件套（Build-Measure-Learn + Innovation Accounting + Pivot-or-Persevere），但**仅引用约 60 行**未作为正式方法论学习。
+- **2026-07-30**：指标仪表盘 MVE 设计——`/metrics` 端点 + 5 字段最小可用版本（chat_total / species_distribution / region_distribution / roi_queried / pdf_exported）。
+- **2026-08-10_08**：作为战术层第 10 个方法论**首次完整正式应用**，补全 7 字段（含 `pdf_shared` / `anoxia_warned` / `alkalinity_alert_triggered`）+ Pivot-or-Persevere 决策阈值表 + 与 Design Sprint 的组合用法。
 
 ## 进化心跳模式的关键陷阱（毛豆2026-07-29实测汇总）
 
@@ -815,6 +764,42 @@ GET /api/projects/{project_id}/metrics/summary
   grep -l "DOI" ~/.hermes/profiles/maodou/evolution/2026-08-*.md
   ```
 
+### ⚠️ 陷阱H：「备选清单」≠「实际使用」（2026-08-10 新增 — 元方法论陷阱）
+- Porter 五力在「下次心跳要求」备选清单中出现 **6 次**（07-31_12 / 08-01_00 / 08-03_20 / 08-09_00 / 08-09_H2 / 08-09_16），但直到 2026-08-10_04 才被首次实际应用——前 6 次都被其他方法论「抢先」占用
+- **根本原因**：分层原则（战略 vs 战术）原本是「选未使用过的层级」，但被错误实现为「选层级内第一个未用的方法论」——结果战略层 6 次都「应该」选 Porter，但实际都被 BCG/VCA/Blue Ocean 等其他战略方法论占用
+- **修正规则**（已在「下次心跳要求」节追加）：
+  - 轮换原则应基于「上次实际使用过的层级」（查 evolution_log.md 最近 3 次心跳）
+  - **不要**仅基于备选清单判断「战略/战术哪个未用」——同一层级内还有 5-6 个方法论，必须按"该层级实际使用次数"判断
+  - **新增校验命令**：
+    ```bash
+    # 最近 3 次心跳用了什么方法论？
+    grep -E "^\- 0[78]-" ~/.hermes/profiles/maodou/evolution/2026-*.md | tail -10
+    # 应有：3 次连续的层级交替（战略→战术→战略 或 战术→战略→战术）
+    ```
+- **本节自我引用**：本陷阱的发现正是 Porter 五力应用后产生的——**「战略方法论完整闭环」判断本身就需要 Porter 来验证**，这反过来证明 Porter 缺位会让「战略层判断」沦为盲人摸象
+
+### ⚠️ 陷阱I：多论文综述的"伪吸收"陷阱（2026-08-10 新增 — 老莫调研论文吸收规则）
+- 老莫 07-23 调研 `2026-07-23_生物滤池_碱度化学品调控与动态优化建模最新进展.md` 是**单文件多论文综述**——包含 3 个独立 DOI：
+  - Qi & Vielma 2026（DOI: 10.1016/j.aquaeng.2026.102726）— **碱度化学品对比**
+  - Montjouridès et al. 2025（DOI: 10.1016/j.aquaeng.2024.102492）— **碱度动态建模**
+  - Yang et al. 2026（DOI: 10.1016/j.aquaculture.2025.742941）— **微生物组繁荣状态**
+- 08-09_16 心跳只吸收了 Montjouridès（碱度建模）一篇，**Qi 化学品对比 + Yang 微生物组繁荣完全未展开**
+- **错误判断**：「07-23 调研已部分吸收」 → 跳过
+- **正确判断**：把单文件多论文综述当作 **N 个独立吸收单元**，每个 DOI 独立计数
+- **修正规则**：
+  - 老莫的"持续调研"文件标题为 `YYYY-MM-DD_*最新进展.md` 或 `*研究进展*.md` 的，**几乎都是综述**——必须按 DOI 拆开评估
+  - 心跳的「错位清单」表格必须按 DOI 行展开，**不是按老莫调研文件**
+  - 检查命令（升级版）：
+    ```bash
+    # 提取所有心跳中引用过的 DOI
+    grep -hoE "DOI: 10\.[0-9]+/[a-z0-9.]+" ~/.hermes/profiles/maodou/evolution/*.md | sort -u > /tmp/absorbed_dois.txt
+    # 提取老莫调研中所有 DOI（按行提取）
+    grep -hoE "10\.[0-9]+/[a-z0-9.]+" /Users/hua/rkr_staging/文档库/1-通用知识/114-项目开发与调研/持续调研/*.md | sort -u > /tmp/laomo_dois.txt
+    # 差集 = 老莫调研中未被任何心跳吸收的论文
+    comm -23 /tmp/laomo_dois.txt <(sed 's/DOI: //' /tmp/absorbed_dois.txt) | sort -u
+    ```
+- **2026-08-10_04 实操**：用上述命令发现 Qi 102726 + Yang 742941 + Pedersen 10499-025-02335-8 等 4 篇从未被任何心跳吸收的论文，全部纳入本次心跳展开
+
 **LookForge后端优化审计脚本**（`references/lookforge-backend-audit.md`）：
 ChromaDB健康度检查、PostgreSQL连接验证、查询延迟测量、Category分布分析、Chunk长度分布、并发瓶颈点识别。2026-05-07完成优化报告，输出至 `/共享资料/LookForge优化报告/LookForge后端优化报告_2026-05-07.md`。
 
@@ -823,6 +808,9 @@ Sprint计划标准格式——Mon/Tue/Wed/Thu/Fri五天节奏 + Sprint目标/交
 
 **仿真算法参考**（`references/simulation-algorithms.md`）：
 5个RAS仿真用例的物理模型、关键公式、判断标准和参数说明，供后续开发参考。
+
+**RAS 碱度-pH-硝化三体耦合**（`references/ras-alkalinity-ph-coupling.md`，2026-08-09_16 新增）：
+7.14g CaCO₃/g NH₃-N 化学计量定律 + 碱度安全区间 + 补碱剂选型 + 品种敏感度 + 碱度崩溃链式故障 + sim_alkalinity 参数化表。与已有 sim_mbbr/sim_drum_filter/sim_oxygen 的耦合拓扑图。
 
 **产品决策工作流**（`references/feasibility-analysis-workflow.md`）：
 扫描文件→生成可行性报告→分解任务看板→分配Agent→等待决策→启动。
