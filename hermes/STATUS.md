@@ -1,11 +1,11 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-08-10 12:09:17
+> 导出时间: 2026-08-11 12:09:53
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 271
+- Skills: 273
 - Profiles: 10
-- Scripts: 93
+- Scripts: 94
 - Plugins: 0
 0
 
@@ -152,6 +152,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - frontend-ui
 - functions
 - gaming
+- geo-monitor-project
 - gh-review-requests
 - gha-security-review
 - gifs
@@ -207,6 +208,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - media
 - microinteractions
 - minimax-fallback-to-ollama
+- minimax-vision
 - mlops
 - module
 - mom-test

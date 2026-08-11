@@ -1,7 +1,7 @@
 ---
 name: afu-customer-service-evolution-protocol
 description: 阿福（客服）自我进化节奏与盲区规避。触发条件：cron 心跳无任务、复盘无真实对话、维护 SKILL.md/参考资料、规划下一轮进化重点。
-version: 1.3.0
+version: 1.5.0
 owner: afu
 status: active
 ---
@@ -21,6 +21,13 @@ status: active
    - **决策流程**：技巧 < 20 → 学；20-23 → 看是否有新场景未覆盖；24+ → 进入"宏观编排"评估阶段
 3. **行业资讯**：先查 `references/ras-industry-*.md` mtime，若 < 12 小时跳过网络搜索；超 12 小时再用 `delegate_task` 或 `browser_navigate` 核验单条新闻。
 4. **技能集检查**：核验版本号、技巧数、辅助框架数与编号体系一致性；修复"双位置""编号重复"等问题。
+   - **🆕 N+42 新增步骤 4.5：inventory-reference 一致性三选一校验**
+     ```bash
+     grep -E '^\| [0-9]+ \|' SKILL.md | wc -l              # inventory 列出数
+     grep -cE '`references/[a-z0-9-]+\.md`' SKILL.md      # 显式引用数
+     ls references/*.md | wc -l                            # 磁盘文件数
+     ```
+     三者不一致 = 索引漏洞（P1 详见 `references/cron-pitfalls.md` "Inventory-Reference 索引漏洞"）
 5. **输出报告**：路径 `~/.hermes/profiles/afu/evolution/$(date +%Y-%m-%d_%H).md`，每轮 5–9KB。
 
 ## 🛑 第 6 步（强制，P0）：报告前自检 — **幻象完成陷阱**
@@ -41,6 +48,7 @@ status: active
 [ ] 我声称的字节数/行数与实际相符吗？      → wc -c / wc -l 验证
 [ ] 我声称"完成"的 N 个事项，每一个都有验证证据吗？  → 一一列举证据行号
 [ ] 我声称的"下一轮 P1"，下一轮开始时还能被 grep 找到吗？  → grep 验证
+[ ] 🆕 N+42 增量：inventory 数 / 显式引用数 / 磁盘文件数 三选一一致
 ```
 
 ### 6.2 自检失败的处理
@@ -51,6 +59,7 @@ status: active
 | 报告声称 v1.16.0，磁盘是 v1.15.0 | **版本号回滚到真实状态** + 在报告"诚实盘点"节明示 |
 | 文件不存在但报告说"创建了" | **补做持久化** → 重新验证 → 报告改"已创建（已验证存在）" |
 | 仪表板声称 7/7，实际是 6/6 | **诚实写为 6/6** + 列出"未完成的 1 个是什么 + 何时补" |
+| 🆕 inventory 数 ≠ 显式引用数 | **三选一决策**：补 reference / 加 link 列 / 删 inventory 行 |
 
 ### 6.3 自检证据模板（写到报告"诚实盘点"节）
 
@@ -61,6 +70,7 @@ status: active
 | 新建 unity-principle.md | ls -la → 15746 bytes, mtime 2026-08-01 16:11 | ✅ |
 | SKILL.md 升级 v1.15.0→v1.16.0 | head -7 → "version: 1.16.0" | ✅ |
 | 仪表板 7/7 | grep "Cialdini" → "7/7 ✅ ✅ ✅" | ✅ |
+| 🆕 inventory-reference 一致性 | grep wc 三数都 = 28 | ✅ |
 ```
 
 ### 6.4 自检时机（每个里程碑节点）
@@ -69,6 +79,7 @@ status: active
 |------|---------|
 | 写文件后立即 | 文件是否真的写到了声称的路径（不是 `/tmp/` 也不是被 guard 退回） |
 | 改 SKILL.md 版本号后 | frontmatter 干净，无 `|` 污染 |
+| 🆕 **patch 工具调用后**（N+42 强化） | 立即 grep 至少 2-3 个标志性行（old_string 周边 + 远处锚点）确认全局完整性；任何 patch 都可能误删锚点行 |
 | 写 evolution 报告前 | 整份报告的所有"已完成"声明都跑过 6.1 自检清单 |
 | 写"下一轮 P1"后 | 下次启动新会话先 grep 该 P1 看是否真做了（**这是反向自检**） |
 
@@ -141,9 +152,80 @@ status: active
 - [ ] 是否出现"两个编排的颗粒度/主战场高度重叠"？→ 是 → 合并为一个
 - [ ] 新编排是否会让单个技巧的实战深度被稀释？（如把 10 个技巧堆进 1 个 7 步流程）→ 是 → 拆分成 2 个
 
+### 🆕 N+43+ 粒度谱系 5 级（演化观察）
+
+到 N+43+ 时，"宏观编排型技巧"这一层也开始饱和。真实多轮客服场景中，**单点技巧的颗粒度不足**，需要**多技巧跨多轮**的联合演练。本轮（2026-08-10 20:00）观察到的 **"签后 30 天沉默激活演练"**（Pre-Mortem × 行为摩擦三问 × Peak-End）属于**新一级颗粒度**——它**不是** 5 步宏观编排（场景还是签后这一个，但需要 3-6 轮跨天持续），也**不是** 4 技组合剧本（没有对应客户旅程的"大转折点"，而是"接受者已签合同但 7-30 天沉默"这一**时间维度内的特殊状态**）。
+
+**完整粒度谱系（5 级）**：
+
+| 级别 | 颗粒度 | 形态 | 数量 | 示例 | 决策场景 |
+|:---:|--------|------|:---:|------|---------|
+| **1** | 声音/语气层 | 1 个底层技巧 | 1 | FM Voice | 永远先于其他技巧 |
+| **2** | 单句技巧 | 1 个微反应 | ~10 | Mirroring / Power of "No" / Disarming | 客户说 1 句话时立即用 |
+| **3** | 单轮对话 | 1 个 3-5 步流程 | ~8 | LAB / Assertive Inquiry / Calibrated Q | 1 轮对话就能解决的异议 |
+| **4** | 认知/心理/对话设计 | 1 个底层原理 | ~10 | BATNA / EBA / Peak-End / Loss Aversion | 框架性工具 |
+| **5** | 宏观编排（5 步剧本） | 1 个 5 步对话流程 | 1 | Negotiation Jujitsu #24 | **客户旅程大转折点**（僵局/退订）|
+| **🆕 6** | **3 技联合演练** | **1 个跨 3-6 轮多天流程** | **1** | **签后 30 天沉默激活（8/10 沉淀）** | **客户旅程转折点之间的高流失空白期**（如签后 7-30 天沉默）|
+
+**与第 5 级的关键区别**：
+- **第 5 级（宏观编排）** = **单次对话**内的 5 步流程（如 Jujitsu 上阳台→站到对方一边→不推反问→搭金色桥梁→让对方说"不"）
+- **第 6 级（3 技联合演练）** = **多轮跨天**的 3-技巧持续激活（如签后 30 天里"周报 / 微信群 / 周日电话"的持续 30 天陪伴）
+
+**为什么这一级独立于 4 技组合剧本**：
+- 组合剧本 #1-#4 覆盖**客户旅程的 4 个大转折点**（陌生人→加入者 / 加入者→报价接受者 / 报价接受者→活跃用户 / 活跃用户→推荐人）
+- 第 6 级覆盖**转折点之间的时间维度空白**（如签后 7-30 天沉默 = "报价接受者"和"活跃用户"之间的空白期；70%+ 流失率但无对应剧本）
+
+**第 6 级沉淀路径**（与第 5 级不同）：
+- 沉淀位置：`references/<场景>-<3技巧联合名>.md`（如 `签后30天激活演练-pre-mortem-friction-peak-end.md`）
+- 资源链接区标签：**"🆕 跨 X 技联合演练"**（区别于"组合剧本"和"实战演练"）
+- **不升主版本**（不增加主技巧，遵循"不为版本更新而更新"原则）
+- **3 大子场景 × 5-6 轮对话** 是最小合格线
+- 必须含 5+ 条实战原则 + 6+ 条自检清单
+
+**何时停止新增第 6 级沉淀**：
+
+```
+[ ] 客户旅程各转折点之间的时间维度空白是否都有对应联合演练？
+    当前的空白 = ① 签后 7-30 天沉默（已沉淀） ② 首次接触 0-7 天冷启动（未沉淀）
+    ③ 续约前 30 天犹豫期（未沉淀） ④ 退订后 7 天挽回窗口（未沉淀）
+    → 还有空白时优先沉淀空白期联合演练
+[ ] 这个联合演练是否仅在"重复已沉淀技巧"而无新元素？
+    → 是 → 删去
+[ ] 沉淀后会让新员工可按场景"插拔技巧"（而非死记技巧间的相互关系）吗？
+    → 是 → 沉淀
+```
+
+**粒度谱系自检决策表**（每轮 cron 进入 N+43+ 阶段时必过）：
+
+```
+技能库当前颗粒度饱和？ → 启动"粒度谱系填空"模式
+├── 第 1-2 级（声音/单句）饱和 → 跳过
+├── 第 3 级（单轮对话）饱和 → 跳过
+├── 第 4 级（认知/心理）饱和 → 跳过
+├── 第 5 级（宏观编排）饱和？ → 看 Jujitsu 等编号技巧是否覆盖了 4 个客户旅程大转折点
+│   ├── 全覆盖 → 跳过
+│   └── 有空白 → 设计第 5 级新编排
+├── 第 6 级（跨技联合演练）饱和？ → 看签后 7-30 天 / 首次接触 0-7 天 / 续约前 30 天 / 退订后 7 天
+│   ├── 全覆盖 → 进入"参考文件维护"模式（更新行业资讯 / 案例库 / 修复索引漏洞）
+│   └── 有空白 → 设计第 6 级新演练
+└── 全部饱和 → 维护现有，不新增
+```
+
+**沉淀产物输出约定**（避免与第 5 级混淆）：
+
+| 维度 | 第 5 级（宏观编排） | 第 6 级（跨技联合演练） |
+|------|-------------------|---------------------|
+| 文件名前缀 | `negotiation-jujitsu.md`（按技巧名） | `<场景>-<3技巧联合>.md`（按场景+技巧链） |
+| 主版本号变化 | +0.01.0（如 1.28.0→1.29.0）| 不变 |
+| 资源链接区标签 | "技巧 #N" + 简短说明 | "🆕 跨 X 技联合演练" + 场景说明 |
+| 实战场景数 | 1-3 个场景 × 1 轮对话 | 3 个子场景 × 3-6 轮对话 + 5+ 原则 + 6+ 自检 |
+| 沉淀周期 | 1 轮 cron | 1 轮 cron（但产物 ≥ 10KB）|
+
 ---
 
 ## 盲区与陷阱（已踩过的坑）
+
+> **🆕 N+42 重要更新**：本节新增长期"看似完成"陷阱的鉴别，详见文末"四种"看似完成"陷阱的鉴别表"。
 
 - **跨 Profile 守护**：写入 `/Users/hua/.hermes/skills/afu-customer-service/SKILL.md` 会触发 `Cross-profile write blocked`。**只动 afu profile 本地**：`/Users/hua/.hermes/profiles/afu/skills/...`，不动共享路径。需批量合并时给出 A/B/C 方案给用户决策。
   - **典型场景（N+19 实测）**：尝试更新 `/Users/hua/.hermes/skills/afu-customer-service/references/cron-evolution-cadence.md`（默认 hub 路径）触发 guard。这份 cadence 文档现在仍然写着"Cialdini 6/6"，但实际已经 7/7 完成。**无法由 afu profile 单方面修复**，需要 `cross_profile=True` 授权，或者在本地维护一份等效的"afu profile cadence"副本。
@@ -151,6 +233,25 @@ status: active
   - **症状**：文件里出现 `|version: 1.25.0|` 或 `|description: ...`（行首或行尾有 `|`），破坏 YAML 解析。
   - **必做的两步**：① patch 之后立即 `head -10 file | od -c | head -5` 检查原始字节，确认 YAML 干净；② 若发现 `|`，用 `sed -i '' 's/^|//' file` 清理（cron 模式下 `execute_code` 被阻止，用 terminal sed 兜底）。
   - **预防**：用 `patch` 改 frontmatter 时，`old_string` 和 `new_string` 都不要包含 `|` 字符；新版最好用全文件 `write_file` 重写而非 patch。
+- **🆕 patch 方向错配陷阱（N+42 新增，**P0**）**：`patch` 工具的 `old_string` / `new_string` 方向写反时，会**误删锚点行**而不是插入新行。
+  - **典型症状**：本想"在 X 行后插入 Y 行"，但 patch 后发现 Y 插入了，**而 X 周围的其他行（原本在 old_string 之外）被当成"删除行"删掉**。
+  - **与 YAML 陷阱的关键区别**：YAML 陷阱是方向对但内容污染；本陷阱是方向错配导致误删。
+  - **必做三步**：① patch 后立即 grep 至少 2-3 个标志性行（含 old_string 周边 + 远处锚点）；② 涉及 SKILL.md 大型 markdown 优先 `write_file` 全文件重写（仅 < 5 行补丁才用 patch）；③ 任何 patch 后用 `wc -l` 对比预期行数变化。
+  - **N+42 实测**：8/10 16 cron 在 SKILL.md 资源链接区想"在 #25 行后插入 #23 行"，但 patch 方向错配导致 #26 行（Door-in-the-Face）被误删，必须用第二次 patch 修复。
+  - **完整步骤与回退**：详见 `references/cron-pitfalls.md` "patch 工具方向错配陷阱"章节。
+- **🆕 Inventory-Reference 索引漏洞（N+42 新增，**P1**）**：SKILL.md inventory 表格**列出**了一个技巧名但**没有** `` `references/xxx.md` `` 链接，references/ 目录下也没有对应文件——技巧处于"挂空"状态。
+  - **`verify_evolution.py` 抓不到原因**：该脚本只校验 SKILL.md 里**显式写了** `references/xxx.md` 路径"的文件，不扫描 inventory 表格里"提到技巧名但无引用"的情况。
+  - **N+42 实测**：8/10 16 cron 发现 Peak-End Rule 是**唯一"inventory 有 + 详情缺失"** 的技巧（28 OK / 0 MISSING 全部通过，但 inventory 列 28、实际显式引用 28 是这次修复后才一致）。
+  - **历史同类问题**：anchoring-effect.md（N+20）、unity-principle.md（N+20）也都是 inventory 引用了但文件不存在的同类问题——说明这是**反复出现的模式**。
+  - **自检三步（必做）**：
+    ```bash
+    grep -E '^\| [0-9]+ \|' SKILL.md | wc -l              # inventory 列出数
+    grep -cE '`references/[a-z0-9-]+\.md`' SKILL.md      # 显式引用数
+    ls references/*.md | wc -l                            # 磁盘文件数
+    # 三者不一致 = 索引漏洞
+    ```
+  - **回退**：发现差异时三选一——① 补 reference 文件 ② 给 inventory 行加 `references/xxx.md` 第 5 列 ③ 从 inventory 删除未沉淀技巧。
+  - **完整步骤与回退**：详见 `references/cron-pitfalls.md` "Inventory-Reference 索引漏洞"章节。
 - **重复编号**：Peak-End Rule 同时登记在编号 23 与辅助框架 9 会造成"双位置"。每轮检查"内容-编号-版本"一致性。
 - **网络搜索超时**：`delegate_task` web 600s 超时后**不要重试同样方式**，切换短搜索或本地趋势库，并在报告标注"本地梳理（非 web 搜索）"。
   - **N+19 实测失败清单**：
@@ -219,7 +320,29 @@ status: active
   - afu 本地 `~/.hermes/profiles/afu/skills/productivity/afu-customer-service/references/unity-principle.md` ⚠️ 状态未验证，可能不存在
 - Anchoring Effect 参考：默认 hub `/Users/hua/.hermes/skills/afu-customer-service/references/anchoring-effect.md` ✅ **7,778 bytes（N+20 补齐，SKILL.md 早已引用但文件一直缺失）**
 - 心跳脚本模板：`templates/heartbeat_check.py`（多 agent 通用，2026-08-03 N+21 新增；缺失 fallback 详见上方"心跳脚本缺失 fallback" pitfall）
-- 翻车案例参考：`references/cron-pitfalls.md`（已有的 cron 陷阱汇总，可与本节新 pitfall 互补）
+- 翻车案例参考：`references/cron-pitfalls.md`（已有的 cron 陷阱汇总；**N+42 新增 3 节**：Inventory-Reference 索引漏洞 / patch 方向错配 / 四种"看似完成"陷阱鉴别表）
 - **第一份宏观编排型技巧示例**（N+31）：Jujitsu #24 — `~/.hermes/profiles/afu/skills/productivity/afu-customer-service/references/negotiation-jujitsu.md`（12,121 bytes；afu 本地；default hub 未同步，详见 4.4 跨 Profile 同步状态）
   - **评估标准**：编排了 Disarming + LAB + Calibrated Q + Closing the Loop + Power of "No" 5 个单点技巧；主战场明确（对抗僵局）；颗粒度第 5 类突破
   - **未来同类沉淀的参照模板**：5 步流程表 + 3 个实战场景话术 + 与已有技巧的对应关系 + 边界与诚信声明
+
+---
+
+## 🆕 N+42 新增章节：五种"看似完成"陷阱的鉴别表
+
+> **背景**：从 N+19 到 N+42 ，出现过 5 种"报告声称完成但实际有缺口"的陷阱。它们的共同点是——**工具返回 success ≠ 真持久化 / 真实一致**。本表用作未来会话快速鉴别。
+
+| 陷阱 | 出现轮次 | 表现 | 根因 | 防御 |
+|------|---------|------|------|------|
+| **YAML frontmatter `\|` 污染** | N+19 | `\|version: 1.25.0\|` 破坏 YAML | patch 工具 diff 误解 `\|` | sed 清理 / 改用 write_file |
+| **幻象完成（持久化失败窗口）** | N+20 | 报告说完成，磁盘无文件 | write_file 返回 success ≠ 真持久化 | 6 步反向自检 |
+| **双技能树不同步** | N+20 | 路径 A 有，路径 B 无 | 跨 profile 守卫 | 双路径必须明示 |
+| **Inventory-Reference 索引漏洞** | N+20 / N+42 | inventory 有技巧但无 reference | `verify_evolution.py` 只查显式引用 | 三者同步写入 + 扩展 verify 脚本 |
+| **patch 方向错配** | N+42 | 误删锚点行 | old/new 方向写反 | 全局 grep 自检 + 优先 write_file |
+
+**核心教训**：每种陷阱都遵循同一个模式——"工具有自己的边界，超出边界时静默失败"。
+
+**通用防御**：
+- 任何工具调用之后，**必做一次反向验证**（ls / grep / wc），不能只看工具返回的 success
+- 涉及"修改文件"的工具（patch / write_file）**优先用 write_file 全文件重写**，仅小补丁用 patch
+- 涉及"检测文件"的自检脚本（verify_evolution.py）**定期扩展**——发现新漏洞就加新检查函数
+- **N+42 P2 行动项**：扩展 `~/.hermes/profiles/afu/evolution/verify_evolution.py`，加入"inventory-vs-references 一致性"检查函数。预估增量 30-50 行 Python。

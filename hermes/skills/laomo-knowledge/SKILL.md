@@ -4,7 +4,7 @@ description: '老莫（知识库+测试）核心技能集 — 文档协作、产
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.27.0"
+  version: "1.28.0"
 ---
 
 # 老莫知识库核心技能
@@ -257,6 +257,69 @@ OpenAlex 现在偶尔返回 Zenodo 仓库的论文（DOI 前缀 `10.5281/zenodo.
 - Zenodo description：空
 - 标题：`Artificial Intelligence-Based Monitoring and Management of Water Quality Parameters in Biofloc Aquaculture Systems`（典型通用词堆砌）
 
+### 3.1.3 Figshare 数据镜像 DUP 4 步鉴别法（2026-08-10 R16 首实战）
+
+OpenAlex 偶尔返回 Figshare 仓库的论文（DOI 前缀 `10.6084/m9.figshare.*`）。Figshare 与 Zenodo 同源（用 DataCite 而非 Crossref 注册 DOI），但 Figshare 命中场景有一个独特模式：**它常常是某个已发表期刊论文的配套数据集镜像**。如果不鉴别就直接入库，会污染 known_dois.txt 并浪费 Crossref 验证配额。
+
+**鉴别流程**（3 个强信号中命中 2 个 = DUP 跳过）：
+
+1. **Crossref API 检查**：
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}\n" \
+     "https://api.crossref.org/works/10.6084/m9.figshare.<id>"
+   ```
+   - `200 OK` → 罕见（极少数 Figshare DOI 会被 Crossref 收录），仍要继续下面 2 步
+   - `404` → 正常（DataCite DOI 不会注册到 Crossref），需要 OpenAlex 兜底
+
+2. **OpenAlex `type` 字段检查**（**核心鉴别信号**）：
+   ```python
+   # 反查 OpenAlex 看 type 字段
+   req = urllib.request.Request(
+       f"https://api.openalex.org/works/doi:10.6084/m9.figshare.<id>",
+       headers={"User-Agent": "mailto:research@yuxintech.com"}
+   )
+   w = json.loads(urllib.request.urlopen(req, timeout=15).read())
+   work_type = w.get("type")  # 关键字段
+   ```
+   - ❌ `type == "other"`（数据集/代码/补充材料） → **DUP 强信号**（不是 journal-article）
+   - ✅ `type == "journal-article"` 或 `"article"` → 通过，继续鉴别
+
+3. **作者列表与已发表期刊论文比对**（**第二个强信号**）：
+   - 提取 Figshare 论文的作者列表（前 5 名显示名）
+   - 与同关键词查询下命中的期刊论文（如 Parasites & Vectors Q1、Springer Nature 系列）作对比
+   - ❌ 作者列表**完全一致** → **DUP 强信号**（配套数据）
+   - ✅ 作者列表**不一致**或 Figshare 是唯一命中 → 通过，纳入独立论文评估
+
+**判定规则**：2 个强信号中命中 2 项（即 `type != journal-article` **且** 作者列表与某已收录期刊论文完全一致）→ **DUP 跳过**，**不写入 known_dois.txt**。
+
+**实战案例**（2026-08-10 R16 验证）：
+
+| DOI | Crossref | OpenAlex type | 作者列表 | 判定 |
+|---|---|---|---|---|
+| 10.1186/s13071-025-07124-z (P&V Q1) | 200 OK | journal-article | 5 名 | ✅ 主论文入库 |
+| 10.6084/m9.figshare.c.8171400.v1 | 404 | **other** | 与上面 5 名**完全一致** | ❌ **DUP 跳过** |
+| 10.6084/m9.figshare.c.8171400 | 404 | **other** | 与上面 5 名**完全一致** | ❌ **DUP 跳过**（同一论文的 v1/base 副本） |
+
+**Figshare API 直连兜底（不推荐）**：
+Figshare API `https://figshare.com/api/v2/articles/<id>` **经常返回 403 Forbidden**（实测 2026-08-10）。如果优先用 OpenAlex 鉴 `type` 字段，**不必尝试 Figshare API**，节省一次 HTTP 调用。
+
+**与 §3.1 Zenodo 鉴别的对比**：
+
+| 维度 | Zenodo（§3.1） | Figshare（§3.1.3） |
+|---|---|---|
+| 主要风险 | **假论文**（虚构内容） | **DUP 镜像**（主论文已入库） |
+| 强信号 | 占位符作者、空 description、`Research Consortium Archive` | `type=other`、作者列表与已收录期刊论文**完全一致** |
+| 入库规则 | 4 步中 ≥3 假信号 → 拒绝 | 2 个强信号都命中 → 拒绝 |
+| 复用代码 | 4 步判定模板可直接扩展 | 新增 `type` 字段判定即可 |
+
+**经验法则**：
+1. **OpenAlex 摘要空不是 Figshare 的判定信号**（Figshare 数据集通常无摘要）— 跟 Zenodo 假论文恰好相反
+2. **`type=other` 是 Figshare 唯一最可靠的 DUP 信号**（比 Crossref 404 更强）
+3. **Figshare vs. v1 副本**：同一 `c.<id>` 论文经常同时返回 base 和 `.v1` 两个 DOI（如 `c.8171400` 和 `c.8171400.v1`）→ known_dois.txt 只记一条（v1 或 base 选其一），避免重复
+4. **若作者列表无法匹配**（找不到对应主论文）→ 可能是独立 Figshare 数据论文，按通用真实论文流程（Crossref/OpenAlex 摘要重建）继续评估
+
+> 🔧 鉴别脚本：`scripts/figshare-dedup-detector.py`（R16 沉淀 — 输入 OpenAlex work dict + 主论文候选列表，自动返回 `is_dup: true/false`）
+
 ### 3.1.2 fwci 字段在论文筛选中的高价值信号（2026-08-01 16:25 验证）
 
 OpenAlex 返回的论文除了 `cited_by_count` 外，还有 **`fwci`（Field-Weighted Citation Impact，字段加权引用影响）** 字段。这是一个比 `cited_by_count` 更精准的影响力指标：
@@ -494,9 +557,10 @@ KDOI = set(Path("/tmp/laomo_known_dois.txt").read_text().strip().split("\n"))
 - 季度清理（每月 1 日）去除孤儿（30 天内未在检索集出现的 DOI）
 
 > 📁 论文发现记录见 `references/arxiv-papers-2026-08-10.md`（最新，2026-08-10 R13 双桶策略）、`references/arxiv-papers-2026-07-31.md`、`references/arxiv-papers-2026-07-30.md`、`references/arxiv-papers-2026-07-26.md`
-> 🔧 可重用脚本：`scripts/openalex-ras-search.py`（双桶策略 + 双条件过滤 + None 防御）、`scripts/crossref-batch-verify.py`（Top N 批量验证）、`scripts/pgvector-health-check.py`（直连 PostgreSQL 知识库健康检查，绕过 RKR token 过期）
+> 🔧 可重用脚本：`scripts/openalex-ras-search.py`（双桶策略 + 双条件过滤 + None 防御）、`scripts/crossref-batch-verify.py`（Top N 批量验证）、`scripts/pgvector-health-check.py`（直连 PostgreSQL 知识库 健康检查，绕过 RKR token 过期）、`scripts/laomo-evolution-dedup.py`（R15 新增 — known_dois.txt 原子写入 + 报告自洽校验，消除"报告/实际漂移"）、`scripts/figshare-dedup-detector.py`（R16 新增 — Figshare 数据集 DUP 2 强信号鉴别，type=other + 作者列表完全一致）
 > 📁 跨日 DOI 去重模式（2026-07-31 12:00 验证）见 `references/openalex-cross-day-dedupe.md`
 > 📁 OpenAlex 搜索精炼技巧 + 4 步饱和诊断法（2026-08-01 20:30 验证）见 `references/openalex-search-refinements.md`
+> 📁 known_dois.txt 写入契约 + 报告自洽校验模式（2026-08-10 R15 沉淀）见 §3.6
 
 **建议检索关键词（按优先级排序）：**
 - `"smart aquaculture" OR "intelligent fishery"`
@@ -536,13 +600,15 @@ KDOI = set(Path("/tmp/laomo_known_dois.txt").read_text().strip().split("\n"))
 > **⚠️ 2026-08-01 升级**：Day 5+ 痛点方向首选源从 **S2 改为 OpenAlex**。S2 限流持续收紧（第 1 查询即 429），不再适合作为生产首选。S2 仅在 OpenAlex 0 命中时作为兜底（"last resort"）。如未来 S2 限流缓解，重新评估后恢复原策略。
 
 **执行流程**：
+0. **（R15+ 新增）known_dois.txt 自洽校验**：cron 启动时先 `wc -l known_dois.txt` 与上一轮报告声明数比对，发现漂移立即从上一轮 Markdown 报告 grep 修复（详见 §3.6）。这一步 5 秒可避免 30 分钟手工恢复。
 1. **进化开始前**：`read_file()` 读取最新论文发现记录（如 `references/arxiv-papers-2026-07-30.md`），确认昨天已覆盖的关键词和论文
 2. **选研究方向**：参考升级版轮转表跳过昨天的主方向；**痛点方向优先**（命中率经验证 4 倍于模型方向）
 3. **按方向选源**：痛点 → S2 优先；模型 → OpenAlex 优先
-4. **检索后去重**：每篇论文的 DOI 与昨日记录比对，重复的丢弃
+4. **检索后去重**：每篇论文的 DOI 与昨日记录比对，重复的丢弃（用 §3.3.1 + §3.6 dedup 脚本）
 5. **如果1轮检索结果 >50% 重复**：跳过剩余检索，直接尝试新关键词（节省时间）
 6. **唯一新论文 <2 篇时**：不算失败，如实记录"该方向近期无新产出"即可
 7. **方向切换判定**：2 轮 0 命中 → **切换研究方向**（不是同方向换词）
+8. **（R15+ 新增）报告声明前必须 wc -l 验证**：写完 known_dois.txt 后立即 wc -l 确认数量，再在报告中引用该数字。**"已加入"是文件动作，不是 Markdown 文本**。
 
 **关键词疲劳 3 阶段诊断模式**（2026-07-31 16:00 沉淀）：
 
@@ -903,6 +969,78 @@ else:
 **历史日志**（不要重复踩）：
 - R14（2026-08-10）首次遇到 503，未在 skill 中预定义 → cron 多等 90 秒
 - 后续轮次如遇 503，**直接按本 SOP 处理**，不要再走 §3.5.4 步骤 4（标记低谷）
+
+### 3.6 known_dois.txt 写入契约 + 报告自洽校验（2026-08-10 R15 沉淀）
+
+**🔴 真实 bug 案例**（R14 报告 vs 实际状态漂移）：
+- R14 进化报告 §"DOI 去重集更新" 列出 5 条新 DOI，声称"已加入 `/tmp/laomo_known_dois.txt`（107 条）"
+- R15 grep 验证：`wc -l known_dois.txt` → **100 条**（5 条 R14 DOI 全部缺失）
+- **根因**：R14 cron 在 dedup 后**只写了 Markdown 报告**，未执行 `cat >> known_dois.txt`。Markdown 报告≠ 实际文件状态。
+- **影响**：R15 检索时可能命中 R14 已验证的论文 → 重复 Crossref 验证 → 浪费配额
+
+**🛡️ 写入契约（必须遵循，违反 = bug）**：
+
+> **"Write file FIRST, then report"** — 永远先改 known_dois.txt，**再**在进化报告中声明"已加入"
+
+**正确执行序列**（R15+ 标准）：
+```bash
+# 步骤1：检索 + 去重 + 生成新 DOI 列表（内存中）
+# 步骤2：先写 known_dois.txt（用脚本原子追加，不要手动 cat >>）
+python3 /Users/hua/.hermes/skills/laomo-knowledge/scripts/laomo-evolution-dedup.py \
+    --new-dois-file /tmp/r15_new_dois.txt \
+    --known-dois-file /Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt
+
+# 步骤3：grep 验证 wc -l 后再写报告
+wc -l /Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt
+# 假设输出 N 条 → 在报告中明确写 "current: N"
+
+# 步骤4：写报告（如 R15 报告 §"DOI 去重集更新"）：
+# ❌ 错误："已加入 known_dois.txt"（未验证）
+# ✅ 正确："known_dois.txt: 100 → 114（+14 = R14 补漏 5 + R15 新增 9）"
+```
+
+**📋 报告自洽校验清单**（cron 写完报告后必做，2 分钟）：
+```bash
+# 1. 提取报告中声明的所有新 DOI
+grep -oE "10\.[0-9]+/[a-zA-Z0-9._/-]+" /Users/hua/.hermes/profiles/laomo/evolution/2026-08-10_R15.md \
+  | sort -u > /tmp/r15_reported_dois.txt
+
+# 2. 提取 known_dois.txt 中所有 DOI
+sort -u /Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt > /tmp/r15_actual_dois.txt
+
+# 3. 检查缺失：报告中声称"已加入"但实际文件里没有的 DOI
+comm -23 /tmp/r15_reported_dois.txt /tmp/r15_actual_dois.txt
+# 空输出 = 报告与实际一致 ✅
+# 非空 = R14 漂移再次发生，必须立即修复
+```
+
+**🔧 自动校验脚本**：`scripts/laomo-evolution-dedup.py` 内置 `--verify` 模式，跑完即知是否一致：
+```bash
+python3 scripts/laomo-evolution-dedup.py \
+    --known-dois-file /Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt \
+    --report-file /Users/hua/.hermes/profiles/laomo/evolution/2026-08-10_R15.md \
+    --verify
+# 输出: ✓ report ↔ file consistent (114 DOIs both)
+# 或:   ✗ DRIFT detected: 5 DOIs in report but missing from file
+```
+
+**经验法则（嵌入到 cron workflow）**：
+1. **append 而非 overwrite**：用 `set()` 合并去重，不要直接覆盖（避免误删历史）
+2. **一行一个 DOI，无注释**：方便 grep/comm 校验
+3. **写入后立即 wc -l 确认数量**：避免静默失败
+4. **报告声明必须 grep 可验证**：报告里写"已加入 DOI X"时，X 必须出现在文件中
+5. **跨日恢复机制**：每轮 cron 启动时先 `wc -l known_dois.txt` 对比上次报告数，发现差异立即从 Markdown 报告 grep 修复
+
+**相关教训**（2026-08-10 验证）：
+- Markdown 报告是**自我描述**，不一定是**事实状态**。文件是事实的唯一来源。
+- 报告中写"已加入"和"未加入"是两件事——必须用脚本强制区分。
+- **R14 → R15 漂移成本**：30 分钟手工 grep + cat >> 补全；如果当时有自动校验脚本，5 秒发现 + 5 秒修复。
+- 这类 bug 不影响检索结果（只是浪费配额），但**累积下来会让去重集失去信任**——每次都要 grep 二次确认，效率降低 30%。
+
+**预防措施**：
+- 未来所有 cron 写入操作都用脚本（避免手工 cat >> 的不可见失败）
+- R16 进化报告必须先写脚本，再让报告引用脚本输出
+- 报告里凡涉及文件状态变化（数量/大小/列表），都必须给出可验证的命令
 
 ### 3.5.10 OpenAlex `primary_location` None 防御式编程（2026-08-10 R13 实证）
 

@@ -424,6 +424,41 @@ startup_timeout_sec = 30
 
 详见 `lookforge-mcp-hermes` skill 的"Codex 端 MCP 注册"章节。
 
+### ⚠️ FastAPI 启动时 `read_text()` 缓存 HTML,改完前端不重启=白改(2026-08-10 实测新增)
+
+**症状**:用 `patch`/`write_file` 改了 `frontend/pricing/index.html`,但 `curl` 看到的仍然是改前的内容。文件磁盘上明明正确,`grep` 也能搜到新字符串,但服务端返回的就是旧版。
+
+**根因**:
+```python
+# frontend.py 典型模式 — 在模块加载时读取
+pricing_html = pricing_path.read_text(encoding="utf-8")
+
+@app.get("/pricing")
+async def serve_pricing():
+    return HTMLResponse(pricing_html)  # ← 启动时缓存的副本,永不过期
+```
+`read_text()` 在 `import app.frontend` 那刻执行一次,之后 `pricing_html` 变量就冻结了。改了磁盘文件,变量不动。
+
+**正确做法**(最简单):改完前端文件 → **重启 uvicorn**。不需要改代码(每请求重读有 I/O 开销)。
+
+**验证三步**(铁律 2 的补充):
+```bash
+# 1. 确认磁盘文件正确
+grep -c "payModal" frontend/pricing/index.html  # → >0
+
+# 2. 重启服务(杀旧进程 + 启动新)
+pkill -f "uvicorn.*8001" && sleep 2
+cd backend && python -m uvicorn app.main:app --port 8001 &
+
+# 3. 确认服务端返回正确
+curl -s http://127.0.0.1:8001/pricing | grep -c "payModal"  # → >0
+```
+
+**反模式**:
+- ❌ 反复 `patch` 同一个文件期望生效(文件早就改对了,是服务没重启)
+- ❌ 怀疑磁盘 I/O 或编码问题(99% 都是缓存,不是文件问题)
+- ❌ 用 `process(action="poll")` 检查旧进程状态(它正在正常工作,只是缓存了旧 HTML)
+
 ### ⚠️ `browser_vision` 可能误读界面状态(2026-06-29 实测新增)
 - **症状**:点击语言切换按钮后,`browser_vision` 返回 "页面仍是中文",但 JS console 注入检查 `lang=zh-CN` + `setLang('en')` 调用证明已经切换为英文
 - **根因**:`browser_vision` 是辅助视觉模型(VLM)对截图做文字描述,描述可能受 prompt 解读影响,不一定 100% 准确
@@ -534,3 +569,4 @@ for path in ['/api/health', '/api/qigua?method=time']:
 - `references/pydantic-v213-python39-trap.md` — Pydantic v2.13 + Python 3.9 兼容性陷阱
 - `references/hexagram-binary-index-trap.md` — 卦象 binary 索引"双重反向"约定 + 互卦计算公式 + 5 个易错点
 - `references/hermes-tooling-gotchas.md` — Hermes 工具调用常见坑(`execute_code` BLOCKED、`$HOME` 劫持等)
+- `references/payment-qr-modal-template.md` — 渔芯聚合收款码支付弹窗可复用模板(CSS + HTML + JS + 集成步骤)
