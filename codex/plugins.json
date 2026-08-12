@@ -1,21 +1,13 @@
 {
-  "scanned_at": "2026-08-12T10:00:00",
-  "version": "0.147.0",
-  "total_plugins": 16,
-  "cache_sources": {
-    "openai-api-curated": {
-      "count": 7,
-      "plugins": ["build-web-apps", "coderabbit", "figma", "github", "linear", "sentry", "superpowers"]
-    },
-    "openai-bundled": {
-      "count": 4,
-      "plugins": ["browser", "chrome", "computer-use", "visualize"]
-    },
-    "openai-primary-runtime": {
-      "count": 5,
-      "plugins": ["documents", "pdf", "presentations", "spreadsheets", "template-creator"]
-    }
-  },
-  "data_sources": ["omo-sisyphuslabs"],
+  "scanned_at": "2026-08-12T10:41:03",
+  "cache_sources": [
+    "openai-api-curated",
+    "openai-bundled",
+    "openai-primary-runtime",
+    "sisyphuslabs"
+  ],
+  "data_sources": [
+    "omo-sisyphuslabs"
+  ],
   "note": "manifest-only, 不上传插件二进制 (避免污染 GitHub)"
 }
