@@ -425,13 +425,14 @@ approvals:
   mcp_reload_confirm: true
   : true
 command_allowlist:
+- force kill processes
+- xargs with rm
+- kill hermes/gateway process (self-termination)
+- pipe remote content to shell
+- recursive delete
+- script execution via -e/-c flag
 - script execution via heredoc
 - delete in root path
-- recursive delete
-- kill hermes/gateway process (self-termination)
-- script execution via -e/-c flag
-- force kill processes
-- pipe remote content to shell
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false
@@ -534,6 +535,8 @@ secrets:
 _config_version: 26
 replicate:
   token: "***"
+FEISHU_APP_ID: "***"
+FEISHU_APP_SECRET: "***"
 
 # ── Fallback Model ────────────────────────────────────────────────────
 # Automatic provider failover when primary is unavailable.
@@ -556,6 +559,3 @@ replicate:
 # fallback_model:
 #   provider: openrouter
 #   model: anthropic/claude-sonnet-4
-
-FEISHU_APP_ID: "***"
-FEISHU_APP_SECRET: "***"

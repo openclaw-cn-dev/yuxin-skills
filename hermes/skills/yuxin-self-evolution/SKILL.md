@@ -275,16 +275,19 @@ comm -23 /tmp/referenced_skills.txt <(sed 's|^|productivity/|' /tmp/installed_sk
 └──────────────────────────────────────────┘
 ```
 
-### 写记忆的正确流程
+### 写记忆的正确流程（v2 2026-08-11 更新）
 1. **完整内容写 L2**：`~/hermes/memory_store/<category>/<topic>.md`
 2. **L1 写 ≤200 字符摘要**：作为 L2 的"指针"
 3. **写入前查容量**：`wc -c ~/.hermes/memories/MEMORY.md ~/.hermes/memories/USER.md`
 4. **总字节 > 4500**：先 replace 老条目精简（不是 add 满后再说）
 5. **写完后 L1 字节 < 4500B**（留 ~1000B buffer）
+6. **⚠️ 不做自动压缩**：压缩由周日分析报告建议，华哥审批后执行。不要自动 compact。
 
 ### 关键命令与脚本
-- **位置**：`~/.hermes/scripts/memory_compact.sh`（已挂 cron `d845f193fdd5` 每 4h）
-- **手动压缩**：`bash ~/.hermes/scripts/memory_compact.sh`
+- **⚠️ 自动压缩已停用（2026-08-11 华哥指示）**：`memory_compact.sh` cron (`d845f193fdd5`) 和 `l1_compact_all.sh` cron (`f392cbc559b4`) 已暂停。改为每周审批制。
+- **新机制：每周分析报告**：cron `5607512cba70`，每周日 10:00 生成分析报告——逐条审查 L1 记忆、标注新鲜度、建议归档/新增项。**只分析不修改**，等待华哥审批后才执行。
+- **原则**：信息分层压缩（L1 摘要 → L2 详细文档），一周整理分析一次，只有经华哥确认才清理。
+- **手动压缩**：`bash ~/.hermes/scripts/memory_compact.sh`（需华哥明确要求）
 - **查容量**：`wc -c ~/.hermes/memories/MEMORY.md ~/.hermes/memories/USER.md`
 - **备份还原**：`cp -p MEMORY.md{,.bak.20260617_210136}` / `mv MEMORY.md{.bak.YYYYMMDD_HHMMSS,}`
 - ⚠️ `hermes memory reset` 需交互式 yes —— 脚本里要 `echo yes | hermes memory reset`

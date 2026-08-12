@@ -4,7 +4,7 @@ description: '渔芯资料收集技能 — 高效搜集行业信息、公司情�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.0.23"
+  version: "1.0.25"
 ---
 
 ## 参考资料库
@@ -15,8 +15,9 @@ metadata:
 - `references/sogou_search_extraction_pitfalls.md` — **Sogou 搜索 HTML 解析踩坑**（hintidx 内部重链 vs 真实外链，公众号文章保留规则；Bing 对照 parser；2026-08-03 16:42 实测）
 - `references/gtm_b2b_sales_sources.md` — **GTM/B2B Sales 方法论文献 cron 可用性速查**（Common Room 全文已核验 12,549 字符 / Gartner 403 / ChiliPiper Apollo 404 / Revue 停更；A-B-C 三级引用规则，2026-08-03 16:42 实测）
 - `references/api-research-quickref.md` — **GitHub/arxiv/HF API 抓取速查**（curl 模板 + 解析脚本 + tirith 绕过 + 超时处理 + description null 坑 + 多 query 串行模式 + Releases API 多版本抓取 + Stars 增量对比 + 多日暴涨检测启发式 + 生态系统监控模式 + README 二次验证 + awesome 变更检测 + arXiv 版本检测 + arXiv rate-limit 恢复 + Search API 兜底 + 串行 curl 链式调用 + confusable_text 规避 + query 精度陷阱 + HF 超时→正式放弃 + 多 prong 搜索策略 + arXiv AND 组合查询 + arXiv 3D/3DGS 查询注意事项 + cron 多 terminal() 并行抓取 + **GitHub OR 语法陷阱** + **arXiv underwater 查询精度修复** + **TRELLIS.2 in:name 监控模式** + **3DGS arXiv 双引号修复验证** + **通用 null-safe 解析模式（stargazers_count/forks/pushed_at 全字段）**, 2026-08-08）
+- `references/ecosystem-tier-framework.md` — **生态分层框架**（🐋巨鲸/🦈鲨鱼/🐬海豚/🐟鱼群四层分类，星数阈值、策略映射、层级迁移信号；2026-08-11 从 AI-CAD 研究实战中提炼）
 
-*最后更新：2026-08-10（新增：3 个方法论 — 星数分水岭检测、学术流水线识别、平台对比专题）*
+*最后更新：2026-08-11（新增：1 个 methodology — MLX 生态信号检测（Hunyuan3D Apple Silicon 案例））*
 
 ## 报告格式模板
 
@@ -219,6 +220,56 @@ curl /search/repositories?q=Hunyuan3D-Buffalo&per_page=3
 # 如果报告中说"WAT3R GitHub 无结果 = 该项目无进展" → 错误
 ```
 
+### Pitfall: GitHub `sort=updated` 盲区 — 热门项目被冷门新仓库挤出 top-N（2026-08-11 验证）
+
+**问题**：标准 GitHub Search 查询使用 `sort=updated` 时，最近几分钟内 push 的 0-star 仓库会排在 13K-star 项目前面。今天 `q=ai-cad+OR+text-to-cad+OR+llm-cad&sort=updated&per_page=8` 返回的前 8 条几乎全是 0-1 star 的新建仓库，完全错过了 **earthtojake/text-to-cad（⭐13,258）** 和 **CADAM（⭐4,967）**。这两个项目在后续 `sort=stars` 和 `in:name,description` 查询中才被发现。
+
+**根本原因**：`sort=updated` 按 `pushed_at` 降序排列，一个 1 分钟前 push 的 0-star 个人仓库会排在 1 天前 push 的 13K-star 生态霸主前面。在快速迭代的领域（AI-CAD），每天有几十个实验性仓库被 push，`per_page=8` 很容易被这些"噪声"仓库填满。
+
+**修复（多 prong 策略）**：
+1. **每次 cron 必跑 3 类查询**，不可只用 `sort=updated`：
+   - `sort=updated&per_page=8`（发现最新动态）
+   - `sort=stars&per_page=5`（发现热门但可能不是最近更新的项目）
+   - `in:name,description&sort=updated&per_page=10`（更宽泛的匹配，覆盖命名偏差）
+2. 如果 `sort=updated` 前 8 条全是 0-5 star 项目，**立即追加 `sort=stars` 查询**补盲
+3. 每期报告中维护"核心项目星数对比"表，表中应包含 `sort=stars` 发现的高星项目（即使它们本期未更新）
+
+**实例（本次）**：
+```
+# ❌ 只用 sort=updated（8 条结果全是 0-1 star）
+q=ai-cad+OR+text-to-cad+OR+llm-cad&sort=updated&per_page=8
+→ prism-core-project/phase1 (0⭐), ricfulop/AGIneer (1⭐), ...
+
+# ✅ 追加 sort=stars + in:name,description
+q=text-to-cad+OR+cad-generation+in:name,description&sort=updated&per_page=10
+→ earthtojake/text-to-cad (13,258⭐) — 第 6 名！
+q=text-to-cad+generation+language:python&sort=stars&per_page=5
+→ Multi-Agent-CAD (718⭐) — 第 1 名！
+```
+
+**教训**：`sort=updated` 是"时间线视图"，`sort=stars` 是"重要性视图"。两者必须互补使用，尤其是在快速迭代的领域（每天 20+ 新仓库）。
+
+### Pitfall: 轮换主题中的项目名不等于已追踪 — 显式查询的必要性（2026-08-11 验证）
+
+**问题**：研究报告中列出了轮换主题"CADAM / Synaps-CAD / BIM 集成"，但从未对 CADAM 和 Synaps-CAD 执行过显式的 GitHub/api 查询。这些项目被列入"下周计划"但从未在当前周被主动搜索。结果：CADAM (⭐4,967) 和 Synaps-CAD (⭐351) 直到明确执行 `q=CADAM+cad` 和 `q=Synaps-CAD+OR+synaps-cad` 查询才被发现。
+
+**修复**：
+1. 每期增量研究中，如果轮换主题列出了新项目名（如 CADAM、Synaps-CAD），**必须在当前期就执行显式搜索**，不要等到"下次"
+2. 显式搜索格式：
+   ```bash
+   # 对轮换主题中的每个新项目名，立即执行
+   curl -s 'https://api.github.com/search/repositories?q=PROJECT_NAME+in:name&sort=stars&per_page=3'
+   curl -s 'https://export.arxiv.org/api/query?search_query=all:PROJECT_NAME&sortBy=submittedDate&max_results=5'
+   ```
+3. 如果项目是 GitHub org 下的（如 `Adam-CAD/CADAM`），用 `GET /repos/ORG/REPO` 直接获取详细信息
+
+**反例**：
+```
+08-10 报告末尾："下次轮换主题建议：CADAM / Synaps-CAD / BIM 集成"
+08-11 cron: 主查询未显式搜 CADAM/Synaps-CAD，直到手动追加专项查询才发现
+→ 如果 cron 因时间不足跳过了专项查询，这两个巨鲸项目会继续被忽视
+```
+
 ### 品牌名监控搜索模式（2026-08-09 沉淀）
 
 **背景**：核心项目的衍生项目（如 Hunyuan3D-WorldClaw）不会在通用关键词搜索中出现，只会通过父项目品牌名搜索发现。
@@ -387,3 +438,28 @@ Buffalo 1.0 增速轨迹：
 - 低：单一平台的零星 fork（非独立项目）→ 不构成信号
 
 **反例**：不要看到 1 个 ROCm fork 就喊"跨平台爆发"——必须是 ≥2 个独立项目、不同平台/语言，才构成有效信号。
+
+### MLX 生态信号检测（2026-08-11 沉淀 · Hunyuan3D Apple Silicon 案例）
+
+**背景**：当同一模型家族在 24 小时内出现 ≥3 个不同作者的 MLX 端口，这不是零星的个人实验——是 Apple Silicon 用户群对该模型的需求被严重压抑后集中释放的信号。MLX（Apple 的机器学习框架）正在打破社区默认的"3D 生成 = NVIDIA GPU"假设。
+
+**检测规则**：
+1. 品牌名搜索（`MODEL_NAME in:name`）中，如果 24 小时内出现 ≥3 个不同作者的 `*-MLX` / `*-mlx` 仓库，触发"Apple Silicon 生态形成"信号
+2. 如果在 MLX 端口之外，还出现了 macOS 优化工具（如"macOS mesh generation"），信号强度 +1 级
+3. 渔芯行动：(a) 检查是否有可直接使用的 MLX 端口（渔芯 Mac 开发机）; (b) 评估 Apple Silicon 是否能成为 RAS 客户端的部署平台
+4. 置信度：≥3 端口 + macOS 工具 → 高；2 端口 → 中；1 端口 → 不构成信号
+
+**实例（本次）**：
+```
+08-11 同日出现：
+  hamsterjiang23/Hunyuan3D-Part-MLX (Apple MLX)
+  digster/hunyuan3d-2.1-mlx (Apple MLX)
+  anton-vsh/m3dium (macOS mesh gen, based on Hunyuan3D-MLX)
+→ 3 个不同作者的 MLX/macOS 端口同日出现 → 触发信号
+→ 判定：Hunyuan3D 的 Apple Silicon 生态正在形成
+```
+
+**与"多平台信号合并"的区别**：
+- 多平台信号 = 跨 OS/GPU 架构（ROCm=AMD, Swift=Apple, Windows=Windows）→ 论文进入长尾传播
+- MLX 信号 = 单一平台（Apple Silicon）的集中爆发 → 该平台用户群需求被压抑后释放
+- 两者可同时出现（如 TRELLIS.2 既有跨平台信号也有潜在的 MLX 端口），但检测阈值不同
