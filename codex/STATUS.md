@@ -1,39 +1,26 @@
 # Codex 状态快照
-> 导出时间: 2026-08-12 09:40:32
-> 🤖 自动同步自 Hermes/玉芬 · Codex 自进化模块
+> 导出时间: 2026-08-12 10:00
+> 🤖 自动同步自 Hermes/玉芬 · Codex 日常维护 cron
 
 ## 版本
-- 当前: `/bin/sh: codex: command not found`
+- 本地: `codex-cli 0.147.0`
 - npm 最新: `0.147.0`
-- 状态: `update_available`
+- 状态: `up_to_date` ✅
+
+## 插件 (16 个)
+| 来源 | 数量 | 插件 |
+|------|------|------|
+| openai-api-curated | 7 | build-web-apps, coderabbit, figma, github, linear, sentry, superpowers |
+| openai-bundled | 4 | browser, chrome, computer-use, visualize |
+| openai-primary-runtime | 5 | documents, pdf, presentations, spreadsheets, template-creator |
 
 ## 公司专属 Skills (yuxin-*)
 - 文件: 13 个
 - 目录: 1 个
 
-## 插件来源 (cache/)
-- `openai-api-curated`
-- `openai-bundled`
-- `openai-primary-runtime`
-- `sisyphuslabs`
+## 数据源
+- `data/omo-sisyphuslabs`
 
-## 数据源 (data/)
-- `omo-sisyphuslabs`
-
-## 同步策略
-- 仅同步 `yuxin-*` 前缀的 skills (公司专属资产)
-- 通用 skills (algorithmic-art, pdf, pptx 等) 不上传 (避免污染 GitHub)
-- `config.toml` 自动脱敏 (含 token/secret/bearer 的字段值替换为 `<REDACTED>`)
-- 同步缓存目录: `/tmp/yuxin-skills-codex-sync/`
-- 触发: (1) 凌晨 2:00 self_evolution (2) 每小时 cron 轻量增量
-
-## 仓库结构
-```
-yuxin-skills/
-├── claude-code/    ← Claude Code 那边的 sync (已有)
-├── drawing-skills/
-├── hermes/         ← Hermes 那边的 sync (已有)
-└── codex/          ← 本目录 (本次新增)
-```
-
-> 🔒 公司内部资产，禁止对外公开。
+## 同步状态
+- GitHub: openclaw-cn-dev/yuxin-skills → `codex/`
+- 上次同步: 2026-08-12 10:00
