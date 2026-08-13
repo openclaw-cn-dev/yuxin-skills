@@ -43,6 +43,9 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/渔芯-UI模板库-开源精选"]
 trust_level = "trusted"
 
+[projects."/Users/hua/6-产品研发/37-通用老板工作台"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
