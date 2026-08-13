@@ -80,7 +80,7 @@ source_type = "local"
 source = "/Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-08-12T07:51:46Z"
+last_updated = "2026-08-13T05:23:49Z"
 source_type = "local"
 source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
