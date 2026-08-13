@@ -5,9 +5,10 @@ disable_response_storage = true
 wire_api = "responses"
 model_catalog_json = "~/.codex/models.json"
 
-notify = ["/Users/hua/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 preferred_auth_method = "apikey"
 forced_login_method = "api"
+
+notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [model_providers]
 [model_providers.custom]
@@ -71,7 +72,7 @@ enabled = false
 followUpQueueMode = "queue"
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-12T07:50:46Z"
+last_updated = "2026-08-13T00:37:39Z"
 source_type = "local"
 source = "/Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
