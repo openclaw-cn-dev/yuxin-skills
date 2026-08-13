@@ -110,6 +110,7 @@ Codex 当前 `danger-full-access` 仅允许：
 - **测试**：关键功能必须写测试，pytest/vitest，测试通过后再提交
 - **提交**：每次提交一个原子变更，<type>(<scope>): <描述>，遵循 Conventional Commits
 - **禁止**: wildcard import, git push --force main, 直推 main, rm -rf
+- **新项目默认路径**: 所有新开发项目默认创建在 `~/6-产品研发/` 下，目录名沿用递增编号（如 `36-老板工作台`），除非用户明确指定其他位置
 
 ## 前端项目铁律 ⚠️
 
@@ -148,7 +149,7 @@ python3 ~/.hermes/scripts/quick_serve.py [端口]
 │   ├── skills/          # 300+ Skills
 │   ├── scripts/         # 运维脚本 + LLM Gateway
 │   └── profiles/        # 6 个同事 Agent
-├── 6-产品研发/           # 公司所有产品项目
+├── 6-产品研发/           # 公司所有产品项目（新项目默认落地目录）
 │   ├── 23-AI培训教程/    # AI 学习平台（华哥主导）
 │   ├── 02-AquaForge/    # RAS 养殖仿真
 │   ├── 22-出图智能体训练/ # 出图平台
