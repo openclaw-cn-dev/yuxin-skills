@@ -151,3 +151,23 @@ if __name__ == "__main__":
     report = format_report(fe, rkr)
     print(report)
     print("\n=== 巡检完成 ===")
+
+    # ── 异常时飞书告警 ────────────────────────────────
+    abnormal = []
+    for name, svc in [("寻元", fe), ("RKR", rkr)]:
+        if svc["container"]["status"] != "HEALTHY":
+            abnormal.append(f"{name}容器 {svc['container']['status']}")
+        if svc["api"]["status_code"] != 200:
+            abnormal.append(f"{name}API HTTP {svc['api']['status_code']}")
+
+    if abnormal:
+        print(f"\n⚠️ 检测到异常: {'; '.join(abnormal)} → 发送飞书告警")
+        try:
+            import sys as _sys
+            _sys.path.insert(0, "/Users/hua/.hermes/scripts")
+            from send_feishu import send_message
+            send_message(f"🔴 系统状态巡检异常\n{'; '.join(abnormal)}\n{report}")
+        except Exception as e:
+            print(f"[飞书告警失败] {e}")
+    else:
+        print("\n✅ 所有服务正常，无需告警")

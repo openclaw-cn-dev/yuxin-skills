@@ -51,7 +51,8 @@ metadata:
    - 08-10_08：**Lean Startup 精益创业（战术）— Build-Measure-Learn + Innovation Accounting + Pivot or Persevere + 指标仪表盘 MVE `/metrics` 端点设计（7 字段）+ 4 项 Sprint 假设重审 + 战略+战术方法论 6 层完整闭环（Porter+BCG+VCA+Blue Ocean+Design Sprint+Lean Startup）**
    - 08-10_16：**Ansoff Matrix 安索夫矩阵（战略）— 4 象限框架（市场渗透/产品开发/市场开发/多元化）+ LookForge 资源分配（①40%/③30%/②20%/④10%）+ 与 6 个战略方法论协同定位（Porter/BCG/VCA/Blue Ocean/Chasm/Wardley）+ 4 项反模式警示 + 全球 RAS 5 个细分市场数据（CAGR 7.9-12.6%）首次作为兜底来源**
    - 08-10_20：**Kano Model 狩野模型（战术层第 11 个）— 5 类别 M/O/A/I/R + Phase 7 P0/P1/P2 标准化映射（P0=M+基础 A 70% / P1=O+进阶 A 25% / P2=I 5% / R 禁止）+ 5 类别与 JTBD/Lean Startup/Design Sprint/Pugh Matrix/OST/FMEA/Taguchi/EOS/DOE 9 个方法论的协同定位 + LookForge 用户 Kano 问卷 5 问模板 + 4 项反模式警示 + 战术层规则升级（见陷阱 K）**
-   - **下次心跳要求**：战略层和战术层交替使用时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）。当前状态：08-10_20 战术层（Kano Model）后，**下次强制回到战略层**。战略层至此覆盖 7 个（Wardley/Chasm/BCG/VCA/Blue Ocean/Porter/Ansoff），战术层覆盖 11 个（JTBD/ECD/OST/Taguchi/Pugh/FMEA/EOS/DOE/Design Sprint/Lean Startup/Kano）。**战术层规则已升级（陷阱 K）**：当战术层所有已用方法论都做过"季度复盘/SOP 化"后，**允许引入新的战术方法论**（Storybrand Messaging / Influence Psychology / TRIZ / OKR / Eisenhower Matrix / MoSCoW / RACI 等），不再局限于已用清单。
+   - **08-13_12：GE McKinsey 9 盒矩阵（战略层第 8 个）— 3 维度行业吸引力（规模 40%/增速 30%/盈利 30%）× 3 维度竞争地位（份额 30%/差异化 40%/获取难度 30%）= 9 象限 + 3 战略（投资增长/选择性投资/收获退出）+ 12 仿真用例 9 盒分布（4 个核心 + 1 个极品蓝海 + 4 个收获退出）+ 资源分配 60/15/5/20 三档聚焦（BCG 12 象限均匀 → GE McKinsey 60%集中度提升 50%）+ 季度复盘 SOP（10/1 首次实施）+ 4 项反模式警示 + 与 BCG/VCA/Blue Ocean/Porter/Ansoff 5 个战略方法论协同定位 + 8 层战略方法论完整闭环首次构建**
+   - **下次心跳要求**：战略层和战术层交替使用时，优先选**未使用过的层级**，避免方法论同质化（陷阱D 变体）。当前状态：08-13_12 战略层（GE McKinsey 9 盒矩阵）后，**下次强制回到战术层**。战略层至此覆盖 8 个（Wardley/Chasm/BCG/VCA/Blue Ocean/Porter/Ansoff/GE McKinsey），战术层覆盖 11 个（JTBD/ECD/OST/Taguchi/Pugh/FMEA/EOS/DOE/Design Sprint/Lean Startup/Kano）。**战术层规则已升级（陷阱 K）**：当战术层所有已用方法论都做过"季度复盘/SOP 化"后，**允许引入新的战术方法论**（Storybrand Messaging / Influence Psychology / TRIZ / OKR / Eisenhower Matrix / MoSCoW / RACI 等），不再局限于已用清单。**战略层规则升级（2026-08-13 新增）**：战略层 8 个方法论已覆盖完整（地图+客户+价值链+行业+组合），下次战略方法论可优先选择**战略集团分析（Strategic Group Mapping）** — 识别渔芯 + 中科海 + 绿脉 + 崇睿 + 海大等设备商集团定位，与现有 8 个战略方法论互补。
    - ⚠️ **战略/战术分层轮换的反模式（陷阱 H 衍生 — 2026-08-10 新增）**：备选清单中出现 N 次 ≠ 实际使用过。Porter 五力在备选清单中出现 6 次（07-31_12 / 08-01_00 / 08-03_20 / 08-09_00 / 08-09_H2 / 08-09_16），但直到 2026-08-10_04 才被首次实际应用——这意味着前 6 次心跳都被"分层原则正确"误判，实际"战略层"从未真正覆盖。**修正**：轮换原则应基于「上次实际使用过的层级」而非「上次应该去的层级」。未来分层规则改为：检查 evolution_log.md 最近 3 次心跳中**实际应用的**方法论层级，而非备选清单。
    - 📐 **Wardley Maps 完整方法论**：见 `references/wardley-maps-methodology.md`（含 LookForge 当前快照 + 季度复盘 SOP）
    - 📐 **Pugh Matrix 完整方法论**：见 `references/pugh-matrix-methodology.md`（含固液分离选型实操案例 + LookForge API 设计 + 在设备选型/品种选型的复用方案）
@@ -65,6 +66,8 @@ metadata:
    - 📐 **Lean Startup 完整方法论**：见 `references/lean-startup-methodology.md`（含 Build-Measure-Learn / Innovation Accounting 三阶段 / Pivot-or-Persevere 决策框架 / 指标仪表盘 `/metrics` 端点设计（7 字段）/ 4 项反模式警示 / 当前 4 个 Sprint 假设重审 / 战略+战术方法论 6 层完整闭环）
    - 📐 **Ansoff Matrix 完整方法论**：见 `references/ansoff-matrix-methodology.md`（含 4 象限框架 + LookForge 资源分配 ①40%/③30%/②20%/④10% + 与 6 个战略方法论协同定位 + 4 项反模式警示 + 全球 RAS 5 个细分市场 CAGR 数据 + Q4 Ansoff 季度评审 SOP）
    - 📐 **Kano Model 完整方法论**：见 `references/kano-model-methodology.md`（含 M/O/A/I/R 5 类别详解 + Phase 7 P0/P1/P2 映射 + 9 个方法论协同表 + LookForge Kano 问卷 5 问模板 + 4 项反模式警示 + Kano × Lean Startup MVP 范围决策）
+   - 📐 **GE McKinsey 9 盒矩阵完整方法论（2026-08-13 新增）**：见 `references/ge-mckinsey-9box-methodology.md`（含 3 维度行业吸引力 × 3 维度竞争地位 = 9 象限 + 12 仿真用例 9 盒分布 + 60/15/5/20 资源三档聚焦 + 季度复盘 SOP + 4 项反模式警示 + 与 BCG/VCA/Blue Ocean/Porter/Ansoff 5 个战略方法论协同定位）
+   - 📐 **战略方法论完整闭环 8 层框架（2026-08-13 新增）**：见 `references/strategic-frameworks-comparison.md`（含 Wardley/Chasm/BCG/VCA/Blue Ocean/Porter/Ansoff/GE McKinsey 8 个战略方法论的协同图 + 4 维度分类 + LookForge 12 仿真用例完整决策实例 + 季度评审 SOP + 4 项反模式警示 + 未来战略方法论候选清单（战略集团分析/PESTEL/CAGE/ADL/麦肯锡 7S））
 5. **技能检查与同步**：检查~/.hermes/profiles/maodou/skills/目录完整性，若为空或不完整：
    - 先用`skills_list`查看当前所有可用技能
    - 通过`skill_view`加载需要的技能
@@ -798,6 +801,26 @@ grep -rn "console\.log" src/ --include="*.tsx" --include="*.ts" | grep -v node_m
   - Profile 本地路径 `/Users/hua/.hermes/profiles/maodou/skills/` 只放**agent-specific** 内容，不放通用方法论 reference
 - **2026-08-10_20 行动**：下次心跳前用 `skill_view` 完整读取已用方法论的 reference 文件，作为"方法论深度回顾"输入
 
+### ⚠️ 陷阱L：DOI 池扫描 SOP 第二次实战验证（2026-08-13 新增）
+- 2026-08-10_20 心跳已识别 122 个未吸收 DOI + 创建季度论文吸收 SOP
+- **2026-08-13_12 心跳第二次实战**：扫描后 116 个未吸收 → 实际新吸收 3 个 → 剩余 113 个
+- **关键观察**：DOI 池是**可持续新主题来源**——每次心跳 1-2 个，1-2 个月一轮清理
+- **有效模式**：每次心跳先跑 `comm -23` → 选 3-5 个与 LookForge 设备/仿真直接对应的 DOI → 展开
+- **错误模式**：按"调研文件"批量吸收（一个文件含 5-10 个 DOI 漏 80%+）；不区分 DOI 与 LookForge 相关性
+- **新增 cron 任务建议**（季度自动跑）：
+  ```bash
+  # 每季度第一个 1 号自动跑（毛豆 cron）
+  bash /Users/hua/.hermes/skills/maodou-product/references/quarterly-paper-absorption.sh > /tmp/doi_pool_status.txt
+  # 输出剩余未吸收 DOI 数量 → 写入 MEMORY.md 备忘
+  ```
+
+### ⚠️ 陷阱M：战略方法论 8 层闭环 — 必须有"完整决策实例"才能算正式应用（2026-08-13 新增）
+- 8 个战略方法论（Wardley/Chasm/BCG/VCA/Blue Ocean/Porter/Ansoff/GE McKinsey）每个单独学习 ≠ 闭环
+- **错误模式**：方法论独立使用，战略叙事碎片化（如 BCG 给 4 象限 + Porter 给 5 力 + Ansoff 给 4 象限 = 3 个独立结论）
+- **正确模式**：每个战略方法论必须有「具体决策实例」（如 GE McKinsey 给出 12 仿真用例 9 盒分布 + 60/15/5/20 资源三档聚焦）
+- **闭环检验**：8 个方法论全部应用后必须有 1 张「协同图」（`references/strategic-frameworks-comparison.md`）说明如何组合使用
+- **下次战略方法论引入规则**：必须先看 `references/strategic-frameworks-comparison.md` 现有协同图，找到未被覆盖的「战略空白」（如战略集团分析=设备商集团定位，PESTEL=央企政策环境）
+
 ### ⚠️ 陷阱K：战术层规则升级 — 允许引入全新战术方法论（2026-08-10_20 新增）
 - 原规则（08-10_16 设定的「下次心跳要求」）：战术层 10 个全部覆盖完毕后，**必须**从已用方法论的"季度复盘/SOP 化"中提取新角度
 - **2026-08-10_20 实操**：10 个战术方法论虽然全部已用，但**没有任何一个**做过"季度复盘"或"SOP 化"——这意味着原规则其实无法执行
@@ -852,6 +875,12 @@ grep -rn "console\.log" src/ --include="*.tsx" --include="*.ts" | grep -v node_m
 
 **LookForge后端优化审计脚本**（`references/lookforge-backend-audit.md`）：
 ChromaDB健康度检查、PostgreSQL连接验证、查询延迟测量、Category分布分析、Chunk长度分布、并发瓶颈点识别。2026-05-07完成优化报告，输出至 `/共享资料/LookForge优化报告/LookForge后端优化报告_2026-05-07.md`。
+
+**GE McKinsey 9 盒矩阵方法论**（`references/ge-mckinsey-9box-methodology.md`，2026-08-13 新增）：
+战略层第 8 个方法论——3 维度行业吸引力 × 3 维度竞争地位 = 9 象限 + 12 仿真用例 9 盒分布 + 60/15/5/20 资源三档聚焦 + 季度复盘 SOP（10/1 首次实施）+ 4 项反模式警示。**资源分配公式**：投资增长 60% / 选择性投资 15% / 收获退出 5% / 战略基础设施 20%。**4 个核心用例**：sim_drum_filter / sim_protein_skimmer / sim_alkalinity / sim_roi。**1 个极品蓝海**：sim_exergy。**4 个收获退出**：sim_temperature / sim_biosecurity / sim_oxygen_feeding_combined / sim_oxygen 弱差异化部分。
+
+**战略方法论完整闭环 8 层框架**（`references/strategic-frameworks-comparison.md`，2026-08-13 新增）：
+8 个战略方法论（Wardley/Chasm/BCG/VCA/Blue Ocean/Porter/Ansoff/GE McKinsey）的协同图 + 4 维度分类（地图/客户/行业/资源）+ LookForge 12 仿真用例完整决策实例 + 季度评审 SOP（3 小时/季度）+ 4 项反模式警示 + 未来战略方法论候选清单（战略集团分析/PESTEL/CAGE/ADL/麦肯锡 7S）。
 
 **Sprint规划方法论**（`references/sprint-planning-methodology.md`）：
 Sprint计划标准格式——Mon/Tue/Wed/Thu/Fri五天节奏 + Sprint目标/交付物/验收标准三件套。适用于Phase 6迭代开发（对话式UI/品种库/PDF导出等）。
