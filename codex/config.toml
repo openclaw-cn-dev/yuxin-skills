@@ -57,6 +57,9 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/03-EDAI硬件开发"]
 trust_level = "trusted"
 
+[projects."/Users/hua/6-产品研发/ok-HG-运营中枢"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
@@ -90,7 +93,7 @@ source_type = "local"
 source = "/Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-08-13T05:23:49Z"
+last_updated = "2026-08-14T11:00:20Z"
 source_type = "local"
 source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
