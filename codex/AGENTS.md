@@ -94,12 +94,12 @@ Codex 当前 `danger-full-access` 仅允许：
 ## 当前配置
 
 - **版本**: codex-cli 0.147.0 (npm 全局安装 · 2026-08-07 巡检更新)
-- **模型**: MiniMax-M2.7 (MiniMax M2.7)
-- **Provider**: custom → 公司 LLM Gateway `http://127.0.0.1:15721/v1`
+- **模型**: deepseek-v4-flash / deepseek-v4-pro（时段调度：工作时段 flash / 非工作 pro，2026-08-17 起）
+- **Provider**: deepseek → 直连 `https://api.deepseek.com/`（responses 协议）
 - **Wire API**: responses (SSE 流式)
 - **沙箱**: danger-full-access (本机开发)
 - **CC Switch**: 华哥独立使用 Codex 时自行通过 CC Switch 切模型
-- **历史 Gateway**: 18888 端口 (deepseek-v4-pro) 当前空闲备用，实测健康但 Codex 已不路由至此
+- **备用 Provider**: `custom`(hermes_gateway) → 公司 LLM Gateway `http://127.0.0.1:18888/openai`，当前停用备用
 
 ## 通用规范
 

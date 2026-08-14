@@ -12,11 +12,10 @@ notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/
 
 [model_providers]
 [model_providers.custom]
-name = "minimax"
-base_url = "http://127.0.0.1:15721/v1"
+name = "hermes_gateway"
+base_url = "http://127.0.0.1:18888/openai"
 wire_api = "responses"
-requires_openai_auth = true
-experimental_bearer_token = "<REDACTED>"
+requires_openai_auth = false
 
 [projects]
 [projects."/Users/hua"]
@@ -46,6 +45,18 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/37-通用老板工作台"]
 trust_level = "trusted"
 
+[projects."/Users/hua/Documents/Codex/2026-08-14/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/07-软件项目开发"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/06-硬件项目开发"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/03-EDAI硬件开发"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
@@ -61,24 +72,17 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_n
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/hua/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 CODEX_HOME = "/Users/hua/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "e7fc907079d6797973cb63f97d2562c965aad8d33f52fb726005bf6702f30afc"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "7fe0e1c59da4bc68f9d6ab81ae8d349b53fee44b074f49be0effbc1105a5f1d3"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
-NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.803.81509"
-SKY_CUA_SERVICE_PATH = "/Users/hua/.codex/computer-use/Codex Computer Use.app"
+BROWSER_USE_CODEX_APP_VERSION = "26.810.41047"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
-
-[mcp_servers.computer-use]
-command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
-args = ["mcp"]
-cwd = "."
-enabled = false
 
 [desktop]
 followUpQueueMode = "queue"
+computerUseAlwaysHidePictureInPicture = true
 
 [marketplaces.openai-bundled]
 last_updated = "2026-08-13T00:37:39Z"
@@ -91,9 +95,6 @@ source_type = "local"
 source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."computer-use@openai-bundled"]
 enabled = true
 
 [plugins."visualize@openai-bundled"]
@@ -119,10 +120,11 @@ enabled = true
 
 [features]
 js_repl = false
+computer_use = false
 
 [shell_environment_policy.set]
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "e7fc907079d6797973cb63f97d2562c965aad8d33f52fb726005bf6702f30afc"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "7fe0e1c59da4bc68f9d6ab81ae8d349b53fee44b074f49be0effbc1105a5f1d3"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/hua/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 
 [model_providers.deepseek]
