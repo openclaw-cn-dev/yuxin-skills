@@ -4,7 +4,7 @@ description: '老莫（知识库+测试）核心技能集 — 文档协作、产
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.28.0"
+  version: "1.31.0"
 ---
 
 # 老莫知识库核心技能
@@ -561,6 +561,7 @@ KDOI = set(Path("/tmp/laomo_known_dois.txt").read_text().strip().split("\n"))
 > 📁 跨日 DOI 去重模式（2026-07-31 12:00 验证）见 `references/openalex-cross-day-dedupe.md`
 > 📁 OpenAlex 搜索精炼技巧 + 4 步饱和诊断法（2026-08-01 20:30 验证）见 `references/openalex-search-refinements.md`
 > 📁 known_dois.txt 写入契约 + 报告自洽校验模式（2026-08-10 R15 沉淀）见 §3.6
+> 📁 OpenAlex 饱和收尾决策法（2026-08-14 R21 沉淀 — 阶段 5「API 健康但净增饱和」）见 `references/openalex-saturation-endgame.md`
 
 **建议检索关键词（按优先级排序）：**
 - `"smart aquaculture" OR "intelligent fishery"`
@@ -656,6 +657,22 @@ KDOI = set(Path("/tmp/laomo_known_dois.txt").read_text().strip().split("\n"))
 | Cryptocaryon irritans + ML | 80% | 71% | —（R14 未跑，503/429） | 🟢 稳定 |
 | biofilter nitrification + AI | — | 100% (1/1) | 100% (1/1) | 🟢 R14 验证通过，已稳定 |
 | RAS predictive maintenance AI sensor | — | — | 2/2 (top 5 内) | 🟡 待 R15 再验证 |
+| **cold-stress early warning + ML + aquaculture**（R19 新发现） | — | — | — | 🟢 R19 单轮 1/1（10.64898/2026.08.01.742243，P0，预印本）。**待 R20-R21 二次验证后升格为"主力"** |
+| **marine heatwave multi-horizon + cage aquaculture**（R19 新发现） | — | — | — | 🟢 R19 单轮 1/1（10.3389/fmars.2026.1887350，FMARS Q1，P0）。**待 R20-R21 二次验证** |
+| **AI in aquaculture bibliometric review**（R19 新发现） | — | — | — | 🟢 R19 单轮 1/1（10.1007/s10499-026-02627-7，AI 期刊 Q1，P0 综述）。**文献计量方向新主力** |
+
+**已验证稀疏/枯竭方向**（R15+ 标记，未来 1 个月内跳过）：
+| 方向 | 关键词 | 验证轮次 | 状态 |
+|---|---|---|---|
+| 微生物组 + 水产 AI | `microbiome aquaculture AI ML` | R18 (0 命中) | 🔴 稀疏（OpenAlex total=118，但前 5 全是非水产相关）|
+| 水下图像增强 + 水产 | `underwater image enhancement fish CNN` | R18 (0 命中) | 🔴 稀疏（OpenAlex total=126，但相关多在水下机器人/通用 CV）|
+| 水产能耗预测 + ML | `energy consumption RAS ML prediction` | R18 (0 命中) | 🔴 稀疏（OpenAlex total=157，但相关多为工业能耗）|
+| 水产群体行为异常 | `anomaly behavior detection fish underwater DL` | R18 (2 命中但 DUP) | 🟡 疲劳（与 JIDMIS 期刊强绑定，单一命中点）|
+
+**未来 1 个月方向轮转清单**（R18 实证驱动）：
+- ❌ 跳过：microbiome / underwater image enhancement / energy consumption RAS
+- ✅ 优先：MLWA 期刊扩展（`10.1016/j.mlwa.*`）/ dissolved oxygen 细分 / Cryptocaryon 主力 / biofilter 主力
+- 🔄 备选：digital twin aquaculture（JIDMIS 风格延续）/ 多变量多步水质预测
 
 > **稳定关键词组定义**：连续 2 轮 cron 中命中率 ≥ 70% 的关键词组，可作为后续轮次的"主力关键词组"，无需轮转。
 
@@ -966,6 +983,8 @@ else:
     # ... 正常执行检索
 ```
 
+> 📁 **R22 新增**：首次查询 429 + cron 启动早期 40% 限流率的实证应对模式见 `references/r22-openalex-429-pattern.md`
+
 **历史日志**（不要重复踩）：
 - R14（2026-08-10）首次遇到 503，未在 skill 中预定义 → cron 多等 90 秒
 - 后续轮次如遇 503，**直接按本 SOP 处理**，不要再走 §3.5.4 步骤 4（标记低谷）
@@ -1014,6 +1033,49 @@ comm -23 /tmp/r15_reported_dois.txt /tmp/r15_actual_dois.txt
 # 非空 = R14 漂移再次发生，必须立即修复
 ```
 
+**⚠️ Bash grep 漂移校验的 R21 误报陷阱（必须改 Python）**：
+
+2026-08-14 R21 实测：报告用反引号包围 DOI（如 `` `10.1038/s41598-026-63136-4` ``），bash `grep -oE "10\.[0-9]+/[a-zA-Z0-9._/-]+"` 完全无法识别 → 误报"漂移"，让人误以为存在 R14 式漂移。
+
+**✅ 正确做法：Python regex 处理反引号/括号/逗号包围**：
+```python
+import re, pathlib
+
+report = pathlib.Path("/Users/hua/.hermes/profiles/laomo/evolution/2026-08-14_R21.md").read_text()
+kd = pathlib.Path("/Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt").read_text().strip().split("\n")
+
+# 提取报告中所有 DOI（包括反引号/括号/逗号包围）
+report_dois = set()
+for m in re.finditer(r'(?:[` (]?)(10\.[0-9]+/[a-zA-Z0-9._/-]+)', report):
+    doi = m.group(1).rstrip("`.,;)")
+    report_dois.add(doi)
+
+# known_dois.txt 中的 DOI
+known = {line.strip() for line in kd if line.strip() and not line.startswith("#")}
+
+# 仅检查本轮新增 N 篇
+new_r21_dois = {"10.1038/s41598-026-63136-4", "10.59543/jidmis.v3.1215"}
+for doi in new_r21_dois:
+    in_known = doi in known
+    in_report = doi in report_dois
+    status = "✅" if (in_known and in_report) else "❌"
+    print(f"  {status} {doi}: known={in_known}, report={in_report}")
+
+# 整体漂移
+drift = report_dois - known
+if drift:
+    print(f"⚠️ 报告引用但 known_dois.txt 缺失的 DOI:")
+    for d in drift:
+        print(f"    {d}")
+else:
+    print(f"✅ 报告引用的所有 DOI 均在 known_dois.txt 中")
+```
+
+**经验（R21 沉淀）**：
+- Bash grep 适用于 plain text URL，但 Markdown 中 DOI 经常被 `` ` ``、`(`、`[`、`<` 包围
+- 误报比漏报更糟糕 — 让人误以为漂移而触发修复流程，反而引入真漂移
+- 校验脚本统一用 Python（与 §3.6 写入契约脚本同语言）
+
 **🔧 自动校验脚本**：`scripts/laomo-evolution-dedup.py` 内置 `--verify` 模式，跑完即知是否一致：
 ```bash
 python3 scripts/laomo-evolution-dedup.py \
@@ -1023,6 +1085,14 @@ python3 scripts/laomo-evolution-dedup.py \
 # 输出: ✓ report ↔ file consistent (114 DOIs both)
 # 或:   ✗ DRIFT detected: 5 DOIs in report but missing from file
 ```
+
+> 📁 **R22 升级版**：Python regex 处理反引号/括号包围的 DOI（避免 R21 bash grep 误报），见 `scripts/report-self-consistency.py`，用法：
+> ```bash
+> python3 scripts/report-self-consistency.py \
+>     --known-dois-file /Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt \
+>     --report-file /Users/hua/.hermes/profiles/laomo/evolution/2026-08-14_R22.md \
+>     --new-dois 10.3390/encyclopedia4010023 10.3390/ani14172555
+> ```
 
 **经验法则（嵌入到 cron workflow）**：
 1. **append 而非 overwrite**：用 `set()` 合并去重，不要直接覆盖（避免误删历史）
@@ -1106,6 +1176,53 @@ def is_relevant(work):
 - 纯养殖研究论文（无 AI）但**对 RAS 仿真参数库有价值**（如氨氮应激生物标志物综述）→ 标 🟡 P2 保留
 - AI 论文但**完全不涉水产**（如通用精准农业 IoT）→ 完全剔除
 
+> 📁 **进阶规则**: §3.5.3.1 摘要级二次校验（防 R22 实证的 OpenAlex concepts 误标）见 `references/r22-false-positive-filtering.md`
+> 📁 **R23 新增**: 单词边界 AI 关键词过滤（防子串误命中如 "antibiotic" → "iot"）见 `references/r23-word-boundary-filter.md` + 验证脚本 `scripts/r23-word-boundary-demo.py`
+
+**⚠️ 双条件过滤的扩词表盲点（2026-08-13 R19 实证，必补）**：
+
+**症状**：R18 用 `AQUACULTURE_KEYWORDS` + `AI_KEYWORDS`（11+14 个词）漏掉了真正的 P0 论文 `10.64898/2026.08.01.742243`（bioRxiv，冷应激预警预印本），标题显式包含 "Aquaculture Nursery Ponds"。
+
+**根因**：
+- 标题为 "Low-Resource Machine-Learning Framework"（带连字符的 `machine-learning`），OpenAlex 倒排索引可能拆分位置导致 `machine learning` 双词子串不连续命中
+- `concepts` 字段中 `Aquaculture` 评分 0.5414 显示概念存在，但脚本未对 `concepts.score < 0.3` 做加权或检查 concept 主题名严格匹配
+- 关键词列表漏掉若干高频隐式水产词：`pond`、`biofloc`、`fish farm`、`fish tank`、`sea bass`、`seabream`
+- 关键词列表漏掉若干高频 AI 词：连字符/大小写变体（`XGBoost`、`yolo`、`transformer`、`xgboost`、`random forest`、`iot`、`sensor`、`regression`）— R19 实证把 `yolo`、`xgboost`、`transformer` 加入后命中 10.59543 系列 JIDMIS 等论文
+
+**R19 修复后的扩词表**（覆盖连字符变体 + 隐式水产词）：
+```python
+AQUACULTURE_KEYWORDS = [
+    "aquaculture", "aquaponics", "recirculating", "tilapia", "salmon",
+    "catfish", "trout", "carp", "shrimp", "prawn", "seaweed",
+    # R19 扩词（隐式水产词，长尾必备）
+    "pond", "biofloc", "fish farm", "fish tank",
+    "sea bass", "seabream", "fish pond",
+    # R21 扩词（极细分撬动词 — 用海洋生物/水产上下游子领域撬动）
+    "plankton", "marine biology", "algae", "seaweed farming",
+    "macroalgae", "microalgae", "hatchery",
+]
+```
+    "machine learning", "deep learning", "neural network", "ai",
+    "artificial intelligence", "computer vision", "iot", "sensor",
+    "prediction", "model", "control", "optimization", "monitoring",
+    "detection", "classification", "estimation", "forecasting",
+    # R19 扩词（连字符变体 + 缩写 + 子任务词）
+    "lstm", "xgboost", "random forest", "yolo", "transformer",
+    "regression", "iot", "sensor"
+]
+```
+
+**防御式扩词策略（避免漏判）**：
+1. **同义词加连字符变体**：每加一个重要词，必须考虑 `machine-learning` / `Machine-Learning` / `AI-based` 的形态
+2. **concepts 主题严格匹配**：当 `work["concepts"][i]["score"] >= 0.3` 时，`display_name` 也加入判定文本（如 `Aquaculture`、`Early warning system`）
+3. **概念反向加分**：把 `concepts[0:5].display_name` 也喂入判定 text 双保险（不要只信 title）
+4. **失败案例回头看**：每个 0 命中轮次都跑一次 `seen_dois` 反向过一遍 `results[:20]`，把该被命中的"准漏网"手动加入下轮的关键词列表
+5. **季度扩词审查**：每季度（每 90 轮 cron）跑一次统计，统计过去 90 轮 Crossref 验证通过的论文标题，对比 `AQUACULTURE_KEYWORDS + AI_KEYWORDS` 是否覆盖
+
+**R19 实证数据**：
+- R18 `aqua_kw=10, ai_kw=14` → 漏掉 bioRxiv 冷应激预警
+- R19 扩展为 `aqua_kw=18, ai_kw=21` + 加入 concepts 严格匹配 → 同一关键词组重跑可命中
+
 #### 3.5.4 检索源饱和 4 步诊断法（2026-08-01 20:30 首次正式化）
 
 **问题**：连续 2 轮检索 0 命中，**是不是工具坏了？要不要切换源？**
@@ -1148,6 +1265,46 @@ def is_relevant(work):
 | 疲劳 | 1-2 轮关键词重复 | 切换关键词（同方向）| Day 3-4 OpenAlex |
 | 方向饱和 | 2 轮方向全 0 命中 | 切换研究方向 | 第 10 轮 8 个新方向验证 |
 | 周期性低谷 | 跨源跨方向全 0 命中 | 标记 + 跳过 + 等 8 月 | 第 10 轮 8 方向 0 命中 |
+
+**🆕 阶段 5: 「API 健康但净增饱和」模式（2026-08-14 R21 实证，必加）**：
+
+R21 跨 27 关键词 / 4 轮 / 5 个新方向，最终净增 2 篇 (= 7% 命中率)。但所有诊断信号都"健康"：
+- ✅ OpenAlex API 全程 200 OK，无 429/503/Timeout
+- ✅ Crossref 验证 2/2 通过
+- ✅ known_dois.txt 健康（134 条稳定去重）
+- ✅ 4 轮每轮都返回 5-8 条结果（API 没罢工）
+- ❌ **但**去重后净增 0（连续末两轮）
+
+**判定信号（与阶段 3-4 的关键区别）**：
+- 阶段 3 是"3 源全 0 命中"（API 全坏或 keyword 全空）
+- 阶段 4 是"周期性低谷"（学术出版周期问题）
+- **阶段 5 是"API 健康 + 来源健康 + keyword 健康，但命中空间被已收录 DOI 库压缩"**
+
+**实证特征（R21）**：
+- 每轮 5-8 条结果都返回非空 ✅
+- 但 80%+ 与已知 DOI 库（134 条）重复（被 dedup 过滤掉）
+- 剩余 20% 经过 STRICT 双条件过滤后命中 0-1 篇
+- 单查询耗时从 R19 的 0.5s 升至 R21 的 1.6s（OpenAlex cluster 压力）
+
+**应对（主动收尾决策树）**：
+```
+单轮结果 × STRICT 双条件过滤后 ≥3 篇净增 → 继续（健康）
+                              1-2 篇净增 → 再跑 1 轮（缓冲）
+                              0 篇净增 2 轮连击 → 主动收尾，写报告
+任何时候：过去 4 轮净增 <5 篇 → 主动收尾
+```
+
+**R21 实证决策**：4 轮结果 2.9% → 1.9% → 0% → 0% 命中率，第 3 轮触底即应收尾，不必等到第 6-8 轮。
+
+**区别于阶段 4 的关键**：
+- 阶段 4（周期性低谷）→ 跨多源多方向全 0，等待 ⏳
+- 阶段 5（饱和收尾）→ 单源低命中率，单轮 1-2 篇是合理产出，**立即收尾 ✅**
+
+**经验法则**：
+1. **不要"穷尽式覆盖"**：每轮 cron 30+ 关键词查询是浪费，应改成"10-15 精准关键词 + 1-2 主题深耕"
+2. **专注新 DOI 比例**：从 "8 查询 → 4 篇候选" 改成 "10 查询 → 6 篇候选" 才是进步
+3. **每轮 cron 上限 3-5 篇净增**：达到即收工
+4. **7-8 月学术淡季**单轮 2 篇净增是合理产出，R19-R21 验证常态
 
 **🔄 低谷恢复信号（2026-08-08 第 11 轮实证）**：
 
@@ -2034,6 +2191,8 @@ cron job 模式下，某些写入方式可能被安全扫描器拦截：
 | `terminal(curl ...)` + schemeless | ❌ BLOCKED | `tirith:schemeless_to_sink` |
 | `execute_code` | ❌ BLOCKED | "Cron jobs run without a user present" |
 
+> 📁 **R22 新增**：Python heredoc `python3 << EOF ... EOF` 也被沙箱标记为 backgrounding 拦截（即使无 `&`），见 `references/r22-python-heredoc-trap.md`
+
 ### 7. 蜕变测试对称性公式陷阱（2026-07-30 老莫进化验证）
 对称蜕变关系（如 MR-LF-02 温度 ±1°C 对 DO 的影响）**不能**用 `|up_diff + down_diff| < ε` 验证。
 - 错误公式：`assert abs((DO_up - DO_base) + (DO_base - DO_down)) < 0.3`
@@ -2514,12 +2673,73 @@ RAS系统知识库         : 57篇
 
 > 📁 详细技术参考见 `references/rkr-platform.md`
 
-### 触发关键词
-"知识库"、"调研"、"资料收集"、"学术论文"、"测试"、"bug"、"竞品分析"、"行业报告"、LookForge调研任务
+| `10.59543/jidmis.v3.1492` (JIDMIS, 3 个关键词下重复出现)
+- `10.70882/josrar.2026.v3i4.123` (JOSRAR 新刊)
+
+### 📌 Machine Learning with Applications (MLWA, Elsevier 2026 新刊) 跟踪信号（R18 实证）
+
+**观察（2026-08-13 R18）**：首次在水产+AI 检索中命中 `10.1016/j.mlwa.2026.100970`（TCN+BiGRU+Attention 水产养殖多变量水质预测）。MLWA 是 Elsevier 旗下 2026 年新刊，已开始产出水产相关 AI 论文。
+
+**跟踪方案**：
+- **DOI 前缀扩展**：`10.1016/j.mlwa.*` 作为后续检索补充模式
+- **关键词组合**：在已知 MLWA 出过水产论文后，下轮可单独检索 `Machine Learning with Applications` 期刊 + 水产限定
+- **优先级**：🔴 P0（新刊首篇水产直接命中，期刊潜力高）
+
+**与 §3.1.1 新刊识别的关系**：
+- MLWA 是 Elsevier 老牌出版集团旗下新刊 → 不属 §3.1.1 的"新刊降级"场景
+- 标 P0 而非 P1：Crossref 200 OK + 作者真实 + 摘要技术细节完整 + 出版社背书
+- 与 JOSRAR（§3.1.1 案例）的区别：JOSRAR 是新独立期刊，MLWA 是 Elsevier 子公司
+
+### 📌 摘要恢复三级 Fallback 链（2026-08-13 R18 实证排序）
+
+按成功率从高到低排列：
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 优先级 1: Crossref API message.abstract                      │
+│   - Foods/MDPI/Springer Nature/SAGE: ~80% 命中率              │
+│   - 命中后需 strip <jats:p> 标签                              │
+├─────────────────────────────────────────────────────────────┤
+│ 优先级 2: OpenAlex abstract_inverted_index 倒排索引重建        │
+│   - 几乎 100% 成功率（绝大多数 Elsevier/Wiley/Taylor 论文）    │
+│   - R18 实证：MLWA 10.1016/j.mlwa.2026.100970 摘要走此路径     │
+│   - 重建代码：见 §3 双验证协议步骤 3                          │
+├─────────────────────────────────────────────────────────────┤
+│ 优先级 3: DOI redirect HTML（已大幅失效，2026-07-31 验证）     │
+│   - 仅对部分 Springer Nature 期刊（Aquaculture International） │
+│     100% 成功                                                  │
+│   - **失效**：Heliyon (Cell Press) / IEEE Access /            │
+│     Smart Agricultural Technology (Elsevier) — HTML 200 OK    │
+│     但无 abstract 容器（§3.2 旧模式失败）                      │
+│   - **拒绝**：MDPI (DOI 10.3390) — 直接 HTTP 403 Forbidden    │
+│   - 默认跳过，除非 OpenAlex + Crossref 双双无摘要             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**R18 决策矩阵**：
+| 情况 | 第一选择 | 第二选择 | 兜底 |
+|---|---|---|---|
+| Elsevier 期刊 | OpenAlex 倒排索引 | Crossref API | DOI redirect（可能失败）|
+| MDPI 期刊 | Crossref API | OpenAlex 倒排索引 | **不试 DOI redirect（403）**|
+| Springer Nature | DOI redirect HTML | Crossref API | OpenAlex 倒排索引 |
+| IEEE | OpenAlex 倒排索引 | Crossref API | DOI redirect（可能失败）|
+| 新刊（fwci=0, cited=0）| OpenAlex 倒排索引 | Crossref API | DOI redirect |
+
+**关键经验（R18 + R19 沉淀）**：
+- **不要把 DOI redirect 作为默认第一步** — 该路径 2026-08 后对 >50% 期刊失效
+- **OpenAlex 倒排索引重建是最可靠的通用 fallback** — 几乎从不失败，只需一行代码
+- **MDPI 必须先试 Crossref** — 顺序错了就是浪费时间（403 拦截）
+
+**R19 实证数据**（验证升级后的三级链）：
+- 3 篇新论文（10.1007/s10499-026-02627-7 Aquaculture Intl、10.3389/fmars.2026.1887350 FMARS、10.64898/2026.08.01.742243 bioRxiv）
+- 3/3 全部 Crossref `message.abstract` 200 OK 命中（优先级 1） — 0 篇需要 fallback
+- **结论**：新文场景（Pub Date < 30 天）下 Crossref 命中率 ≈ 100%，不必先试 OpenAlex 倒排索引，直接走 Crossref 即可
+
+**bioRxiv 特殊情况**：虽然 DOI 注册在 openRxiv（DataCite 类），但 Crossref 实际收录 `10.64898/2026.08.01.742243` 并返回 200 OK + 完整摘要 — Crossref 的覆盖范围 2026-08 已扩展到 DataCite 通道，应优先信 Crossref
 
 ---
 
-## 学习助手职责 & 知识库同步工作流
+## 🔍 检索源健康
 
 ### 第一职责：学习助手（知识库运营）
 

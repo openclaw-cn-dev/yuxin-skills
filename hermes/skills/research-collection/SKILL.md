@@ -55,10 +55,12 @@ metadata:
 
 **路径验证**：写入前务必确认目标目录存在。任务指令中的路径（如 `~/Desktop/知识库 /AI/`）可能因环境迁移而失效，优先用 `find ~/Desktop -name "*关键词*"` 定位实际路径，找不到则创建到 `~/Desktop/渔芯科技/` 下。备选路径（按优先级）：
 
-1. `~/rkr_staging/文档库/3-公司项目资料/301-智能体/` — 研究跟踪报告常在此（如 AI_CAD研究/、水下3D重建/ 等子目录，2026-08-12 验证）
+1. `~/rkr_staging/文档库/3-公司项目资料/301-智能体/` — 研究跟踪报告常在此（如 AI_CAD研究/、水下3D重建/、AI出3D模型研究/ 等子目录，2026-08-12 验证）
 2. `~/rkr_staging/文档库/通用知识库/` — 增量研究报告常在此（历史归档，2026-08-05 验证）
 
 如果两个 rkr_staging 路径都找不到，再回到 `~/Desktop/渔芯科技/` 创建新文件。
+
+**首份落地报告规则**（2026-08-13 验证）：当任务指令路径（如 `~/Desktop/知识库 /AI/`）已失效且全盘搜索确认无任何历史报告时，这不是"路径错误"而是"首份落地"。正确做法：**在 `301-智能体/` 下新建同名主题子目录**（如 `AI出3D模型研究/`）写入起始报告，而非回退到 `~/Desktop/渔芯科技/`——研究跟踪报告是"主题子目录"族（与 AI_CAD研究/ 并列），不是散落在桌面。报告头部加一行注记说明路径迁移原因。
 
 **Pitfall: `find` 在 rkr_staging 上使用宽泛关键词导致超时**（2026-08-12 验证）：`find ~/rkr_staging -name "*CAD*" -type f` 匹配到 **数千个文件**（知识库中大量 CAD 相关文档），10 秒超时且输出被截断。**修复**：始终将 find 限定到具体子目录，如 `find ~/rkr_staging/文档库/3-公司项目资料/301-智能体/ -name "*CAD*研究*" -type f`。宽泛搜索应拆分为按目录分段。
 
@@ -291,6 +293,16 @@ curl -s -o /tmp/gh_brand3.json 'https://api.github.com/search/repositories?q=Tri
 
 **命中逻辑**：品牌名搜索返回的项目中，除了已知主仓库（如 `Tencent-Hunyuan/Hunyuan3D-2.1`），任何**新出现的仓库**（创建日期在 7 天内）都值得关注。即使星数为个位数，也可能是重要生态扩展。
 
+**Pitfall: 品牌名搜索的噪声过滤（2026-08-13 验证）**——品牌名 `in:name` 搜索会返回两类噪声，直接套用"新仓库都值得关注"会误判：
+
+1. **Spam fork（垃圾复刻）**：0-star 仓库 + 创建于当天 + description 是父仓库的**逐字截断复制**（如 `Hunyuan3D-2` 返回 3 个 0-star 当日 fork，description 全是 `High-Resolution 3D Assets Generation with Large Scale Hunyua...`）。这是 fork 机器人的垃圾，不是生态信号。
+2. **品牌名撞车（name collision）**：`TRELLIS in:name` 返回 `trellisworks/trellisworks-website`、`trellis-tech/trellis-academy-source`、`trellis-architecture/axiomatic-core`——是另一家叫 Trellis 的公司，与 `microsoft/TRELLIS` 无关。
+
+**过滤规则**：
+- description 与父仓库逐字雷同（或明显截断）→ 判定 spam fork，丢弃
+- owner/description 与目标品牌明显无关（不同公司/产品线）→ 判定撞车，丢弃
+- 只有 **星数 > 0 且 description 原创/独立** 的新仓库才计入生态信号
+
 **实例**：`Hunyuan3D-WorldClaw`（20⭐, 08-05 创建）通过 `q=Hunyuan3D+in:name` 发现，但不会出现在 `q=text-to-3d+OR+image-to-3d` 的通用搜索中。
 
 ### 相邻领域论文迁移方法论（2026-08-07 沉淀）
@@ -352,6 +364,26 @@ curl -s -o /tmp/gh_brand3.json 'https://api.github.com/search/repositories?q=Tri
 ```
 
 **反例**：不要看到星数高的项目就喊"分水岭"——必须是同类可比（都是 AI-CAD 工具，不能拿通用 3D 引擎来比）。跨类别比较无意义。
+
+### 停滞信号检测（2026-08-13 沉淀 · Hunyuan3D 案例）
+
+**背景**：星数高不代表项目还活着。旗舰项目若长期无 push，往往是组织重心迁移的信号——与"星数分水岭"（新项目跃迁）相反，这是"老项目退场"信号。
+
+**检测规则**：
+1. 每期维护核心项目时，同时记录 `stargazers_count` 和 `pushed_at`，两者缺一不可
+2. 若旗舰项目（≥10k⭐）`pushed_at` 距今 **≥6 个月**，触发停滞警报
+3. 立即检查同 org 的其他仓库（`q=org:ORG_NAME+PROJECT_NAME&sort=stars`），看是否有新项目接管了更新节奏
+4. 停滞项目标注"⚠️ 生态迁移"，并在报告中给出"是否继续依赖 vs 迁移到活跃路线"的判断
+
+**实例（本次）**：
+```
+Hunyuan3D-2: 14,485⭐ but pushed_at=2025-10-28（10 个月未更新）
+同 org 检查 → HunyuanWorld-1.0 (2,907⭐, 2026-04 活跃)、HunyuanWorld-Voyager、HY-WorldPlay 持续更新
+→ 判定：腾讯混元 3D 从"单物体生成"转向"3D 世界生成"
+→ 报告建议：渔芯若依赖 Hunyuan3D 做单设备建模，应评估迁移
+```
+
+**置信度判断**：旗舰停滞 + 同 org 出现持续更新的新项目 → 高（生态迁移确认）；仅旗舰停滞、无接替项目 → 中（可能只是暂停维护）。
 
 ### 学术流水线识别（2026-08-10 沉淀）
 

@@ -443,6 +443,8 @@ Path("/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆
 
 ### ⚠️ 陷阱 12: `304-公司运营/` 16 个子目录里有 4 个空白(`HR/`、`知识产权/`、`财务/`、`销售/`)
 
+> 补充(2026-08-13)：已新增激活目录 `公司证件/`，营业执照 PDF+JPG 归档于此。公司证件(执照/银行账户/收款码等)统一归 `304-公司运营/公司证件/`，详见 `references/company-certificates-archive.md`。
+
 **状态**:4 个目录是占位空目录,等待激活;`销售/` 与 `销售与市场营销/` 重复。
 
 **规则**:
@@ -585,6 +587,7 @@ cronjob action=list  # 看现有 job
 ## References(本目录下)
 
 - `references/scanner-architecture.md` — RKR scanner 详细时序、配置来源、故障行为
+- `references/company-certificates-archive.md` — 公司证件(营业执照等)归档位置 + 证件文件真实存放处(微信接收文件,非"素材图片") + 扫描件 pdftoppm→vision 读取技巧(2026-08-13 建立)
 - `references/migration-rules.md` — `migrate_agent_artifacts.py` 完整扫描/排除规则表
 - `references/findera-exception.md` — 为什么 FindEra 不走 staging 文件系统
 - `references/hermes-profile-env-pitfall.md` — `$HOME` 被 Hermes profile 改写的陷阱 + 修复
