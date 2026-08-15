@@ -19,10 +19,10 @@ doc-coauthoring
 dogfood
 domain
 drawing-agent-v2-three-modules-integration
-drawing-reverse-engineering
 drive-motivation
 email
 feeds
+feishu-operations
 freecad-automation
 frontend-design
 frontend-ui
@@ -33,8 +33,8 @@ github-workflows
 hardware
 heidou-admin
 hermes-ecosystem-entry.md
-hermes-feishu-credential-update
 hermes-internals
+hermes-workarounds
 hooked-ux
 inference-sh
 internal-comms

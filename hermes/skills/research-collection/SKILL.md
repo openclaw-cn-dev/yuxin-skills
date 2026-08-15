@@ -97,6 +97,7 @@ metadata:
 - `send_message` 不可用 → 改用 `feishu-api-notify` skill 的写好文件 → python3 双步模式
 - `execute_code` 不可用 → 改用 terminal + python3 -c (从文件读取)
 - 后台进程 (`&`) 不可用 → 串行 curl 逐个抓取（每条 2-5 秒，8 个库约 16-40 秒）
+- **macOS 无 `timeout` 命令 → 用 `curl --max-time`**（2026-08-14 验证）：`timeout 20 curl ...` 报 `timeout: command not found`（GNU coreutils 命令，macOS 默认 BSD 工具链不带）。**修复**：改用 curl 原生参数 `curl -s --max-time 15 -o /tmp/x.json 'URL' && echo done || echo TIMEOUT`——`--max-time` 超时会令 curl 返回非零退出码，`||` 分支自动捕获超时，无需外部 timeout 包装。HF Spaces 等易超时源统一用此模式。
 - **tirith 安全扫描拦截**：`curl URL | python3 -c`（pipe-to-interpreter）在 cron 中被阻止。
   - ✅ **推荐工作流**（已验证 2026-07-03）：`curl -s -o /tmp/results.json 'URL' && python3 -c "import json; d=json.load(open('/tmp/results.json'))"` — 两步法：先下载到临时文件，再以文件路径方式读取。security scan 只检查 pipe 进 interpreter，不阻止按路径读文件。
   - ⚠️ arXiv 使用 `http://export.arxiv.org`（非 HTTPS）会被 `plain_http_to_sink` 阻止。**修复**：URL 中写 `https://export.arxiv.org`（curl -L 自动 follow 到 HTTP 重定向，但 scan 只检查原始 URL 文本）。
@@ -316,6 +317,17 @@ curl -s -o /tmp/gh_brand3.json 'https://api.github.com/search/repositories?q=Tri
 - 遥感多光谱 → 水下多光谱
 
 **实施**：arXiv 查询时除了主领域关键词，追加 1-2 个相邻领域查询（如 `all:deraining AND all:3d reconstruction`），用查到的相邻领域论文评估迁移可行性。**不要**只在主领域关键词上反复搜。
+
+### Pitfall: arXiv 裸 "editing"/"3d" 查询返回噪声 — 必须配具体技术词（2026-08-14 验证）
+
+**问题**：`search_query=all:3d+generation+OR+all:3d+editing` 返回的 6 条结果几乎全是噪声（量子密钥分发、agentic design、视频生成 V-RAE、统计独立性），没有一条是 3D 模型生成/编辑论文。"editing" 一词高度歧义，arXiv 的 `all:` 宽松匹配会命中 video editing / photo editing / document editing 等无关论文；裸 "3d" 同理会命中 3D 打印、3D 视觉导航等偏离主题的论文。
+
+**修复**：arXiv 查询永远用**具体技术词**，不要用裸 "editing" / "3d"。方向→关键词映射：
+- 3D 生成：`all:text-to-3d` / `all:gaussian+splatting`（本次命中 SCULPT part-aware、PixSDS SDS 噪点）
+- 3D 编辑：`all:gaussian+splatting+editing` / `all:mesh+editing` / `all:part-aware` / `all:scene+editing`
+- 物体重建：`all:single+view+reconstruction` / `all:image-to-3d`
+
+**实例（本次）**：第一条查询 `all:text-to-3d+OR+all:gaussian-splatting` 命中 2 篇 A 级论文；第二条裸查询 `all:3d+generation+OR+all:3d+editing` 完全浪费（6/6 噪声）。宁可少而精，不要为了"覆盖面"上一个会返回噪声的宽泛词。
 
 ### 技术路线对比专题（推荐子章节，2026-08-09 沉淀）
 

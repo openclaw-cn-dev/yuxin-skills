@@ -4,7 +4,7 @@ description: '老莫（知识库+测试）核心技能集 — 文档协作、产
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.31.0"
+  version: "1.32.0"
 ---
 
 # 老莫知识库核心技能
@@ -257,66 +257,45 @@ OpenAlex 现在偶尔返回 Zenodo 仓库的论文（DOI 前缀 `10.5281/zenodo.
 - Zenodo description：空
 - 标题：`Artificial Intelligence-Based Monitoring and Management of Water Quality Parameters in Biofloc Aquaculture Systems`（典型通用词堆砌）
 
-### 3.1.3 Figshare 数据镜像 DUP 4 步鉴别法（2026-08-10 R16 首实战）
+### 3.1.3 DataCite DUP 鉴别法（Figshare / Zenodo 通用，2026-08-10 R16 + 2026-08-14 R24 双实战）
 
-OpenAlex 偶尔返回 Figshare 仓库的论文（DOI 前缀 `10.6084/m9.figshare.*`）。Figshare 与 Zenodo 同源（用 DataCite 而非 Crossref 注册 DOI），但 Figshare 命中场景有一个独特模式：**它常常是某个已发表期刊论文的配套数据集镜像**。如果不鉴别就直接入库，会污染 known_dois.txt 并浪费 Crossref 验证配额。
+OpenAlex 偶尔返回 Figshare 仓库的论文（DOI 前缀 `10.6084/m9.figshare.*`）或 Zenodo 仓库的论文（DOI 前缀 `10.5281/zenodo.*`）。两者同源（都用 DataCite 而非 Crossref 注册 DOI），但命中场景有差异：
 
-**鉴别流程**（3 个强信号中命中 2 个 = DUP 跳过）：
+- **Figshare 模式**：常常是某个已发表期刊论文的配套数据集镜像（DUP 主论文）
+### 3.1.3 DataCite DUP 鉴别法（Figshare / Zenodo 通用，2026-08-10 R16 + 2026-08-14 R24 双实战）
+
+OpenAlex 偶尔返回 Figshare 仓库（DOI 前缀 `10.6084/m9.figshare.*`）或 Zenodo 仓库（DOI 前缀 `10.5281/zenodo.*`）的论文。两者都用 DataCite 而非 Crossref 注册 DOI，需 DUP 鉴别：
+
+- **Figshare 模式**：常是已发表期刊论文的配套数据集镜像
+- **Zenodo 模式**（R24 实战）：OpenAlex 同一关键词返回**两个相同 DOI**（如 `zenodo.20966580` 和 `zenodo.20966579`）
+
+**核心鉴别信号**（2 个强信号都命中 = DUP 跳过）：
 
 1. **Crossref API 检查**：
    ```bash
    curl -s -o /dev/null -w "%{http_code}\n" \
-     "https://api.crossref.org/works/10.6084/m9.figshare.<id>"
+     "https://api.crossref.org/works/10.5281/zenodo.<id>"
    ```
-   - `200 OK` → 罕见（极少数 Figshare DOI 会被 Crossref 收录），仍要继续下面 2 步
-   - `404` → 正常（DataCite DOI 不会注册到 Crossref），需要 OpenAlex 兜底
+   - `200 OK` → 罕见，继续 2-3 步
+   - `404` → 正常（DataCite DOI 不在 Crossref），需 OpenAlex 兜底
 
-2. **OpenAlex `type` 字段检查**（**核心鉴别信号**）：
+2. **OpenAlex `type` 字段检查**（Figshare 强信号 / Zenodo 辅助）：
    ```python
-   # 反查 OpenAlex 看 type 字段
-   req = urllib.request.Request(
-       f"https://api.openalex.org/works/doi:10.6084/m9.figshare.<id>",
-       headers={"User-Agent": "mailto:research@yuxintech.com"}
-   )
-   w = json.loads(urllib.request.urlopen(req, timeout=15).read())
-   work_type = w.get("type")  # 关键字段
+   w = openalex_get(f"https://api.openalex.org/works/doi:10.6084/m9.figshare.<id>")
+   work_type = w.get("type")
    ```
-   - ❌ `type == "other"`（数据集/代码/补充材料） → **DUP 强信号**（不是 journal-article）
-   - ✅ `type == "journal-article"` 或 `"article"` → 通过，继续鉴别
+   - `type == "other"`（数据集/代码/补充材料）→ **DUP 强信号**
+   - `type == "journal-article"` → 通过，继续鉴别
 
-3. **作者列表与已发表期刊论文比对**（**第二个强信号**）：
-   - 提取 Figshare 论文的作者列表（前 5 名显示名）
-   - 与同关键词查询下命中的期刊论文（如 Parasites & Vectors Q1、Springer Nature 系列）作对比
-   - ❌ 作者列表**完全一致** → **DUP 强信号**（配套数据）
-   - ✅ 作者列表**不一致**或 Figshare 是唯一命中 → 通过，纳入独立论文评估
+3. **作者列表比对**（Zenodo 主信号 / Figshare 辅信号）：
+   - 提取作者前 5 名 → 与同关键词下已收录期刊论文比对
+   - **作者列表完全一致** → **DUP 强信号**
+   - 不一致 → 通过，纳入独立论文评估
 
-**判定规则**：2 个强信号中命中 2 项（即 `type != journal-article` **且** 作者列表与某已收录期刊论文完全一致）→ **DUP 跳过**，**不写入 known_dois.txt**。
+**判定规则**：2 个强信号都命中 → DUP 跳过，**不写入 known_dois.txt**。
 
-**实战案例**（2026-08-10 R16 验证）：
-
-| DOI | Crossref | OpenAlex type | 作者列表 | 判定 |
-|---|---|---|---|---|
-| 10.1186/s13071-025-07124-z (P&V Q1) | 200 OK | journal-article | 5 名 | ✅ 主论文入库 |
-| 10.6084/m9.figshare.c.8171400.v1 | 404 | **other** | 与上面 5 名**完全一致** | ❌ **DUP 跳过** |
-| 10.6084/m9.figshare.c.8171400 | 404 | **other** | 与上面 5 名**完全一致** | ❌ **DUP 跳过**（同一论文的 v1/base 副本） |
-
-**Figshare API 直连兜底（不推荐）**：
-Figshare API `https://figshare.com/api/v2/articles/<id>` **经常返回 403 Forbidden**（实测 2026-08-10）。如果优先用 OpenAlex 鉴 `type` 字段，**不必尝试 Figshare API**，节省一次 HTTP 调用。
-
-**与 §3.1 Zenodo 鉴别的对比**：
-
-| 维度 | Zenodo（§3.1） | Figshare（§3.1.3） |
-|---|---|---|
-| 主要风险 | **假论文**（虚构内容） | **DUP 镜像**（主论文已入库） |
-| 强信号 | 占位符作者、空 description、`Research Consortium Archive` | `type=other`、作者列表与已收录期刊论文**完全一致** |
-| 入库规则 | 4 步中 ≥3 假信号 → 拒绝 | 2 个强信号都命中 → 拒绝 |
-| 复用代码 | 4 步判定模板可直接扩展 | 新增 `type` 字段判定即可 |
-
-**经验法则**：
-1. **OpenAlex 摘要空不是 Figshare 的判定信号**（Figshare 数据集通常无摘要）— 跟 Zenodo 假论文恰好相反
-2. **`type=other` 是 Figshare 唯一最可靠的 DUP 信号**（比 Crossref 404 更强）
-3. **Figshare vs. v1 副本**：同一 `c.<id>` 论文经常同时返回 base 和 `.v1` 两个 DOI（如 `c.8171400` 和 `c.8171400.v1`）→ known_dois.txt 只记一条（v1 或 base 选其一），避免重复
-4. **若作者列表无法匹配**（找不到对应主论文）→ 可能是独立 Figshare 数据论文，按通用真实论文流程（Crossref/OpenAlex 摘要重建）继续评估
+> 📁 详细鉴别流程 + R16/R24 双实战案例 + 鉴别脚本见 `references/datacite-dup-detection.md`
+> 📁 Zenodo 同关键词 DUP 鉴别代码（R24 沉淀）见 `scripts/zenodo-dup-detector.py`
 
 > 🔧 鉴别脚本：`scripts/figshare-dedup-detector.py`（R16 沉淀 — 输入 OpenAlex work dict + 主论文候选列表，自动返回 `is_dup: true/false`）
 
@@ -2675,6 +2654,39 @@ RAS系统知识库         : 57篇
 
 | `10.59543/jidmis.v3.1492` (JIDMIS, 3 个关键词下重复出现)
 - `10.70882/josrar.2026.v3i4.123` (JOSRAR 新刊)
+
+### 📌 数据集期刊是 P0 高价值命中区（2026-08-14 R24 实证）
+
+**R24 实证**：OpenAlex `feeding_intensity` 桶命中 **Scientific Data (Nature Q1)** 数据集论文 `10.1038/s41597-026-07669-3`（Tilapia Feeding Behavior Image Dataset, 4000 张罗非鱼投喂强度标注图）→ 对 AquaSmart 投喂 AI + LookForge 仿真参数库**直接可用**（CC BY-NC-ND 4.0）。
+
+**核心判定信号**：
+- OpenAlex `type == "data-paper"` 或 `"dataset"` → 数据集论文 → 优先读全文
+- 期刊 `container-title` 含 "Data" / "Scientific Data" → 高优先级
+- License 是 CC BY 或 CC BY-NC → 可直接复用
+
+**跟踪期刊清单**：
+- 🔴 P0：Scientific Data (Nature Q1, IF~9.8) / Data in Brief (Elsevier Q2) / Geoscientific Model Development
+- 🟡 P1：MethodsX / SoftwareX / Journal of Open Source Software / BMC Research Notes
+- 🟢 P2：Earth System Science Data (Copernicus)
+
+> 📁 详细关键词组 + license 处理 + 错峰窗口升级见 `references/dataset-journal-priority.md`
+
+### 📌 错峰窗口升级为 12:00-20:00（2026-08-14 R24 验证）
+
+R22 建议错峰到 12:00-14:00，R23/R24 双轮验证 12:00-19:00 区间 0% 限流率，R24 在 **19:00** 也跑出 0% 限流。
+
+**升级版错峰窗口**（R22/R23/R24/R25 四轮验证）：
+| 时间窗口 | 限流率 | 验证 |
+|---|---|---|
+| 08:00（默认 cron）| 40% (R22) | 🔴 高峰，避开 |
+| 12:00-14:00 | 0% (R23) | ✅ 健康 |
+| 16:00-19:00 | 0% (R24) | ✅ 健康 |
+| 19:00-20:00 | 0% (R24+R25) | ✅ 健康（R25 全 16 查询 0 限流）|
+| 20:00-21:00 | 0% (R25) | ✅ 健康（待 R26 复测）|
+
+**经验法则**：cron 启动时间应错峰到 12:00-21:00 任意时段，OpenAlex 高峰是 08:00-10:00（学术机构晨间活跃期）。R25 实证 20:00 启动 16 查询 0 限流，**推荐 cron 启动时间 19:00-21:00**（兼顾 R24/R25 双轮验证）。
+
+**🆕 R25 漂移修复经验（2026-08-14 20:00 实证）**：R14 → R25 期间 36 条 DOI 漂移未在 R15-R24 任何轮次告警（违反 R22 强制自检要求）。**R26+ 强制 cron 启动时第一步 `wc -l known_dois.txt` 与上一轮报告声明数比对**，5 秒发现漂移，违规操作立即从历史 `.md` 报告重抽恢复。
 
 ### 📌 Machine Learning with Applications (MLWA, Elsevier 2026 新刊) 跟踪信号（R18 实证）
 

@@ -1,6 +1,6 @@
 ---
 name: yuxin-code-iron-law
-description: 渔芯科技全公司铁律 — 代码/脚本/工具开发必须经 Claude Code 或 Codex,玉芬默认不自写。华哥 2026-08-03 明确。所有 9 个 profile (玉芬+8 同事+community) AGENTS.md 顶部已固化。v1.3 实测双工具链都可用:Claude Code 用 `claude -p --allowedTools "Read,Edit,Write,Glob,Grep"`(代码首选,5/5 任务 100% 成功),Codex 用 `cat /tmp/p.txt | codex exec --skip-git-repo-check -s danger-full-access`(大型 JSON/数据整合首选,2 分 20 秒写 243 行)。两个反模式:无 --allowedTools 卡 300s 超时;缺 -s danger-full-access 报 read-only sandbox。
+description: 渔芯科技全公司铁律 — 代码/脚本/工具开发优先经 Claude Code 或 Codex。华哥 2026-08-03 明确，2026-08-14 修正为"优先"而非"必须"：同事不会调用 Claude Code 不应导致不写代码，不会用或失败时直接自写（加 TODO 标注），把活干完优先于工具洁癖。所有 9 个 profile (玉芬+8 同事+community) AGENTS.md 顶部已固化。v1.3 实测双工具链都可用:Claude Code 用 `claude -p --allowedTools "Read,Edit,Write,Glob,Grep"`(代码首选,5/5 任务 100% 成功),Codex 用 `cat /tmp/p.txt | codex exec --skip-git-repo-check -s danger-full-access`(大型 JSON/数据整合首选,2 分 20 秒写 243 行)。两个反模式:无 --allowedTools 卡 300s 超时;缺 -s danger-full-access 报 read-only sandbox。
 version: 1.3
 created: 2026-08-03
 updated: 2026-08-03
@@ -10,8 +10,11 @@ priority: highest
 # 🛡️ 渔芯 · 代码开发铁律 v1
 
 > **华哥 2026-08-03 明确:"代码开发必须调用 claude code 或 codex,不成功才能自己直接开始"**
+> **华哥 2026-08-14 修正:"有代码要写时优先使用 Claude Code 或 Codex。同事不会调用 Claude Code 不应导致不写代码——不会用或失败时直接自写,不要卡住。"**
 > **范围:9 个 profile 全部遵守(玉芬 default + 8 同事 + community)**
 > **优先级:最高 — 高于任何其他 SOP**
+>
+> ⚠️ **核心精神(2026-08-14 起)**:Claude Code / Codex 是**优先选项,不是硬性门槛**。"不会调用 Claude Code"**绝不是不写代码的理由**。会调就用,不会调或调失败就直接自写(加 TODO 标注),把活干完优先于工具洁癖。
 
 ---
 
@@ -21,10 +24,10 @@ priority: highest
 
 ```
 □ 1. 这件事是"代码/脚本/可执行文件"吗?(查下方"触发条件"表)
-□ 2. 试过 `claude -p "..."` 了吗?失败了?(失败 = 工具异常/超时/无权限,不是"任务太大")
-□ 3. 试过 `codex exec "..." --sandbox danger-full-access` 了吗?失败了?
-□ 4. 若都失败,自写文件首行加 `# TODO(tech-debt): 改由 Claude Code/Codex 重写`
-□ 5. 飞书通知华哥登记技术债
+□ 2. 优先试 `claude -p "..."` — 会调就用;不会调 / 失败(工具异常/超时/无权限)→ 跳到下一步
+□ 3. 优先试 `codex exec "..." --sandbox danger-full-access` — 会调就用;不会调 / 失败 → 跳到下一步
+□ 4. 都不会调或都失败 → **直接自写,不要卡住**(文件首行加 `# TODO(tech-debt): 改由 Claude Code/Codex 重写`)
+□ 5. 飞书通知华哥登记技术债(自写时建议,不强制)
 ```
 
 **自动豁免场景**(无需走铁律,可自写):Markdown · AGENTS.md · 纯 JSON/YAML/TOML 配置 · 元数据 JSON(Dashboard 数据源)· 单行 shell · 调试 print · 数据迁移/批处理。
@@ -94,16 +97,17 @@ claude -p --allowedTools "Read,Edit,Write,Glob,Grep" -- "<精确聚焦的 prompt
 1️⃣ 第一选择: Claude Code
    claude -p "需求描述: .... 写到 <路径>"
    或交互模式
+   (不会调用 Claude Code → 直接跳 2️⃣,不要卡住)
 
 2️⃣ 第二选择: Codex CLI  
    codex exec "需求描述: ...." --sandbox danger-full-access
    或交互模式
+   (不会调用 Codex → 直接跳 3️⃣,不要卡住)
 
-3️⃣ 兜底(必须满足全部条件):
-   ✅ Claude Code 明确失败(API 不可用/工具异常/超时 3 次)
-   ✅ Codex 也明确失败
-   ✅ 自写文件首行加 # TODO(tech-debt): 改由 Claude Code/Codex 重写
-   ✅ 飞书通知华哥登记技术债
+3️⃣ 兜底(不会调 / 调失败即可,不再要求"明确失败 3 次"):
+   ✅ 文件首行加 # TODO(tech-debt): 改由 Claude Code/Codex 重写
+   ✅ 飞书通知华哥登记技术债(建议,不强制)
+   ⚠️ 核心:把活干完优先于工具洁癖。不会用工具不是停摆的理由。
 ```
 
 ---
@@ -198,12 +202,16 @@ cat /tmp/prompt.txt | codex exec --skip-git-repo-check -s danger-full-access
 
 ## 违反处置(自发现或被指出)
 
-```
-1. 立即停手
-2. 改由 Claude Code/Codex 重写(真重写,不是改标注)
-3. 飞书报告华哥(原文件保留 # TODO 标注作为审计追踪)
-4. 写复盘到 ~/hermes/reports/yuxin_self_criticism/YYYY-MM-DD_<主题>.md
-```
+**什么算违规(2026-08-14 更新)**:
+- ❌ 因为"不会调用 Claude Code/Codex"就**完全不写代码、停摆不干活** — 最严重违规,违反"把活干完优先"原则
+- ❌ 既不调工具、也不加 TODO 标注、也不通知华哥,无痕自写并冒充工具产出
+
+**自写本身不算违规**(兜底合法),但建议加 `# TODO(tech-debt)` 标注 + 飞书登记,便于事后统一用工具重写。
+
+处置:
+1. 立即纠正(要么补调工具,要么补标注)
+2. 飞书报告华哥
+3. 写复盘到 ~/hermes/reports/yuxin_self_criticism/YYYY-MM-DD_<主题>.md
 
 **累计 3 次违规**:对应 profile 自动降级(暂停 self-evolution 24h),等华哥手动重启。
 
@@ -219,11 +227,8 @@ claude -p "需求: ... 写出可运行的 Python 脚本到 <绝对路径>,要求
 # 3. 失败时第二选择  
 codex exec "需求: ..." --sandbox danger-full-access
 
-# 4. 两次都失败时,才允许自写
-# 但必须满足:
-#   a) 文件首行加 # TODO(tech-debt)
-#   b) 飞书通知华哥
-#   c) 记录到 ~/hermes/reports/yuxin_self_criticism/<日期>_<主题>.md
+# 4. 不会调用、或两次都失败时 → 直接自写(不要卡住)
+#   建议: a) 文件首行加 # TODO(tech-debt)  b) 飞书通知华哥登记技术债
 ```
 
 ---

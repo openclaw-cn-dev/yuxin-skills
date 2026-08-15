@@ -66,4 +66,5 @@ traction-eos
 ux-heuristics
 web-artifacts-builder
 web-typography
+xiaobao-heartbeat
 yuanbao

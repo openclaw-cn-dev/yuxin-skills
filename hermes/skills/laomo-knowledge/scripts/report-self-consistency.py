@@ -1,130 +1,116 @@
 #!/usr/bin/env python3
-"""报告自洽校验脚本 — R22 验证通过版本
+"""Report self-consistency check (R27 字符扫描法，避开 R21 bash grep 误报).
 
-用法：
-    python3 report-self-consistency.py \\
-        --known-dois-file /Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt \\
-        --report-file /Users/hua/.hermes/profiles/laomo/evolution/2026-08-14_R22.md
+验证 evolution report 中声称"已加入 known_dois.txt"的 DOI 是否真的在文件中。
+用字符扫描法（而非 regex）避免 Markdown 反引号/括号包围时的截断误报。
 
-功能：
-    1. 提取 Markdown 报告中所有 DOI（包括反引号/括号/逗号包围）
-    2. 提取 known_dois.txt 中所有 DOI
-    3. 验证 R22 新增 DOI 是否双向引用
-    4. 检测报告↔文件漂移（报告引用但 known_dois.txt 缺失）
-    5. 校验数量声明（如 "136 → 138"）是否与文件实际一致
-
-依赖：Python 3 stdlib only
+Usage:
+    python3 report-self-consistency.py \
+        --known-dois-file /Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt \
+        --report-file /Users/hua/.hermes/profiles/laomo/evolution/2026-08-15_R27.md \
+        --new-dois 10.3390/encyclopedia4010023 10.3390/ani14172555
 """
-import re
 import argparse
 import pathlib
+import re
 import sys
 
 
-def extract_dois_from_markdown(text):
-    """从 Markdown 文本提取 DOI（处理反引号/括号/逗号包围）"""
-    dois = set()
-    # R21 修复版：兼容 `(10.xxx)`、`10.xxx`、`[10.xxx](url)`、`10.xxx,`
-    pattern = r'(?:[` (]?)(10\.[0-9]+/[a-zA-Z0-9._/-]+)'
-    for m in re.finditer(pattern, text):
-        doi = m.group(1).rstrip("`.,;)")
-        dois.add(doi)
+def extract_dois_from_text(text):
+    """字符扫描法：从文本中提取所有 DOI 列表（避开 R21 bash grep 误报）.
+
+    R21 教训：bash `grep -oE '10\\.[0-9]+/[a-zA-Z0-9._/-]+'` 会把
+    `10.48045/001c.166391` 截断为 `10.48045/001c`（遇到 `.` 停止）。
+
+    字符扫描法：
+    1. 找所有 `10.` 起点
+    2. 验证前一个字符是标点/空白（不是字母数字，避免 IP 地址误判）
+    3. 扫 registrant 数字
+    4. 期待 `/` 分隔符
+    5. 扫 suffix（字母/数字/.-_/），直到第一个非法字符
+    """
+    dois = []
+    i = 0
+    while i < len(text):
+        idx = text.find("10.", i)
+        if idx == -1:
+            break
+        # 验证前一个字符
+        if idx > 0 and text[idx-1].isalnum():
+            i = idx + 3
+            continue
+        # 扫 registrant（数字）
+        j = idx + 3
+        while j < len(text) and text[j].isdigit():
+            j += 1
+        # 期待 / 分隔符
+        if j >= len(text) or text[j] != "/":
+            i = idx + 3
+            continue
+        j += 1
+        # 扫 suffix
+        while j < len(text) and text[j] in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-/":
+            j += 1
+        doi = text[idx:j]
+        if len(doi) > 7:
+            dois.append(doi)
+        i = j
     return dois
-
-
-def extract_dois_from_file(path):
-    """从 plain text 文件逐行提取 DOI（跳过注释行）"""
-    dois = set()
-    for line in pathlib.Path(path).read_text().strip().split("\n"):
-        line = line.strip()
-        if line and not line.startswith("#"):
-            dois.add(line)
-    return dois
-
-
-def extract_quantity_claim(text):
-    """提取报告中的数量声明（形如 '136 → 138' 或 '100 → 114'）"""
-    m = re.search(r'(\d+)\s*→\s*(\d+)', text)
-    if m:
-        return int(m.group(1)), int(m.group(2))
-    return None
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Report ↔ known_dois.txt 自洽校验")
-    parser.add_argument("--known-dois-file", required=True, help="known_dois.txt 路径")
-    parser.add_argument("--report-file", required=True, help="evolution 报告 .md 路径")
-    parser.add_argument("--new-dois", nargs="*", default=[], help="本轮新增 DOI（可选）")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--known-dois-file", required=True)
+    parser.add_argument("--report-file", required=True)
+    parser.add_argument("--new-dois", nargs="+", default=[],
+                        help="本轮新增 DOI 列表，用于重点校验")
+    parser.add_argument("--expected-report-only", nargs="+", default=[],
+                        help="报告中应只出现但不入 known_dois.txt 的 DOI（如假阳性/示例）")
     args = parser.parse_args()
 
-    report_path = pathlib.Path(args.report_file)
-    known_path = pathlib.Path(args.known_dois_file)
+    report_text = pathlib.Path(args.report_file).read_text()
+    known_text = pathlib.Path(args.known_dois_file).read_text().strip()
 
-    if not report_path.exists():
-        print(f"❌ 报告文件不存在: {report_path}")
-        sys.exit(1)
-    if not known_path.exists():
-        print(f"❌ known_dois.txt 不存在: {known_path}")
-        sys.exit(1)
+    known = {line.strip() for line in known_text.split("\n")
+             if line.strip() and not line.startswith("#")}
+    report_dois = set(extract_dois_from_text(report_text))
 
-    report = report_path.read_text()
-    known = extract_dois_from_file(known_path)
-    report_dois = extract_dois_from_markdown(report)
+    print(f"=== 报告自洽校验 (R27 字符扫描法) ===\n")
+    print(f"Report: {args.report_file}")
+    print(f"Known DOIs file: {args.known_dois_file} ({len(known)} 条)\n")
 
-    print(f"=== 报告自洽校验 ===")
-    print(f"报告: {report_path}")
-    print(f"known_dois.txt: {known_path} ({len(known)} 条)")
-    print(f"报告中提取的 DOI: {len(report_dois)} 条")
-    print()
-
-    # 1. 本轮新增 DOI 双向验证
+    # 1. 新增 DOI 逐条校验
     if args.new_dois:
-        print(f"=== 本轮新增 DOI 校验 ({len(args.new_dois)} 篇) ===")
+        print(f"--- 新增 DOI 校验 ({len(args.new_dois)} 条) ---")
         all_ok = True
         for doi in args.new_dois:
             in_known = doi in known
             in_report = doi in report_dois
             status = "✅" if (in_known and in_report) else "❌"
-            print(f"  {status} {doi}: known={in_known}, report={in_report}")
             if not (in_known and in_report):
                 all_ok = False
-        print()
+            print(f"  {status} {doi}: known={in_known}, report={in_report}")
+        if not all_ok:
+            print("\n❌ 新增 DOI 不一致，需修复")
+            sys.exit(1)
 
-    # 2. 漂移检测：报告引用但 known_dois.txt 缺失
+    # 2. 整体漂移检查
+    print("\n--- 整体漂移检查 ---")
     drift = report_dois - known
-    if drift:
-        print(f"⚠️ 报告引用但 known_dois.txt 缺失的 DOI ({len(drift)}):")
-        for d in sorted(drift)[:20]:
+    expected_only = set(args.expected_report_only)
+    real_drift = drift - expected_only
+
+    if real_drift:
+        print(f"⚠️ 报告中引用但 known_dois.txt 缺失的 DOI:")
+        for d in sorted(real_drift):
             print(f"    {d}")
-        # 注意：false positive 论文会在报告中出现但不入库，这是正常情况
-        if len(drift) > 20:
-            print(f"    ... 还有 {len(drift) - 20} 条")
+        sys.exit(1)
     else:
-        print(f"✅ 报告引用的所有 DOI 均在 known_dois.txt 中")
+        print(f"✅ 无漂移（排除已知报告-only DOI {len(expected_only)} 条）")
 
-    # 3. known_dois.txt 多于报告（漏报）
-    in_known_not_report = known - report_dois
-    if in_known_not_report:
-        print(f"\n⚠️ known_dois.txt 中存在但报告未引用的 DOI ({len(in_known_not_report)})")
-        if args.new_dois:
-            r22_missing = set(args.new_dois) & in_known_not_report
-            if r22_missing:
-                print(f"  本轮新增但未引用: {r22_missing}")
-
-    # 4. 数量声明校验
-    claim = extract_quantity_claim(report)
-    if claim:
-        old_count, new_count = claim
-        actual_count = len(known)
-        print(f"\n=== 数量声明校验 ===")
-        print(f"  报告声明: {old_count} → {new_count}")
-        print(f"  实际: {old_count} → {actual_count}")
-        if new_count == actual_count:
-            print(f"  ✅ 数量一致")
-        else:
-            print(f"  ⚠️ 数量不一致 (差 {actual_count - new_count})")
-
-    print(f"\n=== 校验完成 ===")
+    extra = known - report_dois
+    print(f"\nknown_dois.txt 中报告未提及的 DOI: {len(extra)} 条（其他 cron/历史累积）")
+    print(f"\n✅ 自洽校验通过")
 
 
 if __name__ == "__main__":
