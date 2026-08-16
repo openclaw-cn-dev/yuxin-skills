@@ -1,5 +1,5 @@
 model_provider = "deepseek"
-model = "deepseek-v4-flash"
+model = "deepseek-v4-pro"
 model_reasoning_effort = "high"
 disable_response_storage = true
 wire_api = "responses"
