@@ -24,6 +24,9 @@ HERMES_HOME = Path(os.environ.get("HERMES_HOME", Path("/Users/hua/.hermes")))
 USER_HOME = Path("/Users/hua")
 CODEX_HOME = USER_HOME / ".codex"
 CODEX_SKILLS = CODEX_HOME / "skills"
+# ⚠️ cron 环境下 `codex` 不在 PATH（npm 装到 ~/.local/bin），必须用绝对路径，
+#    否则 `codex --version` 返回 "/bin/sh: codex: command not found" 并污染 STATUS.md。
+CODEX_BIN = USER_HOME / ".local/bin/codex"
 LOG_FILE = HERMES_HOME / "logs" / "codex_evolution.log"
 
 # ── GitHub 同步配置 ─────────────────────────────────────────────
@@ -54,8 +57,11 @@ def run(cmd: str, timeout: int = 60) -> str:
 def check_version() -> dict:
     """Check if Codex has updates available."""
     log("1. 版本检查")
-    ver = run("codex --version 2>&1")
-    log(f"  当前: {ver}")
+    raw_ver = run(f"{CODEX_BIN} --version 2>&1")
+    log(f"  当前: {raw_ver}")
+    # `codex --version` 输出 "codex-cli 0.147.0"，提取纯版本号（避免 commit msg / STATUS.md 出现多余前缀）
+    m = re.search(r'\d+\.\d+\.\d+(?:[\.\-][\w]+)*', raw_ver) if raw_ver else None
+    ver = m.group(0) if m else raw_ver
 
     # Check npm for latest
     raw = run("npm view @openai/codex version 2>&1", timeout=30)
@@ -94,7 +100,7 @@ def sync_skills() -> dict:
 def check_plugins() -> dict:
     """Check Codex plugins status."""
     log("3. 插件检查")
-    plugins = run("codex plugin list 2>&1")
+    plugins = run(f"{CODEX_BIN} plugin list 2>&1")
     if plugins:
         log(f"  {plugins[:200]}")
     else:

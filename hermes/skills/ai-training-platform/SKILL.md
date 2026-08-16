@@ -1,9 +1,11 @@
 ---
 name: ai-training-platform
-description: Build and iterate on the AI learning flashcard platform — project-based 6-stage learning paths, data flywheel crowd wisdom injection, progressive depth, TTS voice, content generation, Doubao image workflow. Use when working on /Users/hua/6-产品研发/23-ai培训教程/ or /Users/hua/Desktop/渔芯科技/workspace/AI培训平台工程/.
+description: Build and iterate on the AI learning flashcard platform (品牌名「知渔」/「KnowHow知渔」) — project-based 6-stage learning paths, data flywheel crowd wisdom injection, progressive depth, TTS voice, content generation, Doubao image workflow. Use when working on /Users/hua/6-产品研发/ok-KnowHow知渔/ (主目录) or legacy /Users/hua/6-产品研发/23-ai培训教程/ / /Users/hua/Desktop/渔芯科技/workspace/AI培训平台工程/.
 category: product
 triggers:
   - "AI培训"
+  - "知渔"
+  - "KnowHow知渔"
   - "名词卡片"
   - "学习平台"
   - "语音讲解"
@@ -35,15 +37,31 @@ triggers:
 
 ## Quick Start
 
+> **项目别名**: 用户口中的「知渔」=「KnowHow知渔」= 本平台（品牌名 v5.x 起为「KnowHow知渔 · ai学习平台」）。
+> **当前主目录**: `/Users/hua/6-产品研发/ok-KnowHow知渔/`（旧路径 `23-ai培训教程` / `23-AI培训教程` 已废弃或为副本，以 `ok-KnowHow知渔` 为准）。
+
 ```bash
-cd /Users/hua/6-产品研发/23-AI培训教程
-# Server
+cd /Users/hua/6-产品研发/ok-KnowHow知渔
+
+# 启动（推荐：项目自带脚本，后台运行，PID 写 logs/server.pid，日志 logs/server.stdout.log）
+./start.sh --daemon          # 后台 → http://127.0.0.1:8520
+./start.sh                    # 前台 uvicorn
+./start.sh --status           # 查看运行状态
+./start.sh --stop             # 停止
+
+# 健康检查
+curl -s http://127.0.0.1:8520/api/ops/health   # → {"ok":true,"version":"5.3.0",...}
+
+# 直接跑后端（不推荐，绕过脚本）
 python3 server/app.py  # port 8520
+
 # Re-seed DB
 python3 server/seed.py
 # Re-seed content
 python3 server/seed_content.py
 ```
+
+**给用户打开前端测试**: 后台启动后用 `open http://127.0.0.1:8520` 在默认浏览器打开 + `browser_navigate` 自验页面加载（首页导航 + 登录/注册界面）。
 
 ## LLM Provider Configuration (v5.0+)
 

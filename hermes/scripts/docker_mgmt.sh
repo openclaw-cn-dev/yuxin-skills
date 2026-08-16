@@ -38,7 +38,12 @@ fi
 
 # ── 3. 清理未使用的卷（仅限不在运行的项目的卷） ──
 # 先标记所有运行容器的卷为受保护
-RUNNING_VOLUMES=$(docker inspect $(docker ps -q) --format '{{range .Mounts}}{{.Name}} {{end}}' 2>/dev/null | tr ' ' '\n' | sort -u)
+RUNNING_CIDS=$(docker ps -q 2>/dev/null)
+if [ -n "$RUNNING_CIDS" ]; then
+    RUNNING_VOLUMES=$(docker inspect $RUNNING_CIDS --format '{{range .Mounts}}{{.Name}} {{end}}' 2>/dev/null | tr ' ' '\n' | sort -u)
+else
+    RUNNING_VOLUMES=""
+fi
 UNUSED_VOLUMES=$(docker volume ls -q --filter "dangling=true" 2>/dev/null)
 if [ -n "$UNUSED_VOLUMES" ]; then
     CLEAN_COUNT=0

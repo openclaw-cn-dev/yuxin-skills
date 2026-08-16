@@ -4,7 +4,7 @@ description: '老莫（知识库+测试）核心技能集 — 文档协作、产
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.32.0"
+  version: "1.33.0"
 ---
 
 # 老莫知识库核心技能
@@ -909,60 +909,20 @@ for label, url in [("high_impact", url_high_impact), ("fresh", url_fresh)]:
 - 持续 ≤5 分钟 → 等待即可，**不要切换 S2/arXiv**（按 skill §3 指引 S2 限流更严，arXiv 月度补充）
 - 持续 >10 分钟 → 标记当日「OpenAlex 不可用」，跳过本日论文检索（异常记录到 evolution 报告）
 
+### 3.5.12 反向校验方法论（R30 验证，3轮→23篇入 known_dois.txt）
+
+R30 突破：单轮 23 篇入 known_dois.txt（R22-R29 平均 4 篇的 5.7 倍）。3 轮叠加：Round 1 主搜 + Round 2 反向校验（venue 兜底）+ Round 3 R29 P0 锚点扩展。痛点方向 fwci 4-12 显著高于数字孪生 0-2；错峰窗口 16:00-19:00 三轮 0% 限流。📁 SOP + 论文清单见 `references/r30-reverse-validation-breakthrough.md`
+
+### 3.5.13 R30 自洽校验「false positive drift」模式
+
+报告用 `[FILTER]`/`~~未入库~~` 显式标记未入库 DOI，但 Python regex 提取时无法识别仍算作漂移。R30 实证 `10.2478/aoas-2025-0105` 标 `[FILTER]` 仍误报。统一标记格式 + exclude_unstored=True 修复。📁 见 `references/r30-reverse-validation-breakthrough.md` §4
+
 **经验法则**（2026-08-10 R14 沉淀）：
 1. **探测查询用 per_page=1**：最小成本确认服务可用性，不触发正式查询的资源消耗
 2. **不要立即重试 503 的查询**：OpenAlex cluster 需要时间恢复，连续请求会拖慢恢复
 3. **503 ≠ 周期性低谷**：与 §3.5.4 步骤 4 的"学术出版周期低谷"完全无关，是临时平台故障，不应标记 OpenAlex 不健康
 4. **503 后第一个查询预期会 429**：cluster 限流状态未完全释放，正常现象，继续 sleep 即可
 5. **fallback 路径**：503 持续时不应切到 S2（S2 已知 key-less 第 1 查询即 429），保持等待或当日跳过
-
-**完整恢复 SOP（cron 脚本模式）**：
-```python
-import time, urllib.request, json
-
-UA = "mailto:research@yuxintech.com"
-
-def probe_openalex(max_wait_sec=300, probe_interval=30):
-    """探测 OpenAlex 是否恢复，最多等 max_wait_sec"""
-    elapsed = 0
-    while elapsed < max_wait_sec:
-        try:
-            req = urllib.request.Request(
-                "https://api.openalex.org/works?search=test&per_page=1",
-                headers={"User-Agent": UA}
-            )
-            resp = urllib.request.urlopen(req, timeout=10)
-            if resp.status == 200:
-                return True
-        except urllib.error.HTTPError as e:
-            if e.code == 503:
-                # 服务端恢复中，按 §3.5.11 等待 + 重试
-                time.sleep(probe_interval)
-                elapsed += probe_interval
-                continue
-            elif e.code == 429:
-                # 限流未释放，再等
-                time.sleep(15)
-                elapsed += 15
-                continue
-            else:
-                raise
-        except Exception:
-            time.sleep(probe_interval)
-            elapsed += probe_interval
-    return False
-
-# 用法：cron 启动时
-if not probe_openalex(max_wait_sec=180, probe_interval=30):
-    # 当日跳过论文检索，记录到 evolution 报告
-    print("OpenAlex unavailable, skipping today")
-else:
-    # 第一个查询后 sleep 10s（避免 cluster 限流）
-    time.sleep(10)
-    # ... 正常执行检索
-```
-
-> 📁 **R22 新增**：首次查询 429 + cron 启动早期 40% 限流率的实证应对模式见 `references/r22-openalex-429-pattern.md`
 
 **历史日志**（不要重复踩）：
 - R14（2026-08-10）首次遇到 503，未在 skill 中预定义 → cron 多等 90 秒
@@ -2675,18 +2635,36 @@ RAS系统知识库         : 57篇
 
 R22 建议错峰到 12:00-14:00，R23/R24 双轮验证 12:00-19:00 区间 0% 限流率，R24 在 **19:00** 也跑出 0% 限流。
 
-**升级版错峰窗口**（R22/R23/R24/R25 四轮验证）：
+**升级版错峰窗口**（R22/R23/R24/R25/R31/R33 六轮验证）：
 | 时间窗口 | 限流率 | 验证 |
 |---|---|---|
 | 08:00（默认 cron）| 40% (R22) | 🔴 高峰，避开 |
 | 12:00-14:00 | 0% (R23) | ✅ 健康 |
 | 16:00-19:00 | 0% (R24) | ✅ 健康 |
-| 19:00-20:00 | 0% (R24+R25) | ✅ 健康（R25 全 16 查询 0 限流）|
-| 20:00-21:00 | 0% (R25) | ✅ 健康（待 R26 复测）|
+| **19:00-20:00** | **0% (R24+R25+R31+R33)** | ✅ 健康（三轮实证，R33 7 查询全 200 OK）|
+| **20:00-21:00** | **0% (R25+R33)** | ✅ 健康（R33 验证通过）|
 
-**经验法则**：cron 启动时间应错峰到 12:00-21:00 任意时段，OpenAlex 高峰是 08:00-10:00（学术机构晨间活跃期）。R25 实证 20:00 启动 16 查询 0 限流，**推荐 cron 启动时间 19:00-21:00**（兼顾 R24/R25 双轮验证）。
+**经验法则**：cron 启动时间应错峰到 12:00-21:00 任意时段，OpenAlex 高峰是 08:00-10:00（学术机构晨间活跃期）。**R25 + R31 + R33 三轮实证 19:00-21:00 0% 限流**，**强烈推荐 cron 启动时间 20:00 UTC**（R33 验证最稳定）。
 
 **🆕 R25 漂移修复经验（2026-08-14 20:00 实证）**：R14 → R25 期间 36 条 DOI 漂移未在 R15-R24 任何轮次告警（违反 R22 强制自检要求）。**R26+ 强制 cron 启动时第一步 `wc -l known_dois.txt` 与上一轮报告声明数比对**，5 秒发现漂移，违规操作立即从历史 `.md` 报告重抽恢复。
+
+**🆕 OpenAlex 凌晨限流窗口（2026-08-16 R32 首次实证）**：
+
+R32 cron 启动于 00:05 UTC，OpenAlex 持续 HTTP 429 达 4+ 分钟。错峰窗口升级到三档分类：
+- ❌ **00:00-06:00 UTC**：R32 实证 100% 限流率（**新增禁止窗口**）
+- ❌ **08:00-11:00 UTC**：R22 40% 限流
+- ✅ **12:00-21:00 UTC**：R23-R31 多轮验证 0% 限流（**健康窗口**）
+
+**R33+ 强制要求**：cron 启动时间必须 12:00-21:00 UTC（默认 19:00）。凌晨 cron 必须准备 arXiv 兜底脚本——R32 验证 arXiv 兜底命中率 17% (3/18) 有效。
+
+**关键经验**：
+- 探测查询用 `per_page=1` 最小成本
+- 第一次 429 后等 60s 再探，最多探 4 次（4 分钟硬上限）
+- 4 次后仍 429 → **立即切 arXiv**，不浪费 cron 时间窗口
+- arXiv 论文必须用 OpenAlex 倒排索引补摘要（DataCite DOI 不在 Crossref）
+- known_dois.txt 中 arXiv ID 必须用 `arxiv:` 前缀避免与 DOI 库冲突
+
+> 📁 **完整 arXiv 兜底 SOP**：见 `references/arxiv-fallback-pattern.md`（含 4 个兜底关键词模板、三级 Fallback 链、known_dois.txt 写入规范、R32 实战脚本）
 
 ### 📌 Machine Learning with Applications (MLWA, Elsevier 2026 新刊) 跟踪信号（R18 实证）
 
