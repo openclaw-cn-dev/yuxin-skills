@@ -1,0 +1,4 @@
+# dsh sync generated
+*.log
+__pycache__/
+.DS_Store
