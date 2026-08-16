@@ -1,12 +1,12 @@
 # DeepSeek Harness (dsh) 状态快照
-> 导出时间: 2026-08-16 11:36:59
+> 导出时间: 2026-08-17 05:04:52
 > 🤖 自动同步自 Hermes/玉芬 · dsh 自进化模块
 
 ## 版本
 - 本地: `v0.1.0-rc.5` (commit `47f9438`)
-- npm 最新: `0.1.0-rc.6`
+- npm 最新: ``
 - upstream 落后: `0` commit
-- 状态: `update_available`
+- 状态: `up_to_date`
 
 ## 安装方式
 - 源码 monorepo: `git clone https://github.com/deepseek-ai/deepseek-harness.git`
@@ -14,9 +14,9 @@
 - 运行: `pnpm dsh web` (Web UI 默认 127.0.0.1:3080)
 - 配置目录: `~/.dsh` (⚠️ 尚未软链接到系统文件夹)
 
-## 会话 (3 个)
+## 会话 (4 个)
+- `Users-hua-6-产品研发-ok-GEO`: 2 会话
 - `Users-hua-6-产品研发-37-boss deck御书房`: 2 会话
-- `Users-hua-6-产品研发-ok-GEO`: 1 会话
 
 ## 同步策略
 - 仅同步状态快照 + 配置结构, 不上传真实凭据
