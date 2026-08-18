@@ -1,13 +1,12 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-08-16 12:48:10
+> 导出时间: 2026-08-18 12:28:50
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 272
+- Skills: 191
 - Profiles: 10
-- Scripts: 104
-- Plugins: 0
-0
+- Scripts: 116
+- Plugins: 1
 
 ## 版本
 Hermes Agent v0.15.1 (2026.5.29)
@@ -35,23 +34,10 @@ Update available: 2659 commits behind — run 'hermes update'
 - afu-customer-service-evolution-protocol
 - agent-experience
 - agents-md
-- agents-sdk
 - ai-training-platform
 - ai-vision
 - algorithm
 - algorithmic-art
-- angular-developer
-- angular-new-app
-- apollo-client
-- apollo-connectors
-- apollo-federation
-- apollo-ios
-- apollo-kotlin
-- apollo-mcp-server
-- apollo-router
-- apollo-router-plugin-creator
-- apollo-server
-- apple
 - aquaculture
 - autobrowse
 - autocontext
@@ -65,10 +51,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - browser-to-api
 - browser-trace
 - browser-tts-lecture
-- browser-use-to-stagehand
-- browserbase-cli
 - bugfix
-- build-models
 - byted-supabase
 - cad-automation
 - canvas-design
@@ -76,21 +59,14 @@ Update available: 2659 commits behind — run 'hermes update'
 - claude-settings-audit
 - clean-architecture
 - clean-code
-- cloudflare
-- cloudflare-email-service
-- cloudflare-one
-- cloudflare-one-migrations
 - code-review
 - code-simplifier
 - cold-start-problem
 - commit
 - company-research
-- compare-models
 - competitor-analysis
-- composio
 - contagious
 - continuous-discovery
-- cookie-sync
 - create-branch
 - creative
 - cro-methodology
@@ -101,64 +77,36 @@ Update available: 2659 commits behind — run 'hermes update'
 - design-sprint
 - devops
 - diagramming
-- django-access-review
-- django-perf-review
 - doc-coauthoring
 - document-api-endpoint
 - docx
 - domain
 - domain-driven-design
 - drive-motivation
-- durable-objects
 - edtech
 - educational-platform-patterns
 - email
 - event-prospecting
-- expo-skill-eval
 - feeds
 - feishu-voice-assistant
 - fetch
 - find-bugs
-- find-models
 - find-skills
-- firebase-ai-logic-basics
-- firebase-app-hosting-basics
-- firebase-auth-basics
-- firebase-basics
-- firebase-crashlytics
-- firebase-data-connect-basics
-- firebase-firestore
-- firebase-hosting-basics
-- firebase-remote-config-basics
-- firebase-security-rules-auditor
 - firecrawl-build
 - firecrawl-build-interact
 - firecrawl-build-onboarding
 - firecrawl-build-scrape
 - firecrawl-build-search
 - firecrawl-research-index
-- flutter-add-integration-test
-- flutter-add-widget-preview
-- flutter-add-widget-test
-- flutter-apply-architecture-best-practices
-- flutter-build-responsive-layout
-- flutter-fix-layout-issues
-- flutter-implement-json-serialization
-- flutter-setup-declarative-routing
-- flutter-setup-localization
-- flutter-use-http-package
 - frontend
 - frontend-design
 - frontend-ui
-- functions
 - gaming
 - gh-review-requests
 - gha-security-review
 - gifs
 - github
 - good-strategy-bad-strategy
-- graphql-operations
-- graphql-schema
 - heidou-admin
 - hermes-ecosystem-entry.md
 - hf-cli
@@ -169,21 +117,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - hindsight-cloud
 - hindsight-local
 - hooked-ux
-- huggingface
-- huggingface-best
-- huggingface-community-evals
-- huggingface-datasets
-- huggingface-gradio
-- huggingface-llm-trainer
-- huggingface-local-models
-- huggingface-lora-space-builder
-- huggingface-paper-publisher
-- huggingface-papers
-- huggingface-spaces
-- huggingface-tool-builder
-- huggingface-trackio
-- huggingface-vision-trainer
-- huggingface-zerogpu
 - hundred-million-offers
 - improve-retention
 - inference-sh
@@ -191,7 +124,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - inspired-product
 - interactive-learning-platform
 - internal-comms
-- ios-hig-design
 - iterate-pr
 - jobs-to-be-done
 - knowledge-base
@@ -205,6 +137,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - mcp
 - mcp-builder
 - media
+- memory
 - microinteractions
 - minimax-fallback-to-ollama
 - minimax-vision
@@ -218,6 +151,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - one-page-marketing
 - openalex-aquaculture-paper-search
 - openclaw-gateway-setup
+- p2-policy-window-stacking-sop
 - pdf
 - personal-knowledge-rag
 - pptx
@@ -230,25 +164,17 @@ Update available: 2659 commits behind — run 'hermes update'
 - product-debugging
 - productivity
 - project-monitoring-boundary
-- prompt-images
 - prompt-optimizer
-- prompt-videos
-- publish-models
 - ras-news-verification-playbook
 - red-teaming
 - refactoring-patterns
 - refactoring-ui
 - release-it
-- remotion
 - replay-ux-research
 - research
 - research-collection
-- rover
-- run-models
-- rust-best-practices
 - safe-browser
 - sales
-- sandbox-sdk
 - scorecard-marketing
 - search
 - security
@@ -256,7 +182,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - skill-creator
 - skill-scanner
 - skill-writer
-- slack-gif-creator
 - smart-home
 - social-media
 - software-design-philosophy
@@ -272,11 +197,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - theme-factory
 - top-design
 - traction-eos
-- train-sentence-transformers
-- transformers-js
 - triage-frontend-issues
-- trl-training
-- turnstile-spin
 - typing-exclusion-worker
 - ui-test
 - ux-heuristics
@@ -288,10 +209,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - web-typography
 - webapp-testing
 - webmcp-gen
-- workers-best-practices
 - working-with-legacy-code
-- wrangler
-- xcode-project-setup
 - xiaobao-sales
 - xlsx
 - yuanbao

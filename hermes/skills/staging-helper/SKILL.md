@@ -586,6 +586,7 @@ cronjob action=list  # 看现有 job
 
 ## References(本目录下)
 
+- `references/huage-idea-recording.md` — 华哥想法记录与归档工作流（5要素结构 + staging_save.py --tag 想法 + 飞书回执三段式 + 记忆同步）
 - `references/scanner-architecture.md` — RKR scanner 详细时序、配置来源、故障行为
 - `references/company-certificates-archive.md` — 公司证件(营业执照等)归档位置 + 证件文件真实存放处(微信接收文件,非"素材图片") + 扫描件 pdftoppm→vision 读取技巧(2026-08-13 建立)
 - `references/migration-rules.md` — `migrate_agent_artifacts.py` 完整扫描/排除规则表

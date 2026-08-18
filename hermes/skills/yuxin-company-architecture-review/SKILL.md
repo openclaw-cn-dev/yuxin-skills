@@ -222,6 +222,7 @@ B 类重组方案必含 5 件华哥拍板事项(每件带"截止"日期),否则�
 - `references/2026-08-03-three-core-reorg-output.md` — 8/3 B 类方案输出节选(三大核心矩阵 + 项目目录树)
 - `references/nine-layer-scan-checklist.md` — 9 层摸底的 ls / du / read_file 命令清单
 - `references/huage-decision-patterns.md` — 华哥 5 大决策模式 + 历史拍板记录
+- `references/project-path-migration-sync-checklist.md` — 项目路径迁移后必须同步的硬编码引用位置清单（scripts/cron/plist/Codex 5 类 + 批量扫描/替换命令）
 
 ---
 

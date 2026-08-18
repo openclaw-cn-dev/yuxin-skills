@@ -1,6 +1,7 @@
 apple
 autonomous-ai-agents
 creative
+cron-session-2026-08-18-claude-code-skills-daily-update
 data-science
 devops
 diagramming
@@ -15,11 +16,14 @@ inference-sh
 llm_july_2026_report.md
 mcp
 media
+minimax-anthropic-compat-401-fix
 mlops
 note-taking
 productivity
+quant-workflow
 red-teaming
 research
+research-cron-session-2026-08-18-three-direction
 smart-home
 social-media
 software-development

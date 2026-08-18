@@ -2,7 +2,7 @@
 # RKR 每日 200 条补齐守护:检查今天完成数,<200 则跑 50 条补齐
 # 退出码: 0=已达标/跑了一轮 1=出错 2=guard 跳过
 set -e
-SCRIPT_DIR="/Users/hua/6-产品研发/01-RKR知识库/scripts"
+SCRIPT_DIR="/Users/hua/6-产品研发/渔芯科技/01-RKR知识库/scripts"
 STATE_FILE="$HOME/.hermes/state/rkr_daily_batch.json"
 QUOTA=200
 BATCH=50
@@ -28,6 +28,6 @@ if [ "$NEED" -lt "$BATCH" ]; then
 fi
 
 echo "[run] $TODAY 已完成 $DONE/$QUOTA, 启动 $BATCH 条补齐"
-cd /Users/hua/6-产品研发/01-RKR知识库
+cd /Users/hua/6-产品研发/渔芯科技/01-RKR知识库
 python3 scripts/rkr_daily_batch.py --once --limit "$BATCH" 2>&1 | tail -20
 exit 0

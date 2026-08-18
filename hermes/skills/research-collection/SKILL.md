@@ -49,11 +49,13 @@ metadata:
 
 **增量追加规则**：当起始报告已存在时，在文件末尾追加 `## 增量研究 — {本次日期}` 章节，严格区分：新工具 / 新最佳实践 / 新反模式 / 渔芯应用建议。
 
+**报告文件是单文件追加，非每日新建**（2026-08-17 验证）：cron 任务模板常写"报告路径 `{主题}_{本次日期}.md`"，字面上暗示每日新建一个带日期的文件。但实际约定是**单一合并文件**——文件名以**首次落地日期**命名（如 `AI出CAD图研究_2026-08-05.md`），此后所有增量都 append 到这一个文件末尾，不新建。本 skill 的"增量追加规则"优先于任务模板的"写新文件"字面指令。判断方法：先 `find` 定位主题目录下带日期的 `.md`，有历史文件则 append（并更新头部"最新增量"日期），无则按"首份落地报告规则"新建。本次会话中 `AI出CAD图研究_2026-08-05.md` 已累积 08-05→08-17 全部增量，文件名仍是 08-05。
+
 **推荐子章节**（追加到增量研究中）：
 - `### 核心项目星数对比` — 当跟踪多个核心项目时，用表格对比当前星数、上次 push 日期、活跃度评级。有助于快速判断生态迁移方向。
 - `### {项目名} 代码追踪（continuation from YYYY-MM-DD）` — 当某个论文/项目在连续多期报告中都需要追踪开源进度时，建立延续章节。包含：论文链接、代码状态（已开源/未开源）、时间线、周边发现。每次增量更新时直接替换该章节内容，保持追踪连续性。实例：WAT3R 水下 3D 重建代码追踪（07-25→08-02→08-05）。
 
-**路径验证**：写入前务必确认目标目录存在。任务指令中的路径（如 `~/Desktop/知识库 /AI/`）可能因环境迁移而失效，优先用 `find ~/Desktop -name "*关键词*"` 定位实际路径，找不到则创建到 `~/Desktop/渔芯科技/` 下。备选路径（按优先级）：
+**路径验证**：写入前务必确认目标目录存在。**⚠️ 先 `echo $HOME` 确认 `~` 指向**（2026-08-17 验证）：cron/玉芬环境下 terminal 的 `$HOME` 可能是 profile home（实测 `/Users/hua/.hermes/profiles/zhenglishi/home`）而非真实用户 home `/Users/hua`，导致 `~/rkr_staging`、`~/Desktop` 指向错误的（近乎空的）profile 目录，`find ~/...` 搜不到历史报告。研究跟踪报告真实位置在**绝对路径** `/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/<主题>/`（如 `AI出3D模型研究/AI出3D模型研究_2026-08-13.md`，兄弟目录还有 `AI_CAD研究/`、`量化研究/`）。**凡涉及 rkr_staging/Desktop 一律用 `/Users/hua/...` 绝对路径，不用 `~`**；若发现 `find ~/rkr_staging -name "*关键词*"` 返回空，先怀疑 `$HOME` 错位，改搜 `/Users/hua/rkr_staging`。任务指令中的路径（如 `~/Desktop/知识库 /AI/`）可能因环境迁移而失效，优先用 `find /Users/hua/Desktop -name "*关键词*"` 定位实际路径，找不到则创建到 `/Users/hua/Desktop/渔芯科技/` 下。备选路径（按优先级）：
 
 1. `~/rkr_staging/文档库/3-公司项目资料/301-智能体/` — 研究跟踪报告常在此（如 AI_CAD研究/、水下3D重建/、AI出3D模型研究/ 等子目录，2026-08-12 验证）
 2. `~/rkr_staging/文档库/通用知识库/` — 增量研究报告常在此（历史归档，2026-08-05 验证）
@@ -192,6 +194,22 @@ python3 -c "print(f'{item.get(\"likes\",0)}')"  # 如果代码中嵌入了 ❤�
 python3 -c "print(f'likes={item.get(\"likes\",0)}')"
 ```
 
+### Pitfall: GitHub Search 解析时日期切片 None 崩溃 — null-safe 全字段（2026-08-17 验证）
+
+**问题**：解析 GitHub Search API 结果时用直接下标 + 切片 `it['pushed_at'][:10]` / `it['created_at'][:10]`。当某仓库字段为 `null`（`description`/`language` 常为 null，个别仓库 `pushed_at`/`created_at` 也可能缺失）时，`None[:10]` 触发 `TypeError: 'NoneType' object is not subscriptable`，整个解析脚本中途崩溃，**后续条目全部丢失**（本次在打印到第 5 条时崩溃）。
+
+**修复**：所有字段统一 `or` 兜底后再切片，用 `it.get()` 而非 `it['key']`：
+```python
+full = it.get('full_name') or '?'
+stars = it.get('stargazers_count') or 0
+pushed = (it.get('pushed_at') or '?')[:10]      # ← None 切片崩溃点，必须先 or '?'
+created = (it.get('created_at') or '?')[:10]
+lang = it.get('language') or '?'
+desc = (it.get('description') or '')[:100]
+```
+
+**原则**：任何 `[:N]` 切片前必须先 `or '?'`/`or ''` 兜底；数字字段用 `or 0`。不要假设 GitHub API 返回的字段非空——`description`/`language` 为 null 是常态而非异常。这是 `references/api-research-quickref.md` 中"通用 null-safe 解析模式"的具体崩溃形态（日期切片）。
+
 ### Pitfall: GitHub 仓库更名/迁移导致 404（2026-08-07 验证）
 
 **问题**：直接请求 `GET /repos/Tencent/Hunyuan3D-Buffalo` 返回 404（Not Found）。原因：腾讯混元团队将 3D 项目从 `Tencent` org 迁移至独立 `Tencent-Hunyuan` org，且仓库名也加了版本号后缀。
@@ -328,6 +346,14 @@ curl -s -o /tmp/gh_brand3.json 'https://api.github.com/search/repositories?q=Tri
 - 物体重建：`all:single+view+reconstruction` / `all:image-to-3d`
 
 **实例（本次）**：第一条查询 `all:text-to-3d+OR+all:gaussian-splatting` 命中 2 篇 A 级论文；第二条裸查询 `all:3d+generation+OR+all:3d+editing` 完全浪费（6/6 噪声）。宁可少而精，不要为了"覆盖面"上一个会返回噪声的宽泛词。
+
+### Pitfall: arXiv `+` 连词被解析为 OR — 用引号短语修复（2026-08-17 验证）
+
+**问题**：`search_query=all:gaussian+splatting` 中 `+`（URL 空格）会被 arXiv 解析为 `gaussian OR splatting`，退化成宽泛噪声（08-16 报告已记录 `all:gaussian splatting editing` 5/6 无关）。
+
+**修复**：用引号短语强制 AND：`search_query=all:%22gaussian+splatting%22`（`%22` = 双引号，curl 里写 `all:\"gaussian splatting\"`）。本次实测命中 6 条真实 GS 论文（HiCo-GS 08-14、LocusGS 08-13 等），零噪声。短语内空格用 `+` 保留。
+
+**规则**：多词概念（gaussian splatting / text to 3d / single view reconstruction）一律用 `%22...%22` 引号短语，不用裸 `+` 连词。
 
 ### 技术路线对比专题（推荐子章节，2026-08-09 沉淀）
 
