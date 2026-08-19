@@ -1,84 +1,31 @@
-model_provider = "deepseek"
-model = "deepseek-v4-flash"
+model_provider = "custom"
+model = "deepseek-v4-pro"
 model_reasoning_effort = "high"
 disable_response_storage = true
 wire_api = "responses"
-model_catalog_json = "~/.codex/models.json"
-
-preferred_auth_method = "apikey"
-forced_login_method = "api"
+model_catalog_json = "/Users/hua/.codex/cc-switch-model-catalog.json"
 
 notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [model_providers]
 [model_providers.custom]
-name = "hermes_gateway"
-base_url = "http://127.0.0.1:18888/openai"
+name = "minimax"
+base_url = "http://127.0.0.1:15721/v1"
 wire_api = "responses"
-requires_openai_auth = false
+requires_openai_auth = true
+experimental_bearer_token = "<REDACTED>"
 
 [projects]
 [projects."/Users/hua"]
 trust_level = "trusted"
 
-[projects."/Users/hua/Documents/New project"]
+[projects."/Users/hua/6-产品研发/渔芯科技"]
 trust_level = "trusted"
 
-[projects."/Users/hua/6-产品研发/28-HG-业务工作台"]
+[projects."/Users/hua/Documents/Codex/2026-08-19/wy"]
 trust_level = "trusted"
 
-[projects."/Users/hua/6-产品研发/24-GEO"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/30-SEO"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/27-HG-运营中枢"]
-trust_level = "trusted"
-
-[projects."/Users/hua/Documents/Codex/2026-08-13/s"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/渔芯-UI模板库-开源精选"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/37-通用老板工作台"]
-trust_level = "trusted"
-
-[projects."/Users/hua/Documents/Codex/2026-08-14/new-chat"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/07-软件项目开发"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/06-硬件项目开发"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/03-EDAI硬件开发"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/ok-HG-运营中枢"]
-trust_level = "trusted"
-
-[projects."/Users/hua/Documents/Codex/2026-08-15/udu"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/37-boss deck御书房"]
-trust_level = "trusted"
-
-[projects."/Users/hua/Documents/Codex/2026-08-15/new-chat"]
-trust_level = "trusted"
-
-[projects."/Users/hua/Documents/Codex/2026-08-15/new-chat-2"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/33-初创者"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/ok-GEO"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/渔芯独角兽"]
+[projects."/Users/hua/Documents/Codex/2026-08-19/chrome-plugin-chrome-openai-bundled-file"]
 trust_level = "trusted"
 
 [tui]
@@ -96,12 +43,12 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_n
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/hua/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 CODEX_HOME = "/Users/hua/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "7fe0e1c59da4bc68f9d6ab81ae8d349b53fee44b074f49be0effbc1105a5f1d3"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.810.41047"
+BROWSER_USE_CODEX_APP_VERSION = "26.814.41957"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/hua/.codex/plugins/cache/openai-bundled/browser/26.814.41957/scripts/browser-service.mjs"}'
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
 [desktop]
@@ -109,17 +56,14 @@ followUpQueueMode = "queue"
 computerUseAlwaysHidePictureInPicture = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-13T00:37:39Z"
+last_updated = "2026-08-19T10:52:09Z"
 source_type = "local"
-source = "/Users/hua/.codex/.tmp/bundled-marketplaces/openai-bundled"
+source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-08-14T11:00:20Z"
+last_updated = "2026-08-19T10:54:04Z"
 source_type = "local"
 source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
-
-[plugins."browser@openai-bundled"]
-enabled = true
 
 [plugins."visualize@openai-bundled"]
 enabled = true
@@ -139,7 +83,13 @@ enabled = true
 [plugins."template-creator@openai-primary-runtime"]
 enabled = true
 
+[plugins."browser@openai-bundled"]
+enabled = true
+
 [plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."codex-app-tools@openai-bundled"]
 enabled = true
 
 [features]
@@ -147,12 +97,4 @@ js_repl = false
 computer_use = false
 
 [shell_environment_policy.set]
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "7fe0e1c59da4bc68f9d6ab81ae8d349b53fee44b074f49be0effbc1105a5f1d3"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/hua/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
-
-[model_providers.deepseek]
-name = "deepseek"
-base_url = "https://api.deepseek.com/"
-wire_api = "responses"
-experimental_bearer_token = "<REDACTED>"
