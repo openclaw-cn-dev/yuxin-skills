@@ -1,20 +1,31 @@
-model_provider = "custom"
-model = "deepseek-v4-pro"
+model_provider = "deepseek"
+model = "deepseek-v4-flash"
 model_reasoning_effort = "high"
 disable_response_storage = true
 wire_api = "responses"
-model_catalog_json = "/Users/hua/.codex/cc-switch-model-catalog.json"
+model_catalog_json = "~/.codex/models.json"
+
+notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [model_providers]
 [model_providers.custom]
-name = "minimax"
+name = "deepseek"
 base_url = "http://127.0.0.1:15721/v1"
 wire_api = "responses"
 requires_openai_auth = true
 experimental_bearer_token = "<REDACTED>"
 
+[model_providers.deepseek]
+name = "deepseek"
+base_url = "https://api.deepseek.com/"
+wire_api = "responses"
+experimental_bearer_token = "<REDACTED>"
+
 [projects]
 [projects."/Users/hua"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽"]
 trust_level = "trusted"
 
 [tui]
@@ -30,16 +41,15 @@ startup_timeout_sec = 120
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
 NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
-NODE_REPL_TRUSTED_CODE_PATHS = "/Users/hua/.codex"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/hua/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 CODEX_HOME = "/Users/hua/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "5b74180ac40ca4cf726cad15c5ff886f159224f1c0306ea364ad9eea6a7e7ac2,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.715.21425"
-SKY_CUA_SERVICE_PATH = "/Users/hua/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000451/Codex Computer Use.app"
+BROWSER_USE_CODEX_APP_VERSION = "26.814.41957"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/hua/.codex/plugins/cache/openai-bundled/browser/26.814.41957/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
 [mcp_servers.computer-use]
@@ -48,45 +58,22 @@ args = ["mcp"]
 cwd = "."
 enabled = false
 
-[plugins."browser@openai-bundled"]
+[desktop]
+followUpQueueMode = "queue"
+
+[marketplaces.openai-bundled]
+last_updated = "2026-08-20T00:35:20Z"
+source_type = "local"
+source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[plugins."codex-app-tools@openai-bundled"]
 enabled = true
 
-[plugins."chrome@openai-bundled"]
+[plugins."browser@openai-bundled"]
 enabled = true
 
 [plugins."visualize@openai-bundled"]
 enabled = true
 
-[plugins."codex-app-tools@openai-bundled"]
-enabled = true
-
-[plugins."documents@openai-primary-runtime"]
-enabled = true
-
-[plugins."pdf@openai-primary-runtime"]
-enabled = true
-
-[plugins."spreadsheets@openai-primary-runtime"]
-enabled = true
-
-[plugins."presentations@openai-primary-runtime"]
-enabled = true
-
-[plugins."template-creator@openai-primary-runtime"]
-enabled = true
-
 [features]
-computer_use = false
-
-[desktop]
-computerUseAlwaysHidePictureInPicture = true
-
-[marketplaces.openai-bundled]
-last_updated = "2026-08-19T11:46:23Z"
-source_type = "local"
-source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
-
-[marketplaces.openai-primary-runtime]
-last_updated = "2026-08-19T11:46:23Z"
-source_type = "local"
-source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+js_repl = false
