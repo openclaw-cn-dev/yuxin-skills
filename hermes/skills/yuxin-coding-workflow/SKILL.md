@@ -570,3 +570,15 @@ for path in ['/api/health', '/api/qigua?method=time']:
 - `references/hexagram-binary-index-trap.md` — 卦象 binary 索引"双重反向"约定 + 互卦计算公式 + 5 个易错点
 - `references/hermes-tooling-gotchas.md` — Hermes 工具调用常见坑(`execute_code` BLOCKED、`$HOME` 劫持等)
 - `references/payment-qr-modal-template.md` — 渔芯聚合收款码支付弹窗可复用模板(CSS + HTML + JS + 集成步骤)
+
+## 编码工具/模型选型决策链（原 yuxin-coding-fallback-chain）
+
+编码前先做 **30 秒可达性诊断**，不凭印象推荐工具。决策树：远程 endpoint 实测（api.openai.com / api.deepseek.com / api.anthropic.com / openrouter.ai 的 HTTP 状态码）→ 云端 LLM 选型（DeepSeek 直连 / OpenRouter 中转 / 本地 Ollama qwen2.5-coder:7b 兜底）→ Codex/Claude Code 可用性（Codex 不支持自定义 provider，CC 走 Anthropic 协议 + 国内 LLM 适配层）→ Ollama 本地实测 → 玉芬自己写。
+
+**核心规则**：「优先 A 失败用 B」= 授权自动降级，不让华哥反复决策；「我授权才触发更换大模型」= 所有 LLM provider 切换必须华哥口头授权，**不**写进 fallback_providers 自动链（即使免费）。
+
+**qwen2.5-coder:7b 弱点**：不能可靠 debug 微妙 bug（如 Pydantic v2.13 annotation 解析），遇到 `RecursionError`/`SchemaGenerationError`/版本兼容报错直接走「自己 debug」，别让 7B 试。
+
+**通用 LLM 适配器模板**：几乎所有 LLM 支持 OpenAI 兼容 `/v1/chat/completions`，一个 100 行 `llm_client.py` 抽象掉所有 provider（deepseek/openrouter/gemini/ollama/glm/kimi/local），按 .env 优先级自动 fallback。关键教训：集成 LLM 端点必须真实调用，失败返 503 + 明确错误，**绝不 silent mock 返假数据**（华哥 2026-06-29 明确骂过）。key 写入用 `hermes config set`（防 redact 截断），不要 hard-code 或用 sed。
+
+**MiniMax-M3 配置**：Anthropic 兼容协议但鉴权头是 `X-Api-Key`（大小写敏感，非 `Authorization: Bearer`），key 前缀 `sk-cp-...`。DeepSeek Harness（dsh）是第三个编码 agent 候选，原生支持 DeepSeek + 自定义 OpenAI 端点，可接 LLM Gateway。详见 `references/deepseek-harness-usage.md`、`references/iching-matrix-data-pitfall.md`。

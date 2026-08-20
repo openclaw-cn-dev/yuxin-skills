@@ -393,16 +393,17 @@ approvals:
   mcp_reload_confirm: true
   : true
 command_allowlist:
-- recursive delete
-- shell command via -c/-lc flag
-- force kill processes
-- script execution via -e/-c flag
 - pipe remote content to shell
-- kill hermes/gateway process (self-termination)
-- xargs with rm
-- script execution via heredoc
+- force kill processes
+- shell command via -c/-lc flag
 - delete in root path
 - SQL DELETE without WHERE
+- script execution via heredoc
+- docker restart/stop/kill (container lifecycle)
+- kill hermes/gateway process (self-termination)
+- xargs with rm
+- recursive delete
+- script execution via -e/-c flag
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false

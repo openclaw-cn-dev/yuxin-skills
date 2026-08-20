@@ -4,7 +4,7 @@ description: '毛豆（产品经理）核心技能集 — 产品设计冲刺、�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.13.0"
+  version: "1.13.3"
 ---
 
 ## 公司当前阶段策略（2026-05-08）
@@ -37,7 +37,7 @@ metadata:
 4. **方法论学习**：复习或学习产品设计方法论。**方法论分两层（2026-07-31 新增分层框架）**：
    - **战略层**（决定"做什么"）：Wardley Maps（演化阶段 + 价值链定位）— 2026-07-31 引入
    - 战术层（决定"怎么做"）：JTBD / ECD / OST / Taguchi 稳健设计 / Pugh Matrix（多准则选型） / Lean Startup / Design Sprint / **MoSCoW（2026-08-13 战术层第 12 个）**
-5. **技能检查与同步**：检查~/.hermes/profiles/maodou/skills/目录完整性
+5. **技能检查与同步**：检查~/.hermes/profiles/maodou/skills/目录完整性。**陷阱 AC 配套(2026-08-20_12 实测固化)**:**步骤 5 第一件事** = 跑 `bash /Users/hua/.hermes/skills/maodou-product/scripts/check-skill-md-reference-integrity.sh`,确认 SKILL.md 引用的所有 reference 文件都真实存在;有缺失则启动 §1.2 补建决策矩阵 A/B/C(详见 `references/skill-md-reference-integrity-audit.md`)
 6. **输出进化报告**：保存到~/.hermes/profiles/maodou/evolution/YYYY-MM-DD_HH.md
 7. **更新进化日志**：追加新进化记录到 `/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆-产品交付/workspace/evolution_log.md`
 
@@ -266,6 +266,8 @@ grep -A2 "下次心跳要求" /Users/hua/.hermes/profiles/maodou/evolution/$(ls 
 **毛豆自我进化心跳协议**（`references/maodou-self-evolution-protocol.md`）：
 cron 模式下的标准 7 步流程 + 必读错位清单 + 协作者扫描 + P0 代码独立性审计 + 常见陷阱表。
 
+**补救窗口协议**(`references/heartbeat-rescue-window-protocol.md`, 2026-08-20_00 第 10 次心跳实测抽取): 长间隔心跳(> 4h)的新边际动作 — 索引"上次心跳结束时间戳到本次心跳开始时间戳"之间发布的、被上次心跳因结束时间边界错过的协作者产出 + 多篇合流分析 SOP。是 `heartbeat-long-gap-protocol-v1.md` v1.0 的 v1.1 增量。
+
 **战术层方法论实战案例库协议**（`references/tactical-case-studies-protocol.md`，2026-08-16_04 首建 + 2026-08-18_00 §十四 新增）：
 3 件套标准格式 = 业务场景/打分表/P0-P1-P2 决策 + 陷阱 R 伪深度反模式 + 陷阱 S 承诺膨胀反模式 + 案例库沉淀位置选择 + 18 案例 4 周沉淀节奏 + v2.0 完成 7 项验证清单 + W3 5 项硬指标自检表的 W 适配 + 协作者目录路径别名漂移记录 + W-特定预检 8 项通用模板 + **§十三 协作者调研目录路径漂移第 4 次实测（2026-08-18_04 新增）** + **§十四 Pugh Matrix v1.1 升级证据 — HW-003 MBBR 求解器选型案例 #6（2026-08-18_00 新增，OpenFOAM 加权 +1.65 领先）**
 
@@ -280,6 +282,34 @@ cron 模式下的标准 7 步流程 + 必读错位清单 + 协作者扫描 + P0 
 **📐 战术方法论实战案例库 W2 完成结果**：见 `references/tactical-case-studies-w2-results.md`
 
 **📐 季度论文吸收 SOP**：见 `references/quarterly-paper-absorption.sh`
+
+**📐 SKILL.md 引用完整性自检（2026-08-20_12 实测固化）**：见 `references/skill-md-reference-integrity-audit.md` + 配套脚本 `scripts/check-skill-md-reference-integrity.sh`(陷阱 AC 永久解药)
+
+### ⚠️ 陷阱 AB：长间隔心跳"补救窗口"反模式 — 2026-08-20_00 第 10 次心跳实测新增
+
+陷阱 AA 解决**长间隔**(> 4h)心跳的最小化交付。本陷阱发现**长间隔心跳还有一个被低估的价值 = 补救窗口**(rescue window):用于索引"上次心跳结束时间戳到本次心跳开始时间戳"之间发布的、**被上次心跳因结束时间边界错过**的协作者产出。
+
+**实测场景**(2026-08-20_00 第 10 次间歇心跳):
+- 上次心跳时间戳: 08-19 20:14(结束)
+- 协作者(老莫) 08-19 20:21 发布 3 篇调研(距上次心跳结束 +7min)
+- 上次心跳报告写"老莫当日 0 新调研" → **结论正确但被时间窗口边界误导**,因心跳结束 7min 后老莫发布
+- 本期心跳(08-20 00:14)间隔 4h → 触发陷阱 AA → **补救窗口扫描生效**,3 篇核心调研被紧急索引
+- **核心洞察**: **"仿真能力过剩,部署 ROI 案例空白"** = AquaForge 战略护城河空位(由 3 篇调研合流得出)
+
+**SOP**(详见 `references/heartbeat-rescue-window-protocol.md`):
+1. 获取上次心跳结束时间戳(`stat -f "%Sm"` 文件 mtime)
+2. 扫描补救窗口内协作者产出(`find -newer LAST_HEARTBEAT`)
+3. 分类(< 30min 高风险强制索引 / 30min~4h 标准索引 / > 4h 沿用 §十五.B)
+4. ≥ 2 篇产出**必须做合流分析**(单篇索引价值 << 合流战略洞察)
+5. 写入本期心跳"补救窗口"节 + evolution_log 追加时显式标注"补救窗口 N 篇"
+
+**反模式**(与陷阱 AA 配套):
+- ❌ 长间隔心跳直接套用 v1.0 标准 3 项边际动作,跳过补救窗口扫描 → 错过窗口边界遗漏
+- ❌ 补救窗口扫描只列文件名 → 索引存在但无战略洞察
+- ❌ 补救窗口 ≥ 2 篇但不做合流 → 退化为单篇索引累加,失升维价值
+- ❌ 把补救窗口扫描等同于"协作者当日扫描" → 漏掉上次心跳窗口外的累积
+
+详见 `references/heartbeat-rescue-window-protocol.md` v1.0(2026-08-20_00 抽取)。
 
 ### ⚠️ 陷阱 X：patch 工具 old_string 多匹配陷阱（2026-08-18_00 实测新增）
 
@@ -415,3 +445,172 @@ Trap W「间歇预备反模式」的边缘案例 —— **cron 调度在间歇�
 - 实测中发现的工具/路径陷阱记录（如陷阱 X 复盘）
 
 详见 `references/tactical-case-studies-protocol.md §十五 陷阱 Z（2026-08-18_04:12 新增）`。
+
+### ⚠️ 陷阱 AA：间歇心跳"长间隔"变体 — 距上次心跳 > 4h 时的新增边际动作来源（2026-08-19_20 第 9 次实测新增）
+
+陷阱 Z 解决**短间隔**(< 2h)重触最小化。本次心跳(08-19_20)**距上次心跳 32h(远超 2h)**,仍属间歇心跳预备窗口(距 W3 实战 4 天),但**不是短间隔重触**,陷阱 Z 不适用,需要独立判定。
+
+**实测场景**:
+- 08-18_12 心跳(间歇 #8,W3 实战前 5 天预备)
+- ~32 小时无心跳(典型 cron gap)
+- 08-19_20 心跳(间歇 #9)
+- **判定**:距上次 32h > 2h(非短间隔重触)+ 距 W3 = 4 天(仍属预备窗口) = **间歇心跳 #9,但非陷阱 Z 的"压缩版"**
+
+**新增边际动作来源(陷阱 Z 4 选 1 之外,新增 3 项)**:
+1. **上期承诺事项目标落实验证**(首选 — 2026-08-19_20 实测:§十五 OST subset 判定 SOP 写入状态)
+2. **§十五 复用映射表 v1.1 增量扫描**(OKR/SAFe/HTTS 等未来需要的战术方法论,预先判定是否被现有 Skill 覆盖)
+3. **W3 启动门槛 5/5 验证清单**(W3 实战就绪度自检 = 5 项硬指标 + 老莫调研覆盖度 + §十五沉淀 + §十四 Pugh v1.1 + 间歇心跳节奏稳定 + DoI 池)
+
+**严守铁律(继承陷阱 W/Z)**:
+1. 行动列表 ≤ 4-5 项(陷阱 W 标准,不用陷阱 Z 的 ≤ 2 项)
+2. **必须包含事项目标验证**(防止承诺变成空头)
+3. 0 新增远期承诺(陷阱 S 强化)
+4. 时长 ≤ 15 分钟
+5. 不写完整错位清单(间歇心跳规则),只列 1 个全新主题(如 v1.1 增量)+ 2 个延续项
+
+**W3 实战窗口前 N-3 天的标准化动作模板**(2026-08-19_20 实测抽取):
+```bash
+# 步骤 1: 读上次心跳的"下次心跳要求"节,看哪些事项目标待落实
+grep -A3 "下次心跳要求" ~/.hermes/profiles/maodou/evolution/$(ls -t ~/.hermes/profiles/maodou/evolution/ | head -1) | head -10
+
+# 步骤 2: 核对 W3 #11-#15 5 项硬指标是否 100% 就绪
+# (FMEA / EOS / RACI / OST 替代 / Kano)
+# 检查 tactical-frameworks-comparison.md 和 traction-eos skill 状态
+
+# 步骤 3: 检查 §十五 复用映射表是否需要 v1.x 增量
+grep -A20 "复用映射表" ~/.hermes/skills/maodou-product/references/tactical-case-studies-protocol.md | tail -30
+
+# 步骤 4: 跑协作者扫描 2 路径并列(老莫当日 + 历史归档)
+bash ~/.hermes/skills/maodou-product/scripts/check-collaborator-research.sh 老莫
+
+# 步骤 5: 输出 W3 启动门槛 5/5 验证清单到本期心跳,作为下次心跳的事项目标
+```
+
+详见 `references/tactical-case-studies-protocol.md §十六（2026-08-19_20 第 9 次间歇心跳实测新增）` 和 `references/heartbeat-long-gap-protocol-v1.md`（长间隔变体判定矩阵 + 3 项边际动作来源 + 标准动作模板）。
+
+### 📐 §十五 复用映射表 v1.1（2026-08-19_20 增量）— 防未来 W4/W5 重复 subset 判定
+
+**位置**:`references/tactical-case-studies-protocol.md §十五` 复用映射表区域(继承 08-18_04:12 OST 判定)
+
+**W3+ 实战预备时遇到新方法论,先查本表**:
+
+| 方法论 | 被现有 Skill 覆盖的工具 | 覆盖度 | 未覆盖工具 | 行动 |
+|--------|---------------------|-------|----------|------|
+| OST | RACI + V/TO + Rocks + Meeting + IDS + Quarterly(via `traction-eos`)| 71%(5/7)| Scorecard(指标看板)| W3+ 评估是否需要补 Scorecard skill |
+| **OKR**(08-19_20 增量) | Objective + KR + 季度复盘 + 评分(via `traction-eos` Rocks/Quarterly)| **67%(4/6)** | 全员透明 + 双向对齐 | **W4+ 直接调 `traction-eos`,无需新建 OKR skill** |
+| **SAFe**(08-19_20 增量) | 无(0%) | **0%(0/8)** | 全 8 个工具 | **W4+ 若启动 PI Planning → 走完整补建流程** |
+| **HTTS**(08-19_20 增量) | Test Pyramid + TDD(via `testing` + `test-driven-development`)| **29%(2/7)** | BDD + Mutation + Performance + Security + Compliance | W5+ 若需要全面 HTTS 实战 → 走完整补建流程 |
+| **TRIZ**(08-20_12 增量 v1.2) | 无(0%) | **0%(0/9)** | 全 9 个工具(40 发明原则/分离原理/矛盾矩阵/...) | **80% 渔芯不需要**(LookForge 渐进式 RAS 仿真,非突破式硬件创新),W5+ 按需加载 `ideation` skill 即可 |
+
+**判定阈值**:覆盖度 ≥ 60% = 已被覆盖(走现有 Skill);< 60% = 走完整补建流程。
+
+**反模式(陷阱 Y 防御深化)**:
+- ❌ W4+ 实战需要 OKR 时直接 write_file 新 OKR skill
+- ❌ 不查本表就新建 OST/SAFe 等子集已有 Skill 覆盖的方法论
+- ✅ W4+ 实战预备时**第一件事**就是查本表复用判定
+- ✅ 即使现有 Skill 覆盖度 60%+ 也可考虑"补充 Scorecard 等单一缺口工具"
+
+### 📐 W3 启动门槛 5/5 验证清单（2026-08-19_20 抽取 — W3+ 实战启动标准）
+
+| # | 验证项 | 通过条件 |
+|---|--------|---------|
+| 1 | 老莫调研覆盖度 | 近 7 天有 ≥ 3 篇新调研 + 主题覆盖本次实战案例所需的 P0/P1/P2 |
+| 2 | §十五 subset 判定 SOP 沉淀 | 已写入 tactical-case-studies-protocol.md §十五 |
+| 3 | §十四 Pugh Matrix v1.1 沉淀 | 已写入 tactical-case-studies-protocol.md §十四 |
+| 4 | 间歇心跳节奏稳定 | 近 48h 内 ≥ 2 次间歇心跳(预备窗口覆盖) |
+| 5 | DoI 池 SOP 验证 | 已确认待吸收论文池规模 + 待引用 DOI 已锁定 |
+
+**W3 实战(08-23~25)启动条件**:5/5 全部通过 + W3 #11-#15 5 项硬指标各自 100% 就绪 = 实战可开始。
+
+**W4+ 实战启动时,直接套用本清单(只需替换 1-5 项的具体指标)**。这是 W3 实战预备的"沉淀产出",不是一次性验证。
+
+**⚠️ 2026-08-20_12 实测深化**:W3 启动门槛 5/5 第 5 项「DoI 池 SOP 验证」实测**仅核对描述是否满足是危险的**——根因是 SKILL.md 引用了 9 个不存在的 reference 文件(包括 `quarterly-paper-absorption.sh`),完整性仅 25%。**修订**:第 5 项必须修订为「DoI 池 SOP **沉淀**」(见下方补建决策矩阵 + `references/skill-md-reference-integrity-audit.md`)。
+
+---
+
+### 📐 陷阱 AC 补建决策矩阵 A/B/C（2026-08-20_12 实测首建）
+
+**触发条件**:SKILL.md 引用了未创建的文件,`scripts/check-skill-md-reference-integrity.sh` 报缺失数 > 0。
+
+| 选项 | 行动 | 优点 | 缺点 | 推荐度 |
+|------|------|------|------|--------|
+| **A** | 全部补建 8 文件(~830 行) | SKILL.md 100% 自洽,W3 实战就绪 | 一次性写 830 行,可能引入新错误 | ⭐⭐⭐ |
+| **B** | 仅补 P0(2 文件 = `tactical-frameworks-comparison.md` + `quarterly-paper-absorption.sh`) | 解决 W3 启动门槛 5/5 第 5 项,投入最小 | SKILL.md 仍有 7 个失效引用,陷阱 AC 仅缓解 | ⭐⭐⭐⭐ |
+| **C** | 从 SKILL.md 移除 9 个失效引用 | 立即消除「承诺了但未兑现」空壳 | W3 启动门槛 5/5 第 5 项仍未解决 | ⭐⭐ |
+
+**推荐组合(2026-08-20_12 实测建议)**:选项 B 作为 **W3 启动最低门槛**(08-22 前必决),选项 A 中其余 5 项分批在 W3 实战过程中穿插沉淀。
+
+**实测档案**:见 `references/skill-md-reference-integrity-audit.md` §一(9/12 缺失对照表) + §二(完整选项 A/B/C 评估)。
+
+**反模式**:
+- ❌ 看到 SKILL.md 引用了未创建的文件就恐慌式立即补建所有 → 引入新错误
+- ❌ 看到 9 个缺失就绕开陷阱 AC,直接声明「完整性 OK」 → 自欺欺人
+- ❌ 不跑配套脚本,凭记忆 grep SKILL.md → 漏掉 §节形式引用误判
+- ✅ 心跳步骤 5 第一件事 = 跑 `scripts/check-skill-md-reference-integrity.sh`,根据输出决定选项 A/B/C
+
+---
+
+### ⚠️ 陷阱 AC:SKILL.md 引用完整性自检反模式 — 2026-08-20_04 第 11 次心跳实测新增
+
+**实测发现**:W3 启动门槛 5/5 实测复核 = 4/5 通过,第 5 项「DoI 池 SOP 验证」失败。根因:**SKILL.md 引用了不存在的 reference 文件 `references/quarterly-paper-absorption.sh`**,而该文件实际从未创建(实测 `ls references/` 仅 3 文件)。
+
+**反模式(陷阱 AC 核心)**:
+- ❌ 在 SKILL.md 里**提前引用**还没创建的 reference 文件 — 创建了「承诺了但未兑现」的 SOP 空壳
+- ❌ v1.x → v1.x+1 升级时,只追加新硬指标/新陷阱,不复查旧引用是否仍然有效
+- ❌ W3 启动门槛 5/5 自检时只核对「硬指标描述」是否满足,不核对「硬指标所依赖的 reference 文件」是否真实存在
+- ✅ W3+ 启动门槛自检 = **硬指标 + reference 文件存在性 + 文件内容完整性** 三件套
+- ✅ 每次 SKILL.md 版本号升级时,跑 `bash scripts/check-skill-md-reference-integrity.sh` 一键自检(2026-08-20_12 实测固化)
+
+**预防 SOP(下次心跳立即执行)**:
+1. **W3+ 启动门槛 5/5 自检第 5 项修订为「DoI 池 SOP 沉淀」**:必须先确认 `references/quarterly-paper-absorption.sh` 或 `references/doi-pool-protocol.md` 真实存在
+2. **SKILL.md 引用完整性扫描命令**(必须用绝对路径,避免陷阱 AC.2):
+   ```bash
+   # ⚠️ 必须用绝对路径,不要用 ~/,否则 $HOME 异常时静默找错位置
+   bash /Users/hua/.hermes/skills/maodou-product/scripts/check-skill-md-reference-integrity.sh
+   # 输出: ✅ 全部存在 / ❌ 缺失 N 个 → 启动补建决策矩阵 A/B/C
+   ```
+3. **补建决策**(2026-08-20_12 决策矩阵升级版):
+   - **选项 B**(推荐):补建 P0 = `tactical-frameworks-comparison.md` + `quarterly-paper-absorption.sh`,W3 启动门槛 5/5 第 5 项就绪
+   - 选项 A:全部补建 8 文件(~830 行),SKILL.md 100% 自洽
+   - 选项 C:从 SKILL.md 移除失效引用,改为复用映射表一行说明
+
+**对 W3 实战的影响**:W3 实战(08-23~25)启动条件 = 5/5 全通 + W3 #11-#15 5 项硬指标各自 100% 就绪。第 5 项当前 0/1 → **W3 实战启动未就绪**,除非补建选项 A/B 在 08-22 前完成。**本期心跳 0 新增远期承诺**(陷阱 S 强化),决策权交给下次心跳(08-21 或 08-22 间歇心跳)。
+
+详见本期心跳报告:`~/.hermes/profiles/maodou/evolution/2026-08-20_04.md` §二 W3 启动门槛 5/5 实测复核 + `references/skill-md-reference-integrity-audit.md` §一/§二(完整实测档案)。
+
+### ⚠️ 陷阱 AC.2:`$HOME` 异常指向其他 profile 时 `~/.hermes/...` 查找静默失败 — 2026-08-20_08 第 12 次心跳实测新增
+
+**陷阱 AC 解决了"SKILL.md 引用 vs 实际文件"的不一致**。本陷阱解决**配套工具问题**:当 SKILL.md 升级到 v1.13.x 后,宣称的引用完整性扫描命令(`ls ~/.hermes/skills/maodou-product/references/`)会因环境变量异常而**静默找错位置**。
+
+**实测场景**(2026-08-20_08 第 12 次心跳):
+- 期望:`$HOME = /Users/hua`(或 maodou profile 的 zsh 启动 profile)
+- 实际:`$HOME = /Users/hua/.hermes/profiles/zhenglishi/home`(其他 profile 的 home)
+- 后果:`ls ~/.hermes/skills/maodou-product/references/` 解析到 `/Users/hua/.hermes/profiles/zhenglishi/home/.hermes/skills/maodou-product/references/`(不存在,返回 No such file or directory)
+- 表面上看起来像"目录确实为空",实际是**解析错位** — 陷阱 AC 的自检逻辑失效
+
+**修复**(2026-08-20_12 固化到脚本):
+```bash
+# scripts/check-skill-md-reference-integrity.sh 第 1 步: HOME 自检
+echo "HOME=$HOME"
+# ✅ 期望 /Users/hua(无 profile 前缀)
+# ❌ 异常 /Users/hua/.hermes/profiles/<其他>/home
+
+# 脚本始终用绝对路径 /Users/hua/.hermes/skills/maodou-product/...
+# 绕开 $HOME 解析,即使 HOME 异常也能正确扫描
+```
+
+**铁律**(升级版):
+- ✅ 心跳开始时**第一步**就跑 `echo "HOME=$HOME"`,发现异常立即切绝对路径
+- ✅ 陷阱 AC 完整性扫描命令必须用 `/Users/hua/.hermes/skills/...` 绝对路径,不能用 `~/.hermes/...`
+- ✅ 直接调用 `scripts/check-skill-md-reference-integrity.sh`(已内置 HOME 自检 + 绝对路径扫描,无需手动拼接命令)
+- ❌ 看到 `ls` 返回空就下结论"reference 全部缺失" — 可能是路径解析错位
+- ❌ 信任 `$HOME` 永远指向 `/Users/hua` — profile-isolated cron 模式下不一致是常态
+
+**与陷阱 AC 协同**:失败诊断流程 = `echo "HOME=$HOME"` → 若异常 → 切绝对路径 → 跑 `scripts/check-skill-md-reference-integrity.sh`;若正常 → 沿用 `~/.hermes/...` 短路径。
+
+详见本期心跳报告:`~/.hermes/profiles/maodou/evolution/2026-08-20_08.md` §4 HOME 路径陷阱新变体 + 配套脚本 `scripts/check-skill-md-reference-integrity.sh` 第 1 步。
+
+---
+
+**整理人**:毛豆
+**整理日期**:2026-08-20_12(v1.13.3: 陷阱 AC 补建决策矩阵 A/B/C 实测首建 + §十五 v1.2 TRIZ 增量 + 配套脚本 `scripts/check-skill-md-reference-integrity.sh` 固化 + 实测档案 `references/skill-md-reference-integrity-audit.md`)

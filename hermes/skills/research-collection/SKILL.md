@@ -4,7 +4,7 @@ description: '渔芯资料收集技能 — 高效搜集行业信息、公司情�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.0.26"
+  version: "1.0.28"
 ---
 
 ## 参考资料库
@@ -16,8 +16,9 @@ metadata:
 - `references/gtm_b2b_sales_sources.md` — **GTM/B2B Sales 方法论文献 cron 可用性速查**（Common Room 全文已核验 12,549 字符 / Gartner 403 / ChiliPiper Apollo 404 / Revue 停更；A-B-C 三级引用规则，2026-08-03 16:42 实测）
 - `references/api-research-quickref.md` — **GitHub/arxiv/HF API 抓取速查**（curl 模板 + 解析脚本 + tirith 绕过 + 超时处理 + description null 坑 + 多 query 串行模式 + Releases API 多版本抓取 + Stars 增量对比 + 多日暴涨检测启发式 + 生态系统监控模式 + README 二次验证 + awesome 变更检测 + arXiv 版本检测 + arXiv rate-limit 恢复 + Search API 兜底 + 串行 curl 链式调用 + confusable_text 规避 + query 精度陷阱 + HF 超时→正式放弃 + 多 prong 搜索策略 + arXiv AND 组合查询 + arXiv 3D/3DGS 查询注意事项 + cron 多 terminal() 并行抓取 + **GitHub OR 语法陷阱** + **arXiv underwater 查询精度修复** + **TRELLIS.2 in:name 监控模式** + **3DGS arXiv 双引号修复验证** + **通用 null-safe 解析模式（stargazers_count/forks/pushed_at 全字段）**, 2026-08-08）
 - `references/ecosystem-tier-framework.md` — **生态分层框架**（🐋巨鲸/🦈鲨鱼/🐬海豚/🐟鱼群四层分类，星数阈值、策略映射、层级迁移信号；2026-08-11 从 AI-CAD 研究实战中提炼）
+- `references/claude-code-ecosystem-baseline.md` — **Claude Code 生态基线**（2026-08-19 调研快照：核心 11 项目星数 + 官方版本节奏 + 渔芯策略判断；下次 cron 复盘锚点）
 
-*最后更新：2026-08-12（新增：路径验证 — 301-智能体子目录为研究跟踪报告常驻位置 + Pitfall: find 宽泛关键词在 rkr_staging 超时）*
+*最后更新：2026-08-19（新增：api-evangelist/* 公司简介 dump 仓库作为 GitHub Search 系统噪声 + owner 黑名单过滤规则 + 任务指令路径与真实历史日期不匹配时的"先 find 再决策"路径定位流程；2026-08-19 AI 出 CAD 图 cron 实战）*
 
 ## 报告格式模板
 
@@ -277,6 +278,76 @@ q=text-to-cad+generation+language:python&sort=stars&per_page=5
 
 **教训**：`sort=updated` 是"时间线视图"，`sort=stars` 是"重要性视图"。两者必须互补使用，尤其是在快速迭代的领域（每天 20+ 新仓库）。
 
+### Pitfall: GitHub Search `api-evangelist/*` 噪声污染 — 公司简介 dump 仓库批量出现（2026-08-19 验证）
+
+**问题**：在 `q=ai-cad+OR+text-to-cad+OR+llm-cad&sort=updated` 的搜索中，今日 top-10 中出现 8 条都是同一个 owner `api-evangelist/` 下的仓库（`vention` / `spread` / `riiico` / `rev1` / `rayon` / `qbiq` / `prototypingio` / `flow-engineering` / `flow` 等）。这些仓库特征：
+- 同一 owner（`api-evangelist`）
+- 都是 0⭐ / push 当日 / created 2026-08-01 至 08-02
+- description 是**公司简介的纯文本**（如 "Vention is a Montreal-based manufacturing automation company offering an integra..."）
+- 不是代码项目，是 SEO/聚合内容农场
+
+**修复（cron 解析时过滤规则）**：
+```python
+# 解析 GitHub Search items[] 时，过滤以下特征仓库
+for it in items:
+    owner = it.get('owner', {}).get('login', '')
+    desc = it.get('description') or ''
+    stars = it.get('stargazers_count', 0) or 0
+    pushed = (it.get('pushed_at') or '?')[:10]
+    
+    # ✅ 保留：星数 > 0 + 有 owner
+    # ❌ 过滤条件（任一命中即丢弃）
+    is_noise = (
+        owner == 'api-evangelist'                          # 已知垃圾 owner
+        or ' is a ' in desc and 'company' in desc and stars == 0  # 公司简介模式
+        or it.get('size', 0) == 0                          # 空仓库
+    )
+    if is_noise:
+        continue
+```
+
+**已知噪声 owner 列表**（2026-08-19 实测）：`api-evangelist`（CAD/AI/制造业公司简介聚合）。每次 cron 解析时把这个列表当黑名单。
+
+**与"品牌名搜索噪声"（spammy fork）的区别**：
+- api-evangelist = 跨多家公司批量创建的内容农场，**与查询主题无关**
+- spam fork = 同一真实项目的逐字抄写复刻，**与目标项目有关**
+- 两者都用 0⭐ 当日 created 排除，但前者还需 owner 黑名单
+
+### Pitfall: 任务指令中的「起点报告路径」可能与真实历史文件不匹配（2026-08-19 验证）
+
+**问题**：任务模板常写明确的起点报告路径（如 `AI出CAD图研究_2026-06-22.md`），但实际历史累积在另一个日期文件（如 `AI出CAD图研究_2026-08-05.md`）——任务指令是模板化的、不会自动跟踪文件名迁移。如果按字面"该路径不存在 → 首份落地，新建 2026-06-22 文件"，会把累积的 08-05→08-17 增量截断，新文件成为孤儿。
+
+**修复（任务开始前必做的 30 秒路径定位）**：
+```bash
+# 1. 先按任务指定路径找（可能不存在）
+ls /Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/<主题>/ 2>/dev/null
+
+# 2. 找主题目录下"任何"带日期的 .md（找真实历史）
+find /Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/<主题>/ \
+  -name "*<主题>*" -type f | sort
+
+# 3. 用真实累积文件 append，不按字面新建
+#    (匹配本 skill 的"单文件追加"规则优先于任务字面"每日新建"指令)
+```
+
+**判断优先级**（2026-08-19 实测）：
+1. **指定路径存在** → 追加到指定路径（即使日期是 06-22 而今天是 08-19）
+2. **指定路径不存在，但同目录有其他日期文件** → 用最新文件 append（任务路径只是模板占位符）
+3. **同目录完全无 .md** → 真"首份落地"规则（按首份主题子目录新建）
+4. **同目录无该主题子目录** → `find` 整个 301-智能体 目录，按真实主题子目录定位
+
+**反例**：
+```
+# ❌ 严格按字面
+任务说「读取 ~/rkr_staging/文档库/3-公司项目资料/301-智能体/AI_CAD研究/AI出CAD图研究_2026-06-22.md」
+发现 06-22 文件不存在 → 创建新文件 AI出CAD图研究_2026-06-22.md
+→ 累积 5 期增量的 08-05 文件被截断，新 06-22 文件成为孤儿
+
+# ✅ 先 find 真实历史
+ls <目录>  # 看到 AI出CAD图研究_2026-08-05.md 是唯一文件
+→ append 到该文件，在增量章节中加一行注记说明：「任务指令路径 06-22 实查为 08-05，是真实累积文件」
+```
+
 ### Pitfall: 轮换主题中的项目名不等于已追踪 — 显式查询的必要性（2026-08-11 验证）
 
 **问题**：研究报告中列出了轮换主题"CADAM / Synaps-CAD / BIM 集成"，但从未对 CADAM 和 Synaps-CAD 执行过显式的 GitHub/api 查询。这些项目被列入"下周计划"但从未在当前周被主动搜索。结果：CADAM (⭐4,967) 和 Synaps-CAD (⭐351) 直到明确执行 `q=CADAM+cad` 和 `q=Synaps-CAD+OR+synaps-cad` 查询才被发现。
@@ -354,6 +425,50 @@ curl -s -o /tmp/gh_brand3.json 'https://api.github.com/search/repositories?q=Tri
 **修复**：用引号短语强制 AND：`search_query=all:%22gaussian+splatting%22`（`%22` = 双引号，curl 里写 `all:\"gaussian splatting\"`）。本次实测命中 6 条真实 GS 论文（HiCo-GS 08-14、LocusGS 08-13 等），零噪声。短语内空格用 `+` 保留。
 
 **规则**：多词概念（gaussian splatting / text to 3d / single view reconstruction）一律用 `%22...%22` 引号短语，不用裸 `+` 连词。
+
+### Pitfall: GitHub Search `+` 同样按空格分隔 — `+OR+` 退化为零结果（2026-08-19 验证）
+
+**问题**：GitHub Search 的 `+` 行为与 arXiv 一致——按空格分隔。cron 研究 Claude Code UI/UX 生态时构造查询 `q=frontend+ai+design+OR+ai+ui+generator+2026` 期望"frontend AI design" 或 "ai ui generator 2026" 任一命中，实际返回 **0 条**。原因：GitHub Search 把查询词拆成 7 个 token，再做 OR 匹配——但 7 个独立 token 同时出现在 description 中的概率太低，且 `2026` 是数字年份与具体仓库 description 不匹配。
+
+**修复**：GitHub Search 多词短语同样用引号 `%22...%22` 强制短语匹配：
+```bash
+# ❌ 返回 0 条（词被拆散 + OR 退化）
+q=frontend+ai+design+OR+ai+ui+generator+2026&sort=updated&per_page=6
+
+# ✅ 返回 6 条真项目（Leonxlnx/taste-skill 78K, onlook-dev/onlook 26K 等）
+q=%22frontend%22+%22ai%22+%22design%22&sort=stars&per_page=6
+
+# ✅ 设计系统专项
+q=%22design+system%22+%22ai%22&sort=updated&per_page=6
+```
+
+**与 arXiv 的区别**：arXiv 用 `all:FIELD` 限定字段后再空格拆分；GitHub Search 全文匹配 `name + description + topics`，对数字/年份 token 极不友好。**通用规则**：跨平台研究时，所有"多词概念"在 GitHub Search 查询里都默认用 `%22...%22` 引号短语，与 arXiv 同等待遇。
+
+**陷阱叠加**：`+OR+` 看似短语 OR，实际是"任一 token 命中"——如果想做短语 OR，必须为每个短语分别加引号并保留 OR：
+```bash
+# ✅ 短语 OR（前端设计 skill OR 设计系统 ai）
+q=%22frontend+design%22+OR+%22design+system%22+%22ai%22
+```
+
+**实例（本次 08-19 Claude Code 调研）**：原查询 0 条 → 引号短语修复后 6 条全是有用项目（taste-skill / onlook / webgradients / claude-code-ui-agents / Flame-Code-VLM / claude-directory）。
+
+### Pitfall: 官方 docs 子域在 web_extract 被拦为 "private network address" — 改用 GitHub Releases API 兜底（2026-08-19 验证）
+
+**问题**：`web_extract(urls=["https://docs.claude.com/en/docs/claude-code/changelog"])` 返回 `Blocked: URL targets a private or internal network address`——这是 web_extract 的安全策略（拒解析私有 IP 段），不是工具损坏。当研究 Claude Code / Anthropic 官方文档、Cursor 官方 changelog、Vercel 文档等看似公网但实际走内网 CDN 的站点时，会被拦截。
+
+**修复**：所有官方 changelog/release notes 默认改用 GitHub Releases API：
+```bash
+# 替代 docs.claude.com/changelog
+curl -s 'https://api.github.com/repos/anthropics/claude-code/releases?per_page=10' \
+  | python3 -c "import json,sys; [print(r['tag_name'],(r['published_at'] or '')[:10],(r.get('body') or '')[:500]) for r in json.load(sys.stdin)]"
+
+# 替代 cursor.com/changelog（如需）
+curl -s 'https://api.github.com/repos/getcursor/cursor/releases?per_page=10'
+```
+
+**已知被拦站点**（2026-08-19 实测）：`docs.claude.com`、`claude.com/product/claude-code`、`code.claude.com`。这些站点在 cron 环境的 web_extract/web_search 上**完全不可用**，必须靠 GitHub Releases API。
+
+**置信度**：高——GitHub Releases 通常比官方网页 changelog 更详细（含每个 PR 的具体改动），且可程序化解析。
 
 ### 技术路线对比专题（推荐子章节，2026-08-09 沉淀）
 

@@ -1,7 +1,7 @@
 apple
 autonomous-ai-agents
 creative
-cron-session-2026-08-18-claude-code-skills-daily-update
+cron-research-3projects
 data-science
 devops
 diagramming
@@ -23,7 +23,6 @@ productivity
 quant-workflow
 red-teaming
 research
-research-cron-session-2026-08-18-three-direction
 smart-home
 social-media
 software-development

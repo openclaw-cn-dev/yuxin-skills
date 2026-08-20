@@ -735,3 +735,27 @@ card_images 表 (term_id, style_key, url, variant, is_primary)
 - **旧卡片图残留**：一批卡片（如 Agent 框架 OpenHands/SWE-agent/AutoGPT）被删/重构后，旧图占着编号，挂到新卡片上（T205 挂 OpenHands 图但卡片名是"MCP协议"）
 - **编号笔误孤儿图**：`t312-llama.cpp`（应为 T132）、`t447`（应为 T147）、`t503`（应为 T053）——多打一位数字，图成了孤儿
 - **乱码编号**：`t0277-System Prompt`（应为 T054）、`t0056-流式输出`（应为 T056）——图内容对但编号错，应归位而非删除
+
+## 培训内容方法论（原 ai-training-content）
+
+零基础员工 AI 培训的内容设计方法论。核心是**需求驱动**（demand-driven，反向设计）：从学员目标出发（"我要做 X → 需要学 Y"），不是从知识树出发。
+
+**7 原则**：① 从需求出发（支持 39 职业路径 + 任务关键词匹配）② 先学最需要的（UbD 反向设计，`--minimal` 把 52 卡路径砍到 ~20 卡）③ 先用起来（每卡一句话 30s + 详解 5min）④ 边用边学（螺旋）⑤ 最易懂（日常类比，"参数 = AI 的脑细胞"，描述 ≤30 字）⑥ 最高效（Bloom 认知分层自动排序 + 共享基础阶段复用）⑦ 最智能（AI 编排 AI，新增职业只加 JSON 不改代码）。
+
+**5 课 × 1.5h 课程结构**：AI 是什么 / AI 能做什么 / 提示词工程（GROW 框架 = Goal/Role/Output/Win）/ AI 工具实战（工具矩阵）/ AI 的局限与风险（安全红线 ✅⚠️❌ 三段）。
+
+**术语库 schema**（`terms-full.json`）：`{id,name,en,desc(一句话),diff(⭐),layout(hub/pipe/stack/comp/cycle),labels(3-5个2-5字),group}`，120-200 词 × 12 组。完整数据模型见 `references/term-library-schema.md`。
+
+## 学习路径设计方法论（原 ai-learning-path-system）
+
+「先用再学」第一定律：用户 30 分钟内必须上手，理论放在动手之后。**7 阶段顺序不可协商**：Phase 0 落地准备（推荐套餐/账号/让 AI 帮装环境）→ Phase 1 快速上手（5 分钟复制粘贴 Hello World）→ Phase 2 补理论 → Phase 3 核心能力（80% 用法）→ Phase 4 进阶 → Phase 5 性能优化 → Phase 6 高效实战。
+
+**路径粒度**：拆到"可独立应聘的岗位"粒度（不是"AI工程师"而是"NLP算法工程师/MLOps工程师/RAG系统工程师"）。反向设计：目标岗位 → 核心能力 → 映射术语 → Bloom 排序。**数据分层**：数据（terms/career-paths JSON）与表现（HTML/CLI）分离，绝不硬编码。**暗色模式必做**：每个组件都要 `[data-theme="dark"]` CSS。
+
+## 归藏风格卡片生图工作流（原 ai-flashcard-generator）
+
+豆包生图的三阶段工作流：① Prompt 批量生成（16 领域分组）② 像素级风格分析（visual_analyzer.py 提取尺寸/背景色/亮度/蓝色占比/主蓝 5 维，生成 `_风格规范.json` + `_标准风格Prompt.txt`）③ 5 维自动评分筛选（style_matcher.py：尺寸 20% + 背景色 25% + 亮度 20% + 蓝色占比 20% + 主蓝 15%，每术语选最高分）。
+
+**16 组领域配色**（如 基础概念 `#c026d3` 紫粉、模型架构 `#06b6d4` 青蓝、训练技术 `#f59e0b` 橙黄）见 `references/group-colors.md`。**5 种布局** hub/pipe/stack/cycle/comp 自动生成 SVG。
+
+**陷阱**：版本号必须两位数（`v01` 不是 `v1`，否则字符串排序 v10 < v2）；文件名建议 `T001_v01.png` 不含中文；**不要相信肉眼判断风格一致性**，必须用 5 维像素评分；术语名含 `/` `\` `:` 会破坏文件创建，先清理；SVG 箭头 marker 要在 defs 提前定义。
