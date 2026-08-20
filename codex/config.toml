@@ -7,14 +7,6 @@ model_catalog_json = "~/.codex/models.json"
 
 notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
-[model_providers]
-[model_providers.custom]
-name = "deepseek"
-base_url = "http://127.0.0.1:15721/v1"
-wire_api = "responses"
-requires_openai_auth = true
-experimental_bearer_token = "<REDACTED>"
-
 [model_providers.deepseek]
 name = "deepseek"
 base_url = "https://api.deepseek.com/"
@@ -59,6 +51,7 @@ cwd = "."
 enabled = false
 
 [desktop]
+computerUseAlwaysHidePictureInPicture = true
 followUpQueueMode = "queue"
 
 [marketplaces.openai-bundled]
@@ -76,4 +69,5 @@ enabled = true
 enabled = true
 
 [features]
+computer_use = false
 js_repl = false
