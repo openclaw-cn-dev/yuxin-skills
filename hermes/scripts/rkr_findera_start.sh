@@ -1,5 +1,5 @@
 #!/bin/bash
-# 启动寻元(FindEra) + 知识库(RKR) — 每天 0:00 触发
+# 启动寻元(FindEra) + 知识库(RKR) — 每天 23:30 触发
 # 成功静默(exit 0)，失败输出错误到 stdout 并 exit 1（cron 告警投递）
 LOG=/Users/hua/.hermes/logs/rkr_findera_schedule.log
 mkdir -p "$(dirname "$LOG")"

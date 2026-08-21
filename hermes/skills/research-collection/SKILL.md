@@ -14,11 +14,11 @@ metadata:
 - `references/大客户销售策略.md` — ToB大客户销售流程、LTV/CAC模型、定价策略（2026-06-05）
 - `references/sogou_search_extraction_pitfalls.md` — **Sogou 搜索 HTML 解析踩坑**（hintidx 内部重链 vs 真实外链，公众号文章保留规则；Bing 对照 parser；2026-08-03 16:42 实测）
 - `references/gtm_b2b_sales_sources.md` — **GTM/B2B Sales 方法论文献 cron 可用性速查**（Common Room 全文已核验 12,549 字符 / Gartner 403 / ChiliPiper Apollo 404 / Revue 停更；A-B-C 三级引用规则，2026-08-03 16:42 实测）
-- `references/api-research-quickref.md` — **GitHub/arxiv/HF API 抓取速查**（curl 模板 + 解析脚本 + tirith 绕过 + 超时处理 + description null 坑 + 多 query 串行模式 + Releases API 多版本抓取 + Stars 增量对比 + 多日暴涨检测启发式 + 生态系统监控模式 + README 二次验证 + awesome 变更检测 + arXiv 版本检测 + arXiv rate-limit 恢复 + Search API 兜底 + 串行 curl 链式调用 + confusable_text 规避 + query 精度陷阱 + HF 超时→正式放弃 + 多 prong 搜索策略 + arXiv AND 组合查询 + arXiv 3D/3DGS 查询注意事项 + cron 多 terminal() 并行抓取 + **GitHub OR 语法陷阱** + **arXiv underwater 查询精度修复** + **TRELLIS.2 in:name 监控模式** + **3DGS arXiv 双引号修复验证** + **通用 null-safe 解析模式（stargazers_count/forks/pushed_at 全字段）**, 2026-08-08）
+- `references/api-research-quickref.md` — **GitHub/arxiv/HF API 抓取速查**（curl 模板 + 解析脚本 + tirith 绕过 + 超时处理 + description null 坑 + 多 query 串行模式 + Releases API 多版本抓取 + Stars 增量对比 + 多日暴涨检测启发式 + 生态系统监控模式 + README 二次验证 + awesome 变更检测 + arXiv 版本检测 + arXiv rate-limit 恢复 + Search API 兜底 + 串行 curl 链式调用 + confusable_text 规避 + query 精度陷阱 + HF 超时→正式放弃 + 多 prong 搜索策略 + arXiv AND 组合查询 + arXiv 3D/3DGS 查询注意事项 + cron 多 terminal() 并行抓取 + **GitHub OR 语法陷阱** + **arXiv underwater 查询精度修复** + **TRELLIS.2 in:name 监控模式** + **3DGS arXiv 双引号修复验证** + **通用 null-safe 解析模式（stargazers_count/forks/pushed_at 全字段）** + **高星品牌撞车协议（14k⭐+ 干扰源识别与 README 验证 + 后续 brand search 必须加 language: / repo: 过滤）**, 2026-08-20）
 - `references/ecosystem-tier-framework.md` — **生态分层框架**（🐋巨鲸/🦈鲨鱼/🐬海豚/🐟鱼群四层分类，星数阈值、策略映射、层级迁移信号；2026-08-11 从 AI-CAD 研究实战中提炼）
 - `references/claude-code-ecosystem-baseline.md` — **Claude Code 生态基线**（2026-08-19 调研快照：核心 11 项目星数 + 官方版本节奏 + 渔芯策略判断；下次 cron 复盘锚点）
 
-*最后更新：2026-08-19（新增：api-evangelist/* 公司简介 dump 仓库作为 GitHub Search 系统噪声 + owner 黑名单过滤规则 + 任务指令路径与真实历史日期不匹配时的"先 find 再决策"路径定位流程；2026-08-19 AI 出 CAD 图 cron 实战）*
+*最后更新：2026-08-20（新增：append 用 `printf '\n\n' >> file && cat /tmp/inc.md >> file` 完全绕过 patch 工具的"重复 footer 匹配"陷阱 + arXiv XML 解析需要 `opensearch` namespace 否则 `'opensearch' prefix not found` 报错 + 仓库更名/迁移导致 404 时 brand search 兜底复用证据 + **高星品牌撞车（14k⭐+ 干扰品牌监控）的识别与过滤** + **append 两步法完整工作流（cat-append 内容 + patch 改 header 日期，缺一不可）** + **品牌撞车判定必须读 README 验证内容相关性**）*
 
 ## 报告格式模板
 
@@ -87,6 +87,148 @@ metadata:
 # ✅ 以 "| Hugging Face Spaces | ... | ❌ 超时 |" 为 old_string
 # → 仅文件最后一处匹配，替换成功
 ```
+
+### 更优解：append-via-cat 完全绕过 patch 工具陷阱（2026-08-20 验证）
+
+**问题**：当报告累积到 5+ 期增量（08-05 单文件已 833 行），用 `patch` 追加新章节时几乎一定会撞上"重复 footer 匹配"问题——每个增量的 footer 文本格式固定（`*调研完成时间：YYYY-MM-DD HH:MM*` + `*下次轮换主题建议：...*`），相邻增量的字符串差只在小日期数字上。
+
+**完全绕过 patch 的更优工作流**：
+```bash
+# 1. 先把新章节写到 /tmp 临时文件（write_file 工具）
+write_file /tmp/increment_YYYY-MM-DD.md  "<完整新章节内容>"
+
+# 2. 用 shell append 而不是 patch：
+printf '\n\n' >> <report_path>.md && cat /tmp/increment_YYYY-MM-DD.md >> <report_path>.md
+```
+
+**优势**：
+- 零字符串匹配风险（不依赖任何 anchor 唯一性）
+- 不需要 `read_file` 读末尾来定位 footer
+- 不触发 `read_file offset/limit partial view` 警告
+- bash 原生 append 速度比 patch 工具快（无 fuzzy match 算法开销）
+- 833 行 → 968 行实测 append 不到 100ms
+
+**前提条件**：
+- 新内容**已经写成完整字符串**（用 `write_file` 提前准备好）
+- 不需要回滚（bash `>>` 是真 append，没法 undo；新章节写错只能手动删）
+- 不需要 patch 工具的语法检查（中文 markdown 不需要 lint）
+
+**反例**：
+```
+# ❌ 报告累积 5 期后还用 patch 追加
+patch(path="/path/AI出CAD图研究_2026-08-05.md",
+      old_string="*调研完成时间：2026-08-19 23:35*",  # ← 撞 2 matches
+      new_string="<...新章节...>\n\n*调研完成时间：2026-08-19 23:35*")
+→ 报 Found 2 matches 错误
+
+# ✅ 改用 printf + cat append
+printf '\n\n' >> /path/AI出CAD图研究_2026-08-05.md
+cat /tmp/increment_2026-08-20.md >> /path/AI出CAD图研究_2026-08-05.md
+→ 零摩擦，零 lint，零匹配
+```
+
+**适用判断**：
+- 报告 < 3 期增量 + 起始报告 ≤ 200 行 → `patch` 仍可用（footer 撞库概率低）
+- 报告 ≥ 3 期增量 或 文件 ≥ 500 行 → 一律用 `printf + cat append`，把 `patch` 留给真正的"修改已有内容"场景
+
+### 完整两步法 append 工作流 — cat-append 内容 + patch 改 header（2026-08-20 验证）
+
+**问题**：`printf + cat append` 解决了"在文件末尾追加新章节"的问题，但**报告头部的"最新增量"日期还需要更新**——而 header 在文件最前面（line 3 左右），printf/cat 没法在文件中间修改。
+
+**完整工作流（缺一不可）**：
+```bash
+# 第一步：用 write_file 准备好新章节（写到 /tmp）
+write_file /tmp/increment_YYYY-MM-DD.md "<完整新章节内容，含最新增量日期>"
+
+# 第二步：append 新章节到文件末尾（printf + cat）
+printf '\n\n' >> <report_path>.md
+cat /tmp/increment_YYYY-MM-DD.md >> <report_path>.md
+
+# 第三步：用 patch 改文件头部的"最新增量"日期（patch 工具允许修改文件开头，
+#       因为 patch 走的是模糊匹配定位 unique anchor，不依赖 offset/limit）
+patch(path="<report_path>.md",
+      old_string="> 起始报告：YYYY-MM-DD | 最新增量：OLD_DATE",
+      new_string="> 起始报告：YYYY-MM-DD | 最新增量：NEW_DATE")
+```
+
+**为什么 patch 改 header 是安全的**：
+- header 的 "> 起始报告：... | 最新增量：..." 字符串在文件中只出现 1 次（line 3）→ `patch` 不会撞多匹配
+- header 不在文件末尾 → 不受 `read_file offset/limit partial view` 警告影响
+- 修改的是单行字符串，fuzzy match 算法开销可忽略
+
+**反例**（漏掉第三步）：
+```
+# ❌ 只 append 不改 header
+printf '\n\n' >> report.md
+cat /tmp/inc.md >> report.md
+→ 文件头仍写着"最新增量：2026-08-19" 但内容已新增 08-20 章节
+→ 下次 cron 看到 header 会以为数据停留在 08-19，触发"误判已更新"或重复劳动
+```
+
+**反例**（用 cat 改 header）：
+```bash
+# ❌ ❌ ❌ 千万不要这样做
+cat <(echo "> 起始报告：... | 最新增量：NEW_DATE") <(cat body.md) > new_body.md
+# 原因：(a) 容易丢文件（覆盖失败导致内容为空）；
+#           (b) 重写整个文件没效率；
+#           (c) patch 工具已经能干净完成这一步
+```
+
+**总结决策树**：
+- 文件**末尾追加**新内容 → `printf + cat append`（patch 撞 footer）
+- 文件**头部 / 中间**修改单行 → `patch`（anchor 唯一，安全）
+- 报告 ≥ 3 期增量 → 两步法**全套执行**（append 内容 + patch header）
+
+### Pitfall: arXiv XML 解析需要 opensearch namespace（2026-08-20 验证）
+
+**问题**：用 `xml.etree.ElementTree` 解析 arXiv API 返回的 feed 时，如果只声明 `atom` 和 `arxiv` namespace，访问 `<opensearch:totalResults>` 会抛 `SyntaxError: prefix 'opensearch' not found in prefix map`：
+
+```python
+# ❌ 报错
+ns = {'atom': 'http://www.w3.org/2005/Atom', 'arxiv': 'http://arxiv.org/schemas/atom'}
+root.find('opensearch:totalResults', ns)  # SyntaxError: prefix 'opensearch' not found
+```
+
+**根本原因**：arXiv feed 的根元素同时声明三个 namespace（atom / arxiv / **opensearch**），但 opensearch 经常被解析脚本遗漏。feed 实际长这样：
+```xml
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/"
+      xmlns:arxiv="http://arxiv.org/schemas/atom"
+      xmlns="http://www.w3.org/2005/Atom">
+```
+
+**修复**：namespace dict 必须包含全部三个：
+```python
+ns = {
+    'atom': 'http://www.w3.org/2005/Atom',
+    'arxiv': 'http://arxiv.org/schemas/atom',
+    'opensearch': 'http://a9.com/-/spec/opensearch/1.1/',  # ← 必须
+}
+total = root.find('opensearch:totalResults', ns).text
+entries = root.findall('atom:entry', ns)
+```
+
+**完整解析模板**（2026-08-20 实测可用）：
+```python
+import xml.etree.ElementTree as ET
+ns = {
+    'atom': 'http://www.w3.org/2005/Atom',
+    'arxiv': 'http://arxiv.org/schemas/atom',
+    'opensearch': 'http://a9.com/-/spec/opensearch/1.1/',
+}
+tree = ET.parse('/tmp/arxiv_tcad.json')
+root = tree.getroot()
+total = root.find('opensearch:totalResults', ns).text
+entries = root.findall('atom:entry', ns)
+for e in entries:
+    title = e.find('atom:title', ns).text.strip().replace('\n', ' ')
+    published = e.find('atom:published', ns).text[:10]
+    updated = e.find('atom:updated', ns).text[:10]
+    link_id = e.find('atom:id', ns).text
+    cat = e.find('arxiv:primary_category', ns).get('term')
+    authors = ', '.join(a.find('atom:name', ns).text for a in e.findall('atom:author', ns))
+```
+
+**教训**：任何解析 arXiv feed 的脚本，第一件事就是检查 namespace dict 是否包含 `opensearch`（用于 totalResults / itemsPerPage / startIndex）。一旦遗漏，整个解析脚本会因为 SyntaxError 直接崩溃，连第一条 entry 都看不到。
 
 ### Pitfall: read_file offset/limit 造成 partial view 警告（2026-07-25 验证）
 
@@ -229,6 +371,8 @@ curl /repos/Tencent/Hunyuan3D-Buffalo → {"message": "Not Found"}
 curl /search/repositories?q=Hunyuan3D-Buffalo&per_page=3
 → Tencent-Hunyuan/Hunyuan3D-Buffalo1.0  ⭐63
 ```
+
+**2026-08-20 复用证据**：cron 研究 AI-CAD 时，直接 `GET /repos/multi-agent-systems-research/Multi-Agent-CAD` 返回 404、`GET /repos/UMich-CURLY/SynapsCAD` 也 404。但 `q=Multi-Agent-CAD+in:name&sort=stars` 立即找到 `Pan-Chera/Multi-Agent-CAD`（854⭐），`q=Synaps-CAD+in:name` 找到 `timschmidt/synaps-cad`（361⭐）——说明 org 改名/迁移是高频事件，brand search 应作为任何单仓库查询的**并行 fallback**（不是事后补救）。**建议工作流**：每期 cron 先发 4 类品牌搜索（`X+in:name&sort=stars&per_page=3`），用返回的 `full_name` 作为后续 `GET /repos/{full_name}` 的正确路径，而不是依赖上期报告里的旧路径。
 
 ### Pitfall: GitHub 搜索对未开源论文返回 0 结果 — 先 arXiv 后 GitHub（2026-08-09 验证）
 
@@ -394,6 +538,56 @@ curl -s -o /tmp/gh_brand3.json 'https://api.github.com/search/repositories?q=Tri
 - 只有 **星数 > 0 且 description 原创/独立** 的新仓库才计入生态信号
 
 **实例**：`Hunyuan3D-WorldClaw`（20⭐, 08-05 创建）通过 `q=Hunyuan3D+in:name` 发现，但不会出现在 `q=text-to-3d+OR+image-to-3d` 的通用搜索中。
+
+### Pitfall: 高星品牌撞车 — 14k⭐+ 项目完全压制真实目标（2026-08-20 验证）
+
+**问题**：之前记录的 `TRELLIS in:name` 撞车案例（`trellisworks`、`trellis-tech`）都是 0⭐ 小型项目，过滤简单。但今日 `q=TRELLIS+in:name&sort=updated&per_page=3` 的前 3 条**全部被 `mindfold-ai/Trellis` 一个项目占据**：
+- `mindfold-ai/Trellis` ⭐**14,077**、TypeScript、AGPL-3.0、pushed 2026-08-20
+- 描述：`The best agent harness.` —— AI 编码 agent harness（支持 Claude Code / Cursor / Codex 等 22 个平台），**与 3D 完全无关**
+
+**与之前撞车案例的根本区别**：
+- 0⭐ 小撞车项目（如 trellisworks）→ `description` 一眼可识别为无关 → 人工 5 秒过滤
+- 14k⭐ 高撞车项目 → `description` "agent harness" 字面与目标品牌同名极易混淆 → 必须读 README 才能确认是 harness 而非 3D 模型
+
+**根本原因**：GitHub Search `sort=updated` 按 `pushed_at` 降序，而高星项目通常活跃维护（push 频繁）→ 自然占据 top-N。一个 14k⭐ 的活跃项目**会永久压制**任何低星的真实目标（除非目标也是 10k+ 级别）。
+
+**修复（品牌撞车判定协议）**：
+1. **不要**仅凭 `description` 字符串相关性判定——必须 `GET /repos/{owner}/{repo}/readme` 或抓 README 内容确认项目实际做什么
+2. **README 验证清单**（3 步）：
+   ```bash
+   # 1. 抓 README base64 内容（API）
+   curl -s 'https://api.github.com/repos/owner/repo/readme' | python3 -c "import json,base64; print(base64.b64decode(json.load(sys.stdin)['content']).decode())" | head -50
+   # 2. 检查 language/topics 是否与目标领域匹配
+   #    → mindfold-ai/Trellis: language=TypeScript, topics=[agentic-coding, ai-workflow, claudecode, codex, harness]
+   #    → 与 3D 模型生成完全无关 → 判定撞车
+   # 3. 如果 README 的第一屏与目标领域无任何交集 → 标记为撞车，写入已知撞车清单
+   ```
+3. **后续 brand search 必须加过滤条件**避免被压制：
+   ```bash
+   # ❌ 被 mindfold-ai/Trellis 完全压制（14k⭐ 占 top 3）
+   q=TRELLIS+in:name&sort=updated&per_page=3
+
+   # ✅ 方案 A：用直接路径（已知 owner）
+   q=repo:microsoft/TRELLIS+in:name
+
+   # ✅ 方案 B：按 language 过滤（microsoft/TRELLIS 是 Python/C++）
+   q=TRELLIS+in:name+language:CUDA+OR+language:Python
+
+   # ✅ 方案 C：用 sort=stars 而非 sort=updated（高星项目会自然出现，但按相关度排序）
+   q=TRELLIS+in:name&sort=stars&per_page=5
+   ```
+
+**已知高星撞车清单**（2026-08-20 实测，需持续维护）：
+- `mindfold-ai/Trellis` ⭐14,077 — AI coding harness，与 microsoft/TRELLIS (3D) **完全无关**
+
+**与"已知噪声 owner 列表"（api-evangelist）的区别**：
+- api-evangelist = 黑名单 owner → 整个 owner 跳过
+- 高星品牌撞车 = 同名仓库（不同 owner）→ 必须**逐个** README 验证
+
+**置信度判断**：
+- 高置信度撞车：language/topics 与目标领域完全无关（如 TypeScript harness vs 3D Python/CUDA） → 直接过滤，写入清单
+- 中置信度：language 与目标领域相关但 description 模糊 → 读 README 第一屏确认
+- 低置信度（需要保留）：language/topics/description 都与目标领域匹配 → 即使星数高也保留
 
 ### 相邻领域论文迁移方法论（2026-08-07 沉淀）
 
