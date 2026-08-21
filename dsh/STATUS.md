@@ -1,12 +1,12 @@
 # DeepSeek Harness (dsh) 状态快照
-> 导出时间: 2026-08-21 05:01:53
+> 导出时间: 2026-08-22 05:00:45
 > 🤖 自动同步自 Hermes/玉芬 · dsh 自进化模块
 
 ## 版本
 - 本地: `v0.1.0-rc.5` (commit `47f943859b`)
 - npm 最新: ``
-- upstream 落后: `-1` commit
-- 状态: `unknown`
+- upstream 落后: `13144` commit
+- 状态: `update_available`
 
 ## 安装方式
 - 源码 monorepo: `git clone https://github.com/deepseek-ai/deepseek-harness.git`
