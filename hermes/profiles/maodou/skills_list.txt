@@ -59,6 +59,7 @@ product-debugging
 productivity
 research
 scorecard-marketing
+seed-customer-scout
 skill-creator
 slack-gif-creator
 smart-home

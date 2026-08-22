@@ -10,6 +10,8 @@ claude-api
 coding-agent-delegation
 creative
 cro-methodology
+cron-research-3projects
+cron-research-3projects-3projects-coding
 data-science
 design-everyday-things
 design-sprint
@@ -50,9 +52,13 @@ note-taking
 predictable-revenue
 product-debugging
 productivity
+quant-cron-evolution
+ras-hw-scan-methodology
+ras-hw-scan-protocol
 research
 research-collection
 research-workflow
+sales
 scorecard-marketing
 skill-creator
 slack-gif-creator
@@ -67,3 +73,6 @@ web-typography
 xiaobao-sales
 xiaobao-workflow
 yuanbao
+yuxin-hourly-gateway-patrol
+yuxin-hourly-patrol-recovery-2026-08-22
+zhenglishi-self-evolution

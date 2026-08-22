@@ -116,6 +116,7 @@ def build_backends():
         backends["ds-anthropic"] = {"name": "DeepSeek(Anthropic)", "url": "https://api.deepseek.com/anthropic", "key": ds_key, "auth": "x-api-key"}
         backends["ds-openai"] = {"name": "DeepSeek(OpenAI)", "url": "https://api.deepseek.com", "key": ds_key, "auth": "Authorization", "prefix": "Bearer "}
     if mm_key:
+        backends["minimax-anthropic"] = {"name": "MiniMax(Anthropic)", "url": "https://api.minimaxi.com/anthropic", "key": mm_key, "auth": "x-api-key"}
         backends["minimax-openai"] = {"name": "MiniMax(OpenAI)", "url": "https://api.minimaxi.com", "key": mm_key, "auth": "Authorization", "prefix": "Bearer "}
     if gemini_key:
         backends["gemini-openai"] = {"name": "Gemini(OpenAI兼容)", "url": "https://generativelanguage.googleapis.com/v1beta/openai", "key": gemini_key, "auth": "Authorization", "prefix": "Bearer "}
@@ -132,7 +133,7 @@ def build_backends():
 BACKENDS = build_backends()
 
 ROUTES = {
-    "/anthropic": {"primary": "ds-anthropic", "fallback": "volc-anthropic"},
+    "/anthropic": {"primary": "minimax-anthropic", "fallback": "ds-anthropic"},
     "/openai": {"primary": "minimax-openai", "fallback": "ds-openai"},
 }
 

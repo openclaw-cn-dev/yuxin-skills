@@ -1,6 +1,6 @@
 model:
-  default: deepseek-v4-pro
-  provider: deepseek-direct
+  default: MiniMax-M3
+  provider: minimax-cn
 providers:
   deepseek-direct:
     api_key: "***"
@@ -393,17 +393,6 @@ approvals:
   mcp_reload_confirm: true
   : true
 command_allowlist:
-- pipe remote content to shell
-- force kill processes
-- shell command via -c/-lc flag
-- delete in root path
-- SQL DELETE without WHERE
-- script execution via heredoc
-- docker restart/stop/kill (container lifecycle)
-- docker compose restart/stop/kill/down (container lifecycle)
-- kill hermes/gateway process (self-termination)
-- xargs with rm
-- recursive delete
 - script execution via -e/-c flag
 quick_commands: {}
 hooks: {}
