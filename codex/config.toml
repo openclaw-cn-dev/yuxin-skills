@@ -1,17 +1,10 @@
-model_provider = "deepseek"
-model = "deepseek-v4-pro"
 model_reasoning_effort = "high"
 disable_response_storage = true
 wire_api = "responses"
-model_catalog_json = "~/.codex/models.json"
+
+service_tier = "default"
 
 notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
-
-[model_providers.deepseek]
-name = "deepseek"
-base_url = "https://api.deepseek.com/"
-wire_api = "responses"
-experimental_bearer_token = "<REDACTED>"
 
 [projects]
 [projects."/Users/hua"]
@@ -23,6 +16,52 @@ trust_level = "trusted"
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
+
+[desktop]
+computerUseAlwaysHidePictureInPicture = true
+followUpQueueMode = "queue"
+conversationDetailMode = "STEPS_COMMANDS"
+
+[marketplaces.openai-bundled]
+last_updated = "2026-08-23T07:29:20Z"
+source_type = "local"
+source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-08-23T01:21:41Z"
+source_type = "local"
+source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[plugins."codex-app-tools@openai-bundled"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = false
+
+[plugins."visualize@openai-bundled"]
+enabled = false
+
+[plugins."documents@openai-primary-runtime"]
+enabled = false
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = false
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = false
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = false
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = false
+
+[plugins."sites@openai-bundled"]
+enabled = false
+
+[features]
+computer_use = false
+js_repl = false
 
 [mcp_servers.node_repl]
 args = []
@@ -42,45 +81,3 @@ BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
 BROWSER_USE_CODEX_APP_VERSION = "26.814.41957"
 NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/hua/.codex/plugins/cache/openai-bundled/browser/26.814.41957/scripts/browser-service.mjs"}'
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
-
-[desktop]
-computerUseAlwaysHidePictureInPicture = true
-followUpQueueMode = "queue"
-
-[marketplaces.openai-bundled]
-last_updated = "2026-08-20T02:04:11Z"
-source_type = "local"
-source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
-
-[marketplaces.openai-primary-runtime]
-last_updated = "2026-08-22T15:23:13Z"
-source_type = "local"
-source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
-
-[plugins."codex-app-tools@openai-bundled"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."visualize@openai-bundled"]
-enabled = true
-
-[plugins."documents@openai-primary-runtime"]
-enabled = true
-
-[plugins."pdf@openai-primary-runtime"]
-enabled = true
-
-[plugins."spreadsheets@openai-primary-runtime"]
-enabled = true
-
-[plugins."presentations@openai-primary-runtime"]
-enabled = true
-
-[plugins."template-creator@openai-primary-runtime"]
-enabled = true
-
-[features]
-computer_use = false
-js_repl = false
