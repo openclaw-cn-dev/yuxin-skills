@@ -17,6 +17,9 @@ experimental_bearer_token = "<REDACTED>"
 [projects."/Users/hua"]
 trust_level = "trusted"
 
+[projects."/Users/hua/6-产品研发/渔芯独角兽"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
