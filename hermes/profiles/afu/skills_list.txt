@@ -1,3 +1,4 @@
+afu-customer-service
 apple
 aquaculture
 autonomous-ai-agents
@@ -9,6 +10,7 @@ claude-api
 creative
 cro-methodology
 crossing-the-chasm
+customer-emotion-deescalation
 data-science
 design-everyday-things
 design-sprint
@@ -44,6 +46,7 @@ media
 mlops
 module
 negotiation
+negotiation-voss-techniques
 note-taking
 pdf
 pptx
@@ -51,6 +54,7 @@ predictable-revenue
 product
 product-debugging
 productivity
+ras-industry-2026
 red-teaming
 refactoring-ui
 research

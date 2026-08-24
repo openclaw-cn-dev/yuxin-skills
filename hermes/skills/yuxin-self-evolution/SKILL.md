@@ -101,7 +101,10 @@ allowed-tools: terminal, file, cron, skills, todo, send_message
 - 技术前沿类主题优先用 arXiv 搜索，时效性和权威性最高
 - 直接构造 URL 访问：`https://arxiv.org/search/?query=<关键词>&searchtype=all&order=-announced_date_first`
 - 只看 3 个月内的论文，读摘要不读全文
-- 完整操作指南：见 `references/arxiv-research-technique.md`
+详细操作指南：见 `references/arxiv-research-technique.md`
+
+**Per-Agent 进化报告变体参考**（毛豆/小宝等同事 agent 路径和模板与玉芬不同）：
+- `references/per-agent-evolution-report-variants.md` — 玉芬 vs 毛豆 报告路径/间隔/结构差异 + 毛豆 7 段模板
 
 **避免：**
 - ❌ 写"行业知识科普"（无渔芯落地的笔记是浪费）
@@ -231,6 +234,26 @@ comm -23 /tmp/referenced_skills.txt <(sed 's|^|productivity/|' /tmp/installed_sk
 3. 若该 skill 名是旧的 → 删 cron prompt 中的引用
 
 **关联参考**：`productivity/yuxin-operations/references/patrol-2026-06-23-2004.md` §4。
+
+#### Cron 静默跳过的修复路径（2026-08-24 实测补充）
+
+诊断只是第一步，关键是**怎么修**。三种修法按"侵入性递增"排序：
+
+| 方案 | 命令 | 优点 | 缺点 | 跨 profile? |
+|------|------|------|------|-------------|
+| **1. `hermes curator add-skill --profile`** | `hermes curator add-skill --profile maodou --path ~/.hermes/profiles/maodou/skills/<name>/ --scope profile` | 不复制文件，profile 隔离 | 如果 Hermes 版本不支持 `--profile` 标志则失败 | 否 |
+| **2. 软链接到 L1** | `ln -s ~/.hermes/profiles/maodou/skills/<name> ~/.hermes/skills/<name>` | 一份源文件，profile 隔离仍在 | 如果 L1 和 profile 路径解析冲突，可能导致双注册 | 否 |
+| **3. 复制到 L1 共享池** | `cp -r ~/.hermes/profiles/maodou/skills/<name>/ ~/.hermes/skills/<name>/` | 必成功（registry 加载 L1） | 跨 profile 写入，**需华哥明确授权**（AGENTS.md 铁律） | **是** |
+
+**发现后的处理 SOP**（按优先顺序）：
+
+1. **先确认文件存在**：`ls ~/.hermes/profiles/<profile>/skills/<name>/SKILL.md`
+2. **再确认 registry 加载列表**：`ls ~/.hermes/skills/<name>/SKILL.md`（存在 = 加载，否则 = 不加载）
+3. **如果是 profile 本地 skill 被静默跳过**：默认**不擅自动手修复**（AGENTS.md 铁律），写到下一轮进化报告的"决策请求"段，建议玉芬 / 华哥在 W 复盘时拍板走哪个方案。
+4. **如果是 L1 skill 缺失**：立刻 `hermes curator add-skill --path ...` 修复（不需要跨 profile 授权）。
+5. **不要假设根因**：每次都先 `ls` 验证文件位置，registry 可能因为 L1 / profile / symlink / WIP 多重原因加载失败。
+
+**关键区分**：✅ skill 文件存在 + ❌ registry 加载 = **AGENTS.md 数据漂移问题**（不是 skill 内容问题）。修 skill 没用，要修注册机制。
 
 ## 自进化产物的去向
 

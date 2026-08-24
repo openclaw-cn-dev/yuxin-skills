@@ -1,7 +1,7 @@
 ---
 name: staging-helper
-description: 渔芯 Agent 统一资料入站与查询标准 — 玉芬是全公司总负责人(2026-08-03 华哥明确),7 个 agent(毛豆/小宝/老莫/阿福/黑豆/学习助手/宽博士)都是玉芬的执行单元。同事业务结果性报告直接放 ~/rkr_staging/文档库/3-公司项目资料/(工作空间),归档层(1-通用/2-专业/4-360行)走 staging 中转站,所有资料调用走 staging_query.py (RKR API)。触发条件:agent 调研/生成/产出任何 Markdown 资料,或需要从 RKR 知识库调用已入库资料。
-version: 1.4.0
+description: 渔芯 Agent 统一资料入站与查询标准 — 玉芬是全公司总负责人(2026-08-03 华哥明确),7 个 agent(毛豆/小宝/老莫/阿福/黑豆/学习助手/宽博士)都是玉芬的执行单元。同事业务结果性报告直接放 ~/rkr_staging/文档库/3-公司项目资料/(工作空间),归档层(1-通用/2-专业/4-360行)走 staging 中转站,所有资料调用走 staging_query.py (RKR API)。触发条件:agent 调研/生成/产出任何 Markdown 资料,或需要从 RKR 知识库调用已入库资料,**或 agent personal zone 内的 workspace/knowledge/ 与 staging 中转站/RKR 索引路径不一致导致审计脚本误判**。
+version: 1.4.1
 author: 玉芬
 tags: [rkr, staging, knowledge-base, 文档中转站, 文档库, agent-标准, 工作空间, 玉芬总负责]
 ---
@@ -337,6 +337,11 @@ STAGING_DIR = Path("/Users/hua/rkr_staging/文档中转站")  # 不要用 Path.h
 
 > 华哥本机是 `/Users/hua`,未来换用户 / 多用户部署时此常量要参数化。
 
+> ⚠️ **2026-08-24 审计复现**:毛豆(08-17)+ 宽博士/量化(08-15)**先后踩同一坑**,都写进了字面量 `~/Desktop/知识库/RAS仿真技术调研/` 目录:
+> - 毛豆:`3-公司项目资料/301-智能体/毛豆-产品交付/workspace/~/Desktop/...`(玉芬已清理,移到 `workspace/RAS仿真技术调研/`)
+> - 宽博士:`1-公共知识/114-项目开发与调研/8-量化研究/~/Desktop/...`(归档层,待宽博士自修)
+> 教训:陷阱 5 的"用绝对路径"SOP 未传达到位,两个 agent 的调研脚本都在用 `~/` 相对路径。**排查方法**:`find ~/rkr_staging/文档库 -type d -name '~'` 可快速定位所有残留字面量 `~` 目录。
+
 ### ⚠️ 陷阱 6: 浏览器缓存可能让你以为有某个 RKR 功能
 
 **症状**:用户说"我看到 RKR 有『技能仓库』模块",但代码里**根本没有** —— 浏览器渲染的是旧 dist / 缓存页面。
@@ -440,6 +445,69 @@ Path("/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆
 - 写入:直接 `cp` / `mv`(不走 staging)
 - 引用:用相对路径(在文档库内部),或对象存储 URL
 - **不要**试图把这些目录 mirror 到中转站(9.5G 中转站会被塞爆)
+
+### ⚠️ 陷阱 13: agent personal zone 内的 `workspace/knowledge/` ≠ staging 中转站 ≠ scanner 自动归档目标(2026-08-24 实战)
+
+**症状**:agent 用 `staging_save.py` 写入了一份合同模板 v1.1,scanner 在 60 秒内确实把中转站原文件处理掉了,但**审计脚本 grep 的不是 `3-公司项目资料/301-智能体/<agent>/workspace/knowledge/`**——4 小时后 cron 审计仍报"P0,109 天未修订"。
+
+**根因(三层路径混在一起)**:
+1. **staging 中转站** = `~/rkr_staging/文档中转站/02-生成内容/`(60 秒后被 scanner 自动删)
+2. **scanner 自动归档目标** = `~/rkr_staging/文档库/3-公司项目资料/301-智能体/<agent>/knowledge/`(业务报告的"标准"落地路径)
+3. **agent 个人工作区** = `<profile_home>/workspace/knowledge/` 或 `~/rkr_staging/文档库/3-公司项目资料/301-智能体/<agent>/workspace/knowledge/`(**审计脚本实际访问的路径**——很多合同模板/政策核验脚本 `KNOW_DIR` 都硬编码这里)
+
+**关键事实**:
+- staging_save.py **不保证**把文件 mirror 到 agent 的 `workspace/knowledge/`(它是中转站路径,与 agent personal zone 的 workspace 是两个独立目录)
+- scanner 自动归档到 `3-公司项目资料/301-智能体/<agent>/knowledge/` 也**不保证**同步到 `<agent>/workspace/knowledge/`
+- 审计脚本 `grep -E "关键词" $KNOW_DIR` 通常指向 `workspace/knowledge/`(因为这才是合同模板等"高频访问"资产的真实存放点)
+- **staging 写入 ≠ workspace 归档 ≠ audit 脚本可见**——三步互相独立,缺一不可
+
+**反面案例(2026-08-23 20:33 → 08-24 00:35)**:
+- 20:33 cron `staging_save` 写入项目合作协议 v1.1 到 `02-生成内容/`(✓)
+- 20:33 scanner 处理中转站,自动归档到 `3-公司项目资料/301-智能体/黑豆-行政财务法务/knowledge/`(**可能成功,但路径不同**)
+- 20:33-00:35 之间,审计脚本 grep `<agent>/workspace/knowledge/` 仍显示 v1.0(0 命中,109 天)
+- 00:35 才手动 `cp 02-生成内容/<v1.1>.md <agent>/workspace/knowledge/<v1.1>.md` 兜底
+- **4 小时错配**期间,审计脚本误报"P0 待承接",导致资源错估 + 后续承接优先级判断偏差
+
+**正确做法(写入双路径自检 SOP)**:
+
+```bash
+# 1. staging 写入
+python3 ~/.hermes/scripts/staging_save.py \
+  --title "<标题>" \
+  --content @<file>.md \
+  --source report --agent <自己>
+
+# 2. ⚠️ 必须再 cp 一份到 workspace/knowledge/(若审计脚本 grep 那里)
+cp ~/rkr_staging/文档中转站/02-生成内容/<file>.md \
+   ~/rkr_staging/文档库/3-公司项目资料/301-智能体/<agent>/workspace/knowledge/<file>.md
+
+# 3. ⚠️ 必须再 cp 一份到 3-公司项目资料 knowledge/(若其他 agent 要 RKR 索引)
+cp ~/rkr_staging/文档中转站/02-生成内容/<file>.md \
+   ~/rkr_staging/文档库/3-公司项目资料/301-智能体/<agent>/knowledge/<file>.md
+
+# 4. 双路径落地自检(grep workspace/knowledge/)
+grep -c -E "<关键词>" ~/rkr_staging/文档库/3-公司项目资料/301-智能体/<agent>/workspace/knowledge/<file>.md
+# 输出 > 0 才算真正落地
+
+# 5. 在 evolution report 明确"双路径落地状态"
+# ✅ 02-生成内容 + workspace/knowledge + knowledge 三路径同步
+```
+
+**判断标准**:
+| 落地路径 | 谁读 | 写入方式 |
+|---|---|---|
+| `~/rkr_staging/文档中转站/02-生成内容/` | scanner | `staging_save.py`(60 秒后被删) |
+| `3-公司项目资料/301-智能体/<agent>/knowledge/` | RKR 索引 + 其他 agent | scanner 自动 / 手动 cp |
+| `3-公司项目资料/301-智能体/<agent>/workspace/knowledge/` | **本 agent 审计脚本** | **必须手动 cp** |
+
+**关键纪律**:
+- `staging_save.py` 写入 ≠ agent 可在 workspace 看到
+- agent 写入后,**必须**同时 cp 到 `workspace/knowledge/`(本 agent 审计路径)
+- 如果业务上要让其他 agent 也能搜到,再加 cp 到 `knowledge/`(RKR 索引路径)
+- **进化报告必须明确"双路径/三路径落地状态"**,否则下次 cron 无法判断是否漏归档
+- `workspace/knowledge/` 是 agent personal zone 的子目录,**不是 RKR 归档层**,直接 cp 不违反 `3-公司项目资料/` 工作空间规则
+
+**例外**:如果该 agent 的审计脚本 `KNOW_DIR` 指向 `3-公司项目资料/301-智能体/<agent>/knowledge/`(而非 `workspace/knowledge/`),则 cp 到那一个即可——**先看审计脚本再决定 cp 哪个**。
 
 ### ⚠️ 陷阱 12: `304-公司运营/` 16 个子目录里有 4 个空白(`HR/`、`知识产权/`、`财务/`、`销售/`)
 
@@ -586,6 +654,7 @@ cronjob action=list  # 看现有 job
 
 ## References(本目录下)
 
+- `references/workspace-knowledge-vs-staging-paths.md` — **v1.4.1 新增**:agent personal zone 内 `workspace/knowledge/` 与 staging 中转站、scanner 归档目标的**三路径分离**实战教训 + 强制三路径同步 SOP(2026-08-24 实战:08-23 项目合作 v1.1 漏归档 4h)
 - `references/huage-idea-recording.md` — 华哥想法记录与归档工作流（5要素结构 + staging_save.py --tag 想法 + 飞书回执三段式 + 记忆同步）
 - `references/scanner-architecture.md` — RKR scanner 详细时序、配置来源、故障行为
 - `references/company-certificates-archive.md` — 公司证件(营业执照等)归档位置 + 证件文件真实存放处(微信接收文件,非"素材图片") + 扫描件 pdftoppm→vision 读取技巧(2026-08-13 建立)
@@ -608,9 +677,10 @@ cronjob action=list  # 看现有 job
 
 ---
 
-> 🤖 玉芬维护 · 2026-08-03 · v1.3.1
+> 🤖 玉芬维护 · 2026-08-24 · v1.4.1
 > 📌 适用 agent: 玉芬/毛豆/阿福/黑豆/老莫/小宝/整理师/宽博士 + 任何新 agent
-> 🆕 v1.3.1: 微调 — 补 `references/agent-rollout-procedure.md`(5 同事 AGENTS.md 下发流程 + 已知坑);新增 cron `e2052c9b44c8`(工作空间每周审计);新增 `scripts/audit_workspace.py`(审计脚本);新增 `templates/task-dispatch-to-agent.md`(任务派发模板)
+> 🆕 v1.4.1: **新增陷阱 13** —— `agent personal zone 内 workspace/knowledge/` 与 staging 中转站、scanner 归档目标 是**三个独立路径**;staging_save 写入不等于 workspace 可见,审计脚本 grep 的 KNOW_DIR 通常是 workspace/knowledge/,必须手动 cp 兜底。实战案例:08-23 20:33 项目合作 v1.1 staging 写入但 4h 内审计脚本仍报 P0(误判),08-24 00:35 才补 cp。配套"双路径/三路径落地自检 SOP"写入进化报告模板。
+> 🆕 v1.4.0: 微调 — 补 `references/agent-rollout-procedure.md`(5 同事 AGENTS.md 下发流程 + 已知坑);新增 cron `e2052c9b44c8`(工作空间每周审计);新增 `scripts/audit_workspace.py`(审计脚本);新增 `templates/task-dispatch-to-agent.md`(任务派发模板)
 > 🆕 v1.3.0: **关键架构澄清** — `3-公司项目资料/` 是**可写工作空间**(华哥 2026-08-03 明确,留给同事放"结果性报告"),而 `1-通用知识/` `2-专业知识/` `4-360行项目调研/` 仍是 RKR 归档层(只读,新资料走中转站让 scanner 自动入)。v1.0–v1.2 把整个文档库当作只读归档层是误读,现已修正。配套更新:核心心法段、"2 层 + 1 工作空间"架构段、错误 1 / 错误 9 重写、"用户硬性约束"改为"仅适用于归档层"、5 同事 AGENTS.md 全部按 v2 重下发、staging_save.py SOP 拆为 A(业务报告走工作空间)/B(归档资料走中转站)两类。
 > 🆕 v1.2.0: 新增"3 层架构(写/读/个人)"心法 + pitfall 9/10/11/12 + 2 references + 1 template
 > 📝 v1.1.0: 批量迁移 + GitHub 同步 + cron 模式 + 4 个 references

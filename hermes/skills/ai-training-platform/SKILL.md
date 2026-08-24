@@ -455,7 +455,7 @@ Run as a cron job every Monday. The workflow:
 1. Query existing jobs: `SELECT id, title, company, term_ids FROM ai_jobs ORDER BY id`
 2. Search for new AI jobs (see anti-bot note below)
 3. Insert 5-10 new jobs with all required fields
-4. Mark ~5 stale jobs as `expired` (update status + updated_at)
+4. Expire stale jobs (update status + updated_at) — either ~5 hand-picked, or a deterministic month-sweep of any whole batch whose month-level `posted_date` is >1 month old (see `references/job-database.md` → "Expiring Jobs")
 5. Report: new count, expired count, active count, category breakdown
 
 Reusable script: `scripts/update_ai_jobs.py` (parameterized INSERT + expire + report; copy, fill `new_jobs`/`expire_ids`, run). The `term_ids` map in `references/job-database.md` is the authoritative one — verify IDs against `terms` before writing.

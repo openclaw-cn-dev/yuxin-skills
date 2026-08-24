@@ -1,3 +1,4 @@
+afu-cron-evolution-field-notes
 afu-customer-service
 apple
 aquaculture
@@ -7,9 +8,12 @@ baoyu-visual-content
 brand-guidelines
 canvas-design
 claude-api
+codex-chatgpt-oom-loop-2026-08-23
 coding-agent-delegation
 creative
 cro-methodology
+cron-heartbeat-cross-validation
+cron-obsolescence-audit-placeholder
 cron-research-3projects
 cron-research-3projects-3projects-coding
 data-science
@@ -29,6 +33,7 @@ gaming
 gifs
 github
 heidou-admin
+heidou-admin-audit-helper
 heidou-workflow
 hermes-ecosystem-entry.md
 hooked-ux
@@ -39,6 +44,7 @@ ios-hig-design
 kanban
 laomo-knowledge
 lean-startup
+loss-aversion-framing
 made-to-stick
 maodou-product
 mcp
@@ -49,10 +55,14 @@ module
 music-audio
 negotiation
 note-taking
+policy-triple-verification
 predictable-revenue
 product-debugging
 productivity
+quant
+quant-cron-arxiv-curl-pattern
 quant-cron-evolution
+quant-cron-evolution-doublewrite-2026-08-23
 ras-hw-scan-methodology
 ras-hw-scan-protocol
 research
@@ -75,4 +85,5 @@ xiaobao-workflow
 yuanbao
 yuxin-hourly-gateway-patrol
 yuxin-hourly-patrol-recovery-2026-08-22
+yuxin-management-evolution-scan
 zhenglishi-self-evolution
