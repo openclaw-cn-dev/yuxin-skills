@@ -93,7 +93,7 @@ Codex 当前 `danger-full-access` 仅允许：
 
 ## 当前配置
 
-- **版本**: codex-cli 0.147.0 (npm 全局安装 · 2026-08-07 巡检更新)
+- **版本**: codex-cli 0.148.0-alpha.15 (ChatGPT.app 内置 · 2026-08-24 巡检更新)
 - **模型**: deepseek-v4-flash / deepseek-v4-pro（时段调度：工作时段 flash / 非工作 pro，2026-08-17 起）
 - **Provider**: deepseek → 直连 `https://api.deepseek.com/`（responses 协议）
 - **Wire API**: responses (SSE 流式)
@@ -170,14 +170,18 @@ python3 ~/.hermes/scripts/quick_serve.py [端口]
 - **火山引擎** — 备用 LLM（doubao-seed-2-0 系列）
 - **GitHub** (openclaw-cn-dev) — 代码托管和 Skills 同步
 
-## 插件（共 16 个）
+## 插件（共 9 个 enabled）
 
-已安装插件：
+已启用插件：
 - **代码类**：build-web-apps, coderabbit, superpowers
 - **设计类**：figma
 - **协作类**：github, linear, sentry
-- **桌面类**：browser, chrome, computer-use, visualize
-- **文档类**：documents, pdf, spreadsheets, presentations, template-creator
+- **工具类**：codex-app-tools, visualize
+
+说明：
+- `browser` / `chrome` 已从 openai-bundled 市场移除（Codex 0.148 起，缓存残留 26.814 版本）
+- `computer-use` 非插件，是 `[features] computer_use = false` 开关（当前关闭）
+- 文档类（documents/pdf/spreadsheets/presentations/template-creator）依赖 openai-primary-runtime 市场（当前未注册）
 
 ## 常用命令
 
