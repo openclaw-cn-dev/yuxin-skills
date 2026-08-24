@@ -5,6 +5,8 @@ disable_response_storage = true
 wire_api = "responses"
 model_catalog_json = "/Users/hua/.codex/models.json"
 
+notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
 [model_providers.deepseek]
 name = "deepseek"
 base_url = "https://api.deepseek.com/"
@@ -30,7 +32,7 @@ computerUseAlwaysHidePictureInPicture = true
 followUpQueueMode = "queue"
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-23T10:15:46Z"
+last_updated = "2026-08-24T05:25:48Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -61,5 +63,28 @@ enabled = true
 [plugins."superpowers@openai-api-curated"]
 enabled = true
 
+[plugins."browser@openai-bundled"]
+enabled = true
+
 [features]
 computer_use = false
+js_repl = false
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/hua/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+CODEX_HOME = "/Users/hua/.codex"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.814.41957"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/hua/.codex/plugins/cache/openai-bundled/browser/26.814.41957/scripts/browser-service.mjs"}'
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
