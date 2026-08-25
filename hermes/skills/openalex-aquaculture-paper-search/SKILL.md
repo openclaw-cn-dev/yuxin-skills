@@ -1,5 +1,5 @@
 ---
-name: openalex-aquaculture-paper-search
+name: ***SECRET***
 description: '老莫 cron 论文检索的 OpenAlex 查询策略包 — STRICT/宽泛 双词表过滤、批量查询、DOI 去重、Crossref 二次验证、publication_date 排序技巧、Zenodo/Figshare 假论文辨别。触发条件: 老莫 cron 启用论文检索;运行 OpenAlex/Semantic Scholar/Crossref API 检索 AI×水产养殖相关论文;需要 recall 检索策略词表;已知 DOI 去重需求。'
 license: MIT
 metadata:
@@ -17,7 +17,7 @@ metadata:
 
 ```bash
 # 默认严格双条件检索 (R20+ 推荐)
-python3 /Users/hua/.hermes/skills/openalex-aquaculture-paper-search/scripts/strict_filter.py \
+python3 /Users/hua/.hermes/skills/***SECRET***/scripts/strict_filter.py \
   "machine learning aquaculture water quality" \
   "deep learning fish disease detection"
 ```

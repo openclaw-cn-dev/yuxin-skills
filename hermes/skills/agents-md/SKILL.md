@@ -177,5 +177,5 @@ Pattern: every self-evolution cron cycle should run the 30-day mtime scan once a
 
 ## Support Files
 
-- `references/profile-isolated-agent-hygiene.md` — full playbook for the three profile-agent failure modes (HOME hijack / registry scope / stale skill腐化) with worked examples and threshold tables.
+- `references/***SECRET***.md` — full playbook for the three profile-agent failure modes (HOME hijack / registry scope / stale skill腐化) with worked examples and threshold tables.
 - `scripts/skill-health-check.sh <profile-name>` — automated probe; runs the mtime scan, lists stale skills (>90 days), and reminds about L1 vs L3 registry scope. Exit code 1 if any stale skill detected.

@@ -911,11 +911,11 @@ for label, url in [("high_impact", url_high_impact), ("fresh", url_fresh)]:
 
 ### 3.5.12 反向校验方法论（R30 验证，3轮→23篇入 known_dois.txt）
 
-R30 突破：单轮 23 篇入 known_dois.txt（R22-R29 平均 4 篇的 5.7 倍）。3 轮叠加：Round 1 主搜 + Round 2 反向校验（venue 兜底）+ Round 3 R29 P0 锚点扩展。痛点方向 fwci 4-12 显著高于数字孪生 0-2；错峰窗口 16:00-19:00 三轮 0% 限流。📁 SOP + 论文清单见 `references/r30-reverse-validation-breakthrough.md`
+R30 突破：单轮 23 篇入 known_dois.txt（R22-R29 平均 4 篇的 5.7 倍）。3 轮叠加：Round 1 主搜 + Round 2 反向校验（venue 兜底）+ Round 3 R29 P0 锚点扩展。痛点方向 fwci 4-12 显著高于数字孪生 0-2；错峰窗口 16:00-19:00 三轮 0% 限流。📁 SOP + 论文清单见 `references/***SECRET***.md`
 
 ### 3.5.13 R30 自洽校验「false positive drift」模式
 
-报告用 `[FILTER]`/`~~未入库~~` 显式标记未入库 DOI，但 Python regex 提取时无法识别仍算作漂移。R30 实证 `10.2478/aoas-2025-0105` 标 `[FILTER]` 仍误报。统一标记格式 + exclude_unstored=True 修复。📁 见 `references/r30-reverse-validation-breakthrough.md` §4
+报告用 `[FILTER]`/`~~未入库~~` 显式标记未入库 DOI，但 Python regex 提取时无法识别仍算作漂移。R30 实证 `10.2478/aoas-2025-0105` 标 `[FILTER]` 仍误报。统一标记格式 + exclude_unstored=True 修复。📁 见 `references/***SECRET***.md` §4
 
 **经验法则**（2026-08-10 R14 沉淀）：
 1. **探测查询用 per_page=1**：最小成本确认服务可用性，不触发正式查询的资源消耗
@@ -1850,7 +1850,7 @@ API安全测试  ─── 权限与攻击面验证（测试期/发布前）
 
 **熔断器（Circuit Breaker）**：
 ```python
-def test_circuit_breaker_opens_after_N_failures():
+def ***SECRET***():
     for _ in range(5):
         response = call_unstable_endpoint(timeout=0.1)
         assert response.status in (500, 504)
@@ -1860,7 +1860,7 @@ def test_circuit_breaker_opens_after_N_failures():
 
 **重试与退避（Retry + Backoff）**：
 ```python
-def test_retry_with_exponential_backoff():
+def ***SECRET***():
     start = time.time()
     response = call_with_retry(fail_count=3)
     elapsed = time.time() - start
@@ -1870,7 +1870,7 @@ def test_retry_with_exponential_backoff():
 
 **舱壁隔离（Bulkhead）**：
 ```python
-def test_bulkhead_limits_concurrent_calls():
+def ***SECRET***():
     with ThreadPoolExecutor(max_workers=20):
         responses = [call_slow_endpoint(delay=5) for _ in range(20)]
     rejected = [r for r in responses if r.status == 429]
@@ -2044,17 +2044,17 @@ import great_expectations as ge
 df = ge.read_csv("sensor_data_2026-08-09.csv")
 
 # 完整性：温度字段不允许空值
-df.expect_column_values_to_not_be_null("temperature")
+df.***SECRET***("temperature")
 
 # 有效性：温度应在 -5~40°C 范围
-df.expect_column_values_to_be_between("temperature", min_value=-5, max_value=40)
+df.***SECRET***("temperature", min_value=-5, max_value=40)
 
 # 时效性：时间戳不应超过 24h 延迟
-df.expect_column_max_to_be_between("timestamp",
+df.***SECRET***("timestamp",
     min_value="2026-08-08T20:00:00", max_value="2026-08-09T20:00:00")
 
 # 唯一性：同一传感器+时间戳不应重复
-df.expect_compound_columns_to_be_unique(["sensor_id", "timestamp"])
+df.***SECRET***(["sensor_id", "timestamp"])
 ```
 
 **与已有测试体系的结合**：

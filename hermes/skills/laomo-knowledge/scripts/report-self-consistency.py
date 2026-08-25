@@ -49,7 +49,7 @@ def extract_dois_from_text(text):
             continue
         j += 1
         # 扫 suffix
-        while j < len(text) and text[j] in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-/":
+        while j < len(text) and text[j] in "***SECRET***._-/":
             j += 1
         doi = text[idx:j]
         if len(doi) > 7:

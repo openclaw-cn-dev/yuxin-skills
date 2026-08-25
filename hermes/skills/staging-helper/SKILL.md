@@ -654,7 +654,7 @@ cronjob action=list  # 看现有 job
 
 ## References(本目录下)
 
-- `references/workspace-knowledge-vs-staging-paths.md` — **v1.4.1 新增**:agent personal zone 内 `workspace/knowledge/` 与 staging 中转站、scanner 归档目标的**三路径分离**实战教训 + 强制三路径同步 SOP(2026-08-24 实战:08-23 项目合作 v1.1 漏归档 4h)
+- `references/***SECRET***.md` — **v1.4.1 新增**:agent personal zone 内 `workspace/knowledge/` 与 staging 中转站、scanner 归档目标的**三路径分离**实战教训 + 强制三路径同步 SOP(2026-08-24 实战:08-23 项目合作 v1.1 漏归档 4h)
 - `references/huage-idea-recording.md` — 华哥想法记录与归档工作流（5要素结构 + staging_save.py --tag 想法 + 飞书回执三段式 + 记忆同步）
 - `references/scanner-architecture.md` — RKR scanner 详细时序、配置来源、故障行为
 - `references/company-certificates-archive.md` — 公司证件(营业执照等)归档位置 + 证件文件真实存放处(微信接收文件,非"素材图片") + 扫描件 pdftoppm→vision 读取技巧(2026-08-13 建立)
@@ -664,7 +664,7 @@ cronjob action=list  # 看现有 job
 - `references/document-library-layout.md` — `~/rkr_staging/` 三层目录树与各子目录职责(2026-08-03 实测)
 - `references/agent-personal-zone.md` — 5 个同事 agent 在 `301-智能体/<name>/` 下的 personal zone 规范
 - `references/agent-rollout-procedure.md` — 5 同事 AGENTS.md 下发流程 + 已知坑 + 各 agent 业务特殊说明(2026-08-03 建立)
-- `references/workspace-relocation-manual-v2.md` — 5 个 agent 工作空间归位操作手册 v2:4 类归位决策(A 保留/B 走中转/C 清理/D 留最新)+ 各 agent 任务清单 + 严禁清单(2026-08-03 玉芬固化,基于 5 个 personal zone 扫描结果)
+- `references/***SECRET***.md` — 5 个 agent 工作空间归位操作手册 v2:4 类归位决策(A 保留/B 走中转/C 清理/D 留最新)+ 各 agent 任务清单 + 严禁清单(2026-08-03 玉芬固化,基于 5 个 personal zone 扫描结果)
 
 ## Templates
 

@@ -29,7 +29,7 @@ tags: [玉芬, 编码, 工作流, claude-code, 偏好, 端到端验证]
 | 华哥本人在终端,接受手动按 y 批准 | `pty=true` 交互 | `terminal(command="claude -p '...'", pty=true, timeout=600)` |
 | 飞书/无人值守,需要 CC 改文件 | `delegate_task` 委派(推荐) | `delegate_task(goal="用 Write 工具重写 <path>,需求:...", toolsets=["terminal","file"])` |
 | Claude Code `--allowedTools` 白名单 | 可能跳过权限 | `claude -p "..." --allowedTools "Read,Write,Edit,Bash"` |
-| Claude Code 信任场景 | 完全跳过 | `claude -p "..." --allow-dangerously-skip-permissions` |
+| Claude Code 信任场景 | 完全跳过 | `claude -p "..." ***SECRET***` |
 | 真正明确失败 | 自写兜底 | 加 `# TODO(tech-debt)` + 飞书 |
 
 ### 验证子 agent 是否真的改了文件
@@ -182,7 +182,7 @@ python3.11 -m venv .venv  # 必须用 3.11
 ```
 
 **登记路径**:
-- 飞书通知华哥(channel `oc_2db3b5373825567c3681d1ca580e0143`)
+- 飞书通知华哥(channel `***SECRET***`)
 - 复盘到 `~/hermes/reports/yuxin_self_criticism/<日期>_<主题>.md`
 
 **反模式**:
@@ -204,7 +204,7 @@ python3.11 -m venv .venv  # 必须用 3.11
 
 ### ⚠️ 复杂查表数据(64 卦矩阵等)要写验证测试
 - 教训:v3 方案 64 卦矩阵有 1 个 ID 重复(DUI×ZHEN=54,应为 17)
-- 做法:写 `test_no_duplicate_ids` + `test_all_64_combinations_present` 自动化验证
+- 做法:写 `test_no_duplicate_ids` + `***SECRET***` 自动化验证
 - 推荐:任何嵌入 v3/v4 方案里的数据表,先写一个独立验证脚本用外部标准核对
 - 配套:卦象 binary 索引约定非常容易写反(见 `references/hexagram-binary-index-trap.md`)
 
@@ -247,7 +247,7 @@ python3.11 -m venv .venv  # 必须用 3.11
 |---|---|
 | 华哥本人在终端,接受手动按 y | `terminal(command="claude -p '...'", pty=true, timeout=600)` |
 | 飞书/无人值守 | **`delegate_task(goal="用 Write 工具重写 <path>", toolsets=["terminal","file"])`** ← 推荐默认 |
-| 信任场景可跳过 | `claude -p "..." --allow-dangerously-skip-permissions` |
+| 信任场景可跳过 | `claude -p "..." ***SECRET***` |
 
 **验证子 agent 真改文件**(必做):
 ```bash
@@ -565,7 +565,7 @@ for path in ['/api/health', '/api/qigua?method=time']:
 
 ## 参考
 
-- `references/unified-project-path-2026-07-17.md` — 项目路径统一规范
+- `references/***SECRET***.md` — 项目路径统一规范
 - `references/pydantic-v213-python39-trap.md` — Pydantic v2.13 + Python 3.9 兼容性陷阱
 - `references/hexagram-binary-index-trap.md` — 卦象 binary 索引"双重反向"约定 + 互卦计算公式 + 5 个易错点
 - `references/hermes-tooling-gotchas.md` — Hermes 工具调用常见坑(`execute_code` BLOCKED、`$HOME` 劫持等)

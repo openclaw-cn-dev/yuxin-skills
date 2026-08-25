@@ -69,7 +69,7 @@ claude -p --allowedTools "Read,Edit,Write,Glob,Grep" -- "<精确聚焦的 prompt
 3. **必须验证文件真的改了** — `md5sum` / `wc -l` / `python3 -c "import ast; ast.parse(...)"`,**不要相信 "✅ 任务 N 完成"** — Claude Code 退化行为会回声 `DONE` 但文件未变(只发生在无 --allowedTools 时)
 4. **Bash 命令触发"语法检查"会被卡** — 解决:让 Claude Code 用 Read 工具读文件验证,或任务完成后玉芬独立验证
 
-**完整工作模板见**:`references/claude-p-allowedTools-working-pattern.md`
+**完整工作模板见**:`references/***SECRET***.md`
 
 ---
 
@@ -185,7 +185,7 @@ cat /tmp/prompt.txt | codex exec --skip-git-repo-check -s danger-full-access
 | **B. `codex exec --skip-git-repo-check -s danger-full-access`** | 写大型 JSON/数据整理(>500 行)Claude Code 偶有遗漏,Codex 更稳 | ⭐⭐⭐⭐ |
 | **C. `delegate_task` 委派 subagent** | 需要"无状态"隔离,subagent 上下文独立时 | ⭐⭐⭐ |
 | **D. `pty=true` 交互模式** | 华哥本人在终端,愿意手动 y 批准 | ⭐⭐ |
-| **E. `--allow-dangerously-skip-permissions`** | 完全信任场景,小修改可回滚 | ⭐ (慎用) |
+| **E. `***SECRET***`** | 完全信任场景,小修改可回滚 | ⭐ (慎用) |
 | **F. 自写 + TODO 兜底** | 真正"明确失败" — A/B/C/D/E 都不行时 | ⭐⭐ (合规但不推荐) |
 
 **反模式**(确认会失败或低效):
@@ -196,7 +196,7 @@ cat /tmp/prompt.txt | codex exec --skip-git-repo-check -s danger-full-access
 - ❌ 不做 md5/wc/ast 验证就以为成功了
 - ❌ 反复重试同一条 `claude -p` 命令(触发 `[Tool loop warning]`)
 
-**完整工作模板 + 实测 reproduction 步骤见**:`references/claude-p-allowedTools-working-pattern.md`
+**完整工作模板 + 实测 reproduction 步骤见**:`references/***SECRET***.md`
 
 ---
 
@@ -261,9 +261,9 @@ codex exec "需求: ..." --sandbox danger-full-access
 - **玉芬 default v5**:`/Users/hua/.hermes/profiles/default/AGENTS.md`
 - **技术债清单**:见 `~/hermes/reports/yuxin_self_criticism/`
 - **执行配套 skill**:`yuxin-coding-workflow` — `claude -p --allowedTools` 委派的具体模板 + 验证命令
-- **🆕 Claude Code 实操**:`references/claude-p-allowedTools-working-pattern.md` — 5/5 任务成功的完整 prompt 模板 + 验证命令
+- **🆕 Claude Code 实操**:`references/***SECRET***.md` — 5/5 任务成功的完整 prompt 模板 + 验证命令
 - **🆕 Codex CLI 实操**:`references/codex-exec-working-pattern.md` — 2026-08-03 实测 Codex 写 243 行 JSON 整合任务的完整 reproduction
-- **❌ 过时参考**:`references/codex-claude-permission-blocker.md` — v1.1 误判 delegate_task 唯一论,已被 v1.2 实测推翻
+- **❌ 过时参考**:`references/***SECRET***.md` — v1.1 误判 delegate_task 唯一论,已被 v1.2 实测推翻
 
 ---
 

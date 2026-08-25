@@ -67,4 +67,5 @@ ux-heuristics
 web-artifacts-builder
 web-typography
 xiaobao-heartbeat
+xiaobao-sales.md
 yuanbao

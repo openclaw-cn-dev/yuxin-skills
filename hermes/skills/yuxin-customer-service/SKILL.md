@@ -17,7 +17,7 @@ tags: [客服, 谈判, Voss, RAS, 异议处理, 情绪降级, 渔芯, yuxin]
 
 | 支柱 | 包含技巧 | 何时用 |
 |---|---|---|
-| **1. Voss 战术共情** | Mirroring · Labeling · Accusations Audit · 真假辨别+价值重构 | 客户表达异议、犹豫、不满 |
+| **1. Voss 战术共情** | Mirroring · Labeling · Accusations Audit · 真假辨别+价值重构 · **Question Stacking 问题堆叠** | 客户表达异议、犹豫、不满 |
 | **2. 2026 RAS 行业事实** | 国标《集装箱式循环水养殖标准化指南》· 大口黑鲈工厂化 RAS · 尾水处理痛点 · **8/22 宜昌铜鱼政务品牌化 · 8/23 巨头入场 · 5/18 新坝镇实证** · 7 大品类适配 | 客户问行业趋势 / 选型 / 合规 |
 | **3. 三级情绪降级** | 一级轻度不满 / 二级中度愤怒 / 三级重度暴怒 | 投诉、威胁退订、情绪激动 |
 
@@ -174,9 +174,10 @@ ls ~/.hermes/skills/*/SKILL.md 2>/dev/null | head -20
 
 ## 参见
 
-- `references/voss-techniques.md` — Voss 四战术详细话术（Mirroring / Labeling / Accusations Audit / 真假辨别+价值重构）⭐ v2
+- `references/voss-techniques.md` — Voss 五战术详细话术（Mirroring / Labeling / Accusations Audit / 真假辨别+价值重构 / **Question Stacking 问题堆叠**）⭐ v2.1
 - `references/ras-2026-facts.md` — 2026 RAS 行业六大事实（国标 / 大口黑鲈 / 尾水 / 8/22 宜昌铜鱼政务品牌化 / 8/23 巨头入场 / 5/18 新坝镇实证）+ 客户高频问答标准答案 + 品类适配速查表
 - `references/emotion-deescalation-playbook.md` — 三级情绪应对流程 + 禁忌清单 + 复盘 checklist
+- `references/cron-evolution-playbook.md` — **8/24 毛豆沉淀** Cron 进化模式通用规范：4 维度产出框架 + P0 跟进机制 + 方法论轮换策略 + skills 自检 30 秒 SOP（适用于所有 8 同事 profile 的无任务进化模式）
 
 ## 待补 references（未来进化方向）
 

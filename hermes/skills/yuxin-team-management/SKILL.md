@@ -6,7 +6,7 @@ description: |
   或者其他类似"multi-agent 系统的 profiles 散落管理问题"。
   触发条件：用户提到"重新整理 / 集中管理 / 统一视图 / 同事 agent 整理 / 团队管理视图"。
 related_skills:
-  - multi-agent-local-orchestration   # 协作后端（registry / messages / SOP）
+  - ***SECRET***   # 协作后端（registry / messages / SOP）
   - hermes-gateway-profile-ops        # runtime / launchd / plist / LLM 路由
   - multi-agent-team-architecture     # 9-profile 拓扑 / 记忆分层
 ---
@@ -136,7 +136,7 @@ with open('/Users/hua/.hermes/orchestration/registry.yaml') as f:
 # 模板见下方"附录：Python template"
 ```
 
-**坑：写 heredoc 字符串时，`python3 << EOF`（无引号 EOF）会让 bash 先解释 `$var` 和 `~`！必须用 `python3 << 'PYTHON_END'`（带引号）防 bash 注入。** 完整事件回放 + 修复代码 + 反模式表见 `references/2026-08-01-bash-heredoc-readme-pollution.md`。
+**坑：写 heredoc 字符串时，`python3 << EOF`（无引号 EOF）会让 bash 先解释 `$var` 和 `~`！必须用 `python3 << 'PYTHON_END'`（带引号）防 bash 注入。** 完整事件回放 + 修复代码 + 反模式表见 `references/***SECRET***.md`。
 
 ### Step 5：管理脚本
 放 4 个 sh 脚本到 `~/yuxin-team/scripts/`，所有都用 `chmod +x`。
@@ -255,7 +255,7 @@ for a in cfg['agents']:
 
 **恢复后验证**：所有任务 `paused_at → null`，`next_run_at` 显示下次调度时间。
 
-**根因**：8/4 凌晨 00:00 集体暂停，疑为 multi-agent-local-orchestration 改造时误操作。华哥直派的宽博士和学习助手未受影响。
+**根因**：8/4 凌晨 00:00 集体暂停，疑为 ***SECRET*** 改造时误操作。华哥直派的宽博士和学习助手未受影响。
 **整理方式**：华哥授权"按我专家意见处理"
 
 ---
@@ -633,4 +633,4 @@ profile.json + AGENTS.md + .env + memory/ + cron/ + launchd + skills/ + workspac
 
 **恢复后验证**：所有任务 `paused_at → null`，`next_run_at` 显示下次调度时间。
 
-**根因**：8/4 凌晨 00:00 集体暂停，疑为 multi-agent-local-orchestration 改造时误操作。华哥直派的宽博士和学习助手未受影响。
+**根因**：8/4 凌晨 00:00 集体暂停，疑为 ***SECRET*** 改造时误操作。华哥直派的宽博士和学习助手未受影响。

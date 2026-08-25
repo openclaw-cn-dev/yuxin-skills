@@ -1,5 +1,5 @@
 ---
-name: yuxin-dashboard-v2-architecture
+name: ***SECRET***
 description: 渔芯 Dashboard v2.0 架构与代码铁律 v1 自动驱动模式 — 华哥 8/3 拍板。物理位置、结构、3 模块/5 tab 顺序、代码铁律 v1、Claude Code/Codex 自动驱动模式、Gemini 工具调用禁忌、Gateway 架构现状、Skills 元数据虚高问题。
 version: 1.0
 created: 2026-08-03
@@ -142,9 +142,9 @@ codex exec --skip-git-repo-check -s danger-full-access "<prompt>"
 - 全局:53 个 cron,46 ok / 6 err / 9 paused
 
 **4 个飞书 channel**:
-- `oc_2db3b5373825567c3681d1ca580e0143` — 华哥 home(22 个 cron 投这里)
-- `oc_568a685a2083722cc7fe507ace752545` — 大群
-- `oc_23bd798272a60cbfc15c82b954823730` — 寻元
+- `***SECRET***` — 华哥 home(22 个 cron 投这里)
+- `***SECRET***` — 大群
+- `***SECRET***` — 寻元
 
 ---
 

@@ -704,7 +704,7 @@ pip install silero-vad  # SileroVAD 的 ONNX 模型
 ### 关联参考
 
 - 系统代码审查报告：`references/code_audit_20260710.md`
-- 优化过程方法论：`references/voice_optimization_methodology.md`
+- 优化过程方法论：`references/***SECRET***.md`
 
 ### 推荐方式：voice_dashboard.py（含唤醒词+声纹+实时仪表盘）
 
@@ -1104,7 +1104,7 @@ ASR 的认证方式与 TTS 完全不同：
 ```yaml
 volc_asr:
   app_id: "7802016062"
-  access_token: "KF2h_KirZgQYH7XiQSQcV5HxtsY4txIa"
+  access_token: "***SECRET***"
   resource_id: "volc.seedasr.sauc.duration"
 ```
 

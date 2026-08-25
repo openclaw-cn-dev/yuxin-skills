@@ -35,7 +35,7 @@ def fill_pdf_fields(input_pdf_path: str, fields_json_path: str, output_pdf_path:
             print(f"ERROR: Incorrect page number for `{field['field_id']}` (got {field['page']}, expected {existing_field['page']})")
         else:
             if "value" in field:
-                err = validation_error_for_field_value(existing_field, field["value"])
+                err = ***SECRET***(existing_field, field["value"])
                 if err:
                     print(err)
                     has_error = True
@@ -52,7 +52,7 @@ def fill_pdf_fields(input_pdf_path: str, fields_json_path: str, output_pdf_path:
         writer.write(f)
 
 
-def validation_error_for_field_value(field_info, field_value):
+def ***SECRET***(field_info, field_value):
     field_type = field_info["type"]
     field_id = field_info["field_id"]
     if field_type == "checkbox":

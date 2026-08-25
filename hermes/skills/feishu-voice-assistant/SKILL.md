@@ -220,7 +220,7 @@ ssl_ctx.verify_mode = ssl.CERT_NONE
 
 files = ['config.json', 'model.bin', 'tokenizer.json', 'vocabulary.txt']
 base = 'https://hf-mirror.com/Systran/faster-whisper-tiny/resolve/main'
-cache_dir = os.path.expanduser('~/.cache/huggingface/hub/models--Systran--faster-whisper-tiny/snapshots/main')
+cache_dir = os.path.expanduser('~/.cache/huggingface/hub/***SECRET***/snapshots/main')
 os.makedirs(cache_dir, exist_ok=True)
 for f in files:
     url = f'{base}/{f}'

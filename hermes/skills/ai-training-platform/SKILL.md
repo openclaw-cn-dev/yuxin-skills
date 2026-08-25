@@ -30,7 +30,7 @@ triggers:
 ## LLM Backend
 
 - **v5.0+**: 公司 LLM Gateway (`http://127.0.0.1:18888/openai/v1`) → DeepSeek V4 Pro
-- **v4.x**: 火山引擎直连 (`https://ark.cn-beijing.volces.com/api/v3`) → doubao-seed-2-0-code-preview-260215
+- **v4.x**: 火山引擎直连 (`https://ark.cn-beijing.volces.com/api/v3`) → ***SECRET***
 - Gateway 不需要真实 API key，占位符 `gateway-local-no-key-required` 即可
 - config.py: `ark_base_url` / `ark_model_id` / `ark_api_key` 均指向 Gateway
 - timeout 提升到 120s 适配推理模型
