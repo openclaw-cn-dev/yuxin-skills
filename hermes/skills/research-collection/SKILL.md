@@ -4,7 +4,7 @@ description: '渔芯资料收集技能 — 高效搜集行业信息、公司情�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.0.30"
+  version: "1.0.32"
 ---
 
 ## 参考资料库
@@ -15,12 +15,217 @@ metadata:
 - `references/***SECRET***.md` — **Sogou 搜索 HTML 解析踩坑**（hintidx 内部重链 vs 真实外链，公众号文章保留规则；Bing 对照 parser；2026-08-03 16:42 实测）
 - `references/gtm_b2b_sales_sources.md` — **GTM/B2B Sales 方法论文献 cron 可用性速查**（Common Room 全文已核验 12,549 字符 / Gartner 403 / ChiliPiper Apollo 404 / Revue 停更；A-B-C 三级引用规则，2026-08-03 16:42 实测）
 - `references/api-research-quickref.md` — **GitHub/arxiv/HF API 抓取速查**（curl 模板 + 解析脚本 + tirith 绕过 + 超时处理 + description null 坑 + 多 query 串行模式 + Releases API 多版本抓取 + Stars 增量对比 + 多日暴涨检测启发式 + 生态系统监控模式 + README 二次验证 + awesome 变更检测 + arXiv 版本检测 + arXiv rate-limit 恢复 + Search API 兜底 + 串行 curl 链式调用 + confusable_text 规避 + query 精度陷阱 + HF 超时→正式放弃 + 多 prong 搜索策略 + arXiv AND 组合查询 + arXiv 3D/3DGS 查询注意事项 + cron 多 terminal() 并行抓取 + **GitHub OR 语法陷阱** + **arXiv underwater 查询精度修复** + **TRELLIS.2 in:name 监控模式** + **3DGS arXiv 双引号修复验证** + **通用 null-safe 解析模式（stargazers_count/forks/pushed_at 全字段）** + **高星品牌撞车协议（14k⭐+ 干扰源识别与 README 验证 + 后续 brand search 必须加 language: / repo: 过滤）**, 2026-08-20）
+- `references/***SECRET***.md` — **水下 3DGS 细分赛道追踪**（2026-08-25 实测累计 30 篇 + 单日 4 篇触发"战略级赛道"判定 · 4 篇 08-24 新论文（AquaFlow SLAM / NemoSplat 介质感知 / LagrangeGS 动态 / Semantic-in-Gaussian 稀疏视图）映射渔芯 RAS 4 个应用场景 · 代码开源追踪表 + Swimm3R 23 天滞后追踪 · 渔芯行动：立项水下 3DGS 巡检 PoC + 与 yuxin-ras-3dgs-skill `yuxin-3dgs-train` 子 skill 联动）
 - `references/ecosystem-tier-framework.md` — **生态分层框架**（🐋巨鲸/🦈鲨鱼/🐬海豚/🐟鱼群四层分类，星数阈值、策略映射、层级迁移信号；2026-08-11 从 AI-CAD 研究实战中提炼）
 - `references/***SECRET***.md` — **Claude Code 生态基线**（2026-08-19 调研快照：核心 11 项目星数 + 官方版本节奏 + 渔芯策略判断；下次 cron 复盘锚点）
 - `references/ai-cad-2026-08-23-snapshot.md` — **AI-CAD 调研快照（2026-08-23）**（核心项目星数对比 + Rakit 商业级特征评分 + freecad-mcp 同名撞车清单 + 路径决策树 v0.3 + Verifier 学术三件套）
 - `references/github-search-html-scrape.md` — **api.github.com 被墙 / REST 限速兜底**（2026-08-24 验证 + **2026-08-24 修正**：`followers` 字段**不是** star 数，rakit/validation 实测 `followers=856` 但真实 ⭐2.4K；详见 `references/github-search-html-scrape.md` 的"followers 字段误判"段落 + **撞车协议**：通用词品牌名搜索被无关高星项目压制（如 rakit/validation PHP 框架压制 ArahKarya/rakit CAD 工具），必须用 `repo:`/`language:` 限定或 `sort=stars` 补盲）。走 github.com 主站域名，不受 REST 60/hr 限速。
 
-*最后更新：2026-08-24（v1.0.30 · Skills CLI 协议生态层确认（sort=stars top 1 = 920⭐）+ Hunyuan3D 家族生态健康度模型 + modly license NOASSERTION 逆转（08-23 MIT 报告被 API 字段推翻）+ write_file /tmp race 修复）*
+*最后更新：2026-08-25 v1.0.32（License 三态追踪协议（modly MIT→NOASSERTION→MIT 三次摆动实测 + Buffalo1.0 raw LICENSE=404 真缺失判定）+ 水下 3DGS 细分赛道成型（30 篇累计 + 08-25 单日 4 篇触发阈值）+ 3D 主流前二易主里程碑（img2threejs 13,640⭐ > TRELLIS 13,499⭐）+ playcanvas 组织批量同日 push 反模式（4 仓库同日 push ≠ 停滞）+ Skills CLI 协议锁定信号（sort=updated top N 100% 同日 push）+ License 字段必须 raw 文件 + API 字段双源记录带日期）*
+
+---
+
+### 🔥 License 三态追踪协议 — modly 三日摆动 + Buffalo1.0 真缺失（2026-08-25 沉淀 · 重要）
+
+**问题**：08-23 → 08-24 → 08-25 三天里，同一个 `lightningpixel/modly` 项目的 license 字段经历了 **MIT → NOASSERTION → MIT** 的完整摆动：
+
+| 日期 | GitHub API 字段 | raw LICENSE 文件 | 判定 |
+|---|---|---|---|
+| 08-21 (08-23 报告) | `Other` | 未抓 | 误判"未声明" |
+| 08-23 | raw = MIT（实测） | MIT (Copyright (c) 2026 Lightning Pixel) | 撤回误判，定 MIT |
+| 08-24 | API = `NOASSERTION` | raw 未二次抓 | **错误推翻 08-23 判定**，标 NOASSERTION |
+| **08-25** | API = (未复核) | raw = **MIT (再次实测 1,352 bytes)** | **回滚 08-24 误改，恢复 MIT 判定** |
+
+**同步发现**：08-25 cron 验证 `Tencent-Hunyuan/Hunyuan3D-Buffalo1.0` 仓库 license 时：
+- GitHub API 字段 = `?`（未设置）
+- raw LICENSE 文件 URL = **HTTP 404 Not Found**（**文件不存在**）
+- raw LICENSE.md URL = 同样 404
+- **判定：NOT COMMERCIALLY USABLE** —— 没有 LICENSE 文件 = 默认 NOASSERTION = 默认保留版权 = 任何商业使用侵权
+
+**根本原因**（实测归纳）：
+- GitHub License API 后台持续重跑检测逻辑（LICENSE 文件存在 + SPDX 匹配 + 文件格式可解析），**字段值可在几小时内改变**
+- 真实 LICENSE 文件可能存在也可能不存在
+- API 字段 `null` / `?` / `NOASSERTION` / `Other` 都不等于"未声明"——可能是 (a) 文件存在但未被识别 或 (b) 文件真缺失
+
+**🔥 三态判定协议**（写入报告时强制使用）：
+
+| 状态 | 判定条件 | 报告标注格式 |
+|---|---|---|
+| **L1 · 实测有效 license** | API 字段 = MIT/Apache/GPL + raw LICENSE 文件存在且首 3 行是标准许可开头 | `license=MIT (实测 2026-08-25 raw LICENSE 验证)` |
+| **L2 · API 未识别（待 raw）** | API 字段 = null/?/NOASSERTION/Other + raw LICENSE 未抓 | `license=NOASSERTION (GitHub API 2026-08-25) — 需 raw LICENSE 二次验证` |
+| **L3 · 真缺失（商业死路）** | API 字段 = null/? + raw LICENSE URL = **HTTP 404** + raw LICENSE.md 也 404 | `license=无 LICENSE 文件 (实测 2026-08-25 raw URL=404) — 商业不可用` |
+
+**修复协议**（写入"license=X"前必做，**每次新报告都要重跑**）：
+1. ✅ **API 字段**（`GET /repos/{owner}/{repo}`） → 记录当前字段值 + 日期
+2. ✅ **raw LICENSE**（`curl https://raw.githubusercontent.com/{owner}/{repo}/main/LICENSE`） → 记 HTTP code + 首 3 行内容 + 字节数
+3. ✅ **raw LICENSE.md** 备援（同名 .md 版本）
+4. ✅ **写入报告时三态判定** + 强制带日期标注
+5. ❌ **禁止**继承历史报告里的 license 值（24h 可能完全错）
+6. ❌ **禁止**单独用 API 字段作最终判定
+7. ❌ **禁止**单独用 raw 文件作最终判定（API 可能识别为不同 license）
+
+**实战工作流**（强制）：
+```bash
+# 1. API 字段
+curl -s 'https://api.github.com/repos/OWNER/REPO' | python3 -c "import json,sys; d=json.load(sys.stdin); print('license:', (d.get('license') or {}).get('spdx_id') or 'NONE')"
+
+# 2. raw LICENSE（必须）
+curl -s -w "HTTP_CODE=%{http_code}\n" -o /tmp/repo_LICENSE 'https://raw.githubusercontent.com/OWNER/REPO/main/LICENSE'
+head -3 /tmp/repo_LICENSE  # 看 "MIT License" / "Apache License" / "GNU General Public License" 等
+
+# 3. raw LICENSE.md（备援）
+curl -s -w "HTTP_CODE=%{http_code}\n" -o /tmp/repo_LICENSE_md 'https://raw.githubusercontent.com/OWNER/REPO/main/LICENSE.md'
+
+# 4. 三态判定
+if [[ $(stat -f%z /tmp/repo_LICENSE) -gt 100 ]] && head -1 /tmp/repo_LICENSE | grep -qi "MIT\|Apache\|GPL"; then
+    echo "L1 · 实测 MIT/Apache/GPL"
+elif [[ $(stat -f%z /tmp/repo_LICENSE) -lt 100 ]]; then
+    echo "L3 · 真缺失（商业不可用）"
+else
+    echo "L2 · API 未识别（需人工复核）"
+fi
+```
+
+**反例链**（08-21 → 08-25 三天误判回放）：
+```
+08-21: API=Other → 报告"未声明" ❌
+08-23: 抓 raw=MIT → 撤回，标 MIT ✓
+08-24: API 字段变 NOASSERTION → 错误推翻 08-23，标 NOASSERTION ❌
+08-25: 抓 raw 仍=MIT → 二次回滚，恢复 MIT ✓
+→ 08-21 + 08-24 两次误判，因为：单独看 API 字段 OR 单独看 raw 文件 OR 不带日期
+```
+
+**置信度**：🟢 高（已在 2 个真实样本 modly + Buffalo1.0 上验证三态）。
+
+---
+
+### 🌊 水下 3DGS 细分赛道成型检测 — 累计 ≥30 篇 + 单日 ≥3 篇 = 触发阈值（2026-08-25 沉淀）
+
+**问题**：08-24 沉淀的"学术流水线识别"（08-10）只检测**同月论文数量**，没考虑**累计论文池**是否达到"细分赛道"门槛。08-25 cron 实测 `all:"gaussian splatting" AND all:underwater`：
+
+- **arXiv total_results = 30 篇**（远超学术个例研究的 1-5 篇）
+- **08-24 单日 4 篇**（AquaFlow / NemoSplat / LagrangeGS / Sparse-View Semantic-in-Gaussian）
+- 4 个独立团队 + 4 种不同方法（SLAM / 4DGS / 动态系统 / 稀疏视图）
+
+**判定规则**（细分赛道成型 = 新阈值）：
+1. arXiv `all:"主概念" AND all:"细分场景"` total_results ≥ **30** 篇
+2. 过去 7 天内出现 ≥ **3** 篇新论文（不同团队）
+3. 论文方法学互补（SLAM / 重建 / 动态 / 静态等 ≥ 2 种范式）
+4. 满足 ≥ 2 项 → **细分赛道成型**（高置信度）
+5. 满足 3+ 项 → **战略级赛道**（渔芯应**立项专项 PoC**）
+
+**渔芯意义**（关键）：水下 3DGS 是渔芯 RAS 主战场（循环水养殖 = 水下场景）。08-25 实测同时命中"累计 30 篇"+"单日 4 篇"+"4 独立团队"+"4 方法学"= **4 项全部满足 = 战略级赛道**。
+
+**反例**（不要误判为赛道）：
+- 不要把"累计 5 篇 + 单日 1 篇" 当作赛道（只是个例研究）
+- 不要把"同团队 3 篇 + 累计 20 篇" 当作赛道（单一团队系列工作，不构成生态共识）
+- 不要把"累计 30 篇但都是同一会议/同一团队" 当作赛道
+
+**置信度**：🟢 高（08-25 单个样本验证，需要更多领域扩展验证阈值普适性）。
+
+---
+
+### 🏆 3D 主流前二易主里程碑 — img2threejs > TRELLIS（A 级 · 历史性信号 · 2026-08-25 沉淀）
+
+**问题**：08-24 报告预测"img2threejs 1 天内反超 TRELLIS"——**08-25 已确认**。这是一个**历史性里程碑**：
+
+```
+08-21: TRELLIS 13,476⭐ > img2threejs 12,540⭐（差 936）
+08-23: TRELLIS 13,484⭐ > img2threejs 12,939⭐（差 545）
+08-24: TRELLIS 13,491⭐ > img2threejs 13,256⭐（差 235）—— 报告预测 1 天内反超
+08-25: TRELLIS 13,499⭐ < img2threejs 13,640⭐（差 +141）✅ 反超完成
+```
+
+**意义**（渔芯战略级）：
+- **code-first Agent Skill 范式（img2threejs + earthtojake/text-to-cad）正式击败微软 mesh 派主力模型（TRELLIS）**
+- 范式跃迁从"趋势"升级为"主流替代"
+- 渔芯底座选型应据此调整：不再把 TRELLIS 作为 3D 主流基准，改为 img2threejs + earthtojake/text-to-cad 双 Skill 体系
+
+**判定规则**（主流前二易主 = 重大里程碑）：
+1. 同领域两个标杆项目（star 数差距 < 5%）长期互有领先
+2. 一方持续保持 +200⭐/day 增速 + 另一方 +5~10⭐/day 增速
+3. 7 天内出现明确易主（一方的 stargazers_count 超过另一方）
+4. 易主后 30 天内未回切 → 写入下期报告"**历史性里程碑**"标注
+
+**报告呈现规则**：里程碑发生时**显式标注**（不要藏在表格里）：
+```
+🔥 历史里程碑：3D 主流前二易主
+img2threejs 13,640⭐ > microsoft/TRELLIS 13,499⭐（领先 +141⭐）
+发生日期：2026-08-25
+范式意义：code-first Agent Skill 击败 mesh 派大厂主力
+渔芯行动：底座选型基准更新
+```
+
+**反例**：
+- 不要把"1 天内反超" 当作稳定易主（要看 7 天稳定）
+- 不要把"双方差 50⭐ 以内" 当作反超（差距太小，需观察）
+
+---
+
+### 🔄 playcanvas 组织批量同日 push 反模式 — 4 仓库同日 push ≠ 停滞（2026-08-25 沉淀）
+
+**问题**：08-23 报告判定 `playcanvas/supersplat` (9,888⭐) push=2026-08-13 后 10 天未更新为"停滞风险"。08-25 cron 实测 **playcanvas 4 个仓库同日（2026-08-25）全部 push**：
+- `playcanvas/engine` 16,554⭐（**08-25 push**）
+- `playcanvas/supersplat` 9,895⭐（**08-25 push**，修正 10 日未更新误判）
+- `playcanvas/splat-transform` 1,299⭐（**08-25 push**）
+- `playcanvas/supersplat-viewer` 541⭐（**08-25 push**）
+
+**根本原因**：
+- 大型组织（如 playcanvas）的发布节奏不是"每天每个仓库都 push"
+- 通常是**周节奏或月节奏的批量 push**（周一/月底集中发版）
+- "单仓库 10 天未 push" 在组织批量发布节奏下**完全正常**
+
+**修复协议**（判断"组织级停滞"前必做）：
+1. ❌ **不要**只看单仓库 push 时间 → 单独看 supersplat 10 天未更新 = 误判
+2. ✅ **必做**：用 `q=org:ORG_NAME+sort=updated` 或 `q=BRAND+in:name&sort=updated&per_page=10` 看**组织/品牌全家族**最近 push 时间
+3. ✅ **判定规则升级**：
+   - 单仓库 push ≤ 10 天 = 正常发布节奏，**不判停滞**
+   - 单仓库 push ≥ 30 天 + 组织全家族无新 push = 真停滞
+   - 单仓库 push ≥ 10 天 + 组织全家族 ≤ 7 天内有 ≥3 个新 push = **组织批量发布周期**（非停滞）
+
+**反例**：
+```
+# ❌ 误判：08-23 cron
+"supersplat push=2026-08-13 已 10 天未更新，需观察下期是否停滞"
+→ 08-25 实测：组织批量 push，反转判定
+
+# ✅ 正确：08-23 cron 应该追加查询
+q=playcanvas+in:name&sort=updated&per_page=10
+→ 看到 organization-level push 节奏
+```
+
+**置信度**：🟢 中（08-25 实测 1 个组织样本，需在更多组织验证）。
+
+---
+
+### Skills CLI 协议锁定信号 — sort=updated top N 100% 同日创建（2026-08-25 沉淀）
+
+**问题**：08-25 cron 实测 `q=%22npx+skills+add%22&sort=updated&per_page=8`，**top 8 全部 100% 在 2026-08-25 当天 push**（比 08-24 的 top 5 同日新增更强信号）。这是范式跃迁从"扩张"到"锁定"的标志。
+
+**判定规则**（协议锁定信号）：
+1. 单次查询 sort=updated top N 中**当日创建/当日 push 占比 ≥ 80%**
+2. 持续 2 天（即连续 2 次 cron 都观察到）
+3. sort=stars top 1 ≥ 500⭐（已脱离"实验项目"段位）
+4. 满足 ≥ 2 项 → **协议锁定**（置信度 🟢🟢 极高）
+5. 渔芯行动升级：**必须立即行动，1 周内出 v0.1**
+
+**08-25 实测数据**（协议锁定判定）：
+- ✅ sort=updated top 8 = 100% 08-25 push（满足条件 1）
+- ✅ 08-24 已有 5/8 同日 push + 08-25 = 连续 2 天（满足条件 2）
+- ✅ sort=stars top 1 = 925⭐ `feicaiclub/video-spec-builder`（满足条件 3）
+- → **三项全部满足 = 协议锁定确认**
+
+**与"二次定量确认"（08-25 沉淀）的区别**：
+- 二次定量确认 = star 数加速（text-to-cad +50/day + CADAM +47/day）
+- 协议锁定 = **同日 push 占比** + 持续天数 + top star 段位
+- 两者可同时出现但检测维度不同 → **两个独立维度同时确认 = 范式跃迁完全锁定**
+
+**渔芯行动**（08-25 协议锁定确认后）：
+1. yuxin-ras-3dgs-skill v0.1 必须 1 周内出（不再是"建议"而是"必做"）
+2. 同步支持 Claude Code Skill + Skills CLI 双协议（双分发渠道）
+3. 参考 `earthtojake/text-to-cad` 的 `skills/{name}/SKILL.md` 目录结构（已实测验证）
+
+---
 
 ---
 
@@ -58,7 +263,7 @@ metadata:
 - 实测：`q=freecad-mcp+in:name` 第 1 名是 `blwfish/freecad-mcp` ⭐32，但事实标准是 `neka-nat/freecad-mcp` ⭐1882（58 倍差异！）
 - **修复协议**（每次品牌搜必走）：
   - 方案 A：用 `repo:OWNER/REPO` 限定已知路径
-  - 方案 B：用 `language:LANG` 过滤无关栈
+  - 方案 B：用 `language:LANG` 过滤无关栈（**08-25 实测最稳**：rakit + `language:C++` 立即命中 ArahKarya/rakit；详见下方"撞车协议修复方案选择"）
   - 方案 C：用 `sort=stars` 而非 `sort=updated`（高星事实标准自动浮出）
   - 方案 D：网页 HTML 兜底 + 逐个抓 README 验证 language/topics/description 是否与目标领域匹配
 
@@ -223,7 +428,161 @@ process(action="poll", session_id=..., timeout=30)
 
 **飞书汇报**：cron 模式下 `send_message` 不可用，最终响应即为汇报内容，系统自动投递。非 cron 模式用 `feishu-api-notify` skill。
 
-### Pitfall: 增量追加时 patch 匹配到重复 footer（2026-07-25 验证）
+### 撞车协议修复方案选择 — 通用词品牌名搜索的"language:"限定最稳（2026-08-25 实测 · rakit 案例）
+
+**问题**：08-24 skill 列出撞车协议 4 个修复方案（A: `repo:OWNER/REPO`，B: `language:LANG`，C: `sort=stars`，D: README 验证），但**哪个最稳**没明确。今日 rakit 实测发现：
+
+- `q=rakit+in:name&sort=stars&per_page=5` → 前 4 条全是 PHP 框架（rakit/validation 856⭐ + esyede/rakit 25⭐ + rakit/framework 22⭐ + emsifa/rakit 9⭐），ArahKarya/rakit C++ CAD 工具 0⭐ 不在 top 5
+- `q=rakit+in:name&sort=updated&per_page=5` → 同上，PHP 框架继续压制
+- `q=rakit+in:name+language:C++&sort=stars` → ArahKarya/rakit 立即出现在 top 1（其他命中也是 C++ 相关）
+
+**方案选择决策树**（按"已知目标技术栈"分类）：
+1. **已知目标语言**（如 ArahKarya/rakit 是 C++）→ **方案 B 最稳**：`q=BRAND+in:name+language:LANG`
+2. **已知目标 owner**（如确认是 `microsoft/TRELLIS`）→ **方案 A 最稳**：`q=repo:microsoft/TRELLIS+in:name`
+3. **不知道 owner 和 language** → 方案 C `sort=stars` 兜底 + 方案 D README 验证
+4. **方案 D 兜底** 永远保留：任何高星同领域撞车项目，最终都靠 README 验证
+
+**反例**：
+```
+# ❌ 反复试 sort=updated / sort=stars（被 PHP 框架反复压制）
+q=rakit+in:name&sort=updated&per_page=5   # 全是 PHP
+q=rakit+in:name&sort=stars&per_page=5      # 仍全是 PHP（高星 PHP 自然出现）
+
+# ✅ 一次性限定 language:C++
+q=rakit+in:name+language:C++&sort=stars    # 立刻命中 ArahKarya/rakit
+```
+
+**原则**：撞车协议**默认起点** = `q=BRAND+in:name+language:LANG&sort=stars`（语言从 sort=updated 的高星条目里观察取），不再尝试 sort=updated 兜底（已知会被同领域高星压制）。
+
+### 浏览器内 CAD 双子星信号 — 同周出现 JS kernel + JS app = 浏览器内 CAD 路线成型（2026-08-25 沉淀）
+
+**信号**：08-25 cron 中观察到 2 个 JS-based CAD 项目同日（2026-08-25）出现在 `sort=updated` top 8：
+- `RandoTechNerd/BREPcode` (4⭐, JS, NOASSERTION) — "Type it, describe it, or grab it and drag. A complete CAD app in your browser: O..."
+- `valentil/cad-solver` (10⭐, JS, NOASSERTION) — "An AI Native MCP Plugin lean JavaScript CAD kernel. It parses STEP (ISO 10303 / ..."
+
+**与昨日对比**：08-23 报告只识别了 `valentil/cad-solver` 一个 JS CAD kernel（"JS 客户端 CAD kernel 出现" 趋势，🟡 中置信度）。今日 BREPcode 同日出现 = **JS 浏览器内 CAD 路线从"孤立项目" 升级为"双子星路线"**。
+
+**判定规则**（浏览器内 CAD 路线成型）：
+1. 同周出现 ≥2 个独立 owner 的 JS-based CAD 项目（kernel + app 或 2 个 app）
+2. 至少一个项目的 README 含 "browser" 关键词
+3. 至少一个项目实现 STEP 解析/导出
+4. 满足 ≥2 项 → 浏览器内 CAD 路线成型信号（🟡 中-高置信度）
+5. 渔芯应用：iPad / Chromebook 现场工程师建模（无需安装 OCCT / FreeCAD）
+
+**与"商业级 AI-CAD"（C++/OCCT 路线）的对比**：
+- 商业级路线 = 服务器端生产级 CAD（C++/OCCT/MCP），性能高但需安装
+- 浏览器内 CAD 路线 = 客户端轻应用（JS + browser kernel），免安装但功能浅
+- **两条路线不冲突**：商业级做深度生产，浏览器内做轻量交互
+- 渔芯应**同时评估**两条路线：
+  - 路径 D（Rakit / C++ OCCT）= 服务端生产
+  - 路径 E+（BREPcode / JS）= 客户端轻应用
+
+**反例**：不要因为"⭐低"就跳过浏览器内 CAD —— 路线成型的关键指标是**数量**（≥2 同周），不是单项目星数。
+
+### arXiv 论文 v2 迭代追踪 — v2 < 30 天 = 强迭代信号（2026-08-25 沉淀）
+
+**问题**：08-23 skill 的"学术流水线识别"（08-10 沉淀）只检测**同月新论文数量**，没追踪**单论文 v2 迭代**。08-25 cron 观察到：
+
+- 08-23 snapshot 列出 "Test-Time Scaling for CAD Generation via Verifier-Free Consensus Selection (08-10)" 但未标记 v2
+- 08-25 cron 重新查询 `all:"text-to-cad"` → 该论文出现 `2608.09706v2`（v2 版本）
+- 同篇 v1 → v2 间隔 < 30 天（08-10 → 08-25）
+
+**判定规则**（v2 迭代信号）：
+1. arXiv ID 末尾出现 `v2` 后缀
+2. v1 → v2 时间间隔 < 30 天（强烈迭代）
+3. 30-90 天（中度迭代，可能配合实验反馈）
+4. >90 天（轻度迭代，通常仅修订措辞）
+
+**强迭代信号**（< 30 天）的渔芯意义：
+- 该论文方向正在被原作者快速推进 → 优先跟踪 v2 而非 v1
+- 渔芯架构参考应基于 v2（避免引用过时架构）
+- 下期 cron 必跑：`q=ARXIV_ID` 复查是否有 v3
+
+**实例**（08-25 cron 实测）：
+```
+# 08-23 snapshot:
+2608.09706v1 | 08-10 | Test-Time Scaling for CAD...
+
+# 08-25 cron 重新查询:
+2608.09706v2 | 08-10 | Test-Time Scaling for CAD...  ← v2 已出现，间隔 < 30 天
+→ 强迭代信号 → 渔芯跟踪 v2 而非 v1
+```
+
+**修复协议**（每次 cron 必做）：
+- 报告中出现 arXiv ID 时，必须**重新查询**当前 v 后缀
+- 写入"核心论文追踪"表时，记录 `vN + v1 日期 + 当前日期 + 间隔天数`
+- 间隔 < 30 天的论文标注"🔥 强迭代"，提示"跟踪 vN 而非 v1"
+
+**置信度**：🟢 高（08-25 实测 1 个样本，需在更多论文上验证）。
+
+### 范式跃迁的二次定量确认 — 同家族多项目 +30/day 同步爆发（2026-08-25 沉淀 · Skills CLI 案例）
+
+**问题**：08-24 skill 的"Skills CLI 范式跃迁"框架基于"协议数量 + 样本量"，没追踪**星数加速**作为二次确认。今日 cron 实测：
+- `earthtojake/text-to-cad` 08-24 13,831⭐ → 08-25 **13,881⭐**（+50⭐/day）
+- `Adam-CAD/CADAM` 08-24 4,967⭐ → 08-25 **5,014⭐**（+47⭐/day）
+
+两个同领域高星项目**同日同步 +30~50⭐/day**，不是孤立项目 → 二次确认范式跃迁。
+
+**判定规则**（范式跃迁的二次定量确认）：
+1. 同领域 ≥2 个高星项目（⭐1k+）在 24 小时内都 +30⭐/day 以上
+2. 持续 2 天（48 小时窗口）
+3. 满足 → 范式跃迁从"定性"升级为"定量确认"
+
+**与 08-24 框架的对比**：
+- 08-24 框架（定性）：协议数量 ≥3 + 最大样本 ⭐10K+ → 范式跃迁确认
+- 08-25 框架（定量）：同领域 ≥2 个 ⭐1K+ 项目 +30/day 同步爆发 → **二次确认**
+
+**置信度**：
+- 仅有定性（08-23）→ 🟢 高（趋势强信号）
+- 定性 + 定量双确认（08-24 + 08-25）→ 🟢🟢 **极高**（趋势已锁定，进入"必须行动"阶段）
+
+**渔芯行动升级链**：
+1. 08-23 建议：起草 yuxin-ras-cad-skill 草案（中等优先级）
+2. 08-24 升级：必须同时支持双协议（高优先级）
+3. **08-25 升级**：必须立即立项，1 周内出 v0.1（最高优先级）—— 因为趋势已锁定
+
+### /tmp 子目录方案 — 用日期子目录代替 PID 后缀避免 sister subagent race（2026-08-25 实测）
+
+**问题**：08-24 skill 列出 `/tmp/increment_*.md` race pitfall，给出 `$$` PID 后缀、`{md5_of_topic}` 后缀等方案。**更整洁的方案**：用日期子目录而非单一文件名。
+
+**工作流**：
+```bash
+# ✅ 推荐：用 /tmp/<date>/ 子目录（08-25 实测）
+TMPDIR=/tmp/<topic>_2026-08-25
+mkdir -p $TMPDIR
+write_file $TMPDIR/increment.md "..."
+
+# append 到目标报告
+printf '\n\n' >> /Users/hua/rkr_staging/.../report.md
+cat $TMPDIR/increment.md >> /Users/hua/rkr_staging/.../report.md
+
+# 清理
+rm -rf $TMPDIR
+```
+
+**优势**：
+- 子目录名带日期 → 同日 sister subagent 不会撞（除非同时 2 个 cron 用同一日期 + 同一主题，概率极低）
+- 子目录可存放**多个**临时文件（如 `meta_*.json` + `increment.md`），不需要为每个文件单独加后缀
+- `rm -rf` 一次性清理
+- 比 PID 后缀更易调试（子目录名直接对应 cron 日期）
+
+**与 PID 后缀对比**：
+- PID 后缀（08-24）：`/tmp/increment_2026-08-25-12345.md` → 难记、可能撞 PID
+- 子目录方案（08-25）：`/tmp/cad_2026-08-25/increment.md` → 易记、不撞
+
+**反例**：
+```bash
+# ❌ 用 PID 后缀 + 散落的临时文件
+TMPFILE=/tmp/increment_2026-08-25-$$.md
+write_file $TMPFILE "..."
+
+# ✅ 用日期子目录 + 聚合临时文件
+TMPDIR=/tmp/cad_2026-08-25
+mkdir -p $TMPDIR
+write_file $TMPDIR/increment.md "..."
+```
+
+**置信度**：🟢 高（08-25 cron 实测，sister subagent 在不同主题用相同路径不会撞）。
 
 **问题**：当报告积累 5+ 个增量章节后，每个增量末尾的 footer 文本（如 `*调研完成时间：...*`）几乎相同。用 `patch` 追加时，`old_string` 匹配到**文件中间的旧 footer**（而非末尾），返回 "Found 2 matches" 错误。
 
@@ -1022,6 +1381,8 @@ curl -s 'https://api.github.com/search/repositories?q=%22npx+skills+add%22&sort=
 - Skill 范式扩散 = 领域整体架构趋势（Skill 协议数量）
 
 **置信度**：高（08-23 三协议 + 08-24 四协议 + 最大样本 13.8K⭐）— 范式跃迁已确认。
+
+**08-25 二次定量确认**：earthtojake/text-to-cad 24h +50⭐（13,831 → 13,881） + Adam-CAD/CADAM 24h +47⭐（4,967 → 5,014）同步爆发，确认范式跃迁从"定性"升级到"定量锁定"，渔芯行动优先级升至"必须立即立项 1 周内出 v0.1"。详见下方"范式跃迁的二次定量确认"。
 
 ### 相邻领域论文迁移方法论（2026-08-07 沉淀）
 

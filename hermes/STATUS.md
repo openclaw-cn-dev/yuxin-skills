@@ -1,9 +1,9 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-08-25 12:29:07
+> 导出时间: 2026-08-26 12:12:56
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 82
+- Skills: 86
 - Profiles: 10
 - Scripts: 119
 - Plugins: 1
@@ -29,6 +29,8 @@ Update available: 2659 commits behind — run 'hermes update'
 
 ## Skills 清单
 - ad-creative
+- afu-self-evolution-protocol
+- agent-cron-self-evolution-slot-pattern
 - agents-md
 - ai-training-platform
 - ai-vision
@@ -62,10 +64,12 @@ Update available: 2659 commits behind — run 'hermes update'
 - gifs
 - github
 - hardware
+- heidou-admin-2026-08-compendium
 - hermes-ecosystem-entry.md
 - inference-sh
 - knowledge-base
 - laomo-knowledge
+- lookforge-differentiation-3-layer
 - maodou-product
 - mcp
 - media

@@ -169,16 +169,18 @@ python3 ~/.hermes/scripts/staging_save.py \
   --tag 循环水 \
   --meta "task_id=t-2026-001"
 
-# Python API
+# Python API(⚠️ `agent=` 必须是顶层 kwarg,不能放 meta 里 — 见陷阱 14)
 from staging_save import stage
 stage(
     title="养殖池循环水设计调研",
     content="# ... markdown ...",
     source="research",
-    agent="maodou",
+    agent="maodou",                          # ← 顶层必传,放 meta 里会被静默吞掉
     tags=["养殖池", "循环水"],
 )
 ```
+
+> ⚠️ **常见错误**:把 `agent` 写进 `meta={}` 字典里(`meta={"agent": "maodou", ...}`)。`stage()` 签名里 `agent` 是顶层 kwarg,**写在 meta 里会被静默忽略**,输出 `Agent: default`,文件仍入站但路由失效。详见陷阱 14。
 
 **参数说明**:
 - `--title` (必填): 资料标题
@@ -445,6 +447,69 @@ Path("/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆
 - 写入:直接 `cp` / `mv`(不走 staging)
 - 引用:用相对路径(在文档库内部),或对象存储 URL
 - **不要**试图把这些目录 mirror 到中转站(9.5G 中转站会被塞爆)
+
+### ⚠️ 陷阱 14(2026-08-26 整理师心跳实测):`stage(agent=...)` 必须是顶层 kwarg,**放进 `meta={}` 里会被静默吞掉**
+
+**症状**:调用 `stage()` 后输出 `Agent: default | Source: research`,而不是你期望的 agent 名。文件**确实入站成功**(中转站有文件、.meta.json 写好),但 agent 字段错了 → scanner 后续的路由/分类规则全失效,文件最终落到默认分类。
+
+**根因(staging_save.py 源码)**:
+
+```python
+def stage(
+    title: str,
+    content: str,
+    source: str = "research",
+    agent: Optional[str] = None,   # ← 这是顶层 kwarg
+    tags: Optional[list] = None,
+    subdir: Optional[str] = None,
+    meta: Optional[dict] = None,  # ← agent 写进 meta 字典 = 被忽略
+):
+    if not agent:
+        agent = os.environ.get("HERMES_AGENT", "default")  # ← fallback 到 env var 或 default
+```
+
+`meta` 字典里的 `"agent": "xxx"` 不会回填到顶层 `agent` 参数,也不会被任何代码读出来 → 静默丢失。
+
+**实测复现(2026-08-26 09:01)**:
+
+```python
+# ❌ 错误:agent 写进 meta(静默丢失 → 输出 Agent: default)
+result = stage(
+    title="...",
+    content=...,
+    tags=[...],
+    meta={"agent": "zhenglishi", "scanner_status": "..."},  # ← agent 字段被忽略
+)
+# 输出: ✅ 已入站: ... | Agent: default | Source: research
+
+# ✅ 正确:agent 作为顶层 kwarg(显式传)
+result = stage(
+    title="...",
+    content=...,
+    source="research",
+    agent="zhenglishi",          # ← 顶层 kwarg
+    subdir="01-调研资料",
+    tags=[...],
+    meta={"scanner_status": "..."},  # meta 只放额外元数据,不放 agent
+)
+# 输出: ✅ 已入站: ... | Agent: zhenglishi | Source: research
+```
+
+**防御性写法**(`os.environ` 兜底 + 顶层 kwarg 双保险):
+
+```python
+import os
+os.environ["HERMES_AGENT"] = "zhenglishi"  # 防 cron 启动时没设 env
+from staging_save import stage
+stage(title=..., content=..., source="research", agent="zhenglishi", ...)
+```
+
+**为什么 meta 里还写 agent 字段**:不影响功能(scanner 走顶层 agent),但**方便后续审计/反向追溯**(从 .meta.json 反查当时调用者意图)。保留无害,删除也行。
+
+**与已有陷阱的关系**:
+- 陷阱 13(workspace/knowledge 三路径分离):说的是**落盘路径**问题
+- 陷阱 14(agent 静默丢失):说的是**调用签名**问题
+- 两个都触发"入站成功但行为不对",但前者是文件位置错,后者是文件元数据错
 
 ### ⚠️ 陷阱 13: agent personal zone 内的 `workspace/knowledge/` ≠ staging 中转站 ≠ scanner 自动归档目标(2026-08-24 实战)
 
