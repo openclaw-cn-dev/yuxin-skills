@@ -34,6 +34,7 @@ gifs
 github
 heidou-admin
 heidou-admin-audit-helper
+heidou-cross-profile-skills-pitfall-2026-08-27
 heidou-workflow
 hermes-ecosystem-entry.md
 hooked-ux
@@ -83,6 +84,7 @@ web-typography
 xiaobao-sales
 xiaobao-workflow
 yuanbao
+yuxin-claude-code-programming-tracking
 yuxin-hourly-gateway-patrol
 yuxin-hourly-patrol-recovery-2026-08-22
 yuxin-management-evolution-scan

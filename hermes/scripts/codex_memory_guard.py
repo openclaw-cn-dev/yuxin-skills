@@ -20,7 +20,7 @@ import re
 import subprocess
 import sys
 
-CONFIG = "/Users/hua/.codex/config.toml"
+CONFIG = "/Users/hua/系统文件夹/Codex/config.toml"
 ZOMBIE_THRESHOLD = 10
 
 

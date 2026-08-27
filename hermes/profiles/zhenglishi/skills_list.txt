@@ -23,13 +23,11 @@ note-taking
 productivity
 quant-workflow
 red-teaming
+references
 research
 smart-home
 social-media
 software-development
 yuanbao
 zhenglishi-cron-skip-daily-closeout
-zhenglishi-pitfall-daytime-cron-round-numbering
-zhenglishi-pitfall-night-cron-round-numbering-4-step
-zhenglishi-reference-p22-tcm-international
 zhenglishi-workflow
