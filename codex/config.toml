@@ -1,13 +1,11 @@
-model_provider = "custom"
-model = "deepseek-v4-pro"
-model_reasoning_effort = "high"
+model_provider = "ZAI"
+model = "glm-5.3-flash"
+model_reasoning_effort = "max"
 disable_response_storage = true
 wire_api = "responses"
-model_catalog_json = "/Users/hua/.codex/cc-switch-model-catalog.json"
+model_catalog_json = "~/.codex/models.json"
+notify = [ "/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended" ]
 
-notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
-
-[model_providers]
 [model_providers.custom]
 name = "zhipu_glm_en"
 base_url = "http://127.0.0.1:15721/v1"
@@ -15,14 +13,19 @@ wire_api = "responses"
 requires_openai_auth = true
 experimental_bearer_token = "<REDACTED>"
 
-[projects]
+[model_providers.ZAI]
+name = "ZAI"
+base_url = "https://open.bigmodel.cn/api/v1"
+wire_api = "responses"
+requires_openai_auth = true
+experimental_bearer_token = "<REDACTED>"
+
 [projects."/Users/hua"]
 trust_level = "trusted"
 
 [projects."/Users/hua/6-产品研发/渔芯独角兽/05-唇语识别"]
 trust_level = "trusted"
 
-[tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
 
@@ -54,7 +57,7 @@ computer_use = false
 js_repl = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-28T03:57:17Z"
+last_updated = "2026-08-28T05:18:16Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
