@@ -1,23 +1,22 @@
-model_provider = "deepseek"
+model_provider = "custom"
 model = "deepseek-v4-flash"
 model_reasoning_effort = "high"
 disable_response_storage = true
 wire_api = "responses"
-model_catalog_json = "/Users/hua/.codex/models.json"
+model_catalog_json = "/Users/hua/.codex/cc-switch-model-catalog.json"
 
 notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
-[model_providers.deepseek]
-name = "deepseek"
-base_url = "https://api.deepseek.com/"
+[model_providers]
+[model_providers.custom]
+name = "zhipu_glm_en"
+base_url = "http://127.0.0.1:15721/v1"
 wire_api = "responses"
+requires_openai_auth = true
 experimental_bearer_token = "<REDACTED>"
 
 [projects]
 [projects."/Users/hua"]
-trust_level = "trusted"
-
-[projects."/Users/hua/6-产品研发/渔芯独角兽"]
 trust_level = "trusted"
 
 [projects."/Users/hua/6-产品研发/渔芯独角兽/05-唇语识别"]
@@ -50,8 +49,12 @@ CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 computerUseAlwaysHidePictureInPicture = true
 followUpQueueMode = "queue"
 
+[features]
+computer_use = false
+js_repl = false
+
 [marketplaces.openai-bundled]
-last_updated = "2026-08-27T01:17:18Z"
+last_updated = "2026-08-28T03:57:17Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -63,7 +66,3 @@ enabled = true
 
 [plugins."visualize@openai-bundled"]
 enabled = true
-
-[features]
-computer_use = false
-js_repl = false
