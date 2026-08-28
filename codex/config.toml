@@ -26,6 +26,15 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/渔芯独角兽/05-唇语识别"]
 trust_level = "trusted"
 
+[projects."/Users/hua/6-产品研发/渔芯独角兽/出图智能体训练"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/渔芯量化"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Documents/Codex/2026-08-28/thread-01a0482b-b1ee-7ce2-b931-494a4c5510e1"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 2
 
@@ -61,6 +70,11 @@ last_updated = "2026-08-28T05:18:16Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-08-28T12:23:03Z"
+source_type = "local"
+source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
 [plugins."codex-app-tools@openai-bundled"]
 enabled = true
 
@@ -68,4 +82,19 @@ enabled = true
 enabled = true
 
 [plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
 enabled = true
