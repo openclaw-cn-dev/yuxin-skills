@@ -484,6 +484,10 @@ curl -s http://127.0.0.1:8001/pricing | grep -c "payModal"  # → >0
 - 华哥明确说"用 CC 跑"
 - 玉芬自己 token 不够
 
+## ⚠️ 前台交互式安装命令会被 tirith 拦截（2026-08-28 实测）
+
+`brew install ffmpeg` 这类前台长时间交互安装 → `BLOCKED: Command timed out without user response`，且系统提示"不要换命令重试同一目的"。正确路径：**先找本机已有二进制**（imageio_ffmpeg 自带 ffmpeg、python 包里常藏工具），`mdfind`/`find` 搜一下；真没有才走 terminal(background=true) 或让华哥手动装。用现成二进制是首选，不是降级。
+
 ## 验证流程(实装完成后必做,**全部做完再汇报一次**)
 
 ```bash

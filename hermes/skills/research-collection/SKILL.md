@@ -4,7 +4,7 @@ description: '渔芯资料收集技能 — 高效搜集行业信息、公司情�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.0.32"
+  version: "1.0.34"
 ---
 
 ## 参考资料库
@@ -14,14 +14,101 @@ metadata:
 - `references/大客户销售策略.md` — ToB大客户销售流程、LTV/CAC模型、定价策略（2026-06-05）
 - `references/***SECRET***.md` — **Sogou 搜索 HTML 解析踩坑**（hintidx 内部重链 vs 真实外链，公众号文章保留规则；Bing 对照 parser；2026-08-03 16:42 实测）
 - `references/gtm_b2b_sales_sources.md` — **GTM/B2B Sales 方法论文献 cron 可用性速查**（Common Room 全文已核验 12,549 字符 / Gartner 403 / ChiliPiper Apollo 404 / Revue 停更；A-B-C 三级引用规则，2026-08-03 16:42 实测）
-- `references/api-research-quickref.md` — **GitHub/arxiv/HF API 抓取速查**（curl 模板 + 解析脚本 + tirith 绕过 + 超时处理 + description null 坑 + 多 query 串行模式 + Releases API 多版本抓取 + Stars 增量对比 + 多日暴涨检测启发式 + 生态系统监控模式 + README 二次验证 + awesome 变更检测 + arXiv 版本检测 + arXiv rate-limit 恢复 + Search API 兜底 + 串行 curl 链式调用 + confusable_text 规避 + query 精度陷阱 + HF 超时→正式放弃 + 多 prong 搜索策略 + arXiv AND 组合查询 + arXiv 3D/3DGS 查询注意事项 + cron 多 terminal() 并行抓取 + **GitHub OR 语法陷阱** + **arXiv underwater 查询精度修复** + **TRELLIS.2 in:name 监控模式** + **3DGS arXiv 双引号修复验证** + **通用 null-safe 解析模式（stargazers_count/forks/pushed_at 全字段）** + **高星品牌撞车协议（14k⭐+ 干扰源识别与 README 验证 + 后续 brand search 必须加 language: / repo: 过滤）**, 2026-08-20）
+- **HF Spaces 持续不可达 → 永久放弃该通道（08-21/26/27/28 连续 4 期 0 字节 / timeout）**（2026-08-28 升级 · 决定性证据）：cron 自动化研究应**永久放弃** `https://huggingface.co/api/spaces` 通道。**替代工作流**：
+  - **方案 A**：抓目标项目 README（如 build123d-mcp 的 README 自述含 [CADGenBench leaderboard](https://huggingface.co/spaces/HuggingAI4Engineering/CADGenBench) 链接）—— **README 引用 HF Spaces 比直接抓 API 更可靠**
+  - **方案 B**：用 `web_search 'huggingface.co/spaces <topic>'` 兜底（仅作背景调研，非定量数据源）
+  - **方案 C**：直接接受 HF 信息缺失，**报告中显式标注「HF 通道已放弃」**而非静默失败
+  - **反例**：08-21/26/27/28 四期继续尝试 `curl 'https://huggingface.co/api/spaces'` = 浪费时间 = 0 信息增量
+  - **置信度**：🟢🟢 极高（4 期实测，跨 5+ 天窗口，确认不是临时 rate-limit）
 - `references/***SECRET***.md` — **水下 3DGS 细分赛道追踪**（2026-08-25 实测累计 30 篇 + 单日 4 篇触发"战略级赛道"判定 · 4 篇 08-24 新论文（AquaFlow SLAM / NemoSplat 介质感知 / LagrangeGS 动态 / Semantic-in-Gaussian 稀疏视图）映射渔芯 RAS 4 个应用场景 · 代码开源追踪表 + Swimm3R 23 天滞后追踪 · 渔芯行动：立项水下 3DGS 巡检 PoC + 与 yuxin-ras-3dgs-skill `yuxin-3dgs-train` 子 skill 联动）
 - `references/ecosystem-tier-framework.md` — **生态分层框架**（🐋巨鲸/🦈鲨鱼/🐬海豚/🐟鱼群四层分类，星数阈值、策略映射、层级迁移信号；2026-08-11 从 AI-CAD 研究实战中提炼）
 - `references/***SECRET***.md` — **Claude Code 生态基线**（2026-08-19 调研快照：核心 11 项目星数 + 官方版本节奏 + 渔芯策略判断；下次 cron 复盘锚点）
 - `references/ai-cad-2026-08-23-snapshot.md` — **AI-CAD 调研快照（2026-08-23）**（核心项目星数对比 + Rakit 商业级特征评分 + freecad-mcp 同名撞车清单 + 路径决策树 v0.3 + Verifier 学术三件套）
 - `references/github-search-html-scrape.md` — **api.github.com 被墙 / REST 限速兜底**（2026-08-24 验证 + **2026-08-24 修正**：`followers` 字段**不是** star 数，rakit/validation 实测 `followers=856` 但真实 ⭐2.4K；详见 `references/github-search-html-scrape.md` 的"followers 字段误判"段落 + **撞车协议**：通用词品牌名搜索被无关高星项目压制（如 rakit/validation PHP 框架压制 ArahKarya/rakit CAD 工具），必须用 `repo:`/`language:` 限定或 `sort=stars` 补盲）。走 github.com 主站域名，不受 REST 60/hr 限速。
 
-*最后更新：2026-08-25 v1.0.32（License 三态追踪协议（modly MIT→NOASSERTION→MIT 三次摆动实测 + Buffalo1.0 raw LICENSE=404 真缺失判定）+ 水下 3DGS 细分赛道成型（30 篇累计 + 08-25 单日 4 篇触发阈值）+ 3D 主流前二易主里程碑（img2threejs 13,640⭐ > TRELLIS 13,499⭐）+ playcanvas 组织批量同日 push 反模式（4 仓库同日 push ≠ 停滞）+ Skills CLI 协议锁定信号（sort=updated top N 100% 同日 push）+ License 字段必须 raw 文件 + API 字段双源记录带日期）*
+## 公开基准背书信号 — README 自述引用比直接抓 HF API 更可靠（2026-08-28 沉淀 · build123d-mcp 案例）
+
+**问题**：cron 研究 AI-CAD 等方向时常需要验证项目的"工程质量"——但 GitHub stars 不能完全反映（⭐0 的项目也可能是商业级，参见 Rakit 案例）。08-28 发现一个新模式：当项目 README 中**明确引用了公开 leaderboard / benchmark 链接并给出具体分数提升**时，这是**比 self-claim 更可靠的质量信号**。
+
+**实例（08-28 实测）**：
+- `pzfreo/build123d-mcp` ⭐63 Apache-2.0 Python
+- README 自述："On the public CADGenBench leaderboard in June 2026, using build123d-mcp raised the same model's score from 0.360 to 0.457 and CAD validity from 88% to 100%."
+- **关键信号**：(1) 链接到 HuggingAI4Engineering/CADGenBench 公开 leaderboard (2) 给出具体前后数字 (3) 跨模型可重复（"same model"）
+
+**修复协议**（每次 cron 看到 README 含 leaderboard 链接时）：
+1. ✅ **优先信任** README 中带具体数字的 benchmark 提升声明
+2. ✅ **记录完整引用**到报告中：项目名 / README 段落 / leaderboard URL / 数字 / 日期
+3. ✅ **下期 cron 验证**：用 `web_extract` 或 `curl` 抓 leaderboard 页面，确认数字仍然存在（不是 stale）
+4. ⚠️ **弱信号**（不引用）：仅 description 中"achieves SOTA" 等无数字 self-claim
+5. ⚠️ **强信号**（必引用）：README 含 leaderboard URL + 具体数字 + 可重复方法说明
+
+**与"星数分水岭"的区别**：
+- 星数分水岭 = 生态维度（哪个项目 leader）
+- 公开基准背书 = 工程质量维度（这个项目能不能用、有没有公开数据支撑）
+- 两者独立：build123d-mcp ⭐63 但有 CADGenBench 背书 = 中等生态影响 + 高工程质量
+
+**置信度**：🟢 高（08-28 单个样本验证，需要更多 leaderboard 引用样本扩展验证）
+
+---
+
+## HF Spaces API 永久放弃 — README 引用替代工作流（2026-08-28 决定性升级）
+
+**问题**：cron 调用 `https://huggingface.co/api/spaces?search=cad` 连续 4 期失败（08-21 / 08-26 / 08-27 / 08-28 全部 HTTP=000 / BYTES=0，今日触发 timeout）。
+
+**决定性证据**（4 期跨 5+ 天窗口）：
+```
+08-21: HTTP=000 BYTES=0
+08-26: HTTP=000 BYTES=0
+08-27: HTTP=000 BYTES=0
+08-28: HTTP=000 BYTES=0 (curl --max-time 15 timeout)
+```
+
+**结论**：**这不是临时 rate-limit，是 cron 环境对 HF Spaces API 的系统性阻断**。**所有 cron 自动化研究应永久放弃该通道**。
+
+**替代工作流**（按推荐度）：
+
+| 方案 | 适用场景 | 实操 |
+|---|---|---|
+| **A · README 引用** | 目标项目 README 含 HF Spaces 链接 | 抓 README 提到 leaderboard/Spaces 段落 → 直接引用链接 |
+| **B · web_search 兜底** | 仅需背景信息，无定量需求 | `web_search 'huggingface.co/spaces text-to-cad'` |
+| **C · 接受缺失 + 显式标注** | HF 通道完全失效时 | 报告"HF 通道已放弃（连续 4 期不可达）"，不静默 |
+
+**反例（必须避免）**：
+```bash
+# ❌ 继续尝试（已知失败，浪费时间）
+curl 'https://huggingface.co/api/spaces?search=cad'  # 0 字节, 0 信息增量
+
+# ✅ 改走 README 引用
+curl 'https://raw.githubusercontent.com/pzfreo/build123d-mcp/main/README.md' | grep -A 3 CADGenBench
+→ 拿到具体数字 + leaderboard URL
+```
+
+**置信度**：🟢🟢 极高（4 期实测 + 跨 5+ 天 + 今日触发 timeout，确认是系统性阻断而非临时）
+
+---
+
+## License 四源验证协议升级总结（2026-08-28）
+
+**升级路径**：v1.0.32 三态协议 → v1.0.33 四态协议
+
+**变化**：
+- 三态（L1/L2/L3）：API + raw LICENSE + raw LICENSE.md → 三源
+- 四态（L1/L2/L3/**L4**）：API + raw LICENSE + raw LICENSE.md + **README badges** → 四源
+- 新增 L4 专门处理"API 字段错但 README badges 对"的情况（08-28 实测 mechcad-kernel）
+
+**触发升级的 2 个 08-28 实测案例**：
+1. **nurb**：昨日 API=NOASSERTION → 标"商业不可用"风险 → 今日 raw LICENSE = FSL 1.1 + MIT Future（撤回警告）
+2. **mechcad-kernel**：今日 API=NOASSERTION → 抓 README badges = AGPL-3.0-or-later → 商业阻塞
+
+**协议核心原则**：**API 字段会错**（nurb + mechcad-kernel 都是 API 字段返回 NOASSERTION 但实际分别对应 FSL 和 AGPL）。**raw LICENSE 不会错，但可能不存在**。**README badges 是第三兜底源**——当 raw LICENSE 缺失时，README badges 几乎总是会标明 license。
+
+**置信度**：🟢🟢 极高（4 个真实样本跨 4 天验证：modly + Buffalo1.0 + nurb + mechcad-kernel）
+
+---
+
+## references/
+
+*最后更新：2026-08-28 v1.0.34（arXiv 301 redirect 必用 `-L https://` 再强化版 — 08-28 同 agent 跨 2 天 2 个 cron run 两次踩坑验证 + 多论文批量 GitHub 代码落地追踪 1 次查询替代 5 次 + arXiv 子方向主题聚类检测 — 单日 5/5 同主题 = 强信号 + ETA 反超预判的误差带校准 — 3 天平均替代单日 surge）*
 
 ---
 
@@ -47,24 +134,41 @@ metadata:
 - 真实 LICENSE 文件可能存在也可能不存在
 - API 字段 `null` / `?` / `NOASSERTION` / `Other` 都不等于"未声明"——可能是 (a) 文件存在但未被识别 或 (b) 文件真缺失
 
-**🔥 三态判定协议**（写入报告时强制使用）：
+**🔥 四源验证协议**（2026-08-28 升级 · 新增 README badges 第四源 · 升级原因：08-28 实测 2 个案例证明 API 字段会错）
 
 | 状态 | 判定条件 | 报告标注格式 |
 |---|---|---|
-| **L1 · 实测有效 license** | API 字段 = MIT/Apache/GPL + raw LICENSE 文件存在且首 3 行是标准许可开头 | `license=MIT (实测 2026-08-25 raw LICENSE 验证)` |
-| **L2 · API 未识别（待 raw）** | API 字段 = null/?/NOASSERTION/Other + raw LICENSE 未抓 | `license=NOASSERTION (GitHub API 2026-08-25) — 需 raw LICENSE 二次验证` |
-| **L3 · 真缺失（商业死路）** | API 字段 = null/? + raw LICENSE URL = **HTTP 404** + raw LICENSE.md 也 404 | `license=无 LICENSE 文件 (实测 2026-08-25 raw URL=404) — 商业不可用` |
+| **L1 · 实测有效 license** | API 字段 = MIT/Apache/GPL + raw LICENSE 文件存在且首 3 行是标准许可开头 | `license=MIT (实测 2026-08-28 raw LICENSE 验证)` |
+| **L2 · API 未识别（待 raw）** | API 字段 = null/?/NOASSERTION/Other + raw LICENSE 未抓 | `license=NOASSERTION (GitHub API 2026-08-28) — 需 raw LICENSE 二次验证` |
+| **L3 · 真缺失（商业死路）** | API 字段 = null/? + raw LICENSE URL = **HTTP 404** + raw LICENSE.md 也 404 | `license=无 LICENSE 文件 (实测 2026-08-28 raw URL=404) — 商业不可用` |
+| **🆕 L4 · README badges 优先（API 字段错时）** | API 字段 = NOASSERTION/null + README 含 `[![License: XXX](...)]` 标准 badge | `license=AGPL-3.0 (实测 2026-08-28 README badges, API 字段错)` |
 
 **修复协议**（写入"license=X"前必做，**每次新报告都要重跑**）：
+
 1. ✅ **API 字段**（`GET /repos/{owner}/{repo}`） → 记录当前字段值 + 日期
 2. ✅ **raw LICENSE**（`curl https://raw.githubusercontent.com/{owner}/{repo}/main/LICENSE`） → 记 HTTP code + 首 3 行内容 + 字节数
 3. ✅ **raw LICENSE.md** 备援（同名 .md 版本）
-4. ✅ **写入报告时三态判定** + 强制带日期标注
-5. ❌ **禁止**继承历史报告里的 license 值（24h 可能完全错）
-6. ❌ **禁止**单独用 API 字段作最终判定
-7. ❌ **禁止**单独用 raw 文件作最终判定（API 可能识别为不同 license）
+4. ✅ **README badges**（`curl raw.githubusercontent.com/{owner}/{repo}/main/README.md` → grep `License:` / `AGPL` / `GPL` / `MIT` / `Apache`）
+5. ✅ **写入报告时四源判定** + 强制带日期标注
+6. ❌ **禁止**继承历史报告里的 license 值（24h 可能完全错）
+7. ❌ **禁止**单独用 API 字段作最终判定（**API 字段会错** — 08-28 实测 mechcad-kernel API=NOASSERTION 实则 AGPL）
+8. ❌ **禁止**单独用 raw 文件作最终判定（API 可能识别为不同 license）
 
-**实战工作流**（强制）：
+**08-28 实测两案例（升级 README badges 为必备源的直接证据）**：
+```
+nurb (昨日 08-27 API=NOASSERTION → 报告"商业不可用"风险):
+  → 08-28 实测 raw LICENSE = "Functional Source License 1.1 + MIT Future" (4,220 bytes HTTP 200)
+  → 撤回 08-27 警告, 标 license=FSL 1.1 + MIT Future (商业可用, 2 年后转 MIT)
+
+mechcad-kernel (今日 API=NOASSERTION):
+  → 08-28 实测 README badges = "License-AGPL--3.0--or--later" 标准 badge
+  → 判定 license=AGPL-3.0-or-later (API 字段错, README badges 对)
+  → 商业不可用, 仅技术观察
+```
+
+**实战工作流**（升级为 4 步）：
+
+**实战工作流**（升级为 4 步强制）：
 ```bash
 # 1. API 字段
 curl -s 'https://api.github.com/repos/OWNER/REPO' | python3 -c "import json,sys; d=json.load(sys.stdin); print('license:', (d.get('license') or {}).get('spdx_id') or 'NONE')"
@@ -76,17 +180,23 @@ head -3 /tmp/repo_LICENSE  # 看 "MIT License" / "Apache License" / "GNU General
 # 3. raw LICENSE.md（备援）
 curl -s -w "HTTP_CODE=%{http_code}\n" -o /tmp/repo_LICENSE_md 'https://raw.githubusercontent.com/OWNER/REPO/main/LICENSE.md'
 
-# 4. 三态判定
+# 4. README badges（必须 · 08-28 升级 · API 字段会错时的兜底）
+curl -s -o /tmp/repo_README 'https://raw.githubusercontent.com/OWNER/REPO/main/README.md'
+grep -i 'License-' /tmp/repo_README | head -3  # 看 "License-MIT" / "License-AGPL--3.0" 等
+
+# 5. 四源判定（升级版）
 if [[ $(stat -f%z /tmp/repo_LICENSE) -gt 100 ]] && head -1 /tmp/repo_LICENSE | grep -qi "MIT\|Apache\|GPL"; then
-    echo "L1 · 实测 MIT/Apache/GPL"
+    echo "L1 · 实测 MIT/Apache/GPL (raw LICENSE)"
 elif [[ $(stat -f%z /tmp/repo_LICENSE) -lt 100 ]]; then
     echo "L3 · 真缺失（商业不可用）"
+elif grep -qi 'License-' /tmp/repo_README; then
+    echo "L4 · README badges 判 license (API 字段错时)"
 else
     echo "L2 · API 未识别（需人工复核）"
 fi
 ```
 
-**反例链**（08-21 → 08-25 三天误判回放）：
+**置信度**：🟢🟢 极高（已在 4 个真实样本上验证四源 — modly + Buffalo1.0 + nurb + mechcad-kernel）。
 ```
 08-21: API=Other → 报告"未声明" ❌
 08-23: 抓 raw=MIT → 撤回，标 MIT ✓
@@ -759,7 +869,13 @@ for e in entries:
 - **tirith 安全扫描拦截**：`curl URL | python3 -c`（pipe-to-interpreter）在 cron 中被阻止。
   - ✅ **推荐工作流**（已验证 2026-07-03）：`curl -s -o /tmp/results.json 'URL' && python3 -c "import json; d=json.load(open('/tmp/results.json'))"` — 两步法：先下载到临时文件，再以文件路径方式读取。security scan 只检查 pipe 进 interpreter，不阻止按路径读文件。
   - ⚠️ arXiv 使用 `http://export.arxiv.org`（非 HTTPS）会被 `plain_http_to_sink` 阻止。**修复**：URL 中写 `https://export.arxiv.org`（curl -L 自动 follow 到 HTTP 重定向，但 scan 只检查原始 URL 文本）。
-  - ⚠️ `python3 -c` 中内联 `http://` URL 也会被阻止。上述两步法中的 python3 -c 不应包含 URL 文本。
+
+- 🔥 **arXiv 301 redirect 陷阱 — 必用 `curl -sL https://...`（2026-08-28 再触发验证）**：08-27 报告首次记录此坑，但 **08-28 cron 同一 agent 又踩了一次**——`curl -s 'http://export.arxiv.org/api/query?...'` 返回 **0 字节 / size 0**（HTTP 301 to HTTPS + body 被丢）。**arXiv API 端点 `http://export.arxiv.org` 永久 301 跳转到 HTTPS**，不带 `-L` curl 不会自动 follow 重定向，body 直接为空。**强制规则**：
+  - ✅ **所有 arXiv API 调用统一用**：`curl -sL --max-time 30 'https://export.arxiv.org/api/query?...'` — 同时包含 `-L`（follow redirect）+ `https://`（避免 plain_http_to_sink 拦截）+ `--max-time`（macOS 无 timeout 命令）
+  - ❌ **绝对不要**：`curl -s 'http://export.arxiv.org/api/query?...'` — 哪怕带 `-L`，HTTP scheme 会被 tirith 拦；不带 `-L`，HTTPS 跳转丢 body
+  - **识别症状**：`file_size=0` 或 `wc -c` 返回 0，但 curl exit code = 0（看似成功实际空响应）
+  - **修复路径**：看到 0 bytes 立刻重试 + 加上 `-L` + `https://` 前缀
+  - **置信度**：🟢🟢 极高（08-27 + 08-28 两次同坑验证，跨 2 天 2 个独立 cron run）
 
 - **parfor/并行 curl 不可用**：`&` 后台进程（`repo1_curl &; repo2_curl &; wait`）在 cron 中被阻止。必须串行。
 - **Agent 级并行 terminal() 调用**（2026-08-09 验证）：在一次 tool call block 中同时发起多个 `terminal()` 调用（每个是独立的同步 curl），tirith 不会阻止（因为每个 terminal 内部没有 `&`，只是 agent 侧并行调度）。**但 arXiv 不同**——GitHub API 并行安全（已验证 6 个并行），arXiv 并行 ≥3 个端点触发 anti-bot rate-limit（2026-08-10 实测：3 并发 → 全部 "Rate exceeded"，24h 冷却）。**规则**：GitHub 查询可并行（无上限已验证），arXiv 最多 2 个并行且间隔 ≥15 秒（避免触发 anti-bot），HF 可选（但大概率超时）。
@@ -1541,6 +1657,113 @@ curl -s 'https://api.github.com/repos/getcursor/cursor/releases?per_page=10'
 - 历史参考：TRELLIS.2 论文→代码约 2 周，Hunyuan3D-2 论文→代码约 3 周
 
 **操作规则**：论文发布后每期检查代码状态，记录滞后天数。超过 8 周仍未开源 → 降低该项目的渔芯优先级（可能仅学术研究无工程化计划）。
+
+### 多论文批量 GitHub 代码落地追踪 — 一次查询多个 paper 名（2026-08-28 实测）
+
+**问题**：cron 研究 3DGS 等方向时，每期都要追踪 5-10 个之前 arXiv 论文是否已开源 GitHub 代码。**逐个发查询浪费 rate-limit**（5 个论文 = 5 个 API 调用），且容易遗漏。
+
+**修复（08-28 实测优化）**：**一次查询，OR 所有 paper 名**：
+```bash
+# ❌ 5 次独立查询（浪费 rate-limit + 慢）
+curl '.../search/repositories?q=AquaFlow+in:name,description'
+curl '.../search/repositories?q=Block3D+in:name,description'
+curl '.../search/repositories?q=CGS-SLAM+in:name,description'
+# ...
+
+# ✅ 一次查询，OR 多个 paper 名 + 强制只有仓库
+curl -s 'https://api.github.com/search/repositories?q=AquaFlow+OR+Block3D+OR+CGS-SLAM+OR+KISS-GS+in:name,description&sort=updated' \
+  -o /tmp/paper_followup.json
+python3 -c "
+import json
+d = json.load(open('/tmp/paper_followup.json'))
+for it in d.get('items', [])[:15]:
+    full = it.get('full_name') or '?'
+    stars = it.get('stargazers_count') or 0
+    pushed = (it.get('pushed_at') or '?')[:10]
+    created = (it.get('created_at') or '?')[:10]
+    desc = (it.get('description') or '')[:80]
+    # 🔥 关键过滤：顶级研究机构（Fraunhofer/MIT/Stanford/CNRS/Mila）的项目页匹配度最高
+    print(f'  {full:40s} | {stars:4d}⭐ | push={pushed} | create={created}')
+"
+```
+
+**08-28 实测结果**：1 次查询 = 10 results = 同时确认 KISS-GS（Fraunhofer HHI 官方学术项目页）、AquaFlow（仍无学术仓，只有同名无关项目）、Block3D（仍无学术仓）、CGS-SLAM（仍无，发布第 2 天）。比5次串行查询快 5x + 0 重复 API 配额消耗。
+
+**判定规则**（论文→代码落地）：
+- ✅ **真学术项目落地** = `owner` 是顶级研究机构（Fraunhofer/MIT/Stanford/CNRS/Mila/ETH/CMU/Berkeley 等）+ description 含论文关键词 + `created_at` 早于/接近 arXiv 日期
+- ❌ **同名无关项目** = description 含"sachet/factory/admin/app/web"等商用词 + `created_at` 远晚于 arXiv 日期 → 撞车丢弃
+- ⏳ **未开源** = 学术机构无对应项目 + 商用同名项目全部无关 → 标注"待开源 N 天"
+
+**反例**：
+```bash
+# ❌ 5 个 paper 名各自查询（占满 5/60 rate-limit）
+for paper in AquaFlow Block3D CGS-SLAM KISS-GS PIVOT; do
+  curl ".../search/repositories?q=$paper+in:name,description"
+done
+
+# ✅ 1 次查询同时拿到 5 个 paper 状态
+curl ".../search/repositories?q=AquaFlow+OR+Block3D+OR+CGS-SLAM+OR+KISS-GS+OR+PIVOT+in:name,description&sort=updated"
+```
+
+**置信度**：🟢 高（08-28 单次验证，节省 4 次 API 调用 + 信息完整）。
+
+### arXiv 子方向主题聚类检测 — 单日 5/5 同主题 = 强信号（2026-08-28 沉淀）
+
+**问题**：现有"学术流水线识别"（08-10）检测**不同方法互补**（生成/批判/修复等环节分工）。但**未检测同一主题集中爆发**——当5篇最新论文全部聚焦"鲁棒性"或"压缩"等单一主题时，这是更强的信号（领域共识比方法互补更明确）。
+
+**08-28 实测**：单日 arXiv 3DGS 新论文5篇全部聚焦"鲁棒性"：
+- CGS-SLAM（多智能体协作）
+- KISS-GS（压缩）
+- CoGeo-GS（场景编辑/移除干扰物）
+- Per-View Gaussian Predictions（训练-free 过滤）
+- PIVOT（多轨迹数据集）
+
+**判定规则**（主题聚类信号）：
+1. 单日 ≥4 篇同子领域论文 **主题相似**（不是流水线互补）= 主题聚类
+2. 与"流水线互补"信号的区别：
+   - 流水线互补：≥3 个**不同方法环节**（生成+批判+修复）
+   - 主题聚类：≥4 个**同一主题不同切入点**（如都做"鲁棒性"，但分别从压缩/过滤/编辑/协作入手）
+3. 满足 → 写入报告"主题聚类信号"+ 单独段落说明主题
+
+**渔芯应用价值**（关键）：
+- 主题聚类比流水线更明确指向"领域共识方向"
+- 渔芯应**优先布局**主题聚类方向（如08-28 5 篇全做 3DGS 鲁棒性 → 渔芯 RAS 应优先做"鲁棒 3DGS 部署"而非"3DGS 生成新模型"）
+- 与 08-25"水下 3DGS 战略级赛道"判定**互补**：赛道 = 跨多论文池的总量 + 主题聚类 = 单日集中爆发的方向
+
+**反例**：
+```
+# ❌ 把主题聚类误判为流水线互补
+5 篇论文全部做"3DGS 鲁棒性" → 误判为"5 件套覆盖 5 个环节"
+→ 错！都是同一主题（鲁棒性）的不同方法切片，不是环节互补
+
+# ✅ 正确判定主题聚类
+5 篇全部聚焦"鲁棒性" → 标注"主题聚类信号：3DGS 鲁棒性进入学术共识阶段"
+```
+
+**置信度**：🟢 中高（08-28 单个样本验证，需要更多领域扩展验证阈值普适性）。
+
+### ETA 反超预判的误差带校准 — 当 surge rate 下降时 ETA 应放宽（2026-08-28 沉淀）
+
+**问题**：08-27 报告预测 img2threejs "1.5 天内反超 Hunyuan3D-2"——**实际 08-28 还没反超，ETA 实际 ~3 天**。原因：surge rate 从 +377/day（08-27 单日）降到 +158/day（08-28 单日）。
+
+**修复协议**（预测反超/追赶时间时）：
+1. ❌ **不要**用单一 24h 增速 × 剩余差距 → 严重低估 ETA
+2. ✅ **强制**：取**最近 3 天平均增速**（去掉 surge spike 的极端值）
+3. ✅ **报 ETA 时给出误差带**：实际 ETA = 剩余差距 / 3 天平均增速 × [1.5x, 2.5x]（保守区间）
+4. **原因**：爆发期单日数据**不稳**，2 天后增速衰减 50% 是常态
+
+**08-27 → 08-28 校准实例**：
+```
+08-27 数据：img2threejs +377/day（08-26 → 08-27 单日），Hunyuan3D-2 +100/day
+预测：差距 529⭐ ÷ (377-100) = 1.9 天
+
+08-28 实测：img2threejs +158/day（仅 08-27 → 08-28），Hunyuan3D-2 +26/day
+实际：差距 397⭐ ÷ (158-26) = 3.0 天（比预测多 60%）
+
+→ 教训：单日 surge rate 不可信，必须用 3 天平均
+```
+
+**置信度**：🟢 高（08-27 → 08-28 一次完整校准验证）。
 
 ### 星数分水岭检测（2026-08-10 沉淀）
 

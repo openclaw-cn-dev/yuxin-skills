@@ -12,11 +12,14 @@ gaming
 gifs
 github
 inference-sh
+llm-agent-poisoning-defense
 mcp
 media
 mlops
 mlops-toolkit
 note-taking
+pit-audit-protocol
+product-distribution
 productivity
 quant
 quant-workflow

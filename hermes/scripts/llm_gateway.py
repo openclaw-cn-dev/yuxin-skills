@@ -134,7 +134,8 @@ BACKENDS = build_backends()
 
 ROUTES = {
     "/anthropic": {"primary": "minimax-anthropic", "fallback": "ds-anthropic"},
-    "/openai": {"primary": "minimax-openai", "fallback": "ds-openai"},
+    # 2026-08-28: /openai 主路由切到 GLM-5.3-Flash（智谱，OpenAI 兼容），MiniMax 转 fallback 保底
+    "/openai": {"primary": "glm-openai", "fallback": "minimax-openai"},
 }
 
 # ─── 状态 ──────────────────────────────────────────────────
