@@ -1,4 +1,4 @@
-model_provider = "custom"
+model_provider = "ZAI"
 model = "glm-5.3"
 model_reasoning_effort = "high"
 disable_response_storage = true
@@ -11,6 +11,13 @@ notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/
 [model_providers.custom]
 name = "zhipu_glm_en"
 base_url = "http://127.0.0.1:15721/v1"
+wire_api = "responses"
+requires_openai_auth = true
+experimental_bearer_token = "<REDACTED>"
+
+[model_providers.ZAI]
+name = "ZAI"
+base_url = "https://open.bigmodel.cn/api/v1"
 wire_api = "responses"
 requires_openai_auth = true
 experimental_bearer_token = "<REDACTED>"
@@ -47,7 +54,7 @@ computerUseAlwaysHidePictureInPicture = true
 followUpQueueMode = "queue"
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-29T05:44:07Z"
+last_updated = "2026-08-29T05:57:19Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
