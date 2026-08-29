@@ -1,17 +1,16 @@
-model_provider = "ZAI"
+model_provider = "custom"
 model = "glm-5.3"
 model_reasoning_effort = "high"
 disable_response_storage = true
 wire_api = "responses"
-model_catalog_json = "/Users/hua/.codex/models.json"
-
-notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+model_catalog_json = "/Users/hua/.codex/cc-switch-model-catalog.json"
 
 [model_providers]
-[model_providers.ZAI]
-name = "ZAI"
-base_url = "https://open.bigmodel.cn/api/v1"
+[model_providers.custom]
+name = "zhipu_glm_en"
+base_url = "http://127.0.0.1:15721/v1"
 wire_api = "responses"
+requires_openai_auth = true
 experimental_bearer_token = "<REDACTED>"
 
 [projects]
@@ -50,22 +49,6 @@ enabled = false
 
 [desktop]
 computerUseAlwaysHidePictureInPicture = true
-followUpQueueMode = "queue"
-
-[marketplaces.openai-bundled]
-last_updated = "2026-08-29T13:26:10Z"
-source_type = "local"
-source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
-
-[plugins."codex-app-tools@openai-bundled"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."visualize@openai-bundled"]
-enabled = true
 
 [features]
 computer_use = false
-js_repl = false
