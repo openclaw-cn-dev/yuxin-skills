@@ -35,6 +35,9 @@ trust_level = "trusted"
 [projects."/Users/hua/Documents/Codex/2026-08-28/thread-01a0482b-b1ee-7ce2-b931-494a4c5510e1"]
 trust_level = "trusted"
 
+[projects."/Users/hua/6-产品研发/渔芯独角兽/18-手语学习与识别"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 2
 
