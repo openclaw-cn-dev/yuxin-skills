@@ -69,7 +69,7 @@ js_repl = false
 memories = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-30T03:25:48Z"
+last_updated = "2026-08-30T11:00:36Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 

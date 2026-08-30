@@ -93,124 +93,46 @@ Codex 当前 `danger-full-access` 仅允许：
 
 ## 当前配置
 
-- **版本**: codex-cli 0.148.0-alpha.15 (ChatGPT.app 内置 · 2026-08-24 巡检更新)
-- **模型**: glm-5.3（智谱 Coding 包月 key；glm-5.3-flash 该 key 无权限，必须用 glm-5.3）
-- **Provider**: ZAI → 直连 `https://open.bigmodel.cn/api/v1`（responses 协议，2026-08-29 实测闭环）
-- **Wire API**: responses (SSE 流式)
-- **沙箱**: danger-full-access (本机开发)
-- **CC Switch**: ⚠️ 华哥登录项，重启自启会重写 config 为 custom+127.0.0.1:15721 代理并删 ZAI 段，巡检时需留意
-- **备用 Provider**: 无（已弃 18888 LLM Gateway，Codex 直连智谱）
+- 以 `~/.codex/config.toml`、`codex --version`、`codex doctor` 和 `codex plugin list` 的实时结果为准。
+- 版本、插件、目录和自动同步快照见 `~/.codex/OPERATIONS.md`。
 
 ## 通用规范
 
-- **语言**：中文为主，代码注释用英文
-- **编码风格**：遵循项目现有风格，不引入新范式
-- **Python**: 4空格缩进 + snake_case + type hints + Google docstring
-- **JS/TS**: 2空格 + camelCase + strict 模式
-- **测试**：关键功能必须写测试，pytest/vitest，测试通过后再提交
-- **提交**：每次提交一个原子变更，<type>(<scope>): <描述>，遵循 Conventional Commits
-- **禁止**: wildcard import, git push --force main, 直推 main, rm -rf
-- **新项目默认路径**: 所有新开发项目默认创建在 `~/6-产品研发/` 下，目录名沿用递增编号（如 `36-老板工作台`），除非用户明确指定其他位置
+- **语言**：中文为主，代码注释用英文。
+- **编码风格**：遵循项目现有风格，不引入新范式。
+- **Python**：4 空格缩进、snake_case、type hints、Google docstring。
+- **JS/TS**：2 空格缩进、camelCase、strict 模式。
+- **测试**：关键功能必须写测试；pytest / vitest 通过后再提交。
+- **提交**：原子变更，遵循 Conventional Commits。
+- **禁止**：wildcard import、force push main、直推 main、`rm -rf`。
+- **新项目默认路径**：`~/6-产品研发/`，沿用递增编号，除非用户明确指定。
 
-## 前端项目铁律 ⚠️
+## 前端项目铁律
 
-**Codex 生成的前端项目严禁直接双击 HTML 打开！**
+- Codex 生成的前端项目不得依赖 `file://` 直接打开。
+- 每个项目必须提供 `npm run dev` 或 `start.sh`，完成后立即告知启动命令。
+- 临时静态预览可运行：
 
-原因：`file://` 协议下浏览器禁止 `document.cookie`、`localStorage`、`fetch` 等 API。
-
-正确做法：
-1. 每个前端项目必须包含启动方式（`npm run dev` 或 `start.sh`）
-2. 生成项目后立即告知用户启动命令
-3. 不要生成"双击 index.html 打开"的说明
-
-快捷启动（任意项目目录下）：
 ```bash
 python3 ~/.hermes/scripts/quick_serve.py [端口]
 ```
 
 ## 编码原则
 
-1. **先理解再动手** — 修改前先阅读相关代码，理解上下文
-2. **最小变更** — 只改需要改的地方，不顺手重构无关代码
-3. **防御性编程** — 边界检查、错误处理、日志记录
-4. **性能意识** — 避免不必要的 I/O、内存分配、网络请求
-5. **安全第一** — 不硬编码密钥，走 Gateway 或环境变量
+1. 先理解再动手。
+2. 最小变更，不顺手重构无关代码。
+3. 防御性编程，处理边界、错误和日志。
+4. 避免不必要的 I/O、内存分配和网络请求。
+5. 不硬编码密钥。
 
-## 项目结构
+## 上下文与记忆
 
-```
-~/
-├── .codex/              # Codex 全局配置和 Skills
-│   ├── config.toml      # 主配置
-│   ├── AGENTS.md        # 本文件
-│   ├── skills/          # Codex Skills（从 Hermes 同步）
-│   └── sessions/        # 会话存档
-├── .hermes/             # Hermes Agent（玉芬维护）
-│   ├── skills/          # 300+ Skills
-│   ├── scripts/         # 运维脚本 + LLM Gateway
-│   └── profiles/        # 6 个同事 Agent
-├── 6-产品研发/           # 公司所有产品项目（新项目默认落地目录）
-│   ├── 23-AI培训教程/    # AI 学习平台（华哥主导）
-│   ├── 02-AquaForge/    # RAS 养殖仿真
-│   ├── 22-出图智能体训练/ # 出图平台
-│   └── ...
-└── .local/bin/codex     # Codex CLI
-```
+- 一个任务一个会话；切换任务时新开 Codex task。
+- 复杂改动先通过 `skill-router` 使用 `context-map` 圈定文件、依赖和测试。
+- Codex 原生记忆只保存稳定偏好、项目约束和长期决策。
+- 跨会话知识优先写入项目文档；确需全局检索时再按需使用 `opencontext`。
+- 不使用 `prompt-repetition` 节省 token。
 
-## 可用工具
+## 运维资料
 
-### Codex 内置
-- **GitHub CLI** (`gh`) — PR 创建、审查、合并
-- **Computer Use** — macOS 桌面自动化
-- **Browser** — 浏览器自动化（Playwright）
-- **LLM 直连** → 智谱 `open.bigmodel.cn/api/v1`（ZAI provider / responses 协议）
-
-### 外部服务
-- **飞书** — 团队沟通、文档协作
-- **火山引擎** — 备用 LLM（doubao-seed-2-0 系列）
-- **GitHub** (openclaw-cn-dev) — 代码托管和 Skills 同步
-
-## 插件（共 9 个 enabled）
-
-已启用插件：
-- **代码类**：build-web-apps, coderabbit, superpowers
-- **设计类**：figma
-- **协作类**：github, linear, sentry
-- **工具类**：codex-app-tools, visualize
-
-说明：
-- `browser` / `chrome` 已从 openai-bundled 市场移除（Codex 0.148 起，缓存残留 26.814 版本）
-- `computer-use` 非插件，是 `[features] computer_use = false` 开关（当前关闭）
-- 文档类（documents/pdf/spreadsheets/presentations/template-creator）依赖 openai-primary-runtime 市场（当前未注册）
-
-## 常用命令
-
-```bash
-# 非交互执行
-codex exec "任务描述" --sandbox danger-full-access
-
-# 交互模式
-codex
-
-# 版本检查
-codex --version && codex doctor
-
-# 插件管理
-codex plugin list
-codex plugin install <name>
-```
-
-## 自动进化
-
-- **每日 2:00** — `~/.hermes/scripts/codex_self_evolution.py` 跑 5 步：版本检查、skills 同步、插件检查、会话清理、GitHub 同步
-- **每小时** — `codex_github_sync.sh` (cron `6dfcbdeac7bf`) 跑轻量增量同步 (`--sync-only`)，只跑 GitHub 同步
-- **GitHub 同步目标**: `openclaw-cn-dev/yuxin-skills` 的 `codex/` 子目录（仿 `claude-code/` 结构）
-  - `codex/AGENTS.md`（全文）
-  - `codex/config.toml`（脱敏：token/secret/bearer 字段值替换为 `<REDACTED>`）
-  - `codex/skills/yuxin-*`（**仅公司专属**，13 个 .md + 1 个目录）
-  - `codex/plugins.json`（cache/data 清单）
-  - `codex/STATUS.md`（自动生成版本快照）
-- **同步缓存**: `/tmp/yuxin-skills-codex-sync/`（pull + 增量 copy + commit + push）
-- **SSH 通道**: 端口 22 直连 `git@github.com`（实测可用，无 token）
-- **失败兜底**: GitHub 同步失败不影响 step 1-5 主流程；写入 `~/.hermes/logs/codex_github_sync.log`
-- **玉芬负责维护**
+- 插件清单、项目结构、自动进化和 GitHub 同步细节见 `~/.codex/OPERATIONS.md`。
