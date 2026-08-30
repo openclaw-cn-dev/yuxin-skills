@@ -1,9 +1,9 @@
 ---
 name: yuxin-code-iron-law
-description: 渔芯科技全公司铁律 — 代码/脚本/工具开发优先经 Claude Code 或 Codex。华哥 2026-08-03 明确，2026-08-14 修正为"优先"而非"必须"：同事不会调用 Claude Code 不应导致不写代码，不会用或失败时直接自写（加 TODO 标注），把活干完优先于工具洁癖。所有 9 个 profile (玉芬+8 同事+community) AGENTS.md 顶部已固化。v1.3 实测双工具链都可用:Claude Code 用 `claude -p --allowedTools "Read,Edit,Write,Glob,Grep"`(代码首选,5/5 任务 100% 成功),Codex 用 `cat /tmp/p.txt | codex exec --skip-git-repo-check -s danger-full-access`(大型 JSON/数据整合首选,2 分 20 秒写 243 行)。两个反模式:无 --allowedTools 卡 300s 超时;缺 -s danger-full-access 报 read-only sandbox。
-version: 1.3
+description: 渔芯科技全公司铁律 — 代码/脚本/工具开发优先经 Claude Code 或 Codex。华哥 2026-08-03 明确，2026-08-14 修正为"优先"而非"必须"：同事不会调用 Claude Code 不应导致不写代码，不会用或失败时直接自写（加 TODO 标注），把活干完优先于工具洁癖。所有 9 个 profile (玉芬+8 同事+community) AGENTS.md 顶部已固化。v1.3 实测双工具链都可用:Claude Code 用 `claude -p --allowedTools "Read,Edit,Write,Glob,Grep"`(代码首选,5/5 任务 100% 成功),Codex 用 `cat /tmp/p.txt | codex exec --skip-git-repo-check -s danger-full-access`(大型 JSON/数据整合首选,2 分 20 秒写 243 行)。两个反模式:无 --allowedTools 卡 300s 超时;缺 -s danger-full-access 报 read-only sandbox。2026-08-29 新增 UI 设计铁律：设计定位四问+主题化架构+六项验收（华哥"UI 开发要提升到设计的层面"）。v1.4(2026-08-29 华哥批准)新增 UI 设计铁律:竞品调研先行 / CSS 变量主题化 / 用户主题选择权 / 六项验收。
+version: 1.4
 created: 2026-08-03
-updated: 2026-08-03
+updated: 2026-08-29
 priority: highest
 ---
 
@@ -14,9 +14,7 @@ priority: highest
 > **范围:9 个 profile 全部遵守(玉芬 default + 8 同事 + community)**
 > **优先级:最高 — 高于任何其他 SOP**
 >
-> ⚠️ **核心精神(2026-08-14 起)**:Claude Code / Codex 是**优先选项,不是硬性门槛**。"不会调用 Claude Code"**绝不是不写代码的理由**。会调就用,不会调或调失败就直接自写(加 TODO 标注),把活干完优先于工具洁癖。
-
----
+> ⚠️ **核心精神(2026-08-14 起)**:Claude Code / Codex 是**优先选项,不是硬性门槛**。"不会调用 Claude Code"**绝不是不写代码的理由**。会调就用,不会调或调失败就直接自写(加 TODO 标注),把活干完优先于工具洁癖。---
 
 ## 🚦 执行前 30 秒决策清单(每次写代码前必走)
 
@@ -177,6 +175,51 @@ cat /tmp/prompt.txt | codex exec --skip-git-repo-check -s danger-full-access
 - `-s danger-full-access` — Codex 默认进 read-only sandbox,这个 flag 让 Codex 可写
 - prompt 必须用 `cat` 管道输入,不要在命令行 `codex exec "..."` 嵌(避免 bash 转义 + 长度限制)
 
+### 陷阱 6（2026-08-30 实测）:`/Users/hua` workdir 的 trust dialog 陷阱导致 `claude -p` 静默挂起
+
+**现象**:在 `/Users/hua` 或其下任何子路径（`/Users/hua/6-产品研发/...` 等）调用 `claude -p "..."`,**进程不退出、日志 0 行、CPU 不消耗、uptime 秒数不增长**。即使加 `--allowedTools` 也无效。
+
+**根因**:`~/.claude.json` 里该路径 `hasTrustDialogAccepted=False`,Claude Code 首轮触发权限审查并等人工确认;沙盒无 stdin,挂死。
+
+**错误日志特征**(只有这一行,极容易忽略):
+```
+Ignoring 265 permissions.allow entries from .claude.json: this workspace has not been trusted.
+Run Claude Code interactively here once and accept the trust dialog
+```
+
+**workdir 选择(已实测可用 vs 不可用)**:
+- ✅ `/Users/hua/Documents/`(trust=True)
+- ✅ `/Users/hua/系统文件夹/Claude/`(trust=True)
+- ❌ `/Users/hua`(trust=False)—— 别用它当 workdir
+- ❌ `/Users/hua/6-产品研发/...`(继承父路径 trust=False)
+
+**修复模式("拷到 trusted 目录再调")**:
+```bash
+mkdir -p /Users/hua/Documents/claude_workdir
+cp /Users/hua/6-.../template.py /Users/hua/Documents/claude_workdir/
+cd /Users/hua/Documents/claude_workdir
+claude -p --allowedTools "Read,Edit,Write,Glob,Grep" -- "$(cat /tmp/prompt.txt)"
+# 完成后产物拷回原路径
+cp /Users/hua/Documents/claude_workdir/*.py /Users/hua/6-.../scripts/
+```
+
+**诊断命令**(快速判断是不是这个坑):
+```bash
+python3 -c "
+import json
+d = json.load(open('/Users/hua/.claude.json'))
+for k, v in d.get('projects', {}).items():
+    if 'hasTrustDialogAccepted' in v:
+        print(f'{k}: trust={v[\"hasTrustDialogAccepted\"]}')"
+# 如果 workdir 路径对应 trust=False → 立即换 workdir
+```
+
+**兜底时机**(铁律实操版):
+- 第 1 次 claude 调用超时 / 0 输出 → 排查 trust dialog / 换 workdir / 简化 prompt
+- 第 2 次仍失败 → **立即自写 + 文件首行 `# TODO(tech-debt): 改由 Claude Code/Codex 重写 — 失败原因: <原因>`**
+- 不要无限等:写脚本 + 跑测试任务 5 分钟必 kill 走兜底(不是网络抖动,是 trust 阻塞或代理排队)
+- 简单读文件任务(< 1KB 输入)30 秒无输出 = 异常
+
 ### 优先级(2026-08-03 实测后修正)
 
 | 方案 | 适用场景 | 推荐度 |
@@ -197,6 +240,18 @@ cat /tmp/prompt.txt | codex exec --skip-git-repo-check -s danger-full-access
 - ❌ 反复重试同一条 `claude -p` 命令(触发 `[Tool loop warning]`)
 
 **完整工作模板 + 实测 reproduction 步骤见**:`references/***SECRET***.md`
+
+---
+
+## 🎨 UI 设计铁律（2026-08-29 新增，华哥定调"UI 开发要提升到设计的层面"）
+
+> 全文见 `~/6-产品研发/公共组件/渔芯项目开发_习惯与准则_铁律.md` 第十八章 + `~/6-产品研发/公共组件/UI调研与设计规范.md`。要点：
+
+1. **设计定位四问**（写 CSS 前强制回答，落盘产品 README）：①什么内容（气质关键词）②什么类型（工具/记录/社交/交易）③什么风格（意象板法：产品像什么实物）④什么配色（必须过文化语境：朱砂=喜庆、素灰=丧仪、金=尊长）。判定：陌生人看截图能猜出产品是什么。
+2. **主题化架构**：颜色全走 CSS 语义变量，禁硬编码；每产品出厂 ≥2 套主题（含深色），生活情感类 ≥6 套（参考：文房·宣纸/清雅蓝/暖砂陶/墨绿禅/胭脂红/青瓷/暗夜）；选择持久化；对比度 ≥0.35 实测。
+3. **UI 交付六项验收**：模糊测试/灰度测试/对比度/主题全切换/零 JS 错误/真机窄屏。
+4. **审美进化**：UI 前必做竞品调研（≥3 个同类）+查 Mobbin；交付后 vision 设计审查意见沉淀进 UI调研与设计规范.md。
+5. **正面首例**：情商助手 38「文房·宣纸」（2026-08-29，vision 审查"设计意图 100% 落地"）。
 
 ---
 
@@ -255,6 +310,27 @@ codex exec "需求: ..." --sandbox danger-full-access
 
 ---
 
+## 🎨 UI 设计铁律(2026-08-29 华哥批准,同日生效)
+
+> **来源**:华哥 2026-08-29 指示(调研先行 / 提高审美 / 多主题给用户选 / 能力进化后列入铁律)。
+> **首例验证**:情商助手 38 六主题上线实测(对比度 0.82-0.86 全过门槛 0.35,vision 审查双主题通过)。
+> **完整规范**:`~/6-产品研发/公共组件/UI调研与设计规范.md`(含竞品调研结论与验收清单)
+
+### 五条铁律(所有产品 UI 开发必须遵守)
+
+1. **竞品调研先行**:新产品 UI 开发前,必须做竞品 UI 调研(同类 ≥3 个产品截图分析)+ 参考 Mobbin 同类 pattern。
+2. **CSS 变量主题化**:所有前端颜色必须走 CSS 变量主题架构,禁止组件内硬编码色值;每个产品出厂 ≥2 套主题(含深色),生活情感类 ≥6 套性格主题。
+3. **用户选择权**:必须给用户配色/风格选择权,选择持久化(localStorage + theme-color 同步)。
+4. **六项验收**:UI 交付前过验收清单(灰度测试 / 对比度 ≥0.35 / 主题切换无破色 / JS 零报错 / 移动端安全区 / 模糊测试主次层级)。
+5. **审美进化机制**:每次 UI 交付后记录 vision 审查意见与修正,沉淀进 UI 规范文档;每季度复扫一次竞品新趋势。
+
+### 适用范围
+
+- ✅ 所有新产品 UI / 重大 UI 改版(渔芯产品 + 社区产品 + 内部工具面向用户的界面)
+- ❌ 不适用:纯内部运维面板的临时调试样式(可事后补主题化,不算违规)
+
+---
+
 ## 配套文件
 
 - **9 份 AGENTS.md**:`/Users/hua/.hermes/profiles/*/AGENTS.md` 顶部都有铁律章节
@@ -263,6 +339,7 @@ codex exec "需求: ..." --sandbox danger-full-access
 - **执行配套 skill**:`yuxin-coding-workflow` — `claude -p --allowedTools` 委派的具体模板 + 验证命令
 - **🆕 Claude Code 实操**:`references/***SECRET***.md` — 5/5 任务成功的完整 prompt 模板 + 验证命令
 - **🆕 Codex CLI 实操**:`references/codex-exec-working-pattern.md` — 2026-08-03 实测 Codex 写 243 行 JSON 整合任务的完整 reproduction
+- **🆕 铁律固化工作流**:`references/***SECRET***.md` — 新增/修改铁律并同步 9 profile 的标准流程(备份约定/插入点/幂等批量补丁/grep 验证),2026-08-29 UI 铁律固化实战验证
 - **❌ 过时参考**:`references/***SECRET***.md` — v1.1 误判 delegate_task 唯一论,已被 v1.2 实测推翻
 
 ---
@@ -275,3 +352,5 @@ codex exec "需求: ..." --sandbox danger-full-access
 | v1.1 | 2026-08-03 | 加 30 秒决策清单 + 5 方案执行表 + 误判"delegate_task 推荐默认" |
 | v1.2 | 2026-08-03 | 🔴 重大修正:实测 5/5 任务证明 `claude -p --allowedTools` 才是默认推荐;反悔 delegate_task 唯一论;加入"5 个小 prompt > 1 个大 prompt"模式;加入 Bash 批准绕过的 2 种方案;越权产物表全部闭环 |
 | **v1.3** | **2026-08-03** | **🔴 重大修正**:实测 Codex CLI 加齐 `--skip-git-repo-check -s danger-full-access` 完全可用(2 分 20 秒写 243 行 iron_law.json),反悔 v1.2 陷阱 5 "Codex 仍不可用" 误判;新增 Codex 优先级 B;新增 references/codex-exec-working-pattern.md |
+| **v1.4** | **2026-08-29** | **🎨 新增 UI 设计铁律**(华哥批准):竞品调研先行 / CSS 变量主题化 / 用户主题选择权 / 六项验收 / 审美进化机制。首例=情商助手 38 六主题。9 份 AGENTS.md 顶部同步追加一行。完整规范见 `~/6-产品研发/公共组件/UI调研与设计规范.md`。固化流程沉淀至 `references/***SECRET***.md` |
+| **v1.4.1** | **2026-08-29** | 新增 `references/***SECRET***.md`(铁律固化 6 步标准流程,含幂等批量补丁脚本与 grep 验证法) |

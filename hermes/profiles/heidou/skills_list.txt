@@ -34,7 +34,9 @@ gifs
 github
 heidou-admin
 heidou-admin-audit-helper
+heidou-compliance-2026
 heidou-cross-profile-skills-pitfall-2026-08-27
+heidou-self-evolve-cron
 heidou-workflow
 hermes-ecosystem-entry.md
 hooked-ux

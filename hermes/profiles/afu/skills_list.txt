@@ -1,4 +1,5 @@
 afu-customer-service
+afu-customer-service-evolution-protocol
 apple
 aquaculture
 autonomous-ai-agents
@@ -54,6 +55,7 @@ predictable-revenue
 product
 product-debugging
 productivity
+quant
 ras-industry-2026
 red-teaming
 refactoring-ui

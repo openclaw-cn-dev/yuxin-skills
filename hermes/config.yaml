@@ -1,6 +1,6 @@
 model:
-  default: GLM-5.3-flash
-  provider: glm
+  default: deepseek-v4-pro
+  provider: deepseek-direct
 providers:
   deepseek-direct:
     api_key: "***"
@@ -397,11 +397,10 @@ approvals:
   mcp_reload_confirm: true
   : true
 command_allowlist:
-- xargs with rm
-- script execution via heredoc
 - script execution via -e/-c flag
+- kill hermes/gateway process (self-termination)
 - delete in root path
-- recursive delete
+- force kill processes
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false

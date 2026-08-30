@@ -117,6 +117,33 @@ Mandatory rules for profile agents:
 - ❌ Never use `~/` or `Path.home()` in scripts that touch the profile tree
 - ❌ Never trust the result of `ls ~/.hermes/...` without absolute-path cross-check
 
+## Profile-Agent Path-Resolution Asymmetry — write succeeds, `~`-prefixed verify returns empty (2026-08-29)
+
+The basic HOME hijack (§ above) says "use absolute paths for both writes and reads". A subtler variant discovered by 黑豆 heidou profile on 2026-08-29: **hermes internal tools (`write_file`, `skill_view`) resolve `~` to the real home `/Users/hua`, but a `terminal`-spawned shell resolves `~` to the sandbox `~/.hermes/profiles/<name>/home/`.** This means:
+
+- `write_file(path="~/.hermes/profiles/heidou/skills/foo.md", content=...)` **succeeds and lands at `/Users/hua/.hermes/profiles/heidou/skills/foo.md`** (correct location)
+- A subsequent `find ~/.hermes/profiles/heidou/ -name "*.md"` from a `terminal` call **returns empty** because the shell parsed `~` to the sandbox home
+- The agent then thinks "the write failed" and risks rewriting — potentially polluting the sandbox home this time
+
+Mandatory rules for profile agents (sharper version):
+
+- ✅ `write_file` / `skill_view` / `patch` calls: `~/.hermes/profiles/<name>/...` is safe (hermes tool layer corrects the path)
+- ✅ `terminal` verification commands: ALWAYS use absolute paths `/Users/hua/.hermes/profiles/<name>/...`
+- ❌ Never `find ~/.hermes/...`, `ls ~/.hermes/...`, `stat ~/.hermes/...` from a terminal call expecting to see profile files
+- ❌ Never re-write a file just because a `~`-prefixed terminal verify returned empty — re-verify with an absolute path first
+- ❌ Never use `Path.home() / ".hermes/profiles/<name>/..."` or `os.path.expanduser("~")` inside a terminal script meant to verify profile files
+
+This is the **third layer** of the HOME hijack defense (layer 1: §4.1-4.3 "write to wrong location"; layer 2: §4.4 "fabricate data for nonexistent path"; layer 3: §4.5 "verify returns false negative, agent rewrites").
+
+Encode the asymmetry in every profile's `AGENTS.md` "写资料前必做" section as a **two-line rule**:
+
+```markdown
+# 写操作用 ~ 安全（hermes 内部校正），terminal 验证用绝对路径
+write_file(path="~/.hermes/profiles/<name>/skills/x.md", ...)  # ✅ OK
+find ~/.hermes/profiles/<name>/ -name "*.md"                   # ❌ 假阴性
+find /Users/hua/.hermes/profiles/<name>/ -name "*.md"          # ✅ OK
+```
+
 This lesson is profile-wide; encode it in every profile's `AGENTS.md` under a "路径自检" section, not just as one-off memory.
 
 ## Profile-Local Skills Don't Auto-Load from Registry (2026-08-24)

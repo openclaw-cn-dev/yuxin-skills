@@ -178,6 +178,8 @@ ls ~/.hermes/skills/*/SKILL.md 2>/dev/null | head -20
 - `references/ras-2026-facts.md` — 2026 RAS 行业六大事实（国标 / 大口黑鲈 / 尾水 / 8/22 宜昌铜鱼政务品牌化 / 8/23 巨头入场 / 5/18 新坝镇实证）+ 客户高频问答标准答案 + 品类适配速查表
 - `references/emotion-deescalation-playbook.md` — 三级情绪应对流程 + 禁忌清单 + 复盘 checklist
 - `references/cron-evolution-playbook.md` — **8/24 毛豆沉淀** Cron 进化模式通用规范：4 维度产出框架 + P0 跟进机制 + 方法论轮换策略 + skills 自检 30 秒 SOP（适用于所有 8 同事 profile 的无任务进化模式）
+- `references/voss-tactic-6-thats-right.md` 🆕 — **2026-08-29 阿福沉淀** Voss 第 6 战术「That's Right vs You're Right」+ 4 步触发流程 + 与战术五强耦合（挖出 Black Swan + 接住 Black Swan = 成交闭环）
+- `references/tianxia-yucun-2026-08-20.md` 🆕 — **2026-08-29 阿福沉淀** RAS 第七信号：天下渔仓 19.6 亿鳜鱼全产业链（A+ 级央媒一手）+ 3 类客服话术模板 + 与渔芯品牌咬合点
 
 ## 待补 references（未来进化方向）
 
