@@ -29,6 +29,9 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/渔芯社区"]
 trust_level = "trusted"
 
+[projects."/Users/hua/Documents/Codex/2026-08-30/wv"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
@@ -55,10 +58,12 @@ CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 [desktop]
 computerUseAlwaysHidePictureInPicture = true
 followUpQueueMode = "queue"
+show-context-window-usage = true
 
 [features]
 computer_use = false
 js_repl = false
+memories = true
 
 [marketplaces.openai-bundled]
 last_updated = "2026-08-30T03:25:48Z"
@@ -93,3 +98,7 @@ enabled = true
 
 [plugins."template-creator@openai-primary-runtime"]
 enabled = true
+
+[memories]
+generate_memories = true
+use_memories = true
