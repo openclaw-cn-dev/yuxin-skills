@@ -77,7 +77,7 @@ source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-08-30T00:56:09Z"
+last_updated = "2026-08-30T16:22:44Z"
 source_type = "local"
 source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
