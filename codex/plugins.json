@@ -1,11 +1,8 @@
 {
-  "scanned_at": "2026-08-30T17:28:06",
+  "scanned_at": "2026-08-30T18:28:27",
   "cache_sources": [
-    "openai-api-curated",
     "openai-bundled",
-    "openai-curated-remote",
-    "openai-primary-runtime",
-    "sisyphuslabs"
+    "openai-primary-runtime"
   ],
   "data_sources": [
     "omo-sisyphuslabs"
