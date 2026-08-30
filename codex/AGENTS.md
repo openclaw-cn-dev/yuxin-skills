@@ -94,12 +94,12 @@ Codex 当前 `danger-full-access` 仅允许：
 ## 当前配置
 
 - **版本**: codex-cli 0.148.0-alpha.15 (ChatGPT.app 内置 · 2026-08-24 巡检更新)
-- **模型**: deepseek-v4-flash / deepseek-v4-pro（时段调度：工作时段 flash / 非工作 pro，2026-08-17 起）
-- **Provider**: deepseek → 直连 `https://api.deepseek.com/`（responses 协议）
+- **模型**: glm-5.3（智谱 Coding 包月 key；glm-5.3-flash 该 key 无权限，必须用 glm-5.3）
+- **Provider**: ZAI → 直连 `https://open.bigmodel.cn/api/v1`（responses 协议，2026-08-29 实测闭环）
 - **Wire API**: responses (SSE 流式)
 - **沙箱**: danger-full-access (本机开发)
-- **CC Switch**: 华哥独立使用 Codex 时自行通过 CC Switch 切模型
-- **备用 Provider**: `custom`(hermes_gateway) → 公司 LLM Gateway `http://127.0.0.1:18888/openai`，当前停用备用
+- **CC Switch**: ⚠️ 华哥登录项，重启自启会重写 config 为 custom+127.0.0.1:15721 代理并删 ZAI 段，巡检时需留意
+- **备用 Provider**: 无（已弃 18888 LLM Gateway，Codex 直连智谱）
 
 ## 通用规范
 
@@ -163,7 +163,7 @@ python3 ~/.hermes/scripts/quick_serve.py [端口]
 - **GitHub CLI** (`gh`) — PR 创建、审查、合并
 - **Computer Use** — macOS 桌面自动化
 - **Browser** — 浏览器自动化（Playwright）
-- **LLM Gateway** (`127.0.0.1:18888`) → DeepSeek V4 Pro（玉芬维护）
+- **LLM 直连** → 智谱 `open.bigmodel.cn/api/v1`（ZAI provider / responses 协议）
 
 ### 外部服务
 - **飞书** — 团队沟通、文档协作

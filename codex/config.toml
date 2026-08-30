@@ -32,6 +32,9 @@ trust_level = "trusted"
 [projects."/Users/hua/Documents/Codex/2026-08-30/wv"]
 trust_level = "trusted"
 
+[projects."/Users/hua/Documents/Codex/2026-08-30/new-chat"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
