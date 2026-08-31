@@ -17,7 +17,7 @@ experimental_bearer_token = "<REDACTED>"
 
 [model_providers.ZAI]
 name = "ZAI"
-base_url = "https://open.bigmodel.cn/api/v1"
+base_url = "http://127.0.0.1:15721/v1"
 wire_api = "responses"
 requires_openai_auth = true
 experimental_bearer_token = "<REDACTED>"
