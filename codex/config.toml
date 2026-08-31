@@ -6,11 +6,13 @@ wire_api = "responses"
 model_catalog_json = "/Users/hua/.codex/cc-switch-model-catalog.json"
 
 notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+sandbox_mode = "danger-full-access"
+approval_policy = "never"
 
 [model_providers]
 [model_providers.custom]
 name = "zhipu_glm"
-base_url = "http://127.0.0.1:15721/v1"
+base_url = "https://open.bigmodel.cn/api/v1"
 wire_api = "responses"
 requires_openai_auth = true
 experimental_bearer_token = "<REDACTED>"
@@ -46,11 +48,11 @@ NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/hua/.codex/plugins/cache/openai
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
 [desktop]
-computerUseAlwaysHidePictureInPicture = true
 followUpQueueMode = "queue"
+computerUseAlwaysHidePictureInPicture = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-31T12:11:37Z"
+last_updated = "2026-08-31T13:24:32Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
@@ -64,5 +66,5 @@ enabled = true
 enabled = true
 
 [features]
-computer_use = false
 js_repl = false
+computer_use = false
