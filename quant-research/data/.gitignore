@@ -1,0 +1,10 @@
+# 量化研究本地缓存 - 不入仓
+# 真实数据走 ~/hermes/data/quant/* (见 README)
+*.csv
+*.parquet
+*.h5
+*.feather
+*.pkl
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
