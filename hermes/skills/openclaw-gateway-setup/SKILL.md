@@ -375,4 +375,5 @@ openclaw daemon status            # gateway health + port listening
 
 - `templates/minimax-m3-batch.json` — drop-in batch JSON for `openclaw config set --batch-file`, ready to copy/paste. Includes the SecretRef + env.vars pairing + gateway.mode.
 - `references/fishing-yu-workflow.md` — 渔芯 2026-06-22 实战记录：完整操作流水 + 6 个踩坑点 + 可复制验证清单 (gateway install + verify path).
+- `references/***SECRET***.md` — **YoooClaw C·ONE 硬件调研**（2026-08-30）：OpenClaw 原生 AI 卡片的规格、读取手机通知的机制（通知栏非数据库、Android/iOS 差异）、以及作为情商助手 + 量化工具载体的战略契合与接入路径。华哥定调的「硬件载体」方向必读。
 - `references/***SECRET***.md` — 渔芯 2026-06-22 config-mode session record (merged from `openclaw-config-setup`): 3 core pitfalls + 3 SecretRef providers + diagnostic table.

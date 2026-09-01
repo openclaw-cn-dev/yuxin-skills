@@ -204,15 +204,60 @@ router = APIRouter(tags=["simulation"])  # ✅ 无 prefix
 app.include_router(simulation.router, prefix="/api/projects")  # → /api/projects/{project_id}/simulation/...
 ```
 
-## 当前开发文件
-- `/Users/hua/6-产品研发/渔芯科技/06-硬件项目开发/backend/app/orchestrators/phase_orchestrator.py`
-- `/Users/hua/6-产品研发/渔芯科技/06-硬件项目开发/backend/app/dispatchers/skill_dispatcher.py`
-- `/Users/hua/6-产品研发/渔芯科技/06-硬件项目开发/backend/app/api/knowledge.py`
-- `/Users/hua/6-产品研发/渔芯科技/06-硬件项目开发/backend/app/api/projects.py`
-- `/Users/hua/6-产品研发/渔芯科技/06-硬件项目开发/backend/app/api/orchestrator.py`
-- `/Users/hua/6-产品研发/渔芯科技/06-硬件项目开发/backend/app/models/domain.py`
-- `/Users/hua/6-产品研发/渔芯科技/06-硬件项目开发/backend/app/services/simulation_service.py` ★ 新增
-- `/Users/hua/6-产品研发/渔芯科技/06-硬件项目开发/backend/app/api/simulation.py`          ★ 新增
+## 当前开发文件（2026-09-01 更新 — v1.1.0 已上线）
+
+**真实路径**：`/Users/hua/6-产品研发/渔芯科技/03-硬件项目开发/`（注意：是 `03-硬件项目开发`，不是 `06-硬件项目开发`）
+
+**Phase 1-7 全实装**：
+- `backend/app/orchestrators/phase_orchestrator.py` (101KB) — phase1~7 全部 `async def run_phaseN` 已就绪
+- `backend/app/api/projects.py` (50KB) — Phase 1-7 REST API + PostgreSQL 持久化
+
+**Phase 6 仿真模块（已实装）**：
+- `backend/app/services/simulation_service.py` (78KB) — 仿真执行引擎 + 8 个 RAS 用例
+- `backend/app/services/fluid_engine.py` (35KB) — 流体力学工程计算（Darcy-Weisbach/Colebrook-White/Ergun/硝化动力学/沉降模型）
+- `backend/app/api/simulation.py` (6KB) — 5 个仿真 API 端点
+- `backend/app/api/fluid_simulation.py` (17KB) — 23 个流体力学计算 REST 端点
+
+**Phase 6 工艺设计 + 生产测试（★ 8月25日新增）**：
+- `backend/app/services/craft_service.py` (737 行) — 工艺设计用例库（焊接/装配/机加工/涂装/质检，5 用例）
+- `backend/app/api/craft.py` (5.5KB) — `/api/projects/{id}/craft/{cases,run,chat,schema}`
+- `backend/app/services/test_service.py` (647 行) — 生产测试用例库（密封/流量/压降/噪声/寿命，5 用例）
+- `backend/app/api/test.py` (5.3KB) — `/api/projects/{id}/test/{cases,run,chat,schema}`
+- ✅ main.py:93-95 已正确挂载：`craft` + `test` router → `/api/projects`
+
+**Phase 6 RAS 专用模块**：
+- `backend/app/services/ras_device_service.py` (33KB) — 32 种 RAS 设备定义 + 26 个 GLB 模型
+- `backend/app/services/ras_bom_service.py` (10KB) — RAS 设备 BOM 生成
+- `backend/app/services/ras_pipeline_service.py` (11KB) — RAS 管道布局（A* 路由 + 切割优化 + CSV BOM）
+- `backend/app/services/ras_knowledge.py` (5KB) — RAS 知识库（89 个文档，9 大分类）
+- `backend/app/api/ras_device.py` / `ras_knowledge.py` / `ras_pipeline.py`
+
+**Phase 4 硬件 CAD Agent**：
+- `backend/app/services/hardware_cad_agent.py` (25KB) — Blueprint 风格硬件设计 Agent
+- `backend/app/services/cad_verification_agent.py` (16KB) — CAD 验证
+
+**Phase 2/3 服务**：
+- `backend/app/services/phase2_service.py` (6KB) — Phase 2 持久化
+- `backend/app/services/idea_service.py` (6KB) — Phase 3 创意生成
+- `backend/app/services/research_service.py` (67KB) — Phase 1 调研引擎
+- `backend/app/services/auto_research_service.py` (23KB) — 自动调研
+
+**Phase 7 商业计划**（v1.0 已上线，2026-08-14 commit eb052a48）：
+- ✅ LTV/CAC=17.2（>>3 生死线）已计算
+- ✅ NRR=125%（>>110% 健康线）已计算
+- ✅ OSM（Objective/Strategy/Milestone）框架实装
+- ✅ P0/P1/P2 路线图生成
+- ✅ 订阅方案（3 档）生成
+- ✅ ChromaDB 知识库沉淀
+- ✅ 目标客户差异化话术（RAS/通用硬件两套）
+
+**BossDesk 模块**（v1.1.0 新增）：
+- `bossdesk/RAS产品研发迭代-LookForge.yxf` — 工作流定义文件
+- `bossdeck/README.md` — BossDesk 工作流上架文档
+
+**CLI 工具**：
+- `start.sh` — 一键启动脚本
+- `CLAUDE.md` — Claude Code 上下文入口（含 API 路由清单）
 
 **仿真算法参考**（`references/simulation-algorithms.md`）：
 覆盖8个RAS仿真用例——原始5个（water_flow/oxygen/temperature/structural/thermal）+ 扩展3个（drum_filter滚筒微滤机/protein_skimmer蛋白质分离器/mbbr移动床反应器）。全部基于简化经验公式，非真实CFD。如需高精度CFD可接入SimScale API（€0.02/核·秒）精校。
@@ -864,15 +909,16 @@ LookForge AI出图模块 = Blueprint能力层 + Three.js 3D展示
 - 输出：Three.js WebGL 3D + BOM + 装配SOP + 电气SVG（无直接工程图PDF）
 - 技术栈：Supabase + Gemini + Next.js + Three.js + React Flow + Vercel + Stripe
 
-**CAD模块当前致命问题（深度审查发现，需修复后才能用）**：
+**CAD模块当前状态（2026-09-01 更新 — v1.1.0 已修复大部分）**：
 
-| 问题 | 文件 | 影响 |
+| 问题 | 旧状态 | v1.1.0 现状 |
 |------|------|------|
-| HardwareCADAgent 从未被任何Phase调用 | `phase_orchestrator.py:39` 实例化后无调用点 | 17KB代码是死代码 |
-| SkillDispatcher 完全Mock | `skill_dispatcher.py` | Phase3技能编排全假 |
-| `NEXT_PUBLIC_API_URL` 硬编码localhost | `docker-compose.yml:91` | 容器内前端访问后端失败 |
-| projects.py 内存存储，重启丢失 | `projects.py:22` | Phase间状态无法持久化 |
-| 6 | ChromaDB 多实例混乱 | backend/data/chroma/ vs app/data/chroma/ | 统一为一个实例 |
+| HardwareCADAgent 从未被任何Phase调用 | 死代码 | ✅ Phase 4 已实装调用（`phase_orchestrator.py:1040 run_phase4`）|
+| SkillDispatcher 完全Mock | Phase3 全假 | ⚠️ 部分实装，LLM-based dispatch（CLAUDE.md Known Limitations）|
+| `NEXT_PUBLIC_API_URL` 硬编码localhost | 容器内前端失败 | ✅ 已修复（docker-compose.yml → http://backend:8000）|
+| projects.py 内存存储，重启丢失 | 状态丢失 | ✅ PostgreSQL 持久化（commit eb052a48）|
+| ChromaDB 多实例混乱 | 两个实例 | ✅ 统一为 docker 服务容器（HTTP 连接）|
+| backend1/未决 | 独立Plan生成引擎 | ⚠️ 仍需决策去留 |
 
 ## Phase2.1 多轮追问引擎（2026-05-07 实现）
 
@@ -955,6 +1001,43 @@ Blueprint.am 的分阶段 Prompt 设计是最佳参考：
 | generateElectrical | 生成电气原理图 |
 
 技术栈参考：Gemini AI + Three.js + React Flow + Supabase
+
+## LookForge v1.1.0 状态总结（2026-09-01 摸底）
+
+**v1.1.0 上线时间**：2026-08-14（commit `eb052a48` — 全面修复至可上线状态）
+
+**完整度（grep 实测）**：
+
+| 维度 | 状态 | 数据 |
+|------|------|------|
+| Phase 1-7 | ✅ 全实装 | 7 个 `async def run_phaseN` |
+| Phase 6 仿真 | ✅ | 5+8 个仿真用例 + 35KB fluid_engine |
+| Phase 6 工艺 | ✅ 8月25日新增 | 5 用例（craft_service.py 737行）|
+| Phase 6 测试 | ✅ 8月25日新增 | 5 用例（test_service.py 647行）|
+| Phase 6 RAS 专用 | ✅ | 32 种设备 + 89 文档 + 26 GLB |
+| Phase 7 商业 | ✅ | LTV/CAC=17.2, NRR=125% |
+| PostgreSQL | ✅ | 持久化上线 |
+| ChromaDB | ✅ | HTTP docker 模式 |
+| 3D 布局 | ✅ | `ras-layout/[id]` 页面（Three.js）|
+| 管道优化 | ✅ | A* 路由 + 切割优化 + CSV BOM |
+
+**BossDesk 工作流**（v1.1.0 新增）：
+- `bossdesk/RAS产品研发迭代-LookForge.yxf` — 工作流定义文件
+- `bossdesk/README.md` — 上架文档
+
+**待办 P0（v1.1.0 后）**：
+1. ⚠️ SkillDispatcher 完全 LLM 化（目前部分实装）
+2. ⚠️ backend1/ Plan 生成引擎去留决策
+3. ⚠️ Patent risk detection（占位符，未连接真实专利 API）
+4. ⚠️ Docker 未启动验证（cron 报告 docker socket 缺失）
+
+**与 maodou-product 旧版 task_hw_05041523_* 对照**：
+- task_hw_05041523_4（工艺设计）→ ✅ 已实装（craft_service.py）
+- task_hw_05041523_5（生产测试）→ ✅ 已实装（test_service.py）
+- task_hw_05041523_6（LookForge 嵌入）→ ✅ 已实装
+- task_hw_05041523_7（差异化流程）→ ✅ 已实装（差异化创新 + RAS 专项）
+
+**所有原 task_hw_05041523 子任务已完成**！下一步是产品推广（种子客户）+ Docker 验证 + Claude Code 优化（华哥铁律）。
 
 详见：`workspace/knowledge/CAD生成技术方案_2026-05-07.md`
 

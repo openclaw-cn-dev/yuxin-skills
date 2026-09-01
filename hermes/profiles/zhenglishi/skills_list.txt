@@ -31,5 +31,6 @@ smart-home
 social-media
 software-development
 yuanbao
+zhenglishi
 zhenglishi-cron-skip-daily-closeout
 zhenglishi-workflow

@@ -4,7 +4,7 @@ description: '渔芯资料收集技能 — 高效搜集行业信息、公司情�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # 渔芯资料收集技能
@@ -110,6 +110,61 @@ curl -sL https://raw.githubusercontent.com/<org>/<repo>/main/README.md | head -2
 
 这样既满足飞书按日期归档，又能在主文件看到完整演进。
 
+**重要**：每一期 cron 都必须检查并 append 到主累积文件。上期漏 append 会在下一期被合并修复（避免历史断裂）。详见 `references/cron-execution-cheatsheet.md` §5。
+
+### Pitfall 7: GitHub Sham-Repository 警惕（2026-08-30 实测）
+GitHub 存在一批"占位/SEO/钓鱼"仓库：README 模板化 + 下载链接指向随机命名的 `.zip`（如 `__tests__/Software-hecastotheism.zip`）+ topics 17 个不相关标签。**典型案例**：`JJZ993/vcad`（0⭐ 但当日推送，疑似 spam）。
+
+**SOP**：下载/clone/fork 前先验证 README 下载链接文件名是否与项目名一致 + topics 是否相关 + 创建时间 < 7 天 + 0 stars/forks = 高风险。
+
+详见 `references/cron-execution-cheatsheet.md` §9。
+
+### Pitfall 9: `hermes send` 与 cron auto-delivery 冲突（**2026-08-30 实测**）
+当 cron task spec 明确写"**用 send_message 发飞书**"，但 cron 已配置 auto-delivery target（如 `feishu:oc_xxx`）：
+- ❌ 直接 `hermes send -t feishu -f /tmp/msg.txt` 会被系统**静默 skip**，回显：
+  ```
+  Skipped send_message to feishu:oc_xxx. This cron job will already
+  auto-deliver its final response to that same target.
+  Put the intended user-facing content in your final response instead.
+  ```
+- ✅ **金标准**：把飞书 DM 汇报直接放在 final response 里（系统自动投递）
+- ❌ 不要瞎试 `target` 拼接、换 chat_id、或加 `--subject`（系统层面拦截，不是格式问题）
+- **判断口诀**：看到 `Skip send_message to <target>` → 立刻确认 auto-delivery target 与你想发的 target 一致 → 一致就写 final response，不一致才需要 `hermes send`
+- **例外**：任务要求"发到**不同**地方"（另一个群/不同 chat）→ 此时 auto-delivery target ≠ 目标 target，`hermes send -t <新 target>` 会**真发**（但 final response 仍会被投递到原 auto-delivery target，二者并存）
+
+详见 `references/cron-execution-cheatsheet.md` §1（玉芬 cron 体系的对应补充）。
+
+### Pitfall 10: GitHub Search API 字段 nullable 守卫（**2026-08-30 实测**）
+`api.github.com/search/repositories` 返回的仓库对象里 `license` 和 `description` 都可以是 `None`（不是空 `{}`）：
+
+```python
+# ❌ 触发 TypeError: 'NoneType' object is not subscriptable
+for r in items:
+    print(r.get('license', {}).get('spdx_id'))   # license=None 时 crash
+    print(r.get('description', '')[:80])         # 也可能 None[:80]
+
+# ✅ 正确写法：显式 None 守卫
+for r in items:
+    lic = r.get('license') or {}
+    spdx = lic.get('spdx_id', 'N/A') if lic else 'N/A'
+    desc = (r.get('description') or '')[:80]
+    print(f"{spdx} | {desc}")
+```
+
+**触发场景**：
+- 0⭐ + 新建仓 → 常无 `license` 字段
+- search 关键词宽泛（如 `vision-to-cad`）→ description 可能是 SEO 占位符或留 None
+- 同名 fork 集合（如多个 `Zero-to-CAD` fork）→ 字段空值比例高
+
+**金标准**：所有 GitHub API 解析，**统一先 `or {}` / `or ''` 守卫，再 `.get(...)` 二次过滤**。批量解析前**先 dry-run 1 个 item** 看字段形状。
+
+### Pitfall 11: 范式跟踪 — vision-to-CAD 头部厂商入场（**2026-08-30**）
+`ADSKAILab/Zero-To-CAD-Qwen3-VL-2B`（arXiv:2604.24479）是 Autodesk AI Lab 官方下场的 vision-to-CAD 模型：多视图图像 → 可执行 CAD 程序，**2B 开源小模型 82.1% / IoU 0.747 超过 GPT-5.2 High (72.2% / 0.485)**。
+
+**鱼芯意义**：不能只看 text-to-cad 一条线，**vision-to-cad 是鱼芯最易落地的场景**（现场拍图/PDF → 自动重建 CAD）。HuggingFace 模型权重公开，可本地推理。
+
+**每次 AI-CAD cron 必查**：ADSKAILab/Zero-To-CAD 模型更新（新版 / 训练数据 / 引用数）。详见 `references/cron-execution-cheatsheet.md` §10。
+
 ## 触发关键词
 
 ### GitHub
@@ -145,9 +200,14 @@ curl -sL 'https://export.arxiv.org/api/query?search_query=all:{关键词}&sortBy
 
 ## Cron 模式汇报陷阱
 
-任务指令里**明确写** "用 send_message 发飞书" → 必须执行 `hermes send -t feishu -f /tmp/msg.txt`。
-任务指令只说 "汇报" / "输出" → 靠 final response auto-delivery，**不调用 send**。
-通用 cron 原则被任务显式指令覆盖。详见 `references/cron-execution-cheatsheet.md` §1。
+任务指令里**明确写** "用 send_message 发飞书" **不等于** 必须调 `hermes send`。
+系统会按 auto-delivery target 是否与你发送的 target 一致决定是否拦截：
+
+- **auto-delivery target == 你要发的 target** → 直接写 final response（系统自动投递），调 `hermes send` 会被 skip（见 Pitfall 9）
+- **auto-delivery target ≠ 你要发的 target**（如 cron 默认发 DM、任务要求发群）→ `hermes send -t <新 target>` 真发，final response 也会被投递 = **双投递**
+- **任务说"只汇报/输出"没明确 send** → 靠 final response auto-delivery，**不调用 send**
+
+判断口诀详见 Pitfall 9；详见 `references/cron-execution-cheatsheet.md` §1。
 
 ## 触发关键词
 "调研"、"收集"、"搜索"、"竞品分析"、"行业报告"、"技术资料"、"情报"、"市场数据"、"资料整理"

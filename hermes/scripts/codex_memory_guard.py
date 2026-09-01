@@ -23,9 +23,10 @@ import sys
 CONFIG = "/Users/hua/系统文件夹/Codex/config.toml"
 ZOMBIE_THRESHOLD = 10
 # 线程爆炸熔断(2026-08-29): ChatGPT.app 26.814 有线程锁死 bug——320 线程卡
-# __ulock_wait → 自带看门狗 abort。正常主进程 ~60 线程，>200 即判病态。
-THREAD_THRESHOLD = 200
-RSS_THRESHOLD_MB = 4096
+# __ulock_wait → 自带看门狗 abort。正常主进程 60-220 线程，>400 即判病态
+# (2026-08-31 华哥反馈：旧阈值 200 把健康进程 220 线程/177MB 误杀，主进程被杀导致 Codex 断流，调到 400)
+THREAD_THRESHOLD = 400
+RSS_THRESHOLD_MB = 6144  # 6GB，正常 RSS 200-500MB，爆内存 >4GB 才熔断
 
 
 def chatgpt_bomb() -> list:

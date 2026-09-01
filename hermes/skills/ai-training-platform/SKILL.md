@@ -500,6 +500,30 @@ Every job MUST have: `title`, `company`, `location`, `salary`, `experience`, `ed
 
 See `references/job-database.md` for full schema and example INSERT.
 
+### Multiple DB Locations & Schema Drift (verified 2026-08-31)
+
+There are now MULTIPLE "知渔" SQLite DBs in the repo — always confirm which path the task/cron actually points to before writing (do NOT assume the skill's documented 主目录):
+
+| Path | State |
+|---|---|
+| `/Users/hua/6-产品研发/渔芯独角兽/知渔/db/ai_learning.db` | **fresh/empty** data-only skeleton (created 2026-08-27) — a cron task may point here |
+| `/Users/hua/6-产品研发/渔芯独角兽/00-基本完成/知渔/db/ai_learning.db` | production/reference (56 active jobs, 287 terms, full schema) |
+| `/Users/hua/6-产品研发/ok-KnowHow知渔/db/ai_learning.db` | skill's documented 主目录 |
+
+**Pitfall — the empty target DB may carry a SIMPLIFIED `ai_jobs` schema.** The fresh `知渔/db` table had only `id,title,company,category,salary,location,skills,requirements,term_ids,updated_at` — missing `source`, `status`, `experience`, `education`, `url`, `posted_date`. The task requires `source` (来源) and status tracking (标记新岗位/下线过期岗位), so you MUST migrate the schema before INSERT, never assume it matches production:
+
+```python
+cols = {r[1] for r in cur.execute("PRAGMA table_info(ai_jobs)")}
+missing = [("experience","TEXT DEFAULT ''"), ("education","TEXT DEFAULT '本科及以上'"),
+           ("url","TEXT DEFAULT ''"), ("source","TEXT DEFAULT '公开招聘'"),
+           ("posted_date","TEXT"), ("status","TEXT DEFAULT 'active'")]
+for name, ddl in missing:
+    if name not in cols:
+        cur.execute(f"ALTER TABLE ai_jobs ADD COLUMN {name} {ddl}")
+```
+
+When the table is empty (0 rows), there are no stale jobs to expire — report `expired=0` instead of hunting for old rows. **Canonical reference script**: `00-基本完成/知渔/db/update_ai_jobs_20260817.py` shows the full workflow (backup → INSERT new jobs → expire stale → report). The `terms` table in the production DB has grown to **T287** with new `group_name`s 网络安全(T227–T241) / 爬虫技术(T242–T257) / 网络技术(T258–T287) — always re-verify `term_ids` against the LIVE `terms` table (`SELECT id,name,group_name FROM terms`), never trust memory.
+
 ### Database Corruption Recovery
 
 The `ai_learning.db` SQLite file can become corrupted while the server is running (e.g. `sqlite_autoindex_users_1` index damage). Symptoms: `SELECT` works but `INSERT`/`UPDATE` fails with `sqlite3.DatabaseError: database disk image is malformed`. Integrity check (`PRAGMA integrity_check`) reports specific index corruption.
