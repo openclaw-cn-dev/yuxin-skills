@@ -24,6 +24,9 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/渔芯独角兽/18-手语学习与识别"]
 trust_level = "trusted"
 
+[projects."/Users/hua/Documents/Codex/2026-09-03/new-chat"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
@@ -52,7 +55,7 @@ followUpQueueMode = "queue"
 computerUseAlwaysHidePictureInPicture = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-31T14:39:14Z"
+last_updated = "2026-09-03T06:55:17Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
