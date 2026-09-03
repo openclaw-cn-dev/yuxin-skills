@@ -1,11 +1,11 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-08-21 12:20:49
+> 导出时间: 2026-09-03 12:31:56
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 80
+- Skills: 79
 - Profiles: 10
-- Scripts: 119
+- Scripts: 126
 - Plugins: 1
 
 ## 版本
@@ -29,7 +29,8 @@ Update available: 2659 commits behind — run 'hermes update'
 
 ## Skills 清单
 - ad-creative
-- afu-customer-service-evolution-protocol
+- afu-customer-service
+- afu-self-evolution-protocol
 - agents-md
 - ai-training-platform
 - ai-vision
@@ -39,11 +40,11 @@ Update available: 2659 commits behind — run 'hermes update'
 - autonomous-ai-agents
 - batch-file-renaming
 - browser
-- browser-tts-lecture
 - bugfix
 - byted-supabase
 - cad-automation
 - commit
+- company-law-5y-paid-in-tracker
 - creative
 - data-science
 - devops
@@ -53,7 +54,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - edtech
 - email
 - feeds
-- feishu-voice-assistant
 - fetch
 - find-bugs
 - find-skills
@@ -66,20 +66,20 @@ Update available: 2659 commits behind — run 'hermes update'
 - inference-sh
 - knowledge-base
 - laomo-knowledge
+- maodou-product
 - mcp
 - media
 - memory
 - minimax-fallback-to-ollama
-- minimax-vision
 - mlops
 - module
 - note-taking
-- openalex-aquaculture-paper-search
 - openclaw-gateway-setup
 - pdf
 - pptx
 - product
 - product-debugging
+- product-launch-playbook
 - productivity
 - project-monitoring-boundary
 - ras-news-verification-playbook
@@ -105,6 +105,5 @@ Update available: 2659 commits behind — run 'hermes update'
 - xlsx
 - yuxin-code-iron-law
 - yuxin-coding-workflow
-- yuxin-dashboard-v2-architecture
 - yuxin-self-evolution
 - yuxin-team-management

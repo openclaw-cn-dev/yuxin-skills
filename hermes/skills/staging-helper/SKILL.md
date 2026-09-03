@@ -1,9 +1,9 @@
 ---
 name: staging-helper
-description: 渔芯 Agent 统一资料入站与查询标准 — 玉芬是全公司总负责人(2026-08-03 华哥明确),7 个 agent(毛豆/小宝/老莫/阿福/黑豆/学习助手/宽博士)都是玉芬的执行单元。同事业务结果性报告直接放 ~/rkr_staging/文档库/3-公司项目资料/(工作空间),归档层(1-通用/2-专业/4-360行)走 staging 中转站,所有资料调用走 staging_query.py (RKR API)。触发条件:agent 调研/生成/产出任何 Markdown 资料,或需要从 RKR 知识库调用已入库资料。
-version: 1.4.0
+description: 渔芯 Agent 统一资料入站与查询标准 — 玉芬是全公司总负责人(2026-08-03 华哥明确),7 个 agent(毛豆/小宝/老莫/阿福/黑豆/学习助手/宽博士)都是玉芬的执行单元。同事业务结果性报告直接放 ~/rkr_staging/文档库/3-公司项目资料/(工作空间),归档层(1-通用/2-专业/4-360行)走 staging 中转站,所有资料调用走 staging_query.py (RKR API)。触发条件:agent 调研/生成/产出任何 Markdown 资料,或需要从 RKR 知识库调用已入库资料,**或 agent personal zone 内的 workspace/knowledge/ 与 staging 中转站/RKR 索引路径不一致导致审计脚本误判**,**或 staging_save.py 报 invalid choice 而派单模板用了 quant/maodou/compliance 等非法 source 值**(2026-08-30 黑豆/老莫/小宝/阿福/毛豆 5 同事协作宽博士量化因子库全员踩坑)。
+version: 1.5.0
 author: 玉芬
-tags: [rkr, staging, knowledge-base, 文档中转站, 文档库, agent-标准, 工作空间, 玉芬总负责]
+tags: [rkr, staging, knowledge-base, 文档中转站, 文档库, agent-标准, 工作空间, 玉芬总负责, --source白名单, 派单模板]
 ---
 
 # 渔芯 Agent 统一资料入站与查询标准
@@ -169,21 +169,37 @@ python3 ~/.hermes/scripts/staging_save.py \
   --tag 循环水 \
   --meta "task_id=t-2026-001"
 
-# Python API
+# Python API(⚠️ `agent=` 必须是顶层 kwarg,不能放 meta 里 — 见陷阱 14)
 from staging_save import stage
 stage(
     title="养殖池循环水设计调研",
     content="# ... markdown ...",
     source="research",
-    agent="maodou",
+    agent="maodou",                          # ← 顶层必传,放 meta 里会被静默吞掉
     tags=["养殖池", "循环水"],
 )
 ```
+
+> ⚠️ **常见错误**:把 `agent` 写进 `meta={}` 字典里(`meta={"agent": "maodou", ...}`)。`stage()` 签名里 `agent` 是顶层 kwarg,**写在 meta 里会被静默忽略**,输出 `Agent: default`,文件仍入站但路由失效。详见陷阱 14。
 
 **参数说明**:
 - `--title` (必填): 资料标题
 - `--content` (必填): Markdown 内容(`@file.md` 从文件读)
 - `--source`: research(调研) / generated(生成) / report(报告) / raw(原始) / yuxin(玉芬整理) / findera(寻元)
+
+> ⚠️ **`--source` 是严格白名单**（research/generated/report/raw/yuxin/findera/default，共 7 个固定值）。派单文件 / 协作通知里若写 `--source quant`、`--source maodou` 等**非法值，argparse 会直接拒绝**（`error: argument --source: invalid choice`），任务当场失败。遇到此类派单（2026-08-30 老莫协助宽博士量化因子库实战踩坑）：改用语义最接近的合法值（量化调研 → `research`），并用 `--subdir 07-量化因子` 之类自定义子目录做路由标识，最后在 kanban 评论里记录这一偏差供下游知悉。
+
+**`--source` 合法值精确枚举（必背）**:
+```
+research   # 调研(行业/竞品/学术)
+generated  # 生成(AI 输出/草稿)
+report     # 报告(已完成交付物)
+raw        # 原始数据
+yuxin      # 玉芬整理
+findera    # 寻元采集
+default    # 兜底(不推荐主动用)
+```
+任何不在上表的字符串（如 `quant` / `maodou` / `analysis` / `compliance`）都会被 argparse 拒绝。详见陷阱 15。
 - `--agent`: agent 名字(默认 `$HERMES_AGENT`)
 - `--tag`: 标签(可多次)
 - `--meta`: 额外元数据 `key=value`(可多次)
@@ -337,6 +353,11 @@ STAGING_DIR = Path("/Users/hua/rkr_staging/文档中转站")  # 不要用 Path.h
 
 > 华哥本机是 `/Users/hua`,未来换用户 / 多用户部署时此常量要参数化。
 
+> ⚠️ **2026-08-24 审计复现**:毛豆(08-17)+ 宽博士/量化(08-15)**先后踩同一坑**,都写进了字面量 `~/Desktop/知识库/RAS仿真技术调研/` 目录:
+> - 毛豆:`3-公司项目资料/301-智能体/毛豆-产品交付/workspace/~/Desktop/...`(玉芬已清理,移到 `workspace/RAS仿真技术调研/`)
+> - 宽博士:`1-公共知识/114-项目开发与调研/8-量化研究/~/Desktop/...`(归档层,待宽博士自修)
+> 教训:陷阱 5 的"用绝对路径"SOP 未传达到位,两个 agent 的调研脚本都在用 `~/` 相对路径。**排查方法**:`find ~/rkr_staging/文档库 -type d -name '~'` 可快速定位所有残留字面量 `~` 目录。
+
 ### ⚠️ 陷阱 6: 浏览器缓存可能让你以为有某个 RKR 功能
 
 **症状**:用户说"我看到 RKR 有『技能仓库』模块",但代码里**根本没有** —— 浏览器渲染的是旧 dist / 缓存页面。
@@ -440,6 +461,209 @@ Path("/Users/hua/rkr_staging/文档库/3-公司项目资料/301-智能体/毛豆
 - 写入:直接 `cp` / `mv`(不走 staging)
 - 引用:用相对路径(在文档库内部),或对象存储 URL
 - **不要**试图把这些目录 mirror 到中转站(9.5G 中转站会被塞爆)
+
+### ⚠️ 陷阱 14(2026-08-26 整理师心跳实测):`stage(agent=...)` 必须是顶层 kwarg,**放进 `meta={}` 里会被静默吞掉**
+
+**症状**:调用 `stage()` 后输出 `Agent: default | Source: research`,而不是你期望的 agent 名。文件**确实入站成功**(中转站有文件、.meta.json 写好),但 agent 字段错了 → scanner 后续的路由/分类规则全失效,文件最终落到默认分类。
+
+**根因(staging_save.py 源码)**:
+
+```python
+def stage(
+    title: str,
+    content: str,
+    source: str = "research",
+    agent: Optional[str] = None,   # ← 这是顶层 kwarg
+    tags: Optional[list] = None,
+    subdir: Optional[str] = None,
+    meta: Optional[dict] = None,  # ← agent 写进 meta 字典 = 被忽略
+):
+    if not agent:
+        agent = os.environ.get("HERMES_AGENT", "default")  # ← fallback 到 env var 或 default
+```
+
+`meta` 字典里的 `"agent": "xxx"` 不会回填到顶层 `agent` 参数,也不会被任何代码读出来 → 静默丢失。
+
+**实测复现(2026-08-26 09:01)**:
+
+```python
+# ❌ 错误:agent 写进 meta(静默丢失 → 输出 Agent: default)
+result = stage(
+    title="...",
+    content=...,
+    tags=[...],
+    meta={"agent": "zhenglishi", "scanner_status": "..."},  # ← agent 字段被忽略
+)
+# 输出: ✅ 已入站: ... | Agent: default | Source: research
+
+# ✅ 正确:agent 作为顶层 kwarg(显式传)
+result = stage(
+    title="...",
+    content=...,
+    source="research",
+    agent="zhenglishi",          # ← 顶层 kwarg
+    subdir="01-调研资料",
+    tags=[...],
+    meta={"scanner_status": "..."},  # meta 只放额外元数据,不放 agent
+)
+# 输出: ✅ 已入站: ... | Agent: zhenglishi | Source: research
+```
+
+**防御性写法**(`os.environ` 兜底 + 顶层 kwarg 双保险):
+
+```python
+import os
+os.environ["HERMES_AGENT"] = "zhenglishi"  # 防 cron 启动时没设 env
+from staging_save import stage
+stage(title=..., content=..., source="research", agent="zhenglishi", ...)
+```
+
+**为什么 meta 里还写 agent 字段**:不影响功能(scanner 走顶层 agent),但**方便后续审计/反向追溯**(从 .meta.json 反查当时调用者意图)。保留无害,删除也行。
+
+**与已有陷阱的关系**:
+- 陷阱 13(workspace/knowledge 三路径分离):说的是**落盘路径**问题
+- 陷阱 14(agent 静默丢失):说的是**调用签名**问题
+- 两个都触发"入站成功但行为不对",但前者是文件位置错,后者是文件元数据错
+
+### ⚠️ 陷阱 13: agent personal zone 内的 `workspace/knowledge/` ≠ staging 中转站 ≠ scanner 自动归档目标(2026-08-24 实战)
+
+**症状**:agent 用 `staging_save.py` 写入了一份合同模板 v1.1,scanner 在 60 秒内确实把中转站原文件处理掉了,但**审计脚本 grep 的不是 `3-公司项目资料/301-智能体/<agent>/workspace/knowledge/`**——4 小时后 cron 审计仍报"P0,109 天未修订"。
+
+**根因(三层路径混在一起)**:
+1. **staging 中转站** = `~/rkr_staging/文档中转站/02-生成内容/`(60 秒后被 scanner 自动删)
+2. **scanner 自动归档目标** = `~/rkr_staging/文档库/3-公司项目资料/301-智能体/<agent>/knowledge/`(业务报告的"标准"落地路径)
+3. **agent 个人工作区** = `<profile_home>/workspace/knowledge/` 或 `~/rkr_staging/文档库/3-公司项目资料/301-智能体/<agent>/workspace/knowledge/`(**审计脚本实际访问的路径**——很多合同模板/政策核验脚本 `KNOW_DIR` 都硬编码这里)
+
+**关键事实**:
+- staging_save.py **不保证**把文件 mirror 到 agent 的 `workspace/knowledge/`(它是中转站路径,与 agent personal zone 的 workspace 是两个独立目录)
+- scanner 自动归档到 `3-公司项目资料/301-智能体/<agent>/knowledge/` 也**不保证**同步到 `<agent>/workspace/knowledge/`
+- 审计脚本 `grep -E "关键词" $KNOW_DIR` 通常指向 `workspace/knowledge/`(因为这才是合同模板等"高频访问"资产的真实存放点)
+- **staging 写入 ≠ workspace 归档 ≠ audit 脚本可见**——三步互相独立,缺一不可
+
+**反面案例(2026-08-23 20:33 → 08-24 00:35)**:
+- 20:33 cron `staging_save` 写入项目合作协议 v1.1 到 `02-生成内容/`(✓)
+- 20:33 scanner 处理中转站,自动归档到 `3-公司项目资料/301-智能体/黑豆-行政财务法务/knowledge/`(**可能成功,但路径不同**)
+- 20:33-00:35 之间,审计脚本 grep `<agent>/workspace/knowledge/` 仍显示 v1.0(0 命中,109 天)
+- 00:35 才手动 `cp 02-生成内容/<v1.1>.md <agent>/workspace/knowledge/<v1.1>.md` 兜底
+- **4 小时错配**期间,审计脚本误报"P0 待承接",导致资源错估 + 后续承接优先级判断偏差
+
+**正确做法(写入双路径自检 SOP)**:
+
+```bash
+# 1. staging 写入
+python3 ~/.hermes/scripts/staging_save.py \
+  --title "<标题>" \
+  --content @<file>.md \
+  --source report --agent <自己>
+
+# 2. ⚠️ 必须再 cp 一份到 workspace/knowledge/(若审计脚本 grep 那里)
+cp ~/rkr_staging/文档中转站/02-生成内容/<file>.md \
+   ~/rkr_staging/文档库/3-公司项目资料/301-智能体/<agent>/workspace/knowledge/<file>.md
+
+# 3. ⚠️ 必须再 cp 一份到 3-公司项目资料 knowledge/(若其他 agent 要 RKR 索引)
+cp ~/rkr_staging/文档中转站/02-生成内容/<file>.md \
+   ~/rkr_staging/文档库/3-公司项目资料/301-智能体/<agent>/knowledge/<file>.md
+
+# 4. 双路径落地自检(grep workspace/knowledge/)
+grep -c -E "<关键词>" ~/rkr_staging/文档库/3-公司项目资料/301-智能体/<agent>/workspace/knowledge/<file>.md
+# 输出 > 0 才算真正落地
+
+# 5. 在 evolution report 明确"双路径落地状态"
+# ✅ 02-生成内容 + workspace/knowledge + knowledge 三路径同步
+```
+
+**判断标准**:
+| 落地路径 | 谁读 | 写入方式 |
+|---|---|---|
+| `~/rkr_staging/文档中转站/02-生成内容/` | scanner | `staging_save.py`(60 秒后被删) |
+| `3-公司项目资料/301-智能体/<agent>/knowledge/` | RKR 索引 + 其他 agent | scanner 自动 / 手动 cp |
+| `3-公司项目资料/301-智能体/<agent>/workspace/knowledge/` | **本 agent 审计脚本** | **必须手动 cp** |
+
+**关键纪律**:
+- `staging_save.py` 写入 ≠ agent 可在 workspace 看到
+- agent 写入后,**必须**同时 cp 到 `workspace/knowledge/`(本 agent 审计路径)
+- 如果业务上要让其他 agent 也能搜到,再加 cp 到 `knowledge/`(RKR 索引路径)
+- **进化报告必须明确"双路径/三路径落地状态"**,否则下次 cron 无法判断是否漏归档
+- `workspace/knowledge/` 是 agent personal zone 的子目录,**不是 RKR 归档层**,直接 cp 不违反 `3-公司项目资料/` 工作空间规则
+
+**例外**:如果该 agent 的审计脚本 `KNOW_DIR` 指向 `3-公司项目资料/301-智能体/<agent>/knowledge/`(而非 `workspace/knowledge/`),则 cp 到那一个即可——**先看审计脚本再决定 cp 哪个**。
+
+### ⚠️ 陷阱 15: `--source` 非法值踩坑 + 派单模板示例错误(2026-08-30 黑豆 / 老莫 / 小宝 / 阿福 / 毛豆 5 同事协作实测)
+
+**症状**:跑 `python3 ~/.hermes/scripts/staging_save.py --source quant --agent heidou` 直接报错:
+```
+usage: staging_save.py [-h] --title TITLE [--content CONTENT]
+                       [--source {research,generated,report,raw,yuxin,findera,default}]
+staging_save.py: error: argument --source: invalid choice: 'quant' (choose from 'research', 'generated', 'report', 'raw', 'yuxin', 'findera', 'default')
+```
+
+**根因**:staging_save.py v1.x 的 `--source` 是 **argparse choices 白名单**,任何不在 7 个合法值内的字符串直接被 argparse 拒绝,**没有 fallback**。
+
+**7 个合法值**(必背):
+| 值 | 语义 | 典型场景 |
+|---|---|---|
+| `research` | 调研(行业/竞品/学术) | 量化因子调研、AI 技术综述 |
+| `generated` | 生成(AI 输出/草稿) | AI 自动产出的初稿 |
+| `report` | 报告(已完成交付物) | 项目结项报告、合规报告 |
+| `raw` | 原始数据 | 抓取的 JSON/CSV 等中间产物 |
+| `yuxin` | 玉芬整理 | 玉芬统一的整理/归档资料 |
+| `findera` | 寻元采集 | FindEra 系统产出 |
+| `default` | 兜底 | 不推荐主动用,留作 fallback |
+
+**实战踩坑案例(2026-08-30)**:
+
+5 同事协作宽博士量化因子库任务的派单文件 `~/.hermes/orchestration/messages/<agent>/inbox/task_20260830_量化因子调研.md` **全部写错**:
+```bash
+# ❌ 错误:派单原文
+python3 /Users/hua/.hermes/scripts/staging_save.py \
+  --title "..." --content @<file>.md \
+  --source quant --agent heidou
+# 报错:argument --source: invalid choice: 'quant'
+```
+
+5 个同事(黑豆/老莫/小宝/阿福/毛豆)同时收到此派单 → 5 个 inbox 都含错示例 → 全员踩坑。
+
+**修复方案(三选一)**:
+
+**方案 A(推荐 ✅):改派单示例 + 扩展 staging_save.py 合法 source**
+- 短期:玉芬把 5 份 inbox 派单文件 + `references/agent-rollout-procedure.md` + `templates/task-dispatch-to-agent.md` 里的 `--source quant` 全部改写为 `--source research`(语义最接近)
+- 长期:扩展 staging_save.py `--source choices`,加 `quant / heidou / maodou / afu / xiaobao / laomo / community`(按 agent 名扩展,但要评估对 scanner 路由的影响)
+
+**方案 B(应急,任务执行时):就近 fallback + 记录偏差**
+```bash
+# 把 --source quant 改成 --source research(语义最接近"调研")
+# 加 --subdir 07-量化因子(自定义子目录做路由标识)
+python3 /Users/hua/.hermes/scripts/staging_save.py \
+  --title "财务基本面因子与数据合规_黑豆_20260830" \
+  --content @<file>.md \
+  --source research \
+  --subdir 07-量化因子 \
+  --agent heidou
+
+# 在 kanban task_events 评论里记录偏差:
+# "派单 --source quant 实际不被 staging_save.py 支持(合法值: research/generated/report/raw/yuxin/findera/default), 已自动用 research 入站, --subdir 07-量化因子 做路由"
+```
+
+**方案 C(根治):从 staging_save.py 源码层移除 choices 限制**
+```python
+# staging_save.py 现状(白名单):
+parser.add_argument("--source", choices=["research","generated","report","raw","yuxin","findera","default"])
+
+# 改为(任意字符串都接受,但保留 enum-like 注释):
+parser.add_argument("--source", default="research", help="One of: research/generated/report/raw/yuxin/findera/default/<agent_name>")
+```
+但这会**破坏现有 scanner 的 source 路由逻辑**(scanner 按 source 子目录分类),改前必须先梳理 scanner 路由表。
+
+**关键纪律**:
+- 任何新派单模板/协作通知,**必须先跑一次 staging_save.py --help** 确认 --source 合法值
+- 不要在派单文件里假设 `quant` / `maodou` / `compliance` / `analysis` 等扩展值可用
+- 错值导致的任务失败,务必在 task_events 评论里留 audit trail
+- 派单发送前自检命令:`grep -E "source (quant|maodou|heidou|afu|xiaobao|laomo|community)" <派单文件>` → 输出空 = 安全
+
+**关联陷阱**:
+- 陷阱 13(workspace/knowledge 三路径分离):说的是落盘路径
+- 陷阱 14(stage(agent=...) 必须是顶层 kwarg):说的是调用签名
+- **陷阱 15(--source 非法值踩坑):说的是参数合法性,影响范围最广(全员派单)**
 
 ### ⚠️ 陷阱 12: `304-公司运营/` 16 个子目录里有 4 个空白(`HR/`、`知识产权/`、`财务/`、`销售/`)
 
@@ -586,6 +810,7 @@ cronjob action=list  # 看现有 job
 
 ## References(本目录下)
 
+- `references/***SECRET***.md` — **v1.4.1 新增**:agent personal zone 内 `workspace/knowledge/` 与 staging 中转站、scanner 归档目标的**三路径分离**实战教训 + 强制三路径同步 SOP(2026-08-24 实战:08-23 项目合作 v1.1 漏归档 4h)
 - `references/huage-idea-recording.md` — 华哥想法记录与归档工作流（5要素结构 + staging_save.py --tag 想法 + 飞书回执三段式 + 记忆同步）
 - `references/scanner-architecture.md` — RKR scanner 详细时序、配置来源、故障行为
 - `references/company-certificates-archive.md` — 公司证件(营业执照等)归档位置 + 证件文件真实存放处(微信接收文件,非"素材图片") + 扫描件 pdftoppm→vision 读取技巧(2026-08-13 建立)
@@ -595,7 +820,7 @@ cronjob action=list  # 看现有 job
 - `references/document-library-layout.md` — `~/rkr_staging/` 三层目录树与各子目录职责(2026-08-03 实测)
 - `references/agent-personal-zone.md` — 5 个同事 agent 在 `301-智能体/<name>/` 下的 personal zone 规范
 - `references/agent-rollout-procedure.md` — 5 同事 AGENTS.md 下发流程 + 已知坑 + 各 agent 业务特殊说明(2026-08-03 建立)
-- `references/workspace-relocation-manual-v2.md` — 5 个 agent 工作空间归位操作手册 v2:4 类归位决策(A 保留/B 走中转/C 清理/D 留最新)+ 各 agent 任务清单 + 严禁清单(2026-08-03 玉芬固化,基于 5 个 personal zone 扫描结果)
+- `references/***SECRET***.md` — 5 个 agent 工作空间归位操作手册 v2:4 类归位决策(A 保留/B 走中转/C 清理/D 留最新)+ 各 agent 任务清单 + 严禁清单(2026-08-03 玉芬固化,基于 5 个 personal zone 扫描结果)
 
 ## Templates
 
@@ -608,9 +833,11 @@ cronjob action=list  # 看现有 job
 
 ---
 
-> 🤖 玉芬维护 · 2026-08-03 · v1.3.1
+> 🤖 玉芬维护 · 2026-08-30 · v1.5.0
 > 📌 适用 agent: 玉芬/毛豆/阿福/黑豆/老莫/小宝/整理师/宽博士 + 任何新 agent
-> 🆕 v1.3.1: 微调 — 补 `references/agent-rollout-procedure.md`(5 同事 AGENTS.md 下发流程 + 已知坑);新增 cron `e2052c9b44c8`(工作空间每周审计);新增 `scripts/audit_workspace.py`(审计脚本);新增 `templates/task-dispatch-to-agent.md`(任务派发模板)
+> 🆕 v1.5.0: **新增陷阱 15** — `--source` 非法值踩坑(派单模板示例 `--source quant` 写错导致 5 同事全员踩坑)。提升为编号 pitfall + 7 个合法值精确枚举表 + 三选一修复方案(改派单/应急 fallback/源码层移除 choices)+ 自检命令 `grep -E "source (quant|maodou|heidou|afu|xiaobao|laomo|community)" <派单文件>`。description 加触发条件,让 agent 看到 invalid choice 错误时自动加载本 skill。
+> 🆕 v1.4.1: **新增陷阱 13** —— `agent personal zone 内 workspace/knowledge/` 与 staging 中转站、scanner 归档目标 是**三个独立路径**;staging_save 写入不等于 workspace 可见,审计脚本 grep 的 KNOW_DIR 通常是 workspace/knowledge/,必须手动 cp 兜底。实战案例:08-23 20:33 项目合作 v1.1 staging 写入但 4h 内审计脚本仍报 P0(误判),08-24 00:35 才补 cp。配套"双路径/三路径落地自检 SOP"写入进化报告模板。
+> 🆕 v1.4.0: 微调 — 补 `references/agent-rollout-procedure.md`(5 同事 AGENTS.md 下发流程 + 已知坑);新增 cron `e2052c9b44c8`(工作空间每周审计);新增 `scripts/audit_workspace.py`(审计脚本);新增 `templates/task-dispatch-to-agent.md`(任务派发模板)
 > 🆕 v1.3.0: **关键架构澄清** — `3-公司项目资料/` 是**可写工作空间**(华哥 2026-08-03 明确,留给同事放"结果性报告"),而 `1-通用知识/` `2-专业知识/` `4-360行项目调研/` 仍是 RKR 归档层(只读,新资料走中转站让 scanner 自动入)。v1.0–v1.2 把整个文档库当作只读归档层是误读,现已修正。配套更新:核心心法段、"2 层 + 1 工作空间"架构段、错误 1 / 错误 9 重写、"用户硬性约束"改为"仅适用于归档层"、5 同事 AGENTS.md 全部按 v2 重下发、staging_save.py SOP 拆为 A(业务报告走工作空间)/B(归档资料走中转站)两类。
 > 🆕 v1.2.0: 新增"3 层架构(写/读/个人)"心法 + pitfall 9/10/11/12 + 2 references + 1 template
 > 📝 v1.1.0: 批量迁移 + GitHub 同步 + cron 模式 + 4 个 references

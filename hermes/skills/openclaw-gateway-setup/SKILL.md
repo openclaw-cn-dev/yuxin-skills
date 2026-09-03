@@ -338,7 +338,7 @@ Without `--gateway`, the local CLI path reads `auth-profiles.json` directly and 
 </array>
 ```
 
-The plist doesn't inject env directly — it runs `env-wrapper.sh` first, then sources `ai.openclaw.gateway.env`. That `.env` declares `OPENCLAW_SERVICE_MANAGED_ENV_KEYS=<list>` so OpenClaw knows which keys it owns.
+The plist doesn't inject env directly — it runs `env-wrapper.sh` first, then sources `ai.openclaw.gateway.env`. That `.env` declares `***SECRET***=<list>` so OpenClaw knows which keys it owns.
 
 **User-exported env** (like `export XXX=***` in `~/.zshrc`) gets picked up implicitly when `env.shellEnv.enabled=true` triggers the login shell at startup — this is an **implicit source** that audits often miss. To sever the implicit dependency: set `env.shellEnv.enabled=false` in `openclaw.json`, or move the key entirely into OpenClaw's own `service-env/<label>.env`.
 
@@ -375,4 +375,5 @@ openclaw daemon status            # gateway health + port listening
 
 - `templates/minimax-m3-batch.json` — drop-in batch JSON for `openclaw config set --batch-file`, ready to copy/paste. Includes the SecretRef + env.vars pairing + gateway.mode.
 - `references/fishing-yu-workflow.md` — 渔芯 2026-06-22 实战记录：完整操作流水 + 6 个踩坑点 + 可复制验证清单 (gateway install + verify path).
-- `references/openclaw-config-session-2026-06-22.md` — 渔芯 2026-06-22 config-mode session record (merged from `openclaw-config-setup`): 3 core pitfalls + 3 SecretRef providers + diagnostic table.
+- `references/***SECRET***.md` — **YoooClaw C·ONE 硬件调研**（2026-08-30）：OpenClaw 原生 AI 卡片的规格、读取手机通知的机制（通知栏非数据库、Android/iOS 差异）、以及作为情商助手 + 量化工具载体的战略契合与接入路径。华哥定调的「硬件载体」方向必读。
+- `references/***SECRET***.md` — 渔芯 2026-06-22 config-mode session record (merged from `openclaw-config-setup`): 3 core pitfalls + 3 SecretRef providers + diagnostic table.

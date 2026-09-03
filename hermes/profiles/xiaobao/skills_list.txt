@@ -3,7 +3,6 @@ algorithmic-art
 apple
 aquaculture
 autonomous-ai-agents
-blogwatcher
 blue-ocean-strategy
 brand-guidelines
 canvas-design
@@ -50,6 +49,7 @@ predictable-revenue
 product-debugging
 productivity
 refactoring-ui
+references
 research
 research-collection
 scorecard-marketing
@@ -67,4 +67,5 @@ ux-heuristics
 web-artifacts-builder
 web-typography
 xiaobao-heartbeat
+xiaobao-sales.md
 yuanbao

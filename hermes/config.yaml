@@ -10,7 +10,15 @@ providers:
     api_key_env: MINIMAX_API_KEY
     base_url: https://api.minimaxi.com/anthropic
     model: MiniMax-M3
-fallback_providers: []
+  zhipu-glm:
+    api_key_env: ZHIPUAI_API_KEY
+    base_url: https://open.bigmodel.cn/api/paas/v4
+    model: glm-5.3-flash
+  zhipu-payg:
+    api_key: "***"
+    base_url: https://open.bigmodel.cn/api/paas/v4
+    model: glm-5.3-flash
+fallback_providers: '["zhipu-payg","zhipu-glm","deepseek-direct"]'
 : {}
 toolsets:
 - hermes-cli
@@ -393,18 +401,10 @@ approvals:
   mcp_reload_confirm: true
   : true
 command_allowlist:
-- pipe remote content to shell
-- force kill processes
-- shell command via -c/-lc flag
-- delete in root path
-- SQL DELETE without WHERE
-- script execution via heredoc
-- docker restart/stop/kill (container lifecycle)
-- docker compose restart/stop/kill/down (container lifecycle)
 - kill hermes/gateway process (self-termination)
-- xargs with rm
-- recursive delete
+- stop/restart hermes gateway (kills running agents)
 - script execution via -e/-c flag
+- delete in root path
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false
@@ -509,6 +509,24 @@ FEISHU_APP_ID: "***"
 FEISHU_APP_SECRET: "***"
 replicate:
   token: "***"
+custom_providers:
+- name: glm
+  base_url: https://open.bigmodel.cn/api/anthropic
+  api_key: "***"
+  api_mode: anthropic_messages
+  models:
+    GLM-5.3-flash:
+      name: GLM-5.3-flash
+  model: GLM-5.3-flash
+mcp_servers:
+  lookforge:
+    command: /Users/hua/.hermes/hermes-agent/venv/bin/python3
+    args:
+    - "/Users/hua/Desktop/\u6E14\u82AF\u79D1\u6280/6-\u4EA7\u54C1\u7814\u53D1/02-LookForge/backend/app/mcp/.py"
+    - --token-mode
+    - user_access_token
+    - --oauth
+    enabled: true
 
 # ── Fallback Model ────────────────────────────────────────────────────
 # Automatic provider failover when primary is unavailable.

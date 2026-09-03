@@ -6,7 +6,7 @@ description: |
   或者其他类似"multi-agent 系统的 profiles 散落管理问题"。
   触发条件：用户提到"重新整理 / 集中管理 / 统一视图 / 同事 agent 整理 / 团队管理视图"。
 related_skills:
-  - multi-agent-local-orchestration   # 协作后端（registry / messages / SOP）
+  - ***SECRET***   # 协作后端（registry / messages / SOP）
   - hermes-gateway-profile-ops        # runtime / launchd / plist / LLM 路由
   - multi-agent-team-architecture     # 9-profile 拓扑 / 记忆分层
 ---
@@ -136,7 +136,7 @@ with open('/Users/hua/.hermes/orchestration/registry.yaml') as f:
 # 模板见下方"附录：Python template"
 ```
 
-**坑：写 heredoc 字符串时，`python3 << EOF`（无引号 EOF）会让 bash 先解释 `$var` 和 `~`！必须用 `python3 << 'PYTHON_END'`（带引号）防 bash 注入。** 完整事件回放 + 修复代码 + 反模式表见 `references/2026-08-01-bash-heredoc-readme-pollution.md`。
+**坑：写 heredoc 字符串时，`python3 << EOF`（无引号 EOF）会让 bash 先解释 `$var` 和 `~`！必须用 `python3 << 'PYTHON_END'`（带引号）防 bash 注入。** 完整事件回放 + 修复代码 + 反模式表见 `references/***SECRET***.md`。
 
 ### Step 5：管理脚本
 放 4 个 sh 脚本到 `~/yuxin-team/scripts/`，所有都用 `chmod +x`。
@@ -255,7 +255,7 @@ for a in cfg['agents']:
 
 **恢复后验证**：所有任务 `paused_at → null`，`next_run_at` 显示下次调度时间。
 
-**根因**：8/4 凌晨 00:00 集体暂停，疑为 multi-agent-local-orchestration 改造时误操作。华哥直派的宽博士和学习助手未受影响。
+**根因**：8/4 凌晨 00:00 集体暂停，疑为 ***SECRET*** 改造时误操作。华哥直派的宽博士和学习助手未受影响。
 **整理方式**：华哥授权"按我专家意见处理"
 
 ---
@@ -358,6 +358,9 @@ cronjob action='list' | grep -E '(阿福|小宝|黑豆|老莫|毛豆|宽博|学�
 
 **场景 2（2026-08-08）**：华哥说"软件开发的项目已有了你可以去优化一下，在 6-产品研发"。玉芬花时间搜索后找到 `07-软件项目开发/`。
 **教训**：华哥提到"已有"的东西，优先用 `search_files` 在 `6-产品研发/` 下按编号/关键词搜，不要盲目在外面新建。
+
+**场景 3（2026-08-28）**：华哥买包月套餐后让"加大学习助手调研频率"，玉芬直接把 6 个调研 cron 全部 12h→6h。随后华哥问"学习助手不是项目轮流滚动调研的吗"——玉芬凭任务命名和错峰时间差最初也说不准。取证（jobs.json 结构 + 各任务 output 运行次数 120-124 次齐头并进 + incremental 状态文件各自独立）后确认是**并行制 + 3 分钟错峰**，不是轮换制。
+**教训**：① 对 fleet 任务做批量调整前，先确认真实架构（并行/轮换/依赖链），不要凭命名或印象；② 华哥用"不是 X 的吗"反问架构时，这是核对信号不是纠错信号——先跑证据（jobs.json / output 目录计数 / 状态文件）再回答，证据链反而能让华哥放心。详细架构核实结论见 `multi-cloud-llm-architecture` skill 的「学习助手/宽博士调研 fleet 架构」节。
 
 **通用反模式**：
 - ❌ 听到模糊需求 → 立即执行（按自己理解）
@@ -633,4 +636,4 @@ profile.json + AGENTS.md + .env + memory/ + cron/ + launchd + skills/ + workspac
 
 **恢复后验证**：所有任务 `paused_at → null`，`next_run_at` 显示下次调度时间。
 
-**根因**：8/4 凌晨 00:00 集体暂停，疑为 multi-agent-local-orchestration 改造时误操作。华哥直派的宽博士和学习助手未受影响。
+**根因**：8/4 凌晨 00:00 集体暂停，疑为 ***SECRET*** 改造时误操作。华哥直派的宽博士和学习助手未受影响。

@@ -24,6 +24,7 @@ email
 feeds
 feishu-operations
 freecad-automation
+freecad-cad-generation
 frontend-design
 frontend-ui
 gaming
@@ -42,6 +43,7 @@ ios-hig-design
 knowledge-base
 laomo-knowledge
 lean-startup
+lookforge-jtbd-canvas
 made-to-stick
 maodou-product
 maodou-skill-sync.md
@@ -59,6 +61,7 @@ product-debugging
 productivity
 research
 scorecard-marketing
+seed-customer-scout
 skill-creator
 slack-gif-creator
 smart-home

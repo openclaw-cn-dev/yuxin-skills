@@ -1,2 +1,10 @@
+backup
 jobs.json
+jobs.json.bak.20260828-115950
+jobs.json.bak.20260828-185042
+jobs.json.bak.20260830-额度重启加密
+jobs.json.bak.20260903-恢复正常
+logs
 output
+references
+state
