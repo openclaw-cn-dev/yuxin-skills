@@ -74,7 +74,7 @@ allowed-tools: terminal, file, cron, skills, todo, send_message
 5. 宏观视野（中国经济 / 制造升级 / 出海）
 
 **信息源优先级（2026-08-08 更新）**：
-1. ✅ **delegate_task 子代理调研**（2026-08-08 新增★）→ 并行派发 2-3 个调研子代理（各带 web/search toolsets），产出结构化报告。**实测效果最好**：子代理知识库深厚，即使实时搜索受限也能产出深度分析。比直接 `browser_navigate` 更快（无超时风险），比 `curl` 更丰富。详见 `references/***SECRET***.md`
+1. ✅ **delegate_task 子代理调研**（2026-08-08 新增★）→ 并行派发 2-3 个调研子代理（各带 web/search toolsets），产出结构化报告。**实测效果最好**：子代理知识库深厚，即使实时搜索受限也能产出深度分析。比直接 `browser_navigate` 更快（无超时风险），比 `curl` 更丰富。详见 `references/delegate-task-research-pattern.md`
 2. ✅ **arXiv 学术论文** → 技术前沿、最新算法、benchmark（AI Agent、智慧农业、计算机视觉等主题搜索效果极好）
 3. ✅ **中国政府网（gov.cn）** → 政策/宏观研究首选（首页直接浏览最新要闻和政策解读，不需深链）。实测：首页可获取讲话全文、政策文件库、经济数据速览等一手权威信息。注意 gov.cn 链接常重定向回首页（JS路由），优先用文本搜索框而非点击链接。
 4. ✅ 渔芯产品代码库扫描 → 找产品空白，产出可落地提案
@@ -101,10 +101,7 @@ allowed-tools: terminal, file, cron, skills, todo, send_message
 - 技术前沿类主题优先用 arXiv 搜索，时效性和权威性最高
 - 直接构造 URL 访问：`https://arxiv.org/search/?query=<关键词>&searchtype=all&order=-announced_date_first`
 - 只看 3 个月内的论文，读摘要不读全文
-详细操作指南：见 `references/arxiv-research-technique.md`
-
-**Per-Agent 进化报告变体参考**（毛豆/小宝等同事 agent 路径和模板与玉芬不同）：
-- `references/***SECRET***.md` — 玉芬 vs 毛豆 报告路径/间隔/结构差异 + 毛豆 7 段模板
+- 完整操作指南：见 `references/arxiv-research-technique.md`
 
 **避免：**
 - ❌ 写"行业知识科普"（无渔芯落地的笔记是浪费）
@@ -191,7 +188,7 @@ allowed-tools: terminal, file, cron, skills, todo, send_message
 | `execute_code` | ❌ 拦截（BLOCKED: cron jobs run without user to approve） | 用 `terminal` 单次执行，或拆成多个小步骤 |
 | `memory` tool | ❌ 不可用（"Memory is not available"） | 沉淀到笔记 / 写本地 memory_store L2 |
 | `send_message` | ❌ 自动交付被压制 | 最终响应就是汇报 |
-| `browser_navigate` | ⚠️ 可能慢/超时（Google 60s 超时已验证） | 优先 delegate_task 子代理调研（见 `references/***SECRET***.md`） |
+| `browser_navigate` | ⚠️ 可能慢/超时（Google 60s 超时已验证） | 优先 delegate_task 子代理调研（见 `references/delegate-task-research-pattern.md`） |
 
 **✅ 已验证可用工具（2026-07-16 更新）**：
 - `todo` → 完全可用，适合追踪学习任务进度
@@ -234,26 +231,6 @@ comm -23 /tmp/referenced_skills.txt <(sed 's|^|productivity/|' /tmp/installed_sk
 3. 若该 skill 名是旧的 → 删 cron prompt 中的引用
 
 **关联参考**：`productivity/yuxin-operations/references/patrol-2026-06-23-2004.md` §4。
-
-#### Cron 静默跳过的修复路径（2026-08-24 实测补充）
-
-诊断只是第一步，关键是**怎么修**。三种修法按"侵入性递增"排序：
-
-| 方案 | 命令 | 优点 | 缺点 | 跨 profile? |
-|------|------|------|------|-------------|
-| **1. `hermes curator add-skill --profile`** | `hermes curator add-skill --profile maodou --path ~/.hermes/profiles/maodou/skills/<name>/ --scope profile` | 不复制文件，profile 隔离 | 如果 Hermes 版本不支持 `--profile` 标志则失败 | 否 |
-| **2. 软链接到 L1** | `ln -s ~/.hermes/profiles/maodou/skills/<name> ~/.hermes/skills/<name>` | 一份源文件，profile 隔离仍在 | 如果 L1 和 profile 路径解析冲突，可能导致双注册 | 否 |
-| **3. 复制到 L1 共享池** | `cp -r ~/.hermes/profiles/maodou/skills/<name>/ ~/.hermes/skills/<name>/` | 必成功（registry 加载 L1） | 跨 profile 写入，**需华哥明确授权**（AGENTS.md 铁律） | **是** |
-
-**发现后的处理 SOP**（按优先顺序）：
-
-1. **先确认文件存在**：`ls ~/.hermes/profiles/<profile>/skills/<name>/SKILL.md`
-2. **再确认 registry 加载列表**：`ls ~/.hermes/skills/<name>/SKILL.md`（存在 = 加载，否则 = 不加载）
-3. **如果是 profile 本地 skill 被静默跳过**：默认**不擅自动手修复**（AGENTS.md 铁律），写到下一轮进化报告的"决策请求"段，建议玉芬 / 华哥在 W 复盘时拍板走哪个方案。
-4. **如果是 L1 skill 缺失**：立刻 `hermes curator add-skill --path ...` 修复（不需要跨 profile 授权）。
-5. **不要假设根因**：每次都先 `ls` 验证文件位置，registry 可能因为 L1 / profile / symlink / WIP 多重原因加载失败。
-
-**关键区分**：✅ skill 文件存在 + ❌ registry 加载 = **AGENTS.md 数据漂移问题**（不是 skill 内容问题）。修 skill 没用，要修注册机制。
 
 ## 自进化产物的去向
 

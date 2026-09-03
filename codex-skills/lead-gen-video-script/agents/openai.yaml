@@ -1,0 +1,4 @@
+interface:
+  display_name: "获客型短视频脚本"
+  short_description: "诊断、构建并审核面向高客单业务的精准获客短视频脚本与转化逻辑"
+  default_prompt: "使用 $lead-gen-video-script 诊断我的业务信息，并创作一条能够筛选客户、建立信任和承接转化的短视频脚本。"

@@ -48,13 +48,13 @@ class PPTXSchemaValidator(BaseSchemaValidator):
         if not self.validate_against_xsd():
             all_valid = False
 
-        if not self.***SECRET***():
+        if not self.validate_notes_slide_references():
             all_valid = False
 
         if not self.validate_all_relationship_ids():
             all_valid = False
 
-        if not self.***SECRET***():
+        if not self.validate_no_duplicate_slide_layouts():
             all_valid = False
 
         return all_valid
@@ -130,7 +130,7 @@ class PPTXSchemaValidator(BaseSchemaValidator):
 
                 valid_layout_rids = set()
                 for rel in rels_root.findall(
-                    f".//{{{self.***SECRET***}}}Relationship"
+                    f".//{{{self.PACKAGE_RELATIONSHIPS_NAMESPACE}}}Relationship"
                 ):
                     rel_type = rel.get("Type", "")
                     if "slideLayout" in rel_type:
@@ -140,7 +140,7 @@ class PPTXSchemaValidator(BaseSchemaValidator):
                     f".//{{{self.PRESENTATIONML_NAMESPACE}}}sldLayoutId"
                 ):
                     r_id = sld_layout_id.get(
-                        f"{{{self.***SECRET***}}}id"
+                        f"{{{self.OFFICE_RELATIONSHIPS_NAMESPACE}}}id"
                     )
                     layout_id = sld_layout_id.get("id")
 
@@ -169,7 +169,7 @@ class PPTXSchemaValidator(BaseSchemaValidator):
                 print("PASSED - All slide layout IDs reference valid slide layouts")
             return True
 
-    def ***SECRET***(self):
+    def validate_no_duplicate_slide_layouts(self):
         import lxml.etree
 
         errors = []
@@ -182,7 +182,7 @@ class PPTXSchemaValidator(BaseSchemaValidator):
                 layout_rels = [
                     rel
                     for rel in root.findall(
-                        f".//{{{self.***SECRET***}}}Relationship"
+                        f".//{{{self.PACKAGE_RELATIONSHIPS_NAMESPACE}}}Relationship"
                     )
                     if "slideLayout" in rel.get("Type", "")
                 ]
@@ -207,7 +207,7 @@ class PPTXSchemaValidator(BaseSchemaValidator):
                 print("PASSED - All slides have exactly one slideLayout reference")
             return True
 
-    def ***SECRET***(self):
+    def validate_notes_slide_references(self):
         import lxml.etree
 
         errors = []
@@ -225,7 +225,7 @@ class PPTXSchemaValidator(BaseSchemaValidator):
                 root = lxml.etree.parse(str(rels_file)).getroot()
 
                 for rel in root.findall(
-                    f".//{{{self.***SECRET***}}}Relationship"
+                    f".//{{{self.PACKAGE_RELATIONSHIPS_NAMESPACE}}}Relationship"
                 ):
                     rel_type = rel.get("Type", "")
                     if "notesSlide" in rel_type:

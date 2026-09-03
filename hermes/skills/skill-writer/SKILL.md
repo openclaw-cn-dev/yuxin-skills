@@ -50,7 +50,7 @@ Follow the workflow steps in order. Load only the reference files required for t
 | split independent work into parallel units or votes | `references/workflow-parallel.md` |
 | discover work units dynamically and coordinate worker outputs | `references/workflow-orchestrator-workers.md` |
 | run validate-fix-repeat checks during authoring or execution | `references/workflow-validation-loops.md` |
-| validate a plan before executing a risky action | `references/***SECRET***.md` |
+| validate a plan before executing a risky action | `references/workflow-plan-validate-execute.md` |
 
 ## Claude Code References
 
@@ -67,7 +67,7 @@ Follow the workflow steps in order. Load only the reference files required for t
 | Open when you need to... | Read |
 |--------------------------|------|
 | see the expected depth for a documentation-heavy skill | `references/example-documentation-skill.md` |
-| see the expected depth for a workflow-process skill | `references/***SECRET***.md` |
+| see the expected depth for a workflow-process skill | `references/example-workflow-process-skill.md` |
 | see what a good routed skill looks like | `references/example-router-skill.md` |
 | see what a good subagent-fork skill looks like | `references/example-subagent-fork-skill.md` |
 | see what a good hook-backed skill looks like | `references/example-hook-backed-skill.md` |

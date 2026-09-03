@@ -41,7 +41,7 @@ class DOCXSchemaValidator(BaseSchemaValidator):
         if not self.validate_against_xsd():
             all_valid = False
 
-        if not self.***SECRET***():
+        if not self.validate_whitespace_preservation():
             all_valid = False
 
         if not self.validate_deletions():
@@ -63,7 +63,7 @@ class DOCXSchemaValidator(BaseSchemaValidator):
 
         return all_valid
 
-    def ***SECRET***(self):
+    def validate_whitespace_preservation(self):
         errors = []
 
         for xml_file in self.xml_files:

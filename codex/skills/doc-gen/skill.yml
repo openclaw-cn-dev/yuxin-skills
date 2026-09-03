@@ -1,0 +1,33 @@
+name: doc-gen
+version: 0.1.0
+description: 为仓库生成或更新局部文档摘要。
+adapter:
+  kind: raw
+origin:
+  source: local
+  ref_name: main
+  sha: workspace
+model:
+  provider: ollama
+  name: qwen3:8b
+  max_input_tokens: 1000
+deps: []
+tools:
+  - read_file
+  - write_file
+  - list_dir
+mcp:
+  exposed: true
+  description: 暴露文档生成技能给 MCP 客户端。
+allow:
+  read_paths:
+    - README.md
+    - skills
+    - registry
+    - core
+  write_paths:
+    - README.md
+  net_hosts: []
+eval:
+  fixtures:
+    - README.md

@@ -1,0 +1,29 @@
+name: grep-ts
+version: 0.1.0
+description: 在 TypeScript 代码中执行受限搜索并输出结果摘要。
+adapter:
+  kind: raw
+origin:
+  source: local
+  ref_name: main
+  sha: workspace
+model:
+  provider: ollama
+  name: qwen3:8b
+  max_input_tokens: 800
+deps: []
+tools:
+  - read_file
+  - list_dir
+mcp:
+  exposed: true
+  description: 暴露 TypeScript 搜索技能给 MCP 客户端。
+allow:
+  read_paths:
+    - registry
+    - skills
+  write_paths: []
+  net_hosts: []
+eval:
+  fixtures:
+    - registry/src

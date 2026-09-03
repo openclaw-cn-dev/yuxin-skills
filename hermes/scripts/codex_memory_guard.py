@@ -20,41 +20,8 @@ import re
 import subprocess
 import sys
 
-CONFIG = "/Users/hua/系统文件夹/Codex/config.toml"
+CONFIG = "/Users/hua/.codex/config.toml"
 ZOMBIE_THRESHOLD = 10
-# 线程爆炸熔断(2026-08-29): ChatGPT.app 26.814 有线程锁死 bug——320 线程卡
-# __ulock_wait → 自带看门狗 abort。正常主进程 60-220 线程，>400 即判病态
-# (2026-08-31 华哥反馈：旧阈值 200 把健康进程 220 线程/177MB 误杀，主进程被杀导致 Codex 断流，调到 400)
-THREAD_THRESHOLD = 400
-RSS_THRESHOLD_MB = 6144  # 6GB，正常 RSS 200-500MB，爆内存 >4GB 才熔断
-
-
-def chatgpt_bomb() -> list:
-    """检测 ChatGPT 进程线程数/RSS 爆表。返回需要熔断的描述列表。"""
-    import os
-    bad = []
-    try:
-        out = subprocess.run(
-            ["pgrep", "-f", "ChatGPT.app/Contents/MacOS/ChatGPT"],
-            capture_output=True, text=True, timeout=10,
-        )
-        pids = [l.strip() for l in out.stdout.splitlines() if l.strip()]
-    except Exception:
-        return bad
-    for pid in pids:
-        try:
-            rss_kb = int(
-                subprocess.run(["ps", "-o", "rss=", "-p", pid],
-                               capture_output=True, text=True, timeout=10).stdout.strip()
-            )
-            nthreads = max(0, int(subprocess.run(
-                ["ps", "-M", pid], capture_output=True, text=True, timeout=15
-            ).stdout.count("\n")) - 1)
-        except Exception:
-            continue
-        if nthreads > THREAD_THRESHOLD or rss_kb > RSS_THRESHOLD_MB * 1024:
-            bad.append(f"PID {pid}: {nthreads}线程/{rss_kb//1024}MB")
-    return bad
 
 
 def ensure_config() -> list:
@@ -110,16 +77,6 @@ def main() -> None:
     changed = ensure_config()
     if changed:
         msgs.append("补回配置: " + ", ".join(changed))
-
-    # 线程爆炸熔断: 病态进程先杀，防止拖垮全机
-    bombs = chatgpt_bomb()
-    if bombs:
-        subprocess.run(["pkill", "-9", "-f",
-                        "ChatGPT.app/Contents/MacOS/ChatGPT"], timeout=10)
-        subprocess.run(["pkill", "-9", "-f",
-                        "ChatGPT.app/Contents/Frameworks/Codex Framework"],
-                       timeout=10)
-        msgs.append("💥 熔断杀掉线程/内存爆表的 ChatGPT: " + "; ".join(bombs))
 
     n = zombie_count()
     if n > ZOMBIE_THRESHOLD:

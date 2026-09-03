@@ -1,0 +1,84 @@
+# Codex CLI 0.42 — 接 OpenAI 兼容中转的最小 config 模板
+#
+# 适用:接 minimax / moose / deepseek / 硅基流动 / 任何 OpenAI Chat 协议中转
+# 0.42 关键约束:顶层 `model = "..."` 必须是【字符串】,不能是 [model] name = "..." 子表
+#
+# 用法:
+#   1) 备份原文件: cp ~/.codex/config.toml ~/.codex/config.toml.bak
+#   2) 改下面三处:
+#      - model = "..."  ← 中转侧真实模型名(用控制台"模型广场"列出来的,别用本地叫法)
+#      - [model_providers.xxx] 块里的 name
+#      - base_url (末尾必须带 /v1)
+#      - env_key (专用 env 名,别用 OPENAI_API_KEY,会跟 OpenAI 官方账号冲突)
+#   3) 保留文件里 [mcp_servers.node_repl] / [plugins."browser@openai-bundled"] 等 GUI 段
+#      (Codex 桌面 GUI 启动时拉 MCP,删了桌面会报连不上)
+#   4) 设 key 到 User 级 env(新开 cmd 才生效):
+#      powershell -Command "[Environment]::SetEnvironmentVariable('MINIMAX_API_KEY','你的sk','User')"
+
+# ---- 顶层 model 必须是字符串(0.42 强制) ----
+model_provider = "minimax"
+model = "MiniMax-M3"   # ← 改成中转侧真实名,不要用本地叫法
+
+# ---- provider 预设块 ----
+[model_providers.minimax]
+name = "MiniMax 中转"           # 报错时显示用
+base_url = "https://api.minimaxi.com/v1"   # 末尾必须带 /v1
+env_key = "MINIMAX_API_KEY"      # 引用哪个 env,专用名,不用 OPENAI_API_KEY
+wire_api = "chat"                # OpenAI Chat Completions 协议(中转站都吃这个)
+requires_openai_auth = false     # 跳过 OpenAI 官方登录
+
+# ============================================================
+# 下面这些是 Codex 桌面 GUI 用的段(CLI 不读,但删了桌面会报错)
+# 复制本模板时,把你 ~/.codex/config.toml 里这些段保留/追加到下面
+# ============================================================
+# [plugins."browser@openai-bundled"]
+# enabled = true
+#
+# [mcp_servers.node_repl]
+# args = []
+# command = 'C:\Users\Administrator\AppData\Local\OpenAI\Codex\runtimes\cua_node\xxx\bin\node_repl.exe'
+# startup_timeout_sec = 120
+# [mcp_servers.node_repl.env]
+# ... 各种 NODE_REPL_* env
+# ============================================================
+
+# ============================================================
+# 三家已验证预设(直接复制对应 [model_providers] 块)
+# ============================================================
+
+# ---- MiniMax (minimaxi.com) — 实测 model 名 MiniMax-M3 真存在 ----
+# [model_providers.minimax]
+# name = "MiniMax 中转"
+# base_url = "https://api.minimaxi.com/v1"
+# env_key = "MINIMAX_API_KEY"
+# wire_api = "chat"
+# requires_openai_auth = false
+
+# ---- Moose (moosecloud.cc) ----
+# [model_providers.moose]
+# name = "Moose 中转"
+# base_url = "https://moosecloud.cc/v1"
+# env_key = "MOOSE_API_KEY"
+# wire_api = "chat"
+# requires_openai_auth = false
+
+# ---- DeepSeek (deepseek.com) ----
+# [model_providers.deepseek]
+# name = "DeepSeek 官方"
+# base_url = "https://api.deepseek.com/v1"
+# env_key = "DEEPSEEK_API_KEY"
+# wire_api = "chat"
+# requires_openai_auth = false
+
+# ============================================================
+# 常见错(全是 0.42 真踩过的)
+# ============================================================
+# | 现象 | 修法 |
+# |---|---|
+# | `invalid type: map, expected a string in 'model'` | 顶层 model 必须是字符串,不能写 [model] name="..." 子表 |
+# | `unknown variant 'openai-chat', expected 'responses'` | wire_api 写错,0.42 用 "chat",0.138+ 才用 "responses" |
+# | `wire_api = "chat" is no longer supported` | 装错版本,降到 @openai/codex@0.42.0 |
+# | `401 Unauthorized` | env 没设 / 还没新开 cmd / key 错 |
+# | `404 Not Found` | base_url 末尾漏 /v1,或模型名拼错 |
+# | `model not found` | 用本地叫法当 API 名传了,去控制台"模型广场"查真实名 |
+# | CLI 起来一堆 `ERROR codex_core::mcp_connection_manager` | GUI 段残留,不影响 API 调用,忽略 |

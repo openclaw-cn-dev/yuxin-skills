@@ -84,8 +84,8 @@ class RedliningValidator:
                 print(f"FAILED - Error parsing XML files: {e}")
                 return False
 
-            self.***SECRET***(original_root)
-            self.***SECRET***(modified_root)
+            self._remove_author_tracked_changes(original_root)
+            self._remove_author_tracked_changes(modified_root)
 
             modified_text = self._extract_text_content(modified_root)
             original_text = self._extract_text_content(original_root)
@@ -195,7 +195,7 @@ class RedliningValidator:
 
         return None
 
-    def ***SECRET***(self, root):
+    def _remove_author_tracked_changes(self, root):
         ins_tag = f"{{{self.namespaces['w']}}}ins"
         del_tag = f"{{{self.namespaces['w']}}}del"
         author_attr = f"{{{self.namespaces['w']}}}author"

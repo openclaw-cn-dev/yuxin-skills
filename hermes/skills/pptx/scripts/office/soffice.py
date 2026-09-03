@@ -105,7 +105,7 @@ static void init(void) {
     }
 }
 
-/* ---- socket ***SECRET*** */
+/* ---- socket ---------------------------------------------------------- */
 int socket(int domain, int type, int protocol) {
     if (domain == AF_UNIX) {
         int fd = real_socket(domain, type, protocol);
@@ -130,7 +130,7 @@ int socket(int domain, int type, int protocol) {
     return real_socket(domain, type, protocol);
 }
 
-/* ---- listen ***SECRET*** */
+/* ---- listen ---------------------------------------------------------- */
 int listen(int sockfd, int backlog) {
     if (sockfd >= 0 && sockfd < 1024 && is_shimmed[sockfd]) {
         listener_fd = sockfd;
@@ -139,7 +139,7 @@ int listen(int sockfd, int backlog) {
     return real_listen(sockfd, backlog);
 }
 
-/* ---- accept ***SECRET*** */
+/* ---- accept ---------------------------------------------------------- */
 int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
     if (sockfd >= 0 && sockfd < 1024 && is_shimmed[sockfd]) {
         /* Block until close() writes to the wake pipe. */
@@ -153,7 +153,7 @@ int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
     return real_accept(sockfd, addr, addrlen);
 }
 
-/* ---- close ***SECRET*** */
+/* ---- close ----------------------------------------------------------- */
 int close(int fd) {
     if (fd >= 0 && fd < 1024 && is_shimmed[fd]) {
         int was_listener = (fd == listener_fd);

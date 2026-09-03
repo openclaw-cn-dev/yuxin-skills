@@ -1,4 +1,3 @@
-ai-for-chemistry-paradigm-2026
 apple
 autonomous-ai-agents
 creative
@@ -15,22 +14,18 @@ gifs
 github
 inference-sh
 llm_july_2026_report.md
-maodou-2026-08-28-stall-detector-reference
 mcp
 media
-meta
 minimax-anthropic-compat-401-fix
 mlops
 note-taking
 productivity
 quant-workflow
 red-teaming
-references
 research
 smart-home
 social-media
 software-development
 yuanbao
-zhenglishi
 zhenglishi-cron-skip-daily-closeout
 zhenglishi-workflow

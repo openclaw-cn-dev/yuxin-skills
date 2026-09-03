@@ -44,9 +44,6 @@ EXCLUDE_PREFIXES = [
 ]
 
 def is_excluded(rel_path: str) -> bool:
-    # macOS 元数据噪音文件,不计入审计
-    if rel_path == ".DS_Store" or rel_path.endswith("/.DS_Store"):
-        return True
     return any(rel_path.startswith(prefix) for prefix in EXCLUDE_PREFIXES)
 
 # 扫描

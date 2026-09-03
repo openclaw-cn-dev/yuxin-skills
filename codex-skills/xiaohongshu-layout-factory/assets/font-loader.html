@@ -1,0 +1,36 @@
+<!-- 字体加载：国内源优先，失败再走外网。禁止只挂 Google Fonts CDN。
+     顺序：font.im（国内镜像，CSS+字体文件都改写域名）→ loli.net → Google Fonts。
+     实例化时把 q 换成 design tokens 选定的字体。
+     配合 html:not(.fonts-ok) 就绪门 + --virtual-time-budget=15000。
+     本文件随 Skill 独立分发。实例化新 Skill 时复制到新 Skill 的 assets 目录。 -->
+<style>html:not(.fonts-ok) body{visibility:hidden;}</style>
+<script>
+(function () {
+  var q = 'family=LXGW+WenKai+TC&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,600&family=Caveat:wght@400;600&display=swap';
+  var sources = [
+    'https://fonts.font.im/css2?' + q,
+    'https://fonts.loli.net/css2?' + q,
+    'https://fonts.googleapis.com/css2?' + q
+  ];
+  function load(href) {
+    return new Promise(function (resolve, reject) {
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = href;
+      l.onload = function () { resolve(); };
+      l.onerror = function () { reject(new Error(href)); };
+      document.head.appendChild(l);
+    });
+  }
+  function ready() {
+    var p = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    p.then(function () { document.documentElement.classList.add('fonts-ok'); });
+  }
+  (async function () {
+    for (var i = 0; i < sources.length; i++) {
+      try { await load(sources[i]); ready(); return; } catch (e) {}
+    }
+    ready();
+  })();
+})();
+</script>

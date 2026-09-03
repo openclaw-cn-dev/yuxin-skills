@@ -45,9 +45,9 @@ class BaseSchemaValidator:
         "ppt": "ISO-IEC29500-4_2016/pml.xsd",  
         "xl": "ISO-IEC29500-4_2016/sml.xsd",  
         "[Content_Types].xml": "ecma/fouth-edition/opc-contentTypes.xsd",
-        "app.xml": "ISO-IEC29500-4_2016/***SECRET***.xsd",
+        "app.xml": "ISO-IEC29500-4_2016/shared-documentPropertiesExtended.xsd",
         "core.xml": "ecma/fouth-edition/opc-coreProperties.xsd",
-        "custom.xml": "ISO-IEC29500-4_2016/***SECRET***.xsd",
+        "custom.xml": "ISO-IEC29500-4_2016/shared-documentPropertiesCustom.xsd",
         ".rels": "ecma/fouth-edition/opc-relationships.xsd",
         "people.xml": "microsoft/wml-2012.xsd",
         "commentsIds.xml": "microsoft/wml-cid-2016.xsd",
@@ -61,10 +61,10 @@ class BaseSchemaValidator:
     MC_NAMESPACE = "http://schemas.openxmlformats.org/markup-compatibility/2006"
     XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace"
 
-    ***SECRET*** = (
+    PACKAGE_RELATIONSHIPS_NAMESPACE = (
         "http://schemas.openxmlformats.org/package/2006/relationships"
     )
-    ***SECRET*** = (
+    OFFICE_RELATIONSHIPS_NAMESPACE = (
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
     )
     CONTENT_TYPES_NAMESPACE = (
@@ -110,9 +110,9 @@ class BaseSchemaValidator:
         raise NotImplementedError("Subclasses must implement the validate method")
 
     def repair(self) -> int:
-        return self.***SECRET***()
+        return self.repair_whitespace_preservation()
 
-    def ***SECRET***(self) -> int:
+    def repair_whitespace_preservation(self) -> int:
         repairs = 0
 
         for xml_file in self.xml_files:
@@ -323,7 +323,7 @@ class BaseSchemaValidator:
 
                 for rel in rels_root.findall(
                     ".//ns:Relationship",
-                    namespaces={"ns": self.***SECRET***},
+                    namespaces={"ns": self.PACKAGE_RELATIONSHIPS_NAMESPACE},
                 ):
                     target = rel.get("Target")
                     if target and not target.startswith(
@@ -402,7 +402,7 @@ class BaseSchemaValidator:
                 rid_to_type = {}
 
                 for rel in rels_root.findall(
-                    f".//{{{self.***SECRET***}}}Relationship"
+                    f".//{{{self.PACKAGE_RELATIONSHIPS_NAMESPACE}}}Relationship"
                 ):
                     rid = rel.get("Id")
                     rel_type = rel.get("Type", "")
@@ -420,7 +420,7 @@ class BaseSchemaValidator:
 
                 xml_root = lxml.etree.parse(str(xml_file)).getroot()
 
-                r_ns = self.***SECRET***
+                r_ns = self.OFFICE_RELATIONSHIPS_NAMESPACE
                 rid_attrs_to_check = ["id", "embed", "link"]
                 for elem in xml_root.iter():
                     for attr_name in rid_attrs_to_check:
@@ -439,7 +439,7 @@ class BaseSchemaValidator:
                                 f"(valid IDs: {', '.join(sorted(rid_to_type.keys())[:5])}{'...' if len(rid_to_type) > 5 else ''})"
                             )
                         elif attr_name == "id" and self.ELEMENT_RELATIONSHIP_TYPES:
-                            expected_type = self.***SECRET***(
+                            expected_type = self._get_expected_relationship_type(
                                 elem_name
                             )
                             if expected_type:
@@ -466,7 +466,7 @@ class BaseSchemaValidator:
                 print("PASSED - All relationship ID references are valid")
             return True
 
-    def ***SECRET***(self, element_name):
+    def _get_expected_relationship_type(self, element_name):
         elem_lower = element_name.lower()
 
         if elem_lower in self.ELEMENT_RELATIONSHIP_TYPES:
@@ -763,7 +763,7 @@ class BaseSchemaValidator:
             with open(xml_file, "r") as f:
                 xml_doc = lxml.etree.parse(f)
 
-            xml_doc, _ = self.***SECRET***(xml_doc)
+            xml_doc, _ = self._remove_template_tags_from_text_nodes(xml_doc)
             xml_doc = self._preprocess_for_mc_ignorable(xml_doc)
 
             relative_path = xml_file.relative_to(base_path)
@@ -811,7 +811,7 @@ class BaseSchemaValidator:
             )
             return errors if errors else set()
 
-    def ***SECRET***(self, xml_doc):
+    def _remove_template_tags_from_text_nodes(self, xml_doc):
         warnings = []
         template_pattern = re.compile(r"\{\{[^}]*\}\}")
 

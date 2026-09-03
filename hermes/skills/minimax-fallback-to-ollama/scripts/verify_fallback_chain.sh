@@ -51,8 +51,8 @@ check "L4 custom_providers ollama entry" \
 
 # L5: Hermes fallback 解析代码就位
 check "L5 Hermes fallback 解析代码" \
-  "grep ***SECRET*** ~/.hermes/hermes-agent/gateway/run.py" \
-  "***SECRET***"
+  "grep _try_resolve_fallback_provider ~/.hermes/hermes-agent/gateway/run.py" \
+  "_try_resolve_fallback_provider"
 
 echo ""
 echo "════════════════════════════════════════════════════════"

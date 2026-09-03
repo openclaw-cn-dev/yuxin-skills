@@ -4,17 +4,13 @@ description: '老莫（知识库+测试）核心技能集 — 文档协作、产
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.37.1"
+  version: "1.33.0"
 ---
 
 # 老莫知识库核心技能
 
 ## 职责定位
 老莫负责渔芯知识库建设与维护、产品测试、学术资料收集。
-
-> **心跳任务处理（cron）工作流**：heartbeat_check.py 三源任务架构、blocked 任务 silent round 处理、[SILENT] 汇报约定详见 `references/heartbeat-workflow.md`。
-
-> **量化因子挖掘（协助宽博士）任务族**：华哥多轮派发的 P0 量化策略挖掘（R1 因子动物园 → R2 多因子模型 → R3 组合策略），交付物位置（workspace + 07-量化因子）、kanban.db 任务更新规范、cron 执行陷阱详见 `references/quant-factor-mining-series.md`。
 
 ## 公司两大品牌版块（知识库建设必须对齐）
 
@@ -298,7 +294,7 @@ OpenAlex 偶尔返回 Figshare 仓库（DOI 前缀 `10.6084/m9.figshare.*`）或
 
 **判定规则**：2 个强信号都命中 → DUP 跳过，**不写入 known_dois.txt**。
 
-> 📁 `references/datacite-dup-detection.md`
+> 📁 详细鉴别流程 + R16/R24 双实战案例 + 鉴别脚本见 `references/datacite-dup-detection.md`
 > 📁 Zenodo 同关键词 DUP 鉴别代码（R24 沉淀）见 `scripts/zenodo-dup-detector.py`
 
 > 🔧 鉴别脚本：`scripts/figshare-dedup-detector.py`（R16 沉淀 — 输入 OpenAlex work dict + 主论文候选列表，自动返回 `is_dup: true/false`）
@@ -539,13 +535,12 @@ KDOI = set(Path("/tmp/laomo_known_dois.txt").read_text().strip().split("\n"))
 - 每次新论文归档时 append 到 `/tmp/laomo_known_dois.txt`，避免下轮重复
 - 季度清理（每月 1 日）去除孤儿（30 天内未在检索集出现的 DOI）
 
-> 📁 `references/arxiv-papers-2026-08-10.md`（最新，2026-08-10 R13 双桶策略）、`references/arxiv-papers-2026-07-31.md`、`references/arxiv-papers-2026-07-30.md`、`references/arxiv-papers-2026-07-26.md`
-> 📁 `references/ssrn-preprint-handling.md` — **SSRN 预印本 DOI 处理模式（R39 首次实证）**：与 Zenodo/Figshare 的 DataCite 模式不同，SSRN 是 Elsevier BV + Crossref 已注册，预印本标 P2 降级。包含 R39 `10.2139/ssrn.7323044` 实证案例
-> 🔧 可重用脚本：`scripts/openalex-ras-search.py`、`scripts/crossref-batch-verify.py`、`scripts/pgvector-health-check.py`、`scripts/laomo-evolution-dedup.py`、`scripts/figshare-dedup-detector.py`
-
+> 📁 论文发现记录见 `references/arxiv-papers-2026-08-10.md`（最新，2026-08-10 R13 双桶策略）、`references/arxiv-papers-2026-07-31.md`、`references/arxiv-papers-2026-07-30.md`、`references/arxiv-papers-2026-07-26.md`
+> 🔧 可重用脚本：`scripts/openalex-ras-search.py`（双桶策略 + 双条件过滤 + None 防御）、`scripts/crossref-batch-verify.py`（Top N 批量验证）、`scripts/pgvector-health-check.py`（直连 PostgreSQL 知识库 健康检查，绕过 RKR token 过期）、`scripts/laomo-evolution-dedup.py`（R15 新增 — known_dois.txt 原子写入 + 报告自洽校验，消除"报告/实际漂移"）、`scripts/figshare-dedup-detector.py`（R16 新增 — Figshare 数据集 DUP 2 强信号鉴别，type=other + 作者列表完全一致）
+> 📁 跨日 DOI 去重模式（2026-07-31 12:00 验证）见 `references/openalex-cross-day-dedupe.md`
 > 📁 OpenAlex 搜索精炼技巧 + 4 步饱和诊断法（2026-08-01 20:30 验证）见 `references/openalex-search-refinements.md`
 > 📁 known_dois.txt 写入契约 + 报告自洽校验模式（2026-08-10 R15 沉淀）见 §3.6
-> 📁 OpenAlex 饱和收尾决策法（2026-08-14 R21）见 `references/openalex-saturation-endgame.md` + **R36 Niche V1→V4** 见 `references/r36-niche-direction-rotation.md`
+> 📁 OpenAlex 饱和收尾决策法（2026-08-14 R21 沉淀 — 阶段 5「API 健康但净增饱和」）见 `references/openalex-saturation-endgame.md`
 
 **建议检索关键词（按优先级排序）：**
 - `"smart aquaculture" OR "intelligent fishery"`
@@ -916,11 +911,11 @@ for label, url in [("high_impact", url_high_impact), ("fresh", url_fresh)]:
 
 ### 3.5.12 反向校验方法论（R30 验证，3轮→23篇入 known_dois.txt）
 
-📁 `references/***SECRET***.md`
+R30 突破：单轮 23 篇入 known_dois.txt（R22-R29 平均 4 篇的 5.7 倍）。3 轮叠加：Round 1 主搜 + Round 2 反向校验（venue 兜底）+ Round 3 R29 P0 锚点扩展。痛点方向 fwci 4-12 显著高于数字孪生 0-2；错峰窗口 16:00-19:00 三轮 0% 限流。📁 SOP + 论文清单见 `references/r30-reverse-validation-breakthrough.md`
 
-📁 `references/***SECRET***.md` §4
+### 3.5.13 R30 自洽校验「false positive drift」模式
 
-报告用 `[FILTER]`/`~~未入库~~` 显式标记未入库 DOI，但 Python regex 提取时无法识别仍算作漂移。R30 实证 `10.2478/aoas-2025-0105` 标 `[FILTER]` 仍误报。统一标记格式 + exclude_unstored=True 修复。📁 见 `references/***SECRET***.md` §4
+报告用 `[FILTER]`/`~~未入库~~` 显式标记未入库 DOI，但 Python regex 提取时无法识别仍算作漂移。R30 实证 `10.2478/aoas-2025-0105` 标 `[FILTER]` 仍误报。统一标记格式 + exclude_unstored=True 修复。📁 见 `references/r30-reverse-validation-breakthrough.md` §4
 
 **经验法则**（2026-08-10 R14 沉淀）：
 1. **探测查询用 per_page=1**：最小成本确认服务可用性，不触发正式查询的资源消耗
@@ -1030,13 +1025,14 @@ python3 scripts/laomo-evolution-dedup.py \
 # 或:   ✗ DRIFT detected: 5 DOIs in report but missing from file
 ```
 
-> 📁 R36 升级版：Python regex 处理反引号/括号包围的 DOI（避免 R21 bash grep 误报），见 `scripts/report-self-consistency.py`，用法：
+> 📁 **R22 升级版**：Python regex 处理反引号/括号包围的 DOI（避免 R21 bash grep 误报），见 `scripts/report-self-consistency.py`，用法：
 > ```bash
-python3 scripts/report-self-consistency.py \
-    --known-dois-file /Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt \
-    --report-file /Users/hua/.hermes/profiles/laomo/evolution/2026-08-14_R22.md \
-    --new-dois 10.3390/encyclopedia4010023 10.3390/ani14172555
-```
+> python3 scripts/report-self-consistency.py \
+>     --known-dois-file /Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt \
+>     --report-file /Users/hua/.hermes/profiles/laomo/evolution/2026-08-14_R22.md \
+>     --new-dois 10.3390/encyclopedia4010023 10.3390/ani14172555
+> ```
+
 **经验法则（嵌入到 cron workflow）**：
 1. **append 而非 overwrite**：用 `set()` 合并去重，不要直接覆盖（避免误删历史）
 2. **一行一个 DOI，无注释**：方便 grep/comm 校验
@@ -1119,8 +1115,9 @@ def is_relevant(work):
 - 纯养殖研究论文（无 AI）但**对 RAS 仿真参数库有价值**（如氨氮应激生物标志物综述）→ 标 🟡 P2 保留
 - AI 论文但**完全不涉水产**（如通用精准农业 IoT）→ 完全剔除
 
-> 📁 `references/r36-false-positive-filtering.md`
-> 📁 `references/r23-word-boundary-filter.md` + 验证脚本 `scripts/r23-word-boundary-demo.py`
+> 📁 **进阶规则**: §3.5.3.1 摘要级二次校验（防 R22 实证的 OpenAlex concepts 误标）见 `references/r22-false-positive-filtering.md`
+> 📁 **R23 新增**: 单词边界 AI 关键词过滤（防子串误命中如 "antibiotic" → "iot"）见 `references/r23-word-boundary-filter.md` + 验证脚本 `scripts/r23-word-boundary-demo.py`
+
 **⚠️ 双条件过滤的扩词表盲点（2026-08-13 R19 实证，必补）**：
 
 **症状**：R18 用 `AQUACULTURE_KEYWORDS` + `AI_KEYWORDS`（11+14 个词）漏掉了真正的 P0 论文 `10.64898/2026.08.01.742243`（bioRxiv，冷应激预警预印本），标题显式包含 "Aquaculture Nursery Ponds"。
@@ -1164,57 +1161,6 @@ AQUACULTURE_KEYWORDS = [
 **R19 实证数据**：
 - R18 `aqua_kw=10, ai_kw=14` → 漏掉 bioRxiv 冷应激预警
 - R19 扩展为 `aqua_kw=18, ai_kw=21` + 加入 concepts 严格匹配 → 同一关键词组重跑可命中
-
-**🆕 EXCLUDE_KW 排除列表（R45 沉淀 2026-08-31 + R46 验证 2026-09-01）**：
-
-当 STRICT 双条件过滤无法排除的**非 AI 主题污染**（如 HAB 藻华、基因组学、纳米技术），需在双条件过滤之前加 EXCLUDE_KW 层：
-
-```python
-# R45 沉淀（2026-08-31）— 4 篇误命中后归纳的 13 词排除表
-EXCLUDE_KW = [
-    "harmful algal bloom",     # R45：HAB 藻华主题（fwci=33 但非 AI）
-    "phytoplankton",           # R45：HAB 共现词
-    "algal bloom",             # R45：HAB 同义
-    "review",                  # 综述（除非期刊顶级 / 高 fwci）
-    "genomics",                # 基因组学（非 ML）
-    "nanotechnology",          # 纳米技术（非 ML）
-    "rhizobacteria",           # R45：根际细菌（微生物方向）
-    "biocontrol",              # R45：生物防治
-    "metabolomics",            # 代谢组学（非 ML）
-    "proteomics",              # 蛋白质组学（非 ML）
-    "transcriptomic",          # 转录组学（非 ML）
-    "genomic selection",       # 基因组选择（非 ML）
-    "marker-assisted",         # 分子标记辅助（非 ML）
-]
-
-def is_relevant_v2(work):
-    """三层过滤：EXCLUDE_KW → STRICT 双条件 → 摘要/Crossref 验证"""
-    text = " ".join([
-        (work.get("title") or "").lower(),
-        " ".join(c.get("display_name", "").lower()
-                for c in work.get("concepts", [])[:10])
-    ])
-    # 第一层：EXCLUDE_KW 优先过滤
-    if any(kw in text for kw in EXCLUDE_KW):
-        return False, "EXCLUDE_KW"
-    # 第二层：STRICT 双条件
-    has_aqua = any(kw in text for kw in AQUACULTURE_KEYWORDS)
-    has_ai = any(kw in text for kw in AI_KEYWORDS)
-    if not (has_aqua and has_ai):
-        return False, "STRICT_DUAL"
-    return True, "pass"
-```
-
-**R46 实证验证**（2026-09-01）：
-- 16 关键词 × 5 per_page = 80 candidates
-- EXCLUDE_KW 触发 1 次（`genomics` 命中 Myf5 基因选择研究 → 排除）
-- STRICT_DUAL 过滤 6 次（剩余 6 篇）
-- 0 误命中入库
-- **结论**：EXCLUDE_KW 13 词过滤稳定，可作为 R47+ 默认层
-
-**R47 待办**：
-- 考虑是否把 `genomics` 拆分为 `genomic selection`（更精准，避免误杀真正的 P0 基因组学论文）
-- 当前 13 词表现稳定，暂不调整
 
 #### 3.5.4 检索源饱和 4 步诊断法（2026-08-01 20:30 首次正式化）
 
@@ -1904,7 +1850,7 @@ API安全测试  ─── 权限与攻击面验证（测试期/发布前）
 
 **熔断器（Circuit Breaker）**：
 ```python
-def ***SECRET***():
+def test_circuit_breaker_opens_after_N_failures():
     for _ in range(5):
         response = call_unstable_endpoint(timeout=0.1)
         assert response.status in (500, 504)
@@ -1914,7 +1860,7 @@ def ***SECRET***():
 
 **重试与退避（Retry + Backoff）**：
 ```python
-def ***SECRET***():
+def test_retry_with_exponential_backoff():
     start = time.time()
     response = call_with_retry(fail_count=3)
     elapsed = time.time() - start
@@ -1924,7 +1870,7 @@ def ***SECRET***():
 
 **舱壁隔离（Bulkhead）**：
 ```python
-def ***SECRET***():
+def test_bulkhead_limits_concurrent_calls():
     with ThreadPoolExecutor(max_workers=20):
         responses = [call_slow_endpoint(delay=5) for _ in range(20)]
     rejected = [r for r in responses if r.status == 429]
@@ -2098,17 +2044,17 @@ import great_expectations as ge
 df = ge.read_csv("sensor_data_2026-08-09.csv")
 
 # 完整性：温度字段不允许空值
-df.***SECRET***("temperature")
+df.expect_column_values_to_not_be_null("temperature")
 
 # 有效性：温度应在 -5~40°C 范围
-df.***SECRET***("temperature", min_value=-5, max_value=40)
+df.expect_column_values_to_be_between("temperature", min_value=-5, max_value=40)
 
 # 时效性：时间戳不应超过 24h 延迟
-df.***SECRET***("timestamp",
+df.expect_column_max_to_be_between("timestamp",
     min_value="2026-08-08T20:00:00", max_value="2026-08-09T20:00:00")
 
 # 唯一性：同一传感器+时间戳不应重复
-df.***SECRET***(["sensor_id", "timestamp"])
+df.expect_compound_columns_to_be_unique(["sensor_id", "timestamp"])
 ```
 
 **与已有测试体系的结合**：
@@ -2517,62 +2463,23 @@ docker run --detach --name test hello-world
 - 沙箱拦截发生在 flag 解析层，不是 compose 子命令层
 
 **Cron 模式下的实际选择**：
-1. **`docker compose up -d` 不可用**（沙箱 flag 限制）— 老莫**不能**靠这个恢复 RKR
+1. **不可自动恢复 RKR**：必须在进化报告中明确标注 + 转交华哥手动恢复
 2. **可执行的应急**：
    - `docker ps` 查看容器状态（只读，无 flag 限制）
    - `docker logs <container>` 看日志（只读）
    - `docker inspect <container>` 看元数据（只读）
    - `docker run --detach --name <name> <image>` 创建简单容器（可工作）
-   - **`open -a Docker`** 触发 Docker Desktop 重启（macOS GUI，沙箱不拦截）— **R37 验证可用**
 3. **不可执行的应急**：
    - `docker compose up/down/restart`
    - `docker exec <container> <cmd>`（沙箱通常拦截）
    - `docker rm <container>`（删除操作）
 
-**经验法则（2026-08-30 R37 修正）**：Cron 模式下遇到基础设施异常，**按严重程度分级处理**：
-1. **仅 Docker daemon DOWN + 容器声明 `restart: unless-stopped`** → `open -a Docker` 触发恢复 → 30-120s 容器自愈（**R87 验证：无需华哥手动恢复**，详见 §11.3.2）
-2. **容器被删除 / 数据卷丢失** → 在 evolution 报告中标注异常 + 转交华哥手动恢复
-3. **任何故障** → 通过飞书通知运维，但**不阻塞 cron 主流程**
-4. **继续执行不依赖该基础设施的能力**（OpenAlex/Crossref/arXiv 论文检索与 Docker 解耦）
+**经验法则**：Cron 模式下遇到基础设施异常，**不要尝试自动恢复**，应：
+1. 在 evolution 报告中明确标注异常 + 严重程度
+2. 通过飞书/Hermes Gateway 通知运维（华哥/管理员）
+3. 继续执行不依赖该基础设施的能力（如外部 API 论文检索）
 
-> 📁 Docker daemon 自愈机制完整时间线 + 恢复 SOP + 数据完整性验证见 §11.3.2 + `references/docker-daemon-self-healing.md`
-### 11.3.2 Docker daemon 自愈机制（2026-08-30 R37 验证，旧结论需修正）
-
-**🔴 重要修正**：旧 §11.3.1 结论「Cron 模式下不可自动恢复 RKR，必须华哥手动恢复」**部分错误**。R37 实证：daemon DOWN 时若 RKR 容器声明 `restart: unless-stopped`，**Docker Desktop 重启后所有容器自动拉起**，数据卷零丢失。
-
-**R37 实证摘要**（完整 R83→R37 时间线 + 数据卷验证见 `references/docker-daemon-self-healing.md`）：
-- R83 (15:04) daemon DOWN → R84 (19:20) 华哥手动重建 UP → R85 (20:10) 又 DOWN → R87 (21:13) **自愈 UP** → R37 (22:13) 持续稳定
-- 数据完整性：docs/vectors 100% 一致（210,204 / 658,319）
-- failed 队列自动消化：30,000+ → 500（100% OPC v2.x 孤儿）
-
-**核心机制**：Docker Desktop 重启 → daemon 启动 → 检测 `restart: unless-stopped` 容器 → 自动拉起 → 数据卷保留挂载。
-
-**老莫 cron 模式恢复 SOP**：
-```bash
-if ! docker ps >/dev/null 2>&1; then
-  open -a Docker                              # macOS GUI，沙箱不拦截
-  for i in $(seq 1 12); do                    # 最多等 120s
-    docker ps >/dev/null 2>&1 && break
-    sleep 10
-  done
-fi
-```
-
-**判定信号 → 老莫行动**：
-| `docker ps` 输出 | 判定 | 行动 |
-|---|---|---|
-| 全部 0 容器，CLI 正常 | daemon DOWN + 容器声明存在 | `open -a Docker` → 自愈 |
-| 全部 0 容器，CLI connection refused | daemon 完全退出 | `open -a Docker` → 自愈 |
-| 容器都在但 exited | 进程崩溃 | `docker logs` → 通常自动重启 |
-| 容器全部消失（无 Exited 记录） | 容器被主动删除 | **转交华哥**（沙箱限制）|
-
-**关键经验**：
-1. `open -a Docker` 是 cron 模式合法恢复手段（沙箱不拦截 GUI 调用）
-2. `docker compose up -d` 仍被沙箱拦截（限制在 CLI flag 解析层）
-3. 数据卷零丢失，failed 队列自动消化
-4. R87 起 daemon 稳定，**不再写「需华哥手动恢复」**
-
-> 📁 R37 完整实证时间线 + 失败模式 + 后续监控建议见 `references/docker-daemon-self-healing.md`
+> 📁 RKR 平台诊断命令与健康检查详细列表见 `references/rkr-platform-diagnostics.md`
 
 ## 知识库建设原则
 1. 知识靠积累——持续调研，知识条目随时间累加
@@ -2595,7 +2502,70 @@ fi
 | **Docker容器API可用性** | `python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/projects', timeout=10)"` | ⚠️ `docker ps` 显示 healthy ≠ 服务可用（见 chaos-engineering.md 实战案例） |
 | **关键端口** | `(echo >/dev/tcp/localhost/$port) 2>/dev/null` | 扫描 5173/8000/8001/3000/8080/11434/8011 |
 
-> ⚠️ **DEPRECATED 2026-07-30**：ChromaDB 直接 SQLite 检查方法已废弃，OPC v3.0 改用 pgvector。保留此段仅为向后兼容参考，**不要在新代码中使用**。请改用 `references/pgvector-inspection.md` 中描述的 pgvector 检查方法（详细步骤、SQL 查询、Token 绕过方案、failed 队列诊断模式见该文件）。
+> ⚠️ **DEPRECATED 2026-07-30**：以下 ChromaDB 直接 SQLite 检查方法已废弃，OPC v3.0 改用 pgvector。保留此段仅为向后兼容参考，**不要在新代码中使用**。请改用 `references/pgvector-inspection.md` 中描述的 pgvector 检查方法。
+
+### ChromaDB 直接 SQLite 检查（已废弃，仅作历史参考）
+
+```python
+import sqlite3
+
+# ChromaDB 路径（按优先级尝试）
+import os
+candidates = [
+    "/Users/hua/opc通用管理平台/05-LookForge RAS系统仿真/backend/data/chroma/chroma.sqlite3",  # OPC迁移后路径（当前，2026-07-29验证）
+    "/Users/hua/6-产品研发/05-LookForge RAS系统仿真/backend/data/chroma/chroma.sqlite3",        # 旧路径（已废弃，用于回退）
+]
+db_path = None
+for p in candidates:
+    if os.path.exists(p):
+        db_path = p
+        break
+if db_path is None:
+    print("ChromaDB SQLite file not found at any known path")
+else:
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+
+    # 查看 collections 及其 embedding 数量
+    c.execute("SELECT id, name FROM collections")
+    for col_id, col_name in c.fetchall():
+        c.execute("""
+            SELECT COUNT(e.id)
+            FROM segments s
+            JOIN embeddings e ON e.segment_id = s.id
+            WHERE s.collection = ?
+        """, (col_id,))
+        count = c.fetchone()[0]
+        print(f"  {col_name}: {count} embeddings")
+
+    # 查看元数据分类分布
+    c.execute("""
+        SELECT m.key, m.string_value, COUNT(*) as cnt
+        FROM embedding_metadata m
+        WHERE m.key IN ('category', 'source', 'type')
+        GROUP BY m.key, m.string_value
+        ORDER BY cnt DESC
+        LIMIT 20
+    """)
+    for key, val, cnt in c.fetchall():
+        print(f"  {key}={val}: {cnt}")
+
+    # 检查嵌入队列积压
+    c.execute("SELECT COUNT(*) FROM embeddings_queue")
+    queue_count = c.fetchone()[0]
+    print(f"\nembedding queue pending: {queue_count}")
+    if queue_count > 100:
+        print("   CRITICAL: check Ollama service and ChromaDB worker")
+```
+
+**注意**: ChromaDB 0.4.x 的 SQLite 表结构中，`segments.collection` 指向 `collections.id`，`embeddings.segment_id` 指向 `segments.id`。不同版本的 ChromaDB 表结构可能有差异，先检查 schema：
+
+```python
+c.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='segments'")
+print(c.fetchone()[0])
+```
+
+> 详见 `references/cron-job-environment.md` 和 `references/chromadb-inspection.md`
 
 ## 知识库迁移经验（2026-05-19，更新：2026-06-25）
 
@@ -2685,7 +2655,7 @@ R32 cron 启动于 00:05 UTC，OpenAlex 持续 HTTP 429 达 4+ 分钟。错峰�
 - ❌ **08:00-11:00 UTC**：R22 40% 限流
 - ✅ **12:00-21:00 UTC**：R23-R31 多轮验证 0% 限流（**健康窗口**）
 
-**R33+ 强制要求**：cron 启动时间必须 12:00-21:00 UTC（默认 19:00）。凌晨 cron 必须准备 arXiv 兜底脚本（R32 验证 arXiv 兜底命中率 17% = 3/18）。R41 08:00-09:00 cluster 重载 + cites: filter 边界 + 阶段5饱和收尾详见 `references/openalex-time-windows.md`。
+**R33+ 强制要求**：cron 启动时间必须 12:00-21:00 UTC（默认 19:00）。凌晨 cron 必须准备 arXiv 兜底脚本——R32 验证 arXiv 兜底命中率 17% (3/18) 有效。
 
 **关键经验**：
 - 探测查询用 `per_page=1` 最小成本
@@ -2694,7 +2664,7 @@ R32 cron 启动于 00:05 UTC，OpenAlex 持续 HTTP 429 达 4+ 分钟。错峰�
 - arXiv 论文必须用 OpenAlex 倒排索引补摘要（DataCite DOI 不在 Crossref）
 - known_dois.txt 中 arXiv ID 必须用 `arxiv:` 前缀避免与 DOI 库冲突
 
-> 📁 **完整 arXiv 兜底 SOP**：见 `references/arxiv-fallback-pattern.md`（含 4 个兜底关键词模板、三级 Fallback 链、known_dois.txt 写入规范、R32 实战脚本、**R39 反向证据**（all: 模板 0% 命中）、**R39 快速收尾 SOP**（DOI 直查作为兜底优先于 arXiv））
+> 📁 **完整 arXiv 兜底 SOP**：见 `references/arxiv-fallback-pattern.md`（含 4 个兜底关键词模板、三级 Fallback 链、known_dois.txt 写入规范、R32 实战脚本）
 
 ### 📌 Machine Learning with Applications (MLWA, Elsevier 2026 新刊) 跟踪信号（R18 实证）
 

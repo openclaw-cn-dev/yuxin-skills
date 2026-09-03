@@ -1,0 +1,8 @@
+interface:
+  display_name: "小红书排版工厂"
+  short_description: "把一张IP图搭建成可复用的小红书排版Skill"
+  brand_color: "#1266B3"
+  default_prompt: "使用 $xiaohongshu-layout-factory，基于我的IP素材搭建一套可复用的小红书排版Skill。"
+
+policy:
+  allow_implicit_invocation: true

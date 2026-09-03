@@ -1,0 +1,31 @@
+name: fix-ci
+version: 0.1.0
+description: 修复 GitHub Actions CI 工作流中的常见配置问题。
+adapter:
+  kind: raw
+origin:
+  source: local
+  ref_name: main
+  sha: workspace
+model:
+  provider: ollama
+  name: qwen3:8b
+  max_input_tokens: 1200
+deps: []
+tools:
+  - read_file
+  - write_file
+  - list_dir
+mcp:
+  exposed: true
+  description: 提供 CI 修复建议与工作流修复能力。
+allow:
+  read_paths:
+    - .github/workflows
+    - README.md
+  write_paths:
+    - .github/workflows/ci.yml
+  net_hosts: []
+eval:
+  fixtures:
+    - .github/workflows/ci.yml

@@ -29,7 +29,7 @@ tags: [玉芬, 编码, 工作流, claude-code, 偏好, 端到端验证]
 | 华哥本人在终端,接受手动按 y 批准 | `pty=true` 交互 | `terminal(command="claude -p '...'", pty=true, timeout=600)` |
 | 飞书/无人值守,需要 CC 改文件 | `delegate_task` 委派(推荐) | `delegate_task(goal="用 Write 工具重写 <path>,需求:...", toolsets=["terminal","file"])` |
 | Claude Code `--allowedTools` 白名单 | 可能跳过权限 | `claude -p "..." --allowedTools "Read,Write,Edit,Bash"` |
-| Claude Code 信任场景 | 完全跳过 | `claude -p "..." ***SECRET***` |
+| Claude Code 信任场景 | 完全跳过 | `claude -p "..." --allow-dangerously-skip-permissions` |
 | 真正明确失败 | 自写兜底 | 加 `# TODO(tech-debt)` + 飞书 |
 
 ### 验证子 agent 是否真的改了文件
@@ -67,25 +67,6 @@ wc -l /path/to/file  # 行数变化
   4. 截图/输出确认后再写汇报"完成"
 - 兜底:汇报中**必须明确**写"已 curl 实测返回 200"或"未实测,需补"。**禁止用"已启动"含糊带过**
 - 真实案例:2026-06-29 八卦预测工具阶段 3 编码,玉芬启动了 `api_server.py` 但没 curl 验证就汇报"阶段 3 完成",实际后端 4 个端点都未实测。系统提示上限后才补上汇报,被华哥发现"未实测"。
-
-## ⚠️ 铁律 5:诊断不确定时不要瞎填坑,直接说"我无法确定"(2026-08-31 华哥反馈)
-
-**铁律**:任何根因分析/错误诊断,如果证据不足以断定,**绝对禁止**编造听起来合理但没有证据的解释(如"IP 地域限制"、"DNS 污染"、"证书过期"等)。**直接告诉华哥"我无法确定具体原因,需要他跑 X 探针确认"**,而不是用假故事把话聊圆。
-
-**反例（2026-08-31 实测踩坑）**:
-- 华哥贴 2 个智谱 key 都返 1000 身份验证失败
-- 我嘴上说"key 没问题"但心里没底,看到华哥一直说 key 没复制错,就开始编造"IP 地域限制 (你的 key 绑定了特定 IP,但网络出口变了)" 这种听起来合理但**完全是凭空捏造**的解释
-- 华哥直接反问:"这句话是什么意思?"
-- 暴露之后信任度下降,且浪费 2 轮对话
-
-**正确做法**:
-1. **承认不确定**:"我不知道 key 为什么 1000,可能是账号欠费、key 没激活、key 字符截断、或账号被封"
-2. **给出可执行探针**:"请你在 Mac 终端跑 `pbpaste | wc -c` 验证 key 长度 (应该 35),或在智谱 playground 测一次看能不能发消息"
-3. **不要**为了对话流畅性而拼凑解释
-
-**判别法则**:如果你写"可能是 X / Y / Z 之一"时,**没有一个有实测证据** = 已经在瞎编。停下来,先做最小探针或直接告诉华哥"我需要他跑这个命令确认"。
-
-**为什么这是铁律**:华哥 2026-08-29 多次强调"具体工作你拿主意"——授权自主决策是建立在**信任**上的。编造解释一次,信任扣分一次。信任扣到一定程度,自主决策授权会被收回。
 
 ## ⚠️ 铁律 4:编码 Agent 会话结束必须写 handoff.md(2026-07-18 新增)
 
@@ -201,7 +182,7 @@ python3.11 -m venv .venv  # 必须用 3.11
 ```
 
 **登记路径**:
-- 飞书通知华哥(channel `***SECRET***`)
+- 飞书通知华哥(channel `oc_2db3b5373825567c3681d1ca580e0143`)
 - 复盘到 `~/hermes/reports/yuxin_self_criticism/<日期>_<主题>.md`
 
 **反模式**:
@@ -223,7 +204,7 @@ python3.11 -m venv .venv  # 必须用 3.11
 
 ### ⚠️ 复杂查表数据(64 卦矩阵等)要写验证测试
 - 教训:v3 方案 64 卦矩阵有 1 个 ID 重复(DUI×ZHEN=54,应为 17)
-- 做法:写 `test_no_duplicate_ids` + `***SECRET***` 自动化验证
+- 做法:写 `test_no_duplicate_ids` + `test_all_64_combinations_present` 自动化验证
 - 推荐:任何嵌入 v3/v4 方案里的数据表,先写一个独立验证脚本用外部标准核对
 - 配套:卦象 binary 索引约定非常容易写反(见 `references/hexagram-binary-index-trap.md`)
 
@@ -266,7 +247,7 @@ python3.11 -m venv .venv  # 必须用 3.11
 |---|---|
 | 华哥本人在终端,接受手动按 y | `terminal(command="claude -p '...'", pty=true, timeout=600)` |
 | 飞书/无人值守 | **`delegate_task(goal="用 Write 工具重写 <path>", toolsets=["terminal","file"])`** ← 推荐默认 |
-| 信任场景可跳过 | `claude -p "..." ***SECRET***` |
+| 信任场景可跳过 | `claude -p "..." --allow-dangerously-skip-permissions` |
 
 **验证子 agent 真改文件**(必做):
 ```bash
@@ -503,10 +484,6 @@ curl -s http://127.0.0.1:8001/pricing | grep -c "payModal"  # → >0
 - 华哥明确说"用 CC 跑"
 - 玉芬自己 token 不够
 
-## ⚠️ 前台交互式安装命令会被 tirith 拦截（2026-08-28 实测）
-
-`brew install ffmpeg` 这类前台长时间交互安装 → `BLOCKED: Command timed out without user response`，且系统提示"不要换命令重试同一目的"。正确路径：**先找本机已有二进制**（imageio_ffmpeg 自带 ffmpeg、python 包里常藏工具），`mdfind`/`find` 搜一下；真没有才走 terminal(background=true) 或让华哥手动装。用现成二进制是首选，不是降级。
-
 ## 验证流程(实装完成后必做,**全部做完再汇报一次**)
 
 ```bash
@@ -588,7 +565,7 @@ for path in ['/api/health', '/api/qigua?method=time']:
 
 ## 参考
 
-- `references/***SECRET***.md` — 项目路径统一规范
+- `references/unified-project-path-2026-07-17.md` — 项目路径统一规范
 - `references/pydantic-v213-python39-trap.md` — Pydantic v2.13 + Python 3.9 兼容性陷阱
 - `references/hexagram-binary-index-trap.md` — 卦象 binary 索引"双重反向"约定 + 互卦计算公式 + 5 个易错点
 - `references/hermes-tooling-gotchas.md` — Hermes 工具调用常见坑(`execute_code` BLOCKED、`$HOME` 劫持等)

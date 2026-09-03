@@ -1,27 +1,23 @@
-model_provider = "custom"
-model = "glm-5.3-flash"
+model_provider = "deepseek"
+model = "deepseek-v4-pro"
 model_reasoning_effort = "high"
 disable_response_storage = true
 wire_api = "responses"
-model_catalog_json = "/Users/hua/.codex/cc-switch-model-catalog.json"
+model_catalog_json = "~/.codex/models.json"
 
 notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
-sandbox_mode = "danger-full-access"
-approval_policy = "never"
 
-[model_providers]
-[model_providers.custom]
-name = "zhipu_glm"
-base_url = "https://open.bigmodel.cn/api/v1"
+[model_providers.deepseek]
+name = "deepseek"
+base_url = "https://api.deepseek.com/"
 wire_api = "responses"
-requires_openai_auth = true
 experimental_bearer_token = "<REDACTED>"
 
 [projects]
 [projects."/Users/hua"]
 trust_level = "trusted"
 
-[projects."/Users/hua/6-产品研发/渔芯独角兽/18-手语学习与识别"]
+[projects."/Users/hua/6-产品研发/渔芯独角兽"]
 trust_level = "trusted"
 
 [tui]
@@ -48,13 +44,18 @@ NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/hua/.codex/plugins/cache/openai
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
 [desktop]
-followUpQueueMode = "queue"
 computerUseAlwaysHidePictureInPicture = true
+followUpQueueMode = "queue"
 
 [marketplaces.openai-bundled]
-last_updated = "2026-08-31T14:39:14Z"
+last_updated = "2026-08-20T02:04:11Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-08-20T02:05:48Z"
+source_type = "local"
+source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [plugins."codex-app-tools@openai-bundled"]
 enabled = true
@@ -65,6 +66,21 @@ enabled = true
 [plugins."visualize@openai-bundled"]
 enabled = true
 
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
 [features]
-js_repl = false
 computer_use = false
+js_repl = false

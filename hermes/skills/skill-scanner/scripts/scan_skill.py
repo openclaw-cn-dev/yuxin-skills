@@ -519,7 +519,7 @@ def check_structural_attacks(skill_dir: Path, content: str, frontmatter: dict[st
     return findings
 
 
-def ***SECRET***(frontmatter: dict[str, Any] | None, body: str) -> float:
+def compute_description_body_overlap(frontmatter: dict[str, Any] | None, body: str) -> float:
     """Compute keyword overlap between description and body as a heuristic."""
     if not frontmatter or "description" not in frontmatter or frontmatter["description"] is None:
         return 0.0
@@ -603,7 +603,7 @@ def scan_skill(skill_dir: Path) -> dict[str, Any]:
     all_findings.extend(check_structural_attacks(skill_dir, content, frontmatter))
 
     # 9. Description-body overlap
-    overlap = ***SECRET***(frontmatter, body)
+    overlap = compute_description_body_overlap(frontmatter, body)
 
     # Build structure info
     structure = {
