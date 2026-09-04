@@ -11,7 +11,7 @@ approval_policy = "never"
 
 [model_providers]
 [model_providers.ZAI]
-name = "zhipu_glm"
+name = "ZAI"
 base_url = "https://open.bigmodel.cn/api/v1"
 wire_api = "responses"
 requires_openai_auth = true
@@ -28,6 +28,9 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/hua/Documents/Codex/2026-09-04/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/渔芯定制数字人平台"]
 trust_level = "trusted"
 
 [tui]
@@ -58,7 +61,7 @@ followUpQueueMode = "queue"
 computerUseAlwaysHidePictureInPicture = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-09-04T08:02:24Z"
+last_updated = "2026-09-04T08:24:33Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
