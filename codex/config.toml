@@ -36,6 +36,9 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/app-3d绳结"]
 trust_level = "trusted"
 
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/app-蹭饭搭子"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
