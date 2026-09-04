@@ -65,6 +65,11 @@ last_updated = "2026-09-04T08:24:33Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-09-04T09:22:36Z"
+source_type = "local"
+source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
 [plugins."codex-app-tools@openai-bundled"]
 enabled = true
 
@@ -72,6 +77,21 @@ enabled = true
 enabled = true
 
 [plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
 enabled = true
 
 [features]
