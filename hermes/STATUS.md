@@ -1,11 +1,11 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-09-03 12:31:56
+> 导出时间: 2026-09-04 12:13:27
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 79
+- Skills: 81
 - Profiles: 10
-- Scripts: 126
+- Scripts: 127
 - Plugins: 1
 
 ## 版本
@@ -64,8 +64,10 @@ Update available: 2659 commits behind — run 'hermes update'
 - github
 - hermes-ecosystem-entry.md
 - inference-sh
+- jtbd-ras-4q-template
 - knowledge-base
 - laomo-knowledge
+- maodou
 - maodou-product
 - mcp
 - media

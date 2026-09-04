@@ -6,6 +6,11 @@
 
 set -u
 
+# R166 (2026-09-03): cron 心跳在 profile HOME 劫持态下跑, 必须显式 real-home override,
+# 否则 open -a Docker 会拉起 foreign VM context (无 rkr 镜像, R157 context mismatch)
+# 且 docker CLI 后续命令也会去读 hijacked socket 路径报 "no such file"。
+export HOME=/Users/hua
+
 CONTAINERS=(rkr-postgres rkr-redis rkr-minio rkr-elasticsearch rkr-backend
             rkr-frontend rkr-celery-beat rkr-processing-pool rkr-processing-pool-2
             rkr-staging-pool)

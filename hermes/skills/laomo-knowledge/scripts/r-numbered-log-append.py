@@ -71,6 +71,23 @@ assert new_r == last_r + 1, f"R 编号模板失败: new_r={new_r} != last_r+1={l
 assert f"[R{new_r} " in entry, "entry 缺少 [R<n> 标记 — f-string 占位符未渲染"
 assert f"[R{new_r} " not in desc, f"R{new_r} 已存在，禁止复用"
 
+# === R181 pre-write size 闸口（2026-09-04 补入，R182-R185 验证稳定）===
+# 硬阈值 50KB 字符口径（Pitfall #30：禁止字节口径 len(desc.encode('utf-8'))，中文每字 3 字节会误判）
+# 48KB 早闸口：self-evolution 胖 entry (2-4KB) 加 48KB 高概率破 50KB 线
+# estimated_entry_size = len(entry) * 1.5（R146 安全系数）
+_pre_kb = len(desc) / 1024
+assert _pre_kb < 50, (
+    f"desc {_pre_kb:.1f}KB chars 已触 50KB 硬阈值，禁止直接 append，"
+    f"先 cp templates/laomo_desc_prune.py 跑剪枝"
+)
+assert _pre_kb < 48, (
+    f"desc {_pre_kb:.1f}KB chars 已进 (b) 40-50KB 区间，本轮 append 前先跑剪枝再写"
+)
+_est_kb = (len(desc) + len(entry) * 1.5) / 1024
+assert _est_kb < 50, (
+    f"预估 append 后 {_est_kb:.1f}KB chars 将触 50KB 硬阈值，先跑剪枝再写"
+)
+
 # === 写库 ===
 c.execute(
     "UPDATE tasks SET description = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",

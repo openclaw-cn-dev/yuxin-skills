@@ -19,6 +19,7 @@ doc-coauthoring
 dogfood
 domain
 drawing-agent-v2-three-modules-integration
+drawing-reverse-engineering
 drive-motivation
 email
 feeds
