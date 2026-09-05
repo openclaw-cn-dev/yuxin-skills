@@ -1,10 +1,11 @@
 ---
 name: yuxin-team-management
 description: |
-  渔芯 9-agent 集中管理方法论（2026-08-01 整理）。
+  渔芯 10-agent 集中管理方法论（2026-08-01 整理，2026-09-04 心博士入职扩至 10 人）。
   适用场景：华哥需要"重新整理同事 agent 系统文件"、"建集中目录树管理所有同事"、
-  或者其他类似"multi-agent 系统的 profiles 散落管理问题"。
-  触发条件：用户提到"重新整理 / 集中管理 / 统一视图 / 同事 agent 整理 / 团队管理视图"。
+  "新增一位专家型同事"或者其他类似"multi-agent 系统的 profiles 散落管理问题"。
+  触发条件：用户提到"重新整理 / 集中管理 / 统一视图 / 同事 agent 整理 / 团队管理视图 /
+  新增同事 / 复刻宽博士模式建专家"。
 related_skills:
   - ***SECRET***   # 协作后端（registry / messages / SOP）
   - hermes-gateway-profile-ops        # runtime / launchd / plist / LLM 路由
@@ -16,9 +17,12 @@ related_skills:
 ## 运维参考（按需加载）
 
 - `references/agent-health-scan.md` — 全员 Agent 健康码扫描：gateway PID + 飞书连接 + LLM 错误 + cron 执行，一键四维诊断（触发：检查同事是否正常）
+- `references/***SECRET***.md` — 玉芬每日管理进化扫描 8 项命令级配方：cron 健康（残留 vs 活报错分流）/ skill 容量正确计数 / kanban 权威源与 tasks.db 漂移 / 调研增量覆盖率审计 / agent 心跳 / RKR 积压分桶 / 工具版本 / 死飞书群 chat_id 审计（2026-09-04 首轮实战；触发：跑「玉芬每日管理进化」cron 或任何全公司资源巡检）
 - `references/approval-failure-diagnosis.md` — 飞书审批按钮 Unauthorized 诊断：session 过期 → approvals.mode: smart（触发：手动批准不了 / 按钮点不了）
 - `references/cron-jobs-provider-migration.md` — cron jobs.json 批量迁移废弃 provider：deepseek-direct → deepseek-cn 模板（触发：Unknown provider 报错）
 - `references/***SECRET***.md` — `Unknown provider 'glm-free'` 事故全记录 + 5 步诊断配方（per-profile 隔离排查 + config.yaml.bak-* 时间线重建 + 残留 vs 活报错区分）+ skill 容量审计正确计数命令（触发：任何 "Unknown provider 'X'" 报错 / provider 迁移后 cron 集体失败）
+- `references/***SECRET***.md` — **从零新增同事 Agent Profile 上线 SOP**（目录树/config 复刻/AGENTS+SOUL/launchd plist 改造/bootstrap/心跳脚本/cron×2 含 cronjob 工具 quirk/首跑/Mnemosyne 登记，2026-09-04 心博士实战全流程；触发：华哥拍板新增专家型同事）
+- 现役名单（2026-09-04）：玉芬(default) / 阿福(afu) / 毛豆(maodou) / 老莫(laomo) / 黑豆(heidou) / 小宝(xiaobao) / 宽博士(quant) / 学习助手(zhenglishi) / 旺财(wangcai,Windows) / **心博士(psychology，2026-09-04 复刻宽博士模式入职：心理学专家、后台专家模式不接飞书、伦理红线写死 AGENTS.md、服务全公司 6 条线)**
 
 ---
 

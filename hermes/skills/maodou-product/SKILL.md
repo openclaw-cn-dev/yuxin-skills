@@ -29,7 +29,7 @@ metadata:
 **Claude Code 调用规范**：
 - 项目路径含中文时，先建 symlink 再调用 workdir=/tmp/xxx
   ```bash
-  ln -sf "/Users/hua/6-产品研发/渔芯科技/06-硬件项目开发" /tmp/lookforge
+  ln -sf "/Users/hua/6-产品研发/渔芯独角兽/02-产品开发综合平台/00-综合开发平台" /tmp/lookforge
   # 然后 workdir="/tmp/lookforge/backend"
   ```
 - Claude Code v2.x：`claude --version` 确认版本
@@ -204,16 +204,16 @@ router = APIRouter(tags=["simulation"])  # ✅ 无 prefix
 app.include_router(simulation.router, prefix="/api/projects")  # → /api/projects/{project_id}/simulation/...
 ```
 
-## 当前开发文件（2026-09-01 更新 — v1.1.0 已上线）
+## 当前开发文件（2026-09-01 更新 — v1.1.1 已上线，commit `50f1b9ee`）
 
-**真实路径**：`/Users/hua/6-产品研发/渔芯科技/03-硬件项目开发/`（注意：是 `03-硬件项目开发`，不是 `06-硬件项目开发`）
+**真实路径**：`/Users/hua/6-产品研发/渔芯独角兽/02-产品开发综合平台/00-综合开发平台/`（Docker 运行中：backend 8001 / frontend 3000）
 
-**Phase 1-7 全实装**：
+**Phase 1-7 全实装（v1.1.1）**：
 - `backend/app/orchestrators/phase_orchestrator.py` (101KB) — phase1~7 全部 `async def run_phaseN` 已就绪
 - `backend/app/api/projects.py` (50KB) — Phase 1-7 REST API + PostgreSQL 持久化
 
 **Phase 6 仿真模块（已实装）**：
-- `backend/app/services/simulation_service.py` (78KB) — 仿真执行引擎 + 8 个 RAS 用例
+- `backend/app/services/simulation_service.py` (78KB) — 仿真执行引擎 + **12 个 RAS 工程用例**（water_flow/oxygen/temperature/structural/thermal/drum_filter/protein_skimmer/mbbr/pipe_network/biofilter/sedimentation/oxygen_cone）+ 1 个 sim_roi（LookForge 独有的商业维度）
 - `backend/app/services/fluid_engine.py` (35KB) — 流体力学工程计算（Darcy-Weisbach/Colebrook-White/Ergun/硝化动力学/沉降模型）
 - `backend/app/api/simulation.py` (6KB) — 5 个仿真 API 端点
 - `backend/app/api/fluid_simulation.py` (17KB) — 23 个流体力学计算 REST 端点
@@ -1011,7 +1011,7 @@ Blueprint.am 的分阶段 Prompt 设计是最佳参考：
 | 维度 | 状态 | 数据 |
 |------|------|------|
 | Phase 1-7 | ✅ 全实装 | 7 个 `async def run_phaseN` |
-| Phase 6 仿真 | ✅ | 5+8 个仿真用例 + 35KB fluid_engine |
+| Phase 6 仿真 | ✅ | 13 个仿真用例（12 工程 + 1 sim_roi）+ 35KB fluid_engine |
 | Phase 6 工艺 | ✅ 8月25日新增 | 5 用例（craft_service.py 737行）|
 | Phase 6 测试 | ✅ 8月25日新增 | 5 用例（test_service.py 647行）|
 | Phase 6 RAS 专用 | ✅ | 32 种设备 + 89 文档 + 26 GLB |
@@ -1061,9 +1061,9 @@ Blueprint.am 的分阶段 Prompt 设计是最佳参考：
 - FreeCAD路径硬编码macOS（Docker内不可用）
 - requirements.txt不完整（缺pydantic/fastapi/uvicorn）
 
-**LookForge项目实际路径**：`/Users/hua/6-产品研发/渔芯科技/06-硬件项目开发`
-（原 `02-LookForge` → `08-ai出cad图`（桌面）→ `06-硬件项目开发`（/Users/hua/下），已迁移）
-所有涉及 LookForge 源码路径的参考均应使用 `06-硬件项目开发/backend/`，不是 `02-LookForge/backend/` 或 `08-ai出cad图/backend/`。
+**LookForge项目实际路径**：`/Users/hua/6-产品研发/渔芯独角兽/02-产品开发综合平台/00-综合开发平台/`（v1.1.1，commit `50f1b9ee`）
+（历史路径：`02-LookForge` → `08-ai出cad图`（桌面）→ `06-硬件项目开发`（已废弃，不存在）→ `00-综合开发平台`（当前真身，2026-09-01 仍在更新））
+所有涉及 LookForge 源码路径的参考均应使用 `00-综合开发平台/backend/`，不是 `02-LookForge/backend/` 或 `08-ai出cad图/backend/`。
 ### 硬件开发标准流程（7环节）
 
 每个设备开发按以下标准流程执行，华哥确认后再推广：
