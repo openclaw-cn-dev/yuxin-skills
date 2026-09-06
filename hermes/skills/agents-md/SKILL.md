@@ -204,5 +204,6 @@ Pattern: every self-evolution cron cycle should run the 30-day mtime scan once a
 
 ## Support Files
 
-- `references/***SECRET***.md` — full playbook for the three profile-agent failure modes (HOME hijack / registry scope / stale skill腐化) with worked examples and threshold tables.
+- `references/***SECRET***.md` — full playbook for the five profile-agent failure modes (HOME hijack / registry scope / stale skill腐化 / cross-profile write guard / cross-profile interface gap) with worked examples and threshold tables.
+- `templates/***SECRET***.md` — reusable 8-field contract template for the cross-profile "发起方侧单向接口卡" pattern (type 14). Copy and rename with sender/receiver names when a downstream profile is silent on a known handoff.
 - `scripts/skill-health-check.sh <profile-name>` — automated probe; runs the mtime scan, lists stale skills (>90 days), and reminds about L1 vs L3 registry scope. Exit code 1 if any stale skill detected.

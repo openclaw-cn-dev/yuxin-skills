@@ -41,5 +41,6 @@ testing-methodology-triad
 xiaobao-trigger-content-closed-loop
 yuanbao
 zhenglishi
+zhenglishi-cron-4-360-direct-cp-exception
 zhenglishi-cron-skip-daily-closeout
 zhenglishi-workflow

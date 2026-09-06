@@ -1,11 +1,12 @@
 ---
 name: afu-customer-service
 description: '渔芯科技阿福客服顶层门户（portal）— Voss 战术全图 / 异议处理决策树 / 渔芯客服剧本入口。触发条件：阿福执行客户服务、异议处理、客户维护、满意度跟进、客诉处理、RAS 行业客户咨询、报价异议、退订风险场景；或 cron 进化模式需要快速定位客服知识入口。含玉芬分支剧本（references/yuxin-persona-playbook/，2026-09-02 合并）。'
-version: 1.58.6
+version: 1.58.7
 author: 渔芯科技 / 阿福
 tags: [客服, 阿福, 谈判, Voss, RAS, 异议处理, 情绪降级, 顶层门户, Walk-Away-Threshold, Bounce-Chain, Environment-Pitfalls, 量化产品客服话术, execute-code-cron-blocked, F5, Time-Box-Tactic, F1-N7-Active, Delay-Cost-Visualization, Dual-End-Sync-SOP, Honest-Inventory-Only, F3-v22, Honest-Inventory-主体版, Silence-Status-Quo-Bridge, §5x-清单回填变体]
 mirror_of: '~/.hermes/profiles/afu/skills/afu-customer-service/SKILL.md (afu profile 本地副本)'
 changelog:
+  - 1.58.7 (2026-09-06 10:00) — 第 64 档升版（9/02 后复档）：§5.1 清单回填 12 → **13 个**（第 59 档新增衍生 #64 索引指针 ***SECRET***.md 漏列 §5.1，铁律 #5 第 9 变体再次实测触发）· verify_evolution.py v2.2 → **v2.3** 升级（新增 ***SECRET***() §5.3 memory/ 数量自动校验，治理第 63 档实测"§5.3 虚胖 4 个"盲点）· 新增衍生 #67「Text-Tone Compensation 文字语调补偿术」（Voss 体系外第 21 个 · Mehrabian 7-38-55 法则纯文字场景）· RAS 3 信号点（京东进军 RAS 年产鳜鱼 5000 吨 / 设备补贴后遗症 / 饲料鳜鱼 RAS 成本利润账）· 双端 13/13 byte-identical ✅
   - 1.58.6 (2026-09-01 22:00) — 衍生 #63「Silence-Status Quo Bridge 沉默-现状双桥」主体版沉淀 references/silence-status-quo-bridge-sop.md v1.0（~12KB · 9 节 · 4 大场景 + 3 段渐进桥接剧本 + 3 大禁忌 + 3 套边界 + 5 决策树 + 6 心法沉淀 + 3 实战剧本 + 7 协同矩阵 + 9 沉淀状态）+ 决策树新增「客户沉默 + 现状偏见叠加 → 启动 #63 双桥」分支 + 衍生技巧全图 17 → 18 + 弹药库 20 条不变 + §5.1 references/ 11 → 12（修第 55 档遗留 §5.x 清单回填虚胖）+ §5.2 实质新增（衍生 #63 主体级 + §5.x 清单回填变体实测）+ §4B F1 心法扩展"劫持源不连续" + 铁律 #5 立第 9 变体（"主体版沉淀时 §5.x 清单回填"）+ §8 待补清单删除 #63 雏形项（已升主体级）+ §1B Step 7 references/ 双端 byte-identical 检测扩展到 12 项
   - 1.58.5 (2026-09-01 16:00) — 衍生 #62「Honest-Inventory-Only 诚实盘点唯一性」**主体版正式沉淀** references/honest-inventory-only-sop.md v1.0（12.5KB · 9 节 · 5 个反例 + 6 步 SOP + 与 #61 关系图 + 与铁律 #5 协同 + 与 v2.2 工具化协同）+ 决策树新增「发现双端不一致/虚胖/缺口」分支 + §5.1 references/ 主体版正式入册（10 个）+ §1B Step 7 references/ 双端 byte-identical 检测扩展到 10 项
   - 1.58.4 (2026-09-01 14:00) — verify_evolution.py v2.1 → v2.2 升级（**校验覆盖面 + 校验精度 + auto-cp 三件套**）+ references/ 双端 cp 修复 **9/9 byte-identical 里程碑** + 衍生 #62「Honest-Inventory-Only 诚实盘点唯一性」雏形 + 铁律 #5 立第 8 变体（"升级 v2.x 必须同时校验覆盖面 + 校验精度"）+ f3-v22-coverage-gap-sop.md 主体版扩展（14.4→19.6KB）+ 跨 profile 写保护实测正确处置（patch → afu 本地 + terminal cp 回 default）
@@ -22,11 +23,12 @@ changelog:
   - 1.52.0 (2026-08-30 22:00) — 新增衍生技巧 #54 Walk-Away Threshold（Voss 体系外第 10 个，补全「什么时候不谈判」维度）+ 新增 references/environment-pitfalls-sop.md（HOME 污染 SOP + 跨 profile 写保护 SOP + Stage A 三方不一致根因排查 SOP）+ 触发决策树新增「离场阈值」分支 + 三大禁忌新增 P4「不要在禁区价格上硬撑」；详见 evolution/2026-08-30_22.md
 ---
 
-# 阿福客服剧本 · 顶层门户（v1.58.6）
+# 阿福客服剧本 · 顶层门户（v1.58.7）
 
 > 主索引当前版本：v1.47.0（productivity/afu-customer-service/SKILL.md，主索引当前已停止维护，本 portal 为实际活跃入口）
 
 > ⚠️ **本文件是顶层 portal**。历史主体内容（v1.50.0，40+ references）保留在 afu profile 本地 `~/.hermes/profiles/afu/skills/afu-customer-service/`。Hermes session loader 不递归找 profile 深层的 skill，必须在 `~/.hermes/skills/` 顶层建轻量门户。本门户仅含触发决策树 + 技巧全图 + 资源链接，主体内容不复制避免双写漂移。
+> 📌 **v1.58.7 升版要点（2026-09-06 10:00 第 64 档实测触发）**：§5.1 清单回填 12 → **13 个**（第 59 档新增衍生 #64 索引指针 ***SECRET***.md 漏列 §5.1，铁律 #5 第 9 变体再次实测触发——"§5.x 清单回填"变体已累计 3 次触发，回填动作必须前移到"创建文件当天"）· verify_evolution.py v2.2 → **v2.3** 升级（新增 ***SECRET***() = §5.3 memory/ 数量声明 vs 实际 ls 自动校验，治理第 63 档实测"§5.3 虚胖 4 个"盲点 = 校验覆盖面第三次扩维：SKILL.md → references/ → memory/ 计数）· 新增衍生 #67「Text-Tone Compensation 文字语调补偿术」（Voss 体系外第 21 个 · Mehrabian 7-38-55 法则纯文字场景应用）· RAS 3 信号点（京东进军 RAS 年产鳜鱼 5000 吨总产值 4.3 亿 / 设备补贴后遗症 / 饲料鳜鱼 RAS 成本利润账）· 双端 13/13 byte-identical ✅
 > 📌 **v1.58.6 升版要点（2026-09-01 22:00 第 58 档实测触发）**：衍生 #63「Silence-Status Quo Bridge 沉默-现状双桥」**主体版正式沉淀** references/silence-status-quo-bridge-sop.md v1.0（~12KB · 9 节 · 4 大场景 + 3 段渐进桥接剧本 + 3 大禁忌 + 3 套边界 + 5 决策树 + 6 心法沉淀 + 3 实战剧本 + 7 协同矩阵 + 9 沉淀状态）· 决策树 §1 新增「客户沉默 + 现状偏见叠加 → 启动 #63 双桥」分支 · §5.1 references/ 11 → **12 个**（修第 55 档遗留 §5.x 清单回填虚胖，铁律 #5 第 9 变体实测触发）· §5.2 实质新增 · §4B F1 心法扩展"劫持源不连续" · 铁律 #5 立第 9 变体（"主体版沉淀时 §5.x 清单回填"）· §8 待补清单删除 #63 雏形项 · §1B Step 7 references/ 双端 byte-identical 检测扩展到 12 项 · 升版走完衍生 #61 升版扫尾四件套"1+4+cp"6 步
 > 📌 **v1.58.5 升版要点（2026-09-01 16:00 第 55 档实测触发）**：衍生 #62「Honest-Inventory-Only 诚实盘点唯一性」**主体版正式沉淀** references/honest-inventory-only-sop.md v1.0（12.5KB · 9 节 · 5 个反例 + 6 步 SOP + 与 #61 关系图 + 与铁律 #5 协同 + 与 v2.2 工具化协同）· 决策树新增「发现双端不一致/虚胖/缺口 → 启动 #62」分支 · §5.1 references/ 主体版正式入册（9 → **10 个**）· §1B Step 7 references/ 双端 byte-identical 检测扩展到 10 项 · 升版走完衍生 #61 升版扫尾四件套（frontmatter + H1 + 要点行 + changelog + §内引用 + cp 双端，6 步全过）
 > 📌 **v1.58.4 升版要点（2026-09-01 14:00 第 54 档实测触发）**：verify_evolution.py v2.1 → v2.2 升级（**校验覆盖面 + 校验精度 + auto-cp 三件套**）· references/ 双端 cp 修复 **9/9 byte-identical 里程碑** · 衍生 #62「Honest-Inventory-Only 诚实盘点唯一性」范式雏形 · 铁律 #5 立第 8 变体（"升级 v2.x 必须同时校验覆盖面 + 校验精度"）· f3-v22-coverage-gap-sop.md 主体版扩展（14.4→19.6KB）· 跨 profile 写保护实测正确处置（patch 写 default 顶层受阻 → 按 §1B Step 2 改写 afu 本地 + terminal cp 回 default）
@@ -366,7 +368,9 @@ ls ~/.hermes/profiles/afu/skills/<skill>/references/ | wc -l
 
 > 📌 **v1.58.6 重要修正（9/01 22:00 第 58 档实测）**：portal §5.1 第 55 档创建 ***SECRET***.md 时漏回 §5.1 主体版清单 → 第 58 档实测发现 §5.1 列 10 个但实际 11 个 = 虚胖 1 个（铁律 #5 第 9 变体"主体版沉淀时 §5.x 清单回填"）。本档 v1.58.6 升版补回 §5.1 清单 + 新增衍生 #63「沉默-现状双桥」主体级 = references/ 11 → **12 个**。
 
-### 5.1 已沉淀 references（实际存在 12 个 · 2026-09-01 22:00 第 58 档实测）
+### 5.1 已沉淀 references（实际存在 13 个 · 2026-09-06 10:00 第 64 档实测）
+
+> 📌 **v1.58.7 修正（9/06 10:00 第 64 档实测）**：v1.58.6 §5.1 声称 12 个 → 第 64 档实测 = 13 个（第 59 档新增衍生 #64 索引指针 ***SECRET***.md 漏列，铁律 #5 第 9 变体"§5.x 清单回填"再次触发）→ 本档升 v1.58.7 回填 §5.1 第 13 项。本档实测双端 13/13 byte-identical ✅。
 
 > 📌 **v1.58.6 修正（9/01 22:00 第 58 档实测）**：v1.58.5 §5.1 声称实际存在 10 个 → 第 58 档实测 = 11 个（漏列 ***SECRET***.md，铁律 #5 第 9 变体触发）→ 本档新增衍生 #63「沉默-现状双桥」主体版 references/silence-status-quo-bridge-sop.md v1.0（~12KB · 9 节 · 4 大场景 + 3 段渐进桥接剧本 + 3 大禁忌 + 3 套边界 + 5 决策树 + 6 心法沉淀 + 3 实战剧本 + 7 协同矩阵 + 9 沉淀状态）= **12 个**。本档实测双端 12/12 byte-identical ✅。
 
@@ -382,6 +386,7 @@ ls ~/.hermes/profiles/afu/skills/<skill>/references/ | wc -l
 - `references/honest-inventory-only-sop.md` — **衍生 #62「Honest-Inventory-Only 诚实盘点唯一性」主体版（v1.58.5 立）** ⭐ v1.0 2026-09-01 16:00 第 55 档创建 · 12.5 KB · 9 节 · 5 个反例（声明虚胖/半成品升版/YAML-only 校验/校验覆盖面不全/9/9 修复里程碑）+ 6 步 SOP（实测 → 全量盘点 → 决策 source → 列 P0 → 下档 auto-cp → 二次校验）+ 与 #61 关系图 + 与铁律 #5 协同 + 与 v2.2 工具化协同 + 触发决策树（3 条分支）。**双端 byte-identical ✅**
 - `references/***SECRET***.md` — **"主体版沉淀型升版" 12 步完整动作实战清单**（#61 升版 6 步 + #62 主体版沉淀 6 步 = 12 步组合）⭐ v1.0 2026-09-01 16:00 第 55 档创建 · 配合 #62 §7 v2.2 工具化协同表使用。第 55 档首次实测通过：portal v1.58.4 → v1.58.5 + 衍生 #62 主体版沉淀 + references/ 9 → 10 byte-identical 里程碑。**🆕 v1.58.6 第 58 档修 §5.1 虚胖**：本档实测 §5.1 漏列此 reference，本档 v1.58.6 升版补回 + §5.1 主体清单新增第 11 项
 - `references/silence-status-quo-bridge-sop.md` 🆕 — **衍生 #63「Silence-Status Quo Bridge 沉默-现状双桥」主体版（v1.58.6 立）** ⭐ v1.0 2026-09-01 22:00 第 58 档创建 · ~12 KB · 9 节 · 4 大场景（已读不回 + 现状偏见 / 报价后沉默 + 现状满意 / 合同临门一脚沉默 + 再观望 / 电话不接 + 非主营业务）+ 3 段渐进桥接剧本（silence-drill 制造对话内小真空 → status-quo-unlock 让客户承认现状代价 → Loss Aversion 让客户看见不行动代价）+ 3 大禁忌（不追发消息 / 不用 AA 替代 silence-drill / 不用阿福的数字替代客户自述）+ 3 套边界 + 5 启动决策树 + 6 心法沉淀（silence-drill 是开瓶器 / status-quo-unlock 是倒酒器 / Loss Aversion 是杯子）+ 3 实战剧本（鳗鱼 8000 万项目 / 中型 RAS 报价后沉默 / 合同临门一脚沉默）+ 7 协同矩阵（与 #17/#22/#46/#54/#56/#58/#60 关系明确）+ 9 沉淀状态。**双端 12/12 byte-identical ✅**（含本档新沉淀）
+- `references/***SECRET***.md` 🆕 — **衍生 #64「Probing Anchored Bracketing 探问式锚定分段术」索引指针（v1.58.7 入册）** ⭐ v1.0 2026-09-02 05:51 第 59 档后创建（4.5 KB · **索引指针非主体 SOP**，完整内容在 memory/probing-anchored-bracketing.md v0.1 雏形 5.8KB）。核心：报价前段改"开价式锚定"为"探问验证的范围锚定"（"30-45 万，看您预算节奏"）→ 与 #56 沉默溢价术构成前段+后段组合（#64 探真 + #56 让客户拿锚点）。升主体级条件：实战 3 例 + 与 #56 协同量化 + 3 实战剧本（9 月底批量校对触发）。**双端 13/13 byte-identical ✅**
 
 ### 5.2 🆕 实质新增（2026-09-01 22:00 第 58 档 · v1.58.6）
 
@@ -392,7 +397,9 @@ ls ~/.hermes/profiles/afu/skills/<skill>/references/ | wc -l
 
 - **衍生 #62「Honest-Inventory-Only 诚实盘点唯一性」主体版 v1.0** — references/honest-inventory-only-sop.md 12.5KB / 9 节：①为什么需要这个范式（30 秒心法 + 5 个反例表）② 6 步动作 SOP（30 秒可跑）③ 实战案例库（5 例，第 50-54 档累积）④ 与衍生 #61 关系图（治理动作 vs 治理修复）⑤ 与铁律 #5 协同（铁律 #5 是 WHAT，#62 是 HOW）⑥ 触发决策树（3 条分支：双端不一致 / 同事反馈 cp 错方向 / 升版 v2.x 加新校验维度）⑦ 与 verify_evolution.py v2.2 协同（v2.2 是 #62 的工具化实现）⑧ 沉淀状态 ⑨ 30 秒 SOP 最简版。**与 #61 严格区分**：#61 治升版动作（1+4+cp 6 步），#62 治修复型 cp（盘点先于修复）。**心法**：「**盘点先于修复**，**校验先于声明**，**source 先于 cp**」✅ 实际落地 + 双端 10/10 byte-identical
 
-### 5.3 memory/ 沉淀（24 份，待 9 月底合并升版）· 第 63 档修正
+### 5.3 memory/ 沉淀（25 份，待 9 月底合并升版）· 第 64 档修正
+
+> 📌 **v1.58.7 本档新增（9/06 10:00 第 64 档实测）**：memory/ 24 → **25 份**——新增 `memory/text-tone-compensation-sop.md`（衍生 #67 文字语调补偿术 v0.1 雏形，Voss 体系外第 21 个，3.1KB · 5 节）。按铁律 #5 第 10 变体（"每次新加 memory 必须立即实测 §5.3"）当档回填，verify_evolution.py v2.3 [7] 校验 claimed=25 = actual=25。
 
 > 📌 **v1.58.7 修正（2026-09-02 12:35 第 63 档实测触发）**：memory/ 实际 = **24 份**（v1.58.6 §5.3 claim 20 份 → 实测 24 份 = 虚胖 4 个）
 > 修正：以下 4 份 memory 在第 59/60/62 档新增但 §5.3 未回填（铁律 #5 第 9 变体"§5.x 清单回填"实测连续 3 档触发）：
@@ -403,6 +410,7 @@ ls ~/.hermes/profiles/afu/skills/<skill>/references/ | wc -l
 >
 > 📌 **v1.58.6 修正**：memory/ 实际 = **20 份**（v1.58.0 §5.3 列 19 份 → 本档新增 1 份 silence-status-quo-bridge-sop.md v0.1 雏形）—— 9/01 22:00 第 58 档实测 ls 确认
 
+- `memory/text-tone-compensation-sop.md` — 衍生 #67 文字语调补偿术（**v0.1 雏形，第 64 档新增**）⭐ v0.1 2026-09-06 10:00 新增，3.1KB · 5 节
 - `memory/silence-status-quo-bridge-sop.md` — 衍生 #63 沉默-现状双桥（**v0.1 雏形，本档新增；主体版已升 references/silence-status-quo-bridge-sop.md**）⭐ v0.1 2026-09-01 22:00 新增，9.6KB · 6 节
 - `memory/time-box-tactic-sop.md` — 衍生 #58 时间盒战术 ⭐ v1.0 2026-09-01 00:00 新增
 - `memory/delay-cost-visualization-sop.md` — 衍生 #59 拖延成本可视化 ⭐ v1.0 2026-09-01 02:00 新增

@@ -914,7 +914,7 @@ LookForge AI出图模块 = Blueprint能力层 + Three.js 3D展示
 | 问题 | 旧状态 | v1.1.0 现状 |
 |------|------|------|
 | HardwareCADAgent 从未被任何Phase调用 | 死代码 | ✅ Phase 4 已实装调用（`phase_orchestrator.py:1040 run_phase4`）|
-| SkillDispatcher 完全Mock | Phase3 全假 | ⚠️ 部分实装，LLM-based dispatch（CLAUDE.md Known Limitations）|
+| SkillDispatcher 完全Mock | Phase3 全假 | ✅ 已实装 — `dispatch()`+`dispatch_many()`+ChromaDB 知识库注入（`phase_orchestrator.py:928` 真实调用，2026-09-05 验证）|
 | `NEXT_PUBLIC_API_URL` 硬编码localhost | 容器内前端失败 | ✅ 已修复（docker-compose.yml → http://backend:8000）|
 | projects.py 内存存储，重启丢失 | 状态丢失 | ✅ PostgreSQL 持久化（commit eb052a48）|
 | ChromaDB 多实例混乱 | 两个实例 | ✅ 统一为 docker 服务容器（HTTP 连接）|
@@ -952,10 +952,10 @@ LookForge AI出图模块 = Blueprint能力层 + Three.js 3D展示
 NEXT_PUBLIC_API_URL: http://backend:8000  # 原来是 http://localhost:8000
 ```
 
-**P0 阻塞性问题清单（必须修复才能进入生产）**：
+**P0 阻塞性问题清单（必须修复才能进入生产）**（2026-09-05 状态复审）：
 1. `NEXT_PUBLIC_API_URL` 硬编码 → `http://localhost:8000` 应为 `http://backend:8000`（docker-compose.yml:91）
 2. 内存存储 → `projects.py:22` 的 `_projects_db` 重启丢失，PostgreSQL已定义但未连接
-3. SkillDispatcher Mock → `dispatch()` 返回 `{"status": "mock"}`，Phase3技能编排全假
+3. ~~SkillDispatcher Mock → `dispatch()` 返回 `{"status": "mock"}`，Phase3技能编排全假~~ ✅ **已修复**（2026-09-05 验证，phase_orchestrator.py:928 真实调用 dispatch_many）
 4. HardwareCADAgent死代码 → 实例化了但没有任何Phase方法调用它
 5. ChromaDB多实例 → `backend/data/chroma/`(31MB) vs `backend/app/data/chroma/`(106KB) 混乱
 6. backend1/未决 → 独立Plan生成引擎探索，docker-compose未包含，需决策去留
@@ -1025,10 +1025,10 @@ Blueprint.am 的分阶段 Prompt 设计是最佳参考：
 - `bossdesk/RAS产品研发迭代-LookForge.yxf` — 工作流定义文件
 - `bossdesk/README.md` — 上架文档
 
-**待办 P0（v1.1.0 后）**：
-1. ⚠️ SkillDispatcher 完全 LLM 化（目前部分实装）
+**待办 P0（v1.1.0 后）**（2026-09-05 状态复审）：
+1. ✅ ~~SkillDispatcher 完全 LLM 化（目前部分实装）~~ 已实装
 2. ⚠️ backend1/ Plan 生成引擎去留决策
-3. ⚠️ Patent risk detection（占位符，未连接真实专利 API）
+3. ⚠️ Patent risk detection（占位符，未连接真实专利 API）— 2026-09-05 验证：phase4 返回的 `patent_risk` 是 LLM 凭空生成，无专利数据源
 4. ⚠️ Docker 未启动验证（cron 报告 docker socket 缺失）
 
 **与 maodou-product 旧版 task_hw_05041523_* 对照**：
@@ -1045,11 +1045,11 @@ Blueprint.am 的分阶段 Prompt 设计是最佳参考：
 
 **审查报告**：`docs/深度优化分析报告_2026-05-07.md`
 
-**P0 阻塞性问题**（共6个，必须修复才能进入生产）：
+**P0 阻塞性问题**（共6个，必须修复才能进入生产）**（2026-09-05 状态复审，已修 1 项）**：
 
 1. **API URL硬编码** — `docker-compose.yml:91` → `http://localhost:8000` 应为 `http://backend:8000`
 2. **内存存储** — `projects.py:22` 的 `_projects_db` 重启丢失，PostgreSQL已定义但未连接
-3. **SkillDispatcher Mock** — `dispatch()` 返回 `{"status": "mock"}`，Phase3技能编排全假
+3. ✅ ~~**SkillDispatcher Mock** — `dispatch()` 返回 `{"status": "mock"}`，Phase3技能编排全假~~ **已修复**（2026-09-05 验证）
 4. **HardwareCADAgent死代码** — 实例化了但没有任何Phase方法调用它
 5. **ChromaDB多实例** — `backend/data/chroma/`(31MB) vs `backend/app/data/chroma/`(106KB) 混乱
 6. **backend1/未决** — 独立Plan生成引擎探索，但docker-compose未包含，需决策去留
