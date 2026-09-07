@@ -1,5 +1,5 @@
 # Codex 状态快照
-> 导出时间: 2026-09-07 08:13:59
+> 导出时间: 2026-09-07 09:39:40
 > 🤖 自动同步自 Hermes/玉芬 · Codex 自进化模块
 
 ## 版本
@@ -12,6 +12,7 @@
 - 目录: 1 个
 
 ## 插件来源 (cache/)
+- `openai-api-curated`
 - `openai-bundled`
 - `openai-primary-runtime`
 

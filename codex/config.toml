@@ -109,6 +109,24 @@ enabled = true
 [plugins."template-creator@openai-primary-runtime"]
 enabled = true
 
+[plugins."superpowers@openai-api-curated"]
+enabled = true
+
+[plugins."build-web-apps@openai-api-curated"]
+enabled = true
+
+[plugins."coderabbit@openai-api-curated"]
+enabled = true
+
+[plugins."figma@openai-api-curated"]
+enabled = true
+
+[plugins."linear@openai-api-curated"]
+enabled = true
+
+[plugins."sentry@openai-api-curated"]
+enabled = true
+
 [features]
 js_repl = false
 computer_use = false
