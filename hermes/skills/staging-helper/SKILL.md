@@ -159,15 +159,14 @@ Agent 调研/生成(工作空间:3-公司项目资料/)
 ### 1. 写资料(agent 调研/生成完调用)
 
 ```bash
-# 命令行
-python3 ~/.hermes/scripts/staging_save.py \
+# 命令行（⚠️ 2026-09-06 实测：当前版本**不支持 --tag/--subdir**，传了直接 argparse 报 unrecognized arguments；
+# 只收 --title/--content/--source/--agent/--target。标签语义放标题或入库后手补 .meta.json）
+# ⚠️ 路径用绝对路径，防 profile HOME 劫持（陷阱5）
+python3 /Users/hua/.hermes/scripts/staging_save.py \
   --title "养殖池循环水设计调研" \
   --content "$(cat research.md)" \
   --source research \
-  --agent maodou \
-  --tag 养殖池 \
-  --tag 循环水 \
-  --meta "task_id=t-2026-001"
+  --agent maodou
 
 # Python API(⚠️ `agent=` 必须是顶层 kwarg,不能放 meta 里 — 见陷阱 14)
 from staging_save import stage
@@ -352,6 +351,8 @@ STAGING_DIR = Path("/Users/hua/rkr_staging/文档中转站")  # 不要用 Path.h
 ```
 
 > 华哥本机是 `/Users/hua`,未来换用户 / 多用户部署时此常量要参数化。
+
+> ⚠️ **2026-09-06 玉芬复现**：即使调用路径用绝对路径 `/Users/hua/.hermes/scripts/staging_save.py`，脚本**内部**的落盘目录仍可能解析到 profile home（输出 `已保存到 /Users/hua/.hermes/profiles/zhenglishi/home/.hermes/staging/...`，scanner 看不到）。另：当前版本脚本**不支持 `--tag` 参数**（`error: unrecognized arguments: --tag`），只收 `--title/--content/--source/--agent/--target`。**修复 SOP**：脚本保存后检查输出路径，若含 `profiles/`，手动 `cp` 文件到 `/Users/hua/rkr_staging/文档中转站/01-调研资料/` 并手写同名 `.md.meta.json`（含 title/source/agent/tags/original_path），60 秒内 scanner 会正常入库。
 
 > ⚠️ **2026-08-24 审计复现**:毛豆(08-17)+ 宽博士/量化(08-15)**先后踩同一坑**,都写进了字面量 `~/Desktop/知识库/RAS仿真技术调研/` 目录:
 > - 毛豆:`3-公司项目资料/301-智能体/毛豆-产品交付/workspace/~/Desktop/...`(玉芬已清理,移到 `workspace/RAS仿真技术调研/`)

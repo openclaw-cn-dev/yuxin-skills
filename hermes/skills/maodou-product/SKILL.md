@@ -946,19 +946,23 @@ LookForge AI出图模块 = Blueprint能力层 + Three.js 3D展示
 
 **验证**：两个文件已通过 `ast.parse` 语法检查。Docker 环境需重建后才能测试。
 
-**立即可修复**：
-```yaml
-# docker-compose.yml:91 修复
-NEXT_PUBLIC_API_URL: http://backend:8000  # 原来是 http://localhost:8000
-```
+**✅ 9/7 状态更新（P0 真实盘点，commit `39a5e9d8` 已完成 #1）**：
+P0 净剩余 = **2 项真实未解**（专利占位符 + chromadb 服务待决策）；3 项 P1 可独立做。
+详见 `evolution/2026-09-07_00.md §二`。
 
-**P0 阻塞性问题清单（必须修复才能进入生产）**（2026-09-05 状态复审）：
-1. `NEXT_PUBLIC_API_URL` 硬编码 → `http://localhost:8000` 应为 `http://backend:8000`（docker-compose.yml:91）
-2. 内存存储 → `projects.py:22` 的 `_projects_db` 重启丢失，PostgreSQL已定义但未连接
-3. ~~SkillDispatcher Mock → `dispatch()` 返回 `{"status": "mock"}`，Phase3技能编排全假~~ ✅ **已修复**（2026-09-05 验证，phase_orchestrator.py:928 真实调用 dispatch_many）
-4. HardwareCADAgent死代码 → 实例化了但没有任何Phase方法调用它
-5. ChromaDB多实例 → `backend/data/chroma/`(31MB) vs `backend/app/data/chroma/`(106KB) 混乱
-6. backend1/未决 → 独立Plan生成引擎探索，docker-compose未包含，需决策去留
+~~**立即可修复**：~~（已完成）
+~~```yaml~~
+~~# docker-compose.yml:91 修复~~
+~~NEXT_PUBLIC_API_URL: http://backend:8000  # 原来是 http://localhost:8000~~
+~~```~~
+
+**P0 阻塞性问题清单（真实状态 · 2026-09-07 00:00 验证）**：
+1. ✅ **已完成**（2026-09-06 commit `39a5e9d8`）— 真实根因是 frontend fallback port 仍是 8000，应改 8001。修复涉及 12 个前端 .ts(x) + Dockerfile + .env.example，统一为 `http://127.0.0.1:8001`。docker-compose.yml:56,62 实际已是 8001（9/5 改的）。SKILL.md 之前描述"localhost:8000 → backend:8000"是**错误判断**。
+2. 内存存储 → `projects.py` 的 `_projects_db` 重启丢失 → SQLite fallback 已加（commit `eb052a48`），PostgreSQL 强一致待做（P1 #23，3 天可做）
+3. ✅ ~~SkillDispatcher Mock~~ → **已修复**（`backend/app/dispatchers/skill_dispatcher.py:29-49` 实装 `dispatch()` 真调 LLM）
+4. ⚠️ HardwareCADAgent → `phase_orchestrator.py:1040 run_phase4` 已调用 4 个方法（`generate_bom/generate_assembly_steps/generate_electrical_schema/generate_cad_tasks`），真接入端到端验证待做（P1 #24）
+5. ⚠️ ChromaDB 多实例 → 已统一内嵌模式（`chroma_persist_dir: ./data/chroma` + volume 持久化），`backend/app/data/chroma` 旧 106KB 实例可清理（P1 #25，依赖 P0 #22 决策）
+6. ✅ **已 obsolete** — `backend1/` 目录不存在（`ls backend1/` → No such file or directory），决策自动失效
 
 ### Blueprint.am 与 CAD 生成技术评估
 
@@ -1045,6 +1049,8 @@ Blueprint.am 的分阶段 Prompt 设计是最佳参考：
 
 **审查报告**：`docs/深度优化分析报告_2026-05-07.md`
 
+> 📅 **2026-09-07 00:00 更新**：以下为 9/5 状态快照，最新 P0 真实状态见第 959 行（commit `39a5e9d8` 已修 #1，backend1/ 已 obsolete）。
+
 **P0 阻塞性问题**（共6个，必须修复才能进入生产）**（2026-09-05 状态复审，已修 1 项）**：
 
 1. **API URL硬编码** — `docker-compose.yml:91` → `http://localhost:8000` 应为 `http://backend:8000`
@@ -1061,9 +1067,41 @@ Blueprint.am 的分阶段 Prompt 设计是最佳参考：
 - FreeCAD路径硬编码macOS（Docker内不可用）
 - requirements.txt不完整（缺pydantic/fastapi/uvicorn）
 
-**LookForge项目实际路径**：`/Users/hua/6-产品研发/渔芯独角兽/02-产品开发综合平台/00-综合开发平台/`（v1.1.1，commit `50f1b9ee`）
-（历史路径：`02-LookForge` → `08-ai出cad图`（桌面）→ `06-硬件项目开发`（已废弃，不存在）→ `00-综合开发平台`（当前真身，2026-09-01 仍在更新））
+**LookForge项目实际路径**：`/Users/hua/6-产品研发/渔芯独角兽/02-产品开发综合平台/00-综合开发平台/`（v1.1.1，commit `50f1b9ee`，后续 commit 见 §"v1.1.1+ 增量更新"）
+（历史路径：`02-LookForge` → `08-ai出cad图`（桌面）→ `06-硬件项目开发`（已废弃，不存在）→ `00-综合开发平台`（当前真身，2026-09-06 仍在更新））
 所有涉及 LookForge 源码路径的参考均应使用 `00-综合开发平台/backend/`，不是 `02-LookForge/backend/` 或 `08-ai出cad图/backend/`。
+
+### v1.1.1+ 增量更新（2026-09-06 状态）
+
+**今日（2026-09-06）新增 2 个 commit + 1 个 docs**：
+
+| Commit | 内容 | 关联任务 |
+|---|---|---|
+| `d809ab16` | feat(auth): 复活 OAuth 认证层（微信/飞书/Google + JWT，6 端点 + 24 测试全过）| P0 #18（认证层缺失 → 阻塞签合同） |
+| `fe00df84` | docs(auth): 写认证层 API 文档（5 端点 + token 生命周期 + 安全清单）| P0 #18 收尾 |
+| `8f16d53e` | fix(lookforge): P0 止血 4 处 (9/4 cron 漏提交) | 历史补偿 |
+
+**P0 阻塞清单 → 9/6 状态**：
+
+| # | 问题 | 9/5 状态 | 9/6 状态 |
+|---|---|---|---|
+| 1 | API URL 硬编码 | ⚠️ 未修复 | ⚠️ 仍未修复（docker-compose.yml:91）|
+| 2 | 内存存储 / `_projects_db` | ⚠️ 部分修复 | ⚠️ SQLite fallback 已加，PostgreSQL 强一致待做 |
+| 3 | ~~SkillDispatcher Mock~~ | ✅ 已修复 | ✅ |
+| 4 | HardwareCADAgent 死代码 | ⚠️ Phase4 已调用 | ⚠️ Phase4 集成完成，但真接入路径待验证 |
+| 5 | ChromaDB 多实例混乱 | ⚠️ 已统一内嵌模式 | ⚠️ docker-compose 没加 chromadb 服务（与 SKILL.md 描述不一致）|
+| 6 | backend1/ 去留 | ⚠️ 仍待决策 | ⚠️ 仍待华哥拍板 |
+| **7** | **认证层缺失（OAuth+JWT）** | 🆕 **未在旧 P0 清单中** | ✅ **已完成（commit d809ab16 + fe00df84）** |
+| **8** | **专利占位符仍是 LLM 凭空生成** | 🆕 **未在旧 P0 清单中** | ⚠️ **未修复**（phase_orchestrator.py:1162 + llm_service.py:231）|
+| **9** | **docker-compose 缺 chromadb 服务** | 🆕 **未在旧 P0 清单中** | ⚠️ **未修复**（CHROMADB_HOST 配置了但服务不存在）|
+
+**P0 解除节奏**：今日净解除 1 项（#7 认证层），新增 2 项观察项（#8 #9）。**净 P0 = 6 项**（#1 #2 #5 #6 #8 #9）。
+
+**v1.2 路线图**（基于 9/6 14:00 进化报告）：4 周 / 7 主题 / P0×3 + P1×6。详见 evolution/2026-09-06_14.md。
+华哥待拍板 3 个问题：(A) 专利 API 选型 PatSnap/Google Patents/天眼查；(B) ChromaDB 服务化是否要做；(C) backend1/ 留着吗。
+**9/6 18:00 待办**：v1.2 路线图尚未登记到 tasks.db（14:00 报告"下一步"第 1 条仍未执行）。
+
+**Claude Code 使用证据**：今天 2 个 git commit（d809ab16 + fe00df84）的 Co-Authored-By 都是 Claude，说明铁律 #1（代码必须经 Claude Code/Codex）执行有效。
 ### 硬件开发标准流程（7环节）
 
 每个设备开发按以下标准流程执行，华哥确认后再推广：

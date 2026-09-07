@@ -5,7 +5,8 @@ description: |
   适用场景：华哥需要"重新整理同事 agent 系统文件"、"建集中目录树管理所有同事"、
   "新增一位专家型同事"或者其他类似"multi-agent 系统的 profiles 散落管理问题"。
   触发条件：用户提到"重新整理 / 集中管理 / 统一视图 / 同事 agent 整理 / 团队管理视图 /
-  新增同事 / 复刻宽博士模式建专家"。
+  新增同事 / 复刻宽博士模式建专家"；或华哥发批量批复指令（"需拍板项目全选'是'" /
+  "同意" / "可以"）需要把待拍板清单逐项落地分发时（见 §十四 批量批复落地 SOP）。
 related_skills:
   - ***SECRET***   # 协作后端（registry / messages / SOP）
   - hermes-gateway-profile-ops        # runtime / launchd / plist / LLM 路由
@@ -22,6 +23,7 @@ related_skills:
 - `references/cron-jobs-provider-migration.md` — cron jobs.json 批量迁移废弃 provider：deepseek-direct → deepseek-cn 模板（触发：Unknown provider 报错）
 - `references/***SECRET***.md` — `Unknown provider 'glm-free'` 事故全记录 + 5 步诊断配方（per-profile 隔离排查 + config.yaml.bak-* 时间线重建 + 残留 vs 活报错区分）+ skill 容量审计正确计数命令（触发：任何 "Unknown provider 'X'" 报错 / provider 迁移后 cron 集体失败）
 - `references/***SECRET***.md` — **从零新增同事 Agent Profile 上线 SOP**（目录树/config 复刻/AGENTS+SOUL/launchd plist 改造/bootstrap/心跳脚本/cron×2 含 cronjob 工具 quirk/首跑/Mnemosyne 登记，2026-09-04 心博士实战全流程；触发：华哥拍板新增专家型同事）
+- `references/batch-approval-dispatch.md` — **华哥批量批复落地 SOP 详情**：全量扫描"待拍板/待定夺"清单 → 逐项按同意落地 → 批复原文登记到各 owner 实际读取的文档 → 记忆同步 → 分组汇报（2026-09-07 "需拍板项目全选'是'" 3 清单 15 项实战；触发：华哥批量同意类指令）
 - 现役名单（2026-09-04）：玉芬(default) / 阿福(afu) / 毛豆(maodou) / 老莫(laomo) / 黑豆(heidou) / 小宝(xiaobao) / 宽博士(quant) / 学习助手(zhenglishi) / 旺财(wangcai,Windows) / **心博士(psychology，2026-09-04 复刻宽博士模式入职：心理学专家、后台专家模式不接飞书、伦理红线写死 AGENTS.md、服务全公司 6 条线)**
 
 ---
@@ -370,6 +372,34 @@ cronjob action='list' | grep -E '(阿福|小宝|黑豆|老莫|毛豆|宽博|学�
 **通用反模式**：
 - ❌ 听到模糊需求 → 立即执行（按自己理解）
 - ✅ 听到模糊需求 → 先搜索现有项目/文件 → 确认理解 → 再执行
+
+---
+
+## 十四、华哥批量批复落地 SOP（2026-09-07 实战）
+
+**触发**：华哥发一句批量批复（"需拍板项目全选'是'" / "同意" / "可以"），不指明项目。含义 = 当时所有 agent 报告中挂起的"待拍板/待定夺"清单整体通过。**禁止反问"您指的是哪个？"**（同 §九 铁律：华哥批复 = 已批准，落地后汇报）。
+
+**五步流程**：
+1. **全量扫描待批清单**（不要只处理最近收到的一张）：
+   - `session_search`（sort=newest）：`"待您拍板" OR "待华哥定夺" OR "等您拍板" OR "请您拍板"`，再补 `拍板 OR 定夺` 一轮
+   - `search_files` 项目目录搜 `拍板|定夺|待华哥`，重点文件：`00-总报告.md`（待华哥定夺节）、`INDEX.md`（§五行动项 / 进度勾选）、同步清单 §八
+2. **逐项解读"是"**：是非题 → 直接通过；选择题（如域名 .com/.ai）→ 取方案文档里写明的默认值，汇报中单独标注"默认 X，可改"，不反向追问
+3. **批复原文登记到 owner 实际读取的位置**（只回飞书消息无效，owner cron 读的是文件）：
+   - 专家底座 `INDEX.md` §五：沿用既有格式 `- [x] **华哥拍板 <清单名>（<date> 批复"<原文>"）**：①...②...→ 下轮承接执行`；执行子项保持 `[ ]` 到做完为止
+   - 同步清单 §八 决策表：表头引语下加一行 `> ⚡ **<date> 华哥批复：N 项全选"是"，全部通过**`
+   - 项目文档：`## 待华哥定夺` 改 `## 华哥已定夺（<date> 批复"<原文>"）` + 逐项 ✅；INDEX 进度勾选该决策项并新增一条执行待办
+4. **现实世界动作降档**：涉监管提交 / 付费 / 外部账号（算法备案提交、域名购买、云账号）→ 批复记为"启动/准备"，注明到哪一步仍需华哥本人动作（公司实体资料、Cloudflare 账号等），到点再回来找他
+5. **记忆三连**：`mnemosyne_update` 改写旧的"待华哥定夺"记忆条目（留着会误导后续轮次）→ task:progress canonical 槽更新状态 → 新增批复记录条目（importance ≥0.7）
+
+**汇报格式**：按清单分组、每项一行 ✅、结尾单列"仍需华哥本人的选择/动作"。让华哥可抽查否决任何一项。
+
+**坑**：
+- 各 agent 措辞不同（待您拍板 / 等您拍板 / 待华哥定夺 / 待华哥拍板），单关键词搜索会漏清单——必须 OR 组合
+- 批复落地后，项目里其他"等华哥拍板"的引用文字要同步改，否则下轮 cron / 下个 agent 又把它当待办捞出来
+- session_search 大结果会 persisted 成单行 JSON 临时文件：grep 无行上下文可用，用 `terminal` 跑 `python3 - <<'EOF'` 解析（execute_code 在部分 profile 受审批模式限制，terminal 稳）
+- 心博士这类"唯一直属华哥"的专家 agent，批复要同时登记两处：底座 INDEX §五（cron 工作流读取点）+ 同步清单 §八（对齐文档），缺一处下轮就对不齐
+
+详细实战回放（3 清单 15 项 / 精确 patch 模式 / 汇报模板）见 `references/batch-approval-dispatch.md`。
 
 ---
 

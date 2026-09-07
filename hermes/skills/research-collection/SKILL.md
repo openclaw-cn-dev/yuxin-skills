@@ -181,6 +181,28 @@ for r in items:
 
 详见 `references/cron-execution-cheatsheet.md` §11（待补）。
 
+### Pitfall 13: 并行子代理调研全员超时 → 自研兜底模式（2026-09-06 OPC出海项目实测）
+**症状**：delegate_task 派 3 路并行 web 调研子代理，600s 硬超时，各完成 14-24 次 API 调用但**零产出**（文件未落盘）。
+**根因**：子代理用慢模型 + 外网请求慢，600s 上限内跑不完"多轮搜索+写文件"全链路。
+**兜底 SOP（实测有效）**：
+1. 不再重试子代理，玉芬直研：一轮 **2-4 个并行 web_search**（查询词一半中文一半英文，避开纯中文宽泛词——"OPC 一人公司 AI"这类组合会返回垃圾结果，加英文锚词如 "One Person Company"）
+2. 关键页用 curl 抓全文（见 Pitfall 14），控制 2-3 个源
+3. 直接写分报告 + 总报告，未核实处标[待核实]
+**决策口诀**：子代理调研超时一次 → 立即切自研，不再赌第二次 600s。
+
+### Pitfall 14: web_extract 后端未配置时的网页全文提取配方（2026-09-06 实测）
+**症状**：`web_extract` 报错 "DuckDuckGo (ddgs) is a search-only backend and cannot extract URL content"（extract_backend 只支持 firecrawl/tavily/exa/parallel，未配置时整条路堵死）。
+**替代配方**（curl + 标签剥离，一次拿正文前 N 字符）：
+```bash
+curl -sL --max-time 25 -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)" "$URL" | python3 -c "
+import sys,re,html
+t=sys.stdin.read()
+t=re.sub(r'<script[\s\S]*?</script>','',t); t=re.sub(r'<style[\s\S]*?</style>','',t)
+t=re.sub(r'<[^>]+>',' ',t); t=html.unescape(t); t=re.sub(r'\s+',' ',t)
+print(t[:3500])"
+```
+**要点**：①UA 必须带，否则部分站点拒 ②一次 2-3 个源足够，全文前 3500 字符已覆盖正文 ③dump 页（如阿里云文章）要先 `find` 定位正文起点再截取，避免抓到整页导航噪音。这是提取配方的固有能力差异，非工具故障；如需整页 Markdown 再考虑配 extract_backend。
+
 ## 触发关键词
 
 ### GitHub
@@ -225,6 +247,20 @@ curl -sL 'https://export.arxiv.org/api/query?search_query=all:{关键词}&sortBy
 
 判断口诀详见 Pitfall 9；详见 `references/cron-execution-cheatsheet.md` §1。
 
+### Pitfall 13: web_extract 后端可能只配了搜索（2026-09-06 实测）
+`web_extract` 返回 `{"success": false, "error": "...(ddgs) is a search-only backend and cannot extract URL content. Set web.extract_backend to firecrawl, tavily, exa, or parallel."}` 时不要反复重试，直接走 curl 抓取 + 正则剥标签的兜底配方（10 行搞定，还能用 `[:N]` 控制回传体量省 token）：
+
+```bash
+curl -sL --max-time 25 -A "Mozilla/5.0" "<url>" | python3 -c "
+import sys,re,html
+t=sys.stdin.read()
+t=re.sub(r'<script[\s\S]*?</script>','',t); t=re.sub(r'<style[\s\S]*?</style>','',t)
+t=re.sub(r'<[^>]+>',' ',t); t=html.unescape(t); t=re.sub(r'\s+',' ',t)
+print(t[:3500])"
+```
+
+注意：这不是"web_extract 坏了"——是 extract_backend 配置问题，可由用户改配置根治；在未改配置前，以上配方是稳定替代。深读 1-2 个关键页足够，不要对搜索结果逐条 curl（token 纪律）。
+
 ## 触发关键词
 "调研"、"收集"、"搜索"、"竞品分析"、"行业报告"、"技术资料"、"情报"、"市场数据"、"资料整理"
 
@@ -235,3 +271,23 @@ curl -sL 'https://export.arxiv.org/api/query?search_query=all:{关键词}&sortBy
 - 技术选型调研
 - 行业趋势分析
 - AI 出 CAD 图等垂直技术追踪（GitHub 热门 + arXiv 学术双线）
+
+## 华哥口头立项 SOP（"新增调研项目：X" 类指令，2026-09-06 固化）
+
+1. **语义验证**：华哥指令常带缩写代号（如 OPC），先 1 次 web_search 验证通行语义再动手，不反问（OPC=One Person Company 一人公司，非工业 OPC UA）
+2. **立项**：建 `~/6-产品研发/渔芯独角兽/01-开发中/研-<主题>/`（研-前缀=调研中，区别于 app-/卖-/学-），写 INDEX.md（定义/研究框架/产出规划/进度）
+3. **调研执行 → 汇总**：总报告命名 `00-总报告.md`（一句话结论先行+行动建议+来源）；分报告放 `02-调研/`
+4. **入库**：staging_save.py 必须用绝对路径 `/Users/hua/.hermes/scripts/` 调用且只收 `--title/--content/--source/--agent/--target`（无 --tag）；保存后检查输出路径是否被劫持到 profile home，是则手动 cp 到 `/Users/hua/rkr_staging/文档中转站/01-调研资料/` 并手写 `.md.meta.json`（详见 staging-helper 陷阱5 v1.5+）
+5. **飞书汇报**：结论先行+关键数字+建议+文件路径+**编号待定夺项**
+6. **数字批复语式**：华哥回"1"=执行第①项；"2 顺序进行"=对应项批准且按序推进。批复后直接落地，不重复确认
+
+## 调研执行模式选择：子代理并行 vs 直研（2026-09-06 实测）
+
+- delegate_task 批量 web 调研子代理有 **600s 硬超时**：3 路并行各 14-24 次 API 调用全部 timeout 且**零落盘**（慢模型/慢外网下高发）
+- 若仍派子代理：必须限定"最多 N 次 web_search，**先落盘再补充**"，让子代理写文件而非把全文塞 final summary
+- **fallback 直研模式**（实测有效，2 轮搞定）：每轮 3-4 个 web_search 并行一批发 → 挑 1-2 个关键页 `curl -sL` + python 正则剥标签抽正文 → 自己写报告。上下文可控、交叉验证自己把关
+- web_extract 不可用/未配 extract_backend 时的 curl 抓取法：见 `references/***SECRET***.md` §5
+
+## References 增补
+
+- `references/***SECRET***.md` — OPC（一人公司）出海知识库快照：已验证单人公司案例收入表、GEO 工具竞品定价与空档、MoR 收款路径、中国生态、whois 域名批量查重 one-liner、CitedLens landing 模板指针

@@ -500,15 +500,18 @@ Every job MUST have: `title`, `company`, `location`, `salary`, `experience`, `ed
 
 See `references/job-database.md` for full schema and example INSERT.
 
-### Multiple DB Locations & Schema Drift (verified 2026-08-31)
+### Multiple DB Locations & Schema Drift (re-verified 2026-09-07)
 
-There are now MULTIPLE "知渔" SQLite DBs in the repo — always confirm which path the task/cron actually points to before writing (do NOT assume the skill's documented 主目录):
+There are now MULTIPLE "知渔" SQLite DBs — always confirm which path the task/cron actually points to before writing (do NOT assume the skill's documented 主目录), and re-locate when the named path is missing. **The cron prompt itself can carry a stale path**: on 2026-09-07 it still hard-coded 渔芯独角兽/知渔/db, which no longer exists. Discovery that worked: `find /Users/hua -name "ai_learning.db" -not -path "*/Library/*" -not -path "*/.Trash/*"`, then confirm the candidate holds data (`SELECT COUNT(*) FROM ai_jobs; SELECT COUNT(*) FROM terms;`) before writing.
 
-| Path | State |
+| Path | State (2026-09-07) |
 |---|---|
-| `/Users/hua/6-产品研发/渔芯独角兽/知渔/db/ai_learning.db` | **fresh/empty** data-only skeleton (created 2026-08-27) — a cron task may point here |
-| `/Users/hua/6-产品研发/渔芯独角兽/00-基本完成/知渔/db/ai_learning.db` | production/reference (56 active jobs, 287 terms, full schema) |
-| `/Users/hua/6-产品研发/ok-KnowHow知渔/db/ai_learning.db` | skill's documented 主目录 |
+| `/Users/hua/Documents/New project/ai-learning/db/ai_learning.db` | **LIVE** — docker compose + sqlite platform in the "New project" workspace (own AGENTS.md); 220 terms (T001–T220), ai_jobs 47 rows (9 active / 38 expired) |
+| `/Users/hua/6-产品研发/渔芯独角兽/知渔/db/ai_learning.db` | **GONE** — `知渔/` dir no longer exists under 渔芯独角兽/ |
+| `/Users/hua/6-产品研发/渔芯独角兽/00-基本完成/知渔/db/ai_learning.db` | parallel snapshot (287 terms incl. T227–T287; not re-verified 2026-09-07) |
+| `/Users/hua/6-产品研发/ok-KnowHow知渔/db/ai_learning.db` | older snapshot (not re-verified 2026-09-07) |
+
+Terms count drifts per copy (206 / 220 / 287) — a T-ID valid in one copy may not exist in another. Always validate term_ids against the LIVE terms table of the DB being written.
 
 **Pitfall — the empty target DB may carry a SIMPLIFIED `ai_jobs` schema.** The fresh `知渔/db` table had only `id,title,company,category,salary,location,skills,requirements,term_ids,updated_at` — missing `source`, `status`, `experience`, `education`, `url`, `posted_date`. The task requires `source` (来源) and status tracking (标记新岗位/下线过期岗位), so you MUST migrate the schema before INSERT, never assume it matches production:
 

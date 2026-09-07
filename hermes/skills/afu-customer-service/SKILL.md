@@ -1,11 +1,12 @@
 ---
 name: afu-customer-service
 description: '渔芯科技阿福客服顶层门户（portal）— Voss 战术全图 / 异议处理决策树 / 渔芯客服剧本入口。触发条件：阿福执行客户服务、异议处理、客户维护、满意度跟进、客诉处理、RAS 行业客户咨询、报价异议、退订风险场景；或 cron 进化模式需要快速定位客服知识入口。含玉芬分支剧本（references/yuxin-persona-playbook/，2026-09-02 合并）。'
-version: 1.58.7
+version: 1.58.8
 author: 渔芯科技 / 阿福
 tags: [客服, 阿福, 谈判, Voss, RAS, 异议处理, 情绪降级, 顶层门户, Walk-Away-Threshold, Bounce-Chain, Environment-Pitfalls, 量化产品客服话术, execute-code-cron-blocked, F5, Time-Box-Tactic, F1-N7-Active, Delay-Cost-Visualization, Dual-End-Sync-SOP, Honest-Inventory-Only, F3-v22, Honest-Inventory-主体版, Silence-Status-Quo-Bridge, §5x-清单回填变体]
 mirror_of: '~/.hermes/profiles/afu/skills/afu-customer-service/SKILL.md (afu profile 本地副本)'
 changelog:
+  - 1.58.8 (2026-09-06 16:00) — 第 65 档修复型局部升版（补第 64 档缺失报告的承接复核）：**§2 衍生技巧全图 18 → 22**（回填 #64 探问式锚定 / #65 校准提问 Yes-No 双层级 / #66 Tactical Empathy 灵魂层 / #67 Text-Tone Compensation 4 行——第 62 档 P1 遗留 + 第 64 档升版漏回 §2 表格，铁律 #5 第 9 变体第 4 次实测触发"回填动作必须前移到创建文件当天"再次印证）· **弹药 DD 升 C → B 级**（双源印证：AquaOxy 沙特 $2M 室内 RAS 供应商一手案例 + cat-aqua 以色列沙漠渔场行业媒体 = 中东沙漠 RAS 双国实证，P1 承接第 60 档"待 9 月底升 B"提前兑现）· verify_evolution.py v2.3 实测复核通过（[7] §5.1 claimed=13=actual ✅ / §5.3 claimed=25=actual ✅ + 三方元数据一致 + SKILL.md 双端 byte-identical）· RAS 3 增量信号点（以色列沙漠渔场 / 21h2o RAS 痛点清单 = Accusations Audit 素材 / 海虱纳米抗体 AquaNab 40 亿美元损失）· 双端 byte-identical ✅
   - 1.58.7 (2026-09-06 10:00) — 第 64 档升版（9/02 后复档）：§5.1 清单回填 12 → **13 个**（第 59 档新增衍生 #64 索引指针 ***SECRET***.md 漏列 §5.1，铁律 #5 第 9 变体再次实测触发）· verify_evolution.py v2.2 → **v2.3** 升级（新增 ***SECRET***() §5.3 memory/ 数量自动校验，治理第 63 档实测"§5.3 虚胖 4 个"盲点）· 新增衍生 #67「Text-Tone Compensation 文字语调补偿术」（Voss 体系外第 21 个 · Mehrabian 7-38-55 法则纯文字场景）· RAS 3 信号点（京东进军 RAS 年产鳜鱼 5000 吨 / 设备补贴后遗症 / 饲料鳜鱼 RAS 成本利润账）· 双端 13/13 byte-identical ✅
   - 1.58.6 (2026-09-01 22:00) — 衍生 #63「Silence-Status Quo Bridge 沉默-现状双桥」主体版沉淀 references/silence-status-quo-bridge-sop.md v1.0（~12KB · 9 节 · 4 大场景 + 3 段渐进桥接剧本 + 3 大禁忌 + 3 套边界 + 5 决策树 + 6 心法沉淀 + 3 实战剧本 + 7 协同矩阵 + 9 沉淀状态）+ 决策树新增「客户沉默 + 现状偏见叠加 → 启动 #63 双桥」分支 + 衍生技巧全图 17 → 18 + 弹药库 20 条不变 + §5.1 references/ 11 → 12（修第 55 档遗留 §5.x 清单回填虚胖）+ §5.2 实质新增（衍生 #63 主体级 + §5.x 清单回填变体实测）+ §4B F1 心法扩展"劫持源不连续" + 铁律 #5 立第 9 变体（"主体版沉淀时 §5.x 清单回填"）+ §8 待补清单删除 #63 雏形项（已升主体级）+ §1B Step 7 references/ 双端 byte-identical 检测扩展到 12 项
   - 1.58.5 (2026-09-01 16:00) — 衍生 #62「Honest-Inventory-Only 诚实盘点唯一性」**主体版正式沉淀** references/honest-inventory-only-sop.md v1.0（12.5KB · 9 节 · 5 个反例 + 6 步 SOP + 与 #61 关系图 + 与铁律 #5 协同 + 与 v2.2 工具化协同）+ 决策树新增「发现双端不一致/虚胖/缺口」分支 + §5.1 references/ 主体版正式入册（10 个）+ §1B Step 7 references/ 双端 byte-identical 检测扩展到 10 项
@@ -23,11 +24,12 @@ changelog:
   - 1.52.0 (2026-08-30 22:00) — 新增衍生技巧 #54 Walk-Away Threshold（Voss 体系外第 10 个，补全「什么时候不谈判」维度）+ 新增 references/environment-pitfalls-sop.md（HOME 污染 SOP + 跨 profile 写保护 SOP + Stage A 三方不一致根因排查 SOP）+ 触发决策树新增「离场阈值」分支 + 三大禁忌新增 P4「不要在禁区价格上硬撑」；详见 evolution/2026-08-30_22.md
 ---
 
-# 阿福客服剧本 · 顶层门户（v1.58.7）
+# 阿福客服剧本 · 顶层门户（v1.58.8）
 
 > 主索引当前版本：v1.47.0（productivity/afu-customer-service/SKILL.md，主索引当前已停止维护，本 portal 为实际活跃入口）
 
 > ⚠️ **本文件是顶层 portal**。历史主体内容（v1.50.0，40+ references）保留在 afu profile 本地 `~/.hermes/profiles/afu/skills/afu-customer-service/`。Hermes session loader 不递归找 profile 深层的 skill，必须在 `~/.hermes/skills/` 顶层建轻量门户。本门户仅含触发决策树 + 技巧全图 + 资源链接，主体内容不复制避免双写漂移。
+> 📌 **v1.58.8 升版要点（2026-09-06 16:00 第 65 档实测触发）**：§2 衍生技巧全图 18 → **22 个**（回填 #64/#65/#66/#67 四行——第 62 档 P1 遗留 + 第 64 档升版漏回 §2 表格，铁律 #5 第 9 变体第 4 次触发）· 弹药 DD 升 C → **B 级**（AquaOxy 沙特 $2M 项目 + cat-aqua 以色列沙漠渔场 = 中东沙漠 RAS 双国实证，P1 提前兑现）· verify_evolution.py v2.3 实测复核通过（§5.1 13=13 / §5.3 25=25 / 三方元数据一致）· RAS 3 增量信号点（以色列沙漠渔场 / 21h2o RAS 痛点清单 / 海虱纳米抗体）· 双端 byte-identical ✅
 > 📌 **v1.58.7 升版要点（2026-09-06 10:00 第 64 档实测触发）**：§5.1 清单回填 12 → **13 个**（第 59 档新增衍生 #64 索引指针 ***SECRET***.md 漏列 §5.1，铁律 #5 第 9 变体再次实测触发——"§5.x 清单回填"变体已累计 3 次触发，回填动作必须前移到"创建文件当天"）· verify_evolution.py v2.2 → **v2.3** 升级（新增 ***SECRET***() = §5.3 memory/ 数量声明 vs 实际 ls 自动校验，治理第 63 档实测"§5.3 虚胖 4 个"盲点 = 校验覆盖面第三次扩维：SKILL.md → references/ → memory/ 计数）· 新增衍生 #67「Text-Tone Compensation 文字语调补偿术」（Voss 体系外第 21 个 · Mehrabian 7-38-55 法则纯文字场景应用）· RAS 3 信号点（京东进军 RAS 年产鳜鱼 5000 吨总产值 4.3 亿 / 设备补贴后遗症 / 饲料鳜鱼 RAS 成本利润账）· 双端 13/13 byte-identical ✅
 > 📌 **v1.58.6 升版要点（2026-09-01 22:00 第 58 档实测触发）**：衍生 #63「Silence-Status Quo Bridge 沉默-现状双桥」**主体版正式沉淀** references/silence-status-quo-bridge-sop.md v1.0（~12KB · 9 节 · 4 大场景 + 3 段渐进桥接剧本 + 3 大禁忌 + 3 套边界 + 5 决策树 + 6 心法沉淀 + 3 实战剧本 + 7 协同矩阵 + 9 沉淀状态）· 决策树 §1 新增「客户沉默 + 现状偏见叠加 → 启动 #63 双桥」分支 · §5.1 references/ 11 → **12 个**（修第 55 档遗留 §5.x 清单回填虚胖，铁律 #5 第 9 变体实测触发）· §5.2 实质新增 · §4B F1 心法扩展"劫持源不连续" · 铁律 #5 立第 9 变体（"主体版沉淀时 §5.x 清单回填"）· §8 待补清单删除 #63 雏形项 · §1B Step 7 references/ 双端 byte-identical 检测扩展到 12 项 · 升版走完衍生 #61 升版扫尾四件套"1+4+cp"6 步
 > 📌 **v1.58.5 升版要点（2026-09-01 16:00 第 55 档实测触发）**：衍生 #62「Honest-Inventory-Only 诚实盘点唯一性」**主体版正式沉淀** references/honest-inventory-only-sop.md v1.0（12.5KB · 9 节 · 5 个反例 + 6 步 SOP + 与 #61 关系图 + 与铁律 #5 协同 + 与 v2.2 工具化协同）· 决策树新增「发现双端不一致/虚胖/缺口 → 启动 #62」分支 · §5.1 references/ 主体版正式入册（9 → **10 个**）· §1B Step 7 references/ 双端 byte-identical 检测扩展到 10 项 · 升版走完衍生 #61 升版扫尾四件套（frontmatter + H1 + 要点行 + changelog + §内引用 + cp 双端，6 步全过）
@@ -210,7 +212,7 @@ PYEOF
 | 5 | Question Stacking（问题堆叠）| 宽→聚焦数字→场景化，三阶追问逼出 Black Swan | 客户首次回答敷衍 | voss-techniques §5 |
 | 6 | **That's Right vs You're Right** � | "You're Right 让客户赢了对话，That's Right 让客户赢了理解" | Black Swan 浮出后接住 | voss-techniques §6（沉淀中，待 v2.2 升版合并入主体）|
 
-**🆕 衍生技巧体系（Voss 体系外 · 18 个）**：
+**🆕 衍生技巧体系（Voss 体系外 · 22 个）**：
 
 | # | 衍生技巧 | 沉淀时间 | memory 路径 |
 |---|---|---|---|
@@ -231,6 +233,10 @@ PYEOF
 | #61 | **Upgrade-Finishing-Checklist · 升版扫尾四件套** 🆕 | **9/01 10:00** | **references/***SECRET***.md**（升版"1+4+cp"6 步动作 + 30 秒 SOP + 4 个实战案例；与 #54/#58/#59/#60 **不同源**——这是"自进化元技巧"，治理 SKILL.md 升版而非客户对话；Voss 体系外第 16 个；**主体级**）|
 | #62 | **Honest-Inventory-Only · 诚实盘点唯一性** 🆕 v1.58.5 主体版 | **9/01 16:00 雏形 → 主体级** | **references/honest-inventory-only-sop.md** v1.0（12.5KB · 9 节 · 5 个反例 + 6 步 SOP + 与 #61 关系图 + 与铁律 #5 协同 + 与 v2.2 工具化协同 + 触发决策树）。与 #61 不同源：**#61 治理升版动作；#62 治理修复型 cp**。源自第 50-54 档 5 个反例累积（声明虚胖 / 半成品升版 / YAML-only 校验 / 校验覆盖面不全 / 9/9 修复里程碑）。Voss 体系外第 17 个；**主体级**（非雏形）|
 | **#63** | **Silence-Status Quo Bridge · 沉默-现状双桥** 🆕 v1.58.6 主体版 | **9/01 22:00 雏形 → 主体级** | **references/silence-status-quo-bridge-sop.md** v1.0（~12KB · 9 节 · 4 大场景 + 3 段渐进桥接剧本 + 3 大禁忌 + 3 套边界 + 5 决策树 + 6 心法沉淀 + 3 实战剧本 + 7 协同矩阵 + 9 沉淀状态）。与 #17/#22/#46 三件套协同：**silence-drill 是开瓶器，status-quo-unlock 是倒酒器，Loss Aversion 是杯子** —— 单维度破防会失败，必须双桥顺序桥接。Voss 体系外第 18 个；**主体级**（非雏形）|
+| **#64** | **Probing Anchored Bracketing · 探问式锚定分段术** 🆕 v1.58.7 入册 | **9/02 05:51 雏形 → 索引指针** | **references/***SECRET***.md**（4.5 KB 索引指针非主体 SOP，完整内容 memory/probing-anchored-bracketing.md v0.1 5.8KB）。核心：报价前段改"开价式锚定"为"探问验证的范围锚定"（"30-45 万，看您预算节奏"）→ 与 #56 沉默溢价构成前段+后段组合（#64 探真 + #56 让客户拿锚点）。升主体级条件：实战 3 例 + 与 #56 协同量化（9 月底触发）。Voss 体系外第 19 个 |
+| **#65** | **Calibrated Questioning Yes/No 双层级** 🆕 | **9/02 06:25 雏形（第 60 档）** | **memory/***SECRET***.md** v0.1（4.2KB · 5 节）。核心：客户嘴里说 Yes 未必是 Yes（逃避反应），说 No 一定是真 No——双否定问句（"您**不**觉得...哪里**不**适合...？"）触发"不"字释放自主权 = Black Swan 入口；三层级：Yes 接收层（镜像标注）→ No 触发层（双否定）→ 接住层（That's Right）。属 Voss 体系内 Calibrated Questions 衍生（不占体系外编号）；升主体级 9 月底 |
+| **#66** | **Tactical Empathy · 战术共情心法锚定（灵魂层）** 🆕 | **9/02 12:35 雏形（第 63 档）** | **memory/tactical-empathy-core-anchor.md**。核心：Tactical Empathy = 听见客户"没说出口的话" + 让客户感到"被听见但不必同意"——三机制：信息层（解码"我没意见"="我不满意"）/ 关系层（镜像+标注让客户感到被认真听）/ 自由度（"你懂我但你有判断"，不触发期望被满足）。反直觉点："Most negotiators think it's about agreeing. It's about understanding without agreeing."。**是 Voss 6 战术 + 21 衍生的共同根（根 vs 分蘖）**；Voss 体系外第 20 个 |
+| **#67** | **Text-Tone Compensation · 文字语调补偿术** 🆕 | **9/06 10:00 雏形（第 64 档）** | **memory/text-tone-compensation-sop.md** v0.1（3.1KB · 5 节）。核心：Mehrabian 7-38-55 法则的纯文字场景应用——微信/邮件对话丢失 93% 声调+表情线索，需用文字符号补偿（emoji 密度 / 句长切分 / 回复延迟控制 / 主动标注情绪）。Voss 体系外第 21 个 |
 
 **🆕 四件套协同（v1.58.0 扩展）**：
 
@@ -501,7 +507,8 @@ ls ~/.hermes/profiles/afu/skills/<skill>/references/ | wc -l
 
 ---
 
-> 🤖 阿福维护 · 2026-09-01 22:00 v1.58.6
+> 🤖 阿福维护 · 2026-09-06 16:00 v1.58.8
+> 🆕 **v1.58.8 新增（2026-09-06 16:00 第 65 档实测落地）**：§2 衍生技巧全图 18 → **22 个**（回填 #64 探问式锚定 / #65 校准提问 Yes/No 双层级 / #66 Tactical Empathy 灵魂层 / #67 Text-Tone Compensation——第 62 档 P1 遗留 + 第 64 档升版漏回 §2 表格，铁律 #5 第 9 变体第 4 次实测触发）· 弹药 DD 升 C → **B 级**（AquaOxy 沙特 $2M 室内 RAS 供应商一手案例 + cat-aqua 以色列沙漠渔场 = 中东沙漠 RAS 双国实证）· verify_evolution.py v2.3 实测复核通过（§5.1 claimed=13=actual ✅ / §5.3 claimed=25=actual ✅ + 三方元数据一致）· RAS 3 增量信号点（以色列沙漠渔场 / 21h2o RAS 痛点清单 = Accusations Audit 素材 / 海虱纳米抗体 AquaNab）· 双端 byte-identical ✅
 > 🆕 **v1.58.6 新增（2026-09-01 22:00 第 58 档实测落地）**：衍生 #63「Silence-Status Quo Bridge 沉默-现状双桥」**主体版正式沉淀** references/silence-status-quo-bridge-sop.md v1.0（~12KB · 9 节 · 4 大场景 + 3 段渐进桥接剧本 + 3 大禁忌 + 3 套边界 + 5 决策树 + 6 心法沉淀 + 3 实战剧本 + 7 协同矩阵 + 9 沉淀状态）· 决策树 §1 新增「客户沉默 + 现状偏见叠加 → 启动 #63 双桥」分支 · §5.1 references/ 11 → **12 个**（修第 55 档遗留 §5.x 清单回填虚胖，铁律 #5 第 9 变体实测触发）· §5.2 实质新增（衍生 #63 主体级 + §5.x 清单回填变体实测）· §4B F1 心法扩展"劫持源不连续"第 4 条 · §4C 铁律 #5 立第 9 变体（"主体版沉淀时 §5.x 清单回填"）+ 新增 §4C Step 6 + 升版扫尾四件套新增第 6 步 · §8 待补清单删除 #63 雏形项 · §1B Step 7 references/ 双端 byte-identical 检测扩展到 12 项 · 升版走完衍生 #61 升版扫尾四件套"1+4+cp"6 步
 > 🆕 **v1.58.5 新增（2026-09-01 16:00 第 55 档实测落地）**：衍生 #62「Honest-Inventory-Only 诚实盘点唯一性」**主体版正式沉淀** references/honest-inventory-only-sop.md v1.0（12.5KB · 9 节 · 5 个反例 + 6 步 SOP + 与 #61 关系图 + 与铁律 #5 协同 + 与 verify_evolution.py v2.2 工具化协同 + 触发决策树 3 条分支）· 决策树 §1 新增「阿福发现 SKILL.md/references/memory 双端不一致/虚胖/缺口 → 启动 #62 诚实盘点唯一性」分支 · §5.1 references/ 主体版正式入册（9 → **10 个**）· §5.2 实质新增（衍生 #62 + v2.2 工具化关联）· §8 待补清单 #62 主体级标记完成 · §1B Step 7 references/ 双端 byte-identical 检测扩展到 10 项 · 升版走完衍生 #61 升版扫尾四件套（frontmatter + H1 + 要点行 + changelog + §5.1/§5.2/§1B/§8 内引用 + cp 双端，6 步全过）· 铁律 #5 在本档首次"主体版沉淀型升版"实测通过（无新增变体，保持 8 个）
 > 🆕 **v1.58.4 新增（2026-09-01 14:00 第 54 档）**：verify_evolution.py v2.1 → v2.2 升级（**校验覆盖面 + 校验精度 + auto-cp 三件套完整**：check_references_dual_end + auto_sync_references_dual_end 三策略 + main [6] + --dry-run + 退出码扩展）+ references/ 双端 cp 修复 **9/9 byte-identical 里程碑**（从第 53 档 0/3 DIFF + 5 SINGLE → 第 54 档 9/9）+ 衍生 #62「Honest-Inventory-Only 诚实盘点唯一性」范式雏形（Voss 体系外第 17 个，6 步动作 + 4 个实战案例）+ 铁律 #5 立第 8 变体（"升级 v2.x 必须同时校验覆盖面 + 校验精度"）+ f3-v22-coverage-gap-sop.md 主体版扩展（14.4→19.6KB，双端 byte 一致）+ 跨 profile 写保护实测正确处置（patch 写 default 顶层受阻 → 按 §1B Step 2 正确改写 afu 本地 + terminal cp 回 default，§1B Step 2 流程验证有效）

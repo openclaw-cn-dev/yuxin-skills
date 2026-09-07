@@ -1,9 +1,9 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-09-06 12:17:25
+> 导出时间: 2026-09-07 12:13:50
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 84
+- Skills: 88
 - Profiles: 11
 - Scripts: 128
 - Plugins: 1
@@ -53,6 +53,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - docx
 - domain
 - edtech
+- eel-ras-blank-sku
 - email
 - feeds
 - fetch
@@ -71,6 +72,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - laomo-heartbeat
 - laomo-knowledge
 - maodou
+- maodou-cron-evolution-customer-research-loop
 - maodou-product
 - marketing-from-simulation
 - mcp
@@ -88,6 +90,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - product-launch-playbook
 - productivity
 - project-monitoring-boundary
+- quant
 - ras-news-verification-playbook
 - red-teaming
 - refactoring-ui
@@ -97,6 +100,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - search
 - security
 - security-review
+- seed-customer-pitch-templates
 - skill-creator
 - skill-scanner
 - skill-writer

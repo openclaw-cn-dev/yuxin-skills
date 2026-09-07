@@ -20,7 +20,6 @@ mlops-toolkit
 note-taking
 pit-audit-protocol
 product
-product-distribution
 productivity
 quant
 quant-workflow

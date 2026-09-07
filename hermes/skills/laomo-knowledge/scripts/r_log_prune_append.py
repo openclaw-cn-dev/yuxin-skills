@@ -21,7 +21,8 @@ Usage:
 
 Entry file format:
   Body: "[R<NNN> YYYY-MM-DD HH:MM CST <agent> heartbeat] ..." (leading blank
-  lines optional, stripped) ending with "keep_in_progress.".
+  lines optional, stripped) ending with "keep_in_progress." or "keep_in_progress。"
+  (R262 dual-punctuation: both tail styles exist across rounds).
   R number must be > last canonical R in the description; == last+1 preferred
   (R-skip allowed with WARN per R194 precedent; forbid via --require-plus-one).
 
@@ -64,8 +65,8 @@ def main() -> None:
     m = ENTRY_RE.search(body)
     assert m, "entry file missing '[R<n> YYYY-MM-DD HH:MM CST' header"
     new_r = int(m.group(1))
-    assert body.rstrip().endswith("keep_in_progress."), \
-        "entry must end with 'keep_in_progress.'"
+    assert re.search(r"keep_in_progress[.。]\s*$", body.rstrip()), \
+        "entry must end with 'keep_in_progress.' or 'keep_in_progress。' (R262 dual-punctuation)"
 
     conn = sqlite3.connect(args.db)
     row = conn.execute("SELECT description, status FROM tasks WHERE id=?",
@@ -128,7 +129,8 @@ def main() -> None:
                           (args.task_id,)).fetchone()
     assert f"[R{new_r} " in d2, "post-write: entry marker missing"
     assert s2 == args.status, "post-write: status mismatch"
-    assert d2.endswith("keep_in_progress."), "post-write: endswith check FAIL"
+    assert re.search(r"keep_in_progress[.。]\s*$", d2.rstrip()), \
+        "post-write: endswith check FAIL (R262 dual-punctuation tolerant)"
     first_r = segments[0][1] if segments else new_r
     print(f"OK: R{new_r} appended; entries R{first_r}..R{new_r} "
           f"({len(segments) + 1}); desc {len(d2) / 1024:.1f}KB chars; status={s2}")
