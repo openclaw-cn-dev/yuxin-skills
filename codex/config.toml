@@ -60,6 +60,9 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/opc-海外版"]
 trust_level = "trusted"
 
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/智囊团"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
@@ -88,7 +91,7 @@ followUpQueueMode = "queue"
 computerUseAlwaysHidePictureInPicture = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-09-04T08:24:33Z"
+last_updated = "2026-09-07T13:41:32Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
