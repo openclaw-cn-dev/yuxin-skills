@@ -9,7 +9,8 @@
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6",
     "ANTHROPIC_DEFAULT_SONNET_MODEL_NAME": "glm-5.3-flash",
     "API_TIMEOUT_MS": "3000000",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
   },
-  "includeCoAuthoredBy": false
+  "includeCoAuthoredBy": false,
+  "theme": "light-ansi"
 }
