@@ -1,5 +1,6 @@
 apple
 autonomous-ai-agents
+claude-code-skills-ecosystem-tracking
 creative
 cron-research-3projects
 data-science
@@ -43,4 +44,3 @@ yuanbao
 zhenglishi
 zhenglishi-cron-4-360-direct-cp-exception
 zhenglishi-cron-skip-daily-closeout
-zhenglishi-workflow

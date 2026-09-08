@@ -1,6 +1,7 @@
 backup
 backups
 jobs.json
+jobs.json.bak-20260907-p62-rotate
 jobs.json.bak.20260828-115950
 jobs.json.bak.20260828-185042
 jobs.json.bak.20260830-额度重启加密
