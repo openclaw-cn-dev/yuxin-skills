@@ -64,6 +64,6 @@ row = sqlite3.connect(sys.argv[1]).execute("SELECT description FROM tasks WHERE 
 if not row:
     print("task #11 not found"); sys.exit(1)
 desc = row[0]
-rs = re.findall(r"\[R(\d+)", desc)
+rs = re.findall(r"(?m)^\[R(\d+)", desc)
 print(f"chars: {len(desc)} = {len(desc)/1024:.1f} KB chars | last_r: {rs[-1] if rs else '-'} | entries: {len(rs)} | range: {rs[0] if rs else '-'}..{rs[-1] if rs else '-'}")
 PY
