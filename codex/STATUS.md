@@ -1,10 +1,10 @@
 # Codex 状态快照
-> 导出时间: 2026-09-03 09:45:21
+> 导出时间: 2026-09-10 09:22:46
 > 🤖 自动同步自 Hermes/玉芬 · Codex 自进化模块
 
 ## 版本
-- 当前: `0.152.0`
-- npm 最新: `0.153.0`
+- 当前: `0.153.4`
+- npm 最新: `0.154.0`
 - 状态: `update_available`
 
 ## 公司专属 Skills (yuxin-*)
@@ -12,6 +12,7 @@
 - 目录: 1 个
 
 ## 插件来源 (cache/)
+- `openai-api-curated`
 - `openai-bundled`
 - `openai-primary-runtime`
 

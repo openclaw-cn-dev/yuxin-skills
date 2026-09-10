@@ -51,7 +51,7 @@ def find_local_file_references(text: str) -> list[str]:
     return refs
 
 
-def validate_local_file_references(
+def ***SECRET***(
     skill_path: Path,
     skill_content: str,
     errors: list[str],
@@ -128,7 +128,7 @@ def validate_skill(
             "Consider moving optional detail to references/."
         )
 
-    validate_local_file_references(skill_path, content, errors)
+    ***SECRET***(skill_path, content, errors)
 
     return len(errors) == 0, errors, warnings
 

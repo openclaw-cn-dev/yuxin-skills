@@ -148,7 +148,7 @@ For each potential finding, confirm:
 **Is the input attacker-controlled?**
 
 | Attacker-Controlled (Investigate) | Server-Controlled (Usually Safe) |
-|-----------------------------------|----------------------------------|
+|***SECRET***|***SECRET***|
 | `request.GET`, `request.POST`, `request.args` | `settings.X`, `app.config['X']` |
 | `request.json`, `request.data`, `request.body` | `os.environ.get('X')` |
 | `request.headers` (most headers) | Hardcoded constants |

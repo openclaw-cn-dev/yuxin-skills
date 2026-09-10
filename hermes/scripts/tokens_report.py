@@ -16,7 +16,10 @@ import json
 from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 
-HOME = os.path.expanduser("~")
+_h = os.path.expanduser("~")
+# cron 环境下 $HOME 可能被改写为 profile home (~/.hermes/profiles/<name>/home)，
+# 此时 expanduser("~") 解析到错误目录导致读不到数据。回退到真实用户 home。
+HOME = "/Users/hua" if (os.sep + ".hermes") in _h else _h
 HERMES_HOME = os.path.join(HOME, ".hermes")
 
 

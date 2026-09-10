@@ -57,14 +57,22 @@ MODEL_REGISTRY = {
         "purpose": "文本兜底 + 玉芬/学助专用",
     },
 
-    # ── MiniMax Token Plan（套餐，文本+视觉+音频） ──
+    # ── MiniMax Token Plan（套餐，文本+视觉+音频）──
+    "minimax-anthropic": {
+        "name": "MiniMax M3 (Anthropic, Token Plan)",
+        "endpoint_key": "minimax-anthropic",
+        "capabilities": {"text": True, "vision": True, "audio": False, "function_calling": True},
+        "free_quota": None,  # Token Plan 套餐，非免费
+        "cost_tier": "token_plan",
+        "purpose": "/anthropic 路由主力（玉芬/学助/Codex）",
+    },
     "minimax-openai": {
-        "name": "MiniMax M3 (Token Plan)",
+        "name": "MiniMax M3 (OpenAI, Token Plan)",
         "endpoint_key": "minimax-openai",
         "capabilities": {"text": True, "vision": True, "audio": True, "function_calling": True},
         "free_quota": None,  # Token Plan 套餐，非免费
         "cost_tier": "token_plan",
-        "purpose": "套餐主力，文本+多模态全覆盖",
+        "purpose": "/openai 路由主力（Codex/Hermes），含音频",
     },
 
     # ── 智谱 GLM-4V（免费 100万/月） ──
@@ -198,6 +206,10 @@ class QuotaTracker:
         1. 后端必须存在 (Gateway 的 BACKENDS 里)
         2. 未被 block (配额未耗尽)
         3. 免费模型检查月额度
+
+        例外 (2026-08-21 B1): token_plan 类模型(MiniMax-M3)永不被 block，
+        防止 SMART-ROUTE 错误降级到 pay_as_you_go (DeepSeek)。
+        即便 gateway 抽风时收到 504 也不应被 block，SMART-ROUTE 应继续尝试。
         """
         if not backend_exists:
             return False
@@ -207,6 +219,11 @@ class QuotaTracker:
 
         self._check_monthly_reset()
         model_info = self._data.get("models", {}).get(mid, {})
+
+        # token_plan 类套餐模型免 block 保护
+        model_def = MODEL_REGISTRY.get(mid, {})
+        if model_def.get("cost_tier") == "token_plan":
+            return True
 
         if model_info.get("blocked", False):
             return False

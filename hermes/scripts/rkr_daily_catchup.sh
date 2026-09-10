@@ -2,6 +2,14 @@
 # RKR 每日 200 条补齐守护:检查今天完成数,<200 则跑 50 条补齐
 # 退出码: 0=已达标/跑了一轮 1=出错 2=guard 跳过
 set -e
+
+# ── 夜间窗口守卫（华哥 2026-08-30 定调）──
+# 容器只在 23:30–次日 8:00 运行，白天(8:00–23:30)静默跳过，绝不拉起容器
+HHMM=$(TZ=Asia/Shanghai date +%H%M)
+if [ "$HHMM" -ge 0800 ] && [ "$HHMM" -lt 2330 ]; then
+  exit 0
+fi
+
 SCRIPT_DIR="/Users/hua/6-产品研发/渔芯科技/01-RKR知识库/scripts"
 STATE_FILE="$HOME/.hermes/state/rkr_daily_batch.json"
 QUOTA=200

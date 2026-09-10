@@ -10,8 +10,8 @@ trigger: minimax 429 / 401 / 套餐限额 / 验证 ollama fallback / Hermes 切�
 
 - **配置解剖**：[`references/config-anatomy.md`](references/config-anatomy.md) — 三件套（fallback_providers + custom_providers + ollama 服务）必须齐的细节、常见踩坑、升级路径
 - **验证脚本**：[`scripts/verify_fallback_chain.sh`](scripts/verify_fallback_chain.sh) — 一键跑 5 层检查；加 `--with-e2e` 触发真实 fallback（自动恢复 .env）
-- **本会话日志**：[`references/session-2026-07-02-verification.md`](references/session-2026-07-02-verification.md) — 2026-07-02 真实验证记录、未办遗留事项
-- **授权切换策略**：[`references/2026-07-02-authorized-provider-switching.md`](references/2026-07-02-authorized-provider-switching.md) — "主+本地兜底"和"主+备用云"两种 provider 拓扑，授权门设计、华哥偏好模式、三件套操作命令
+- **本会话日志**：[`references/***SECRET***.md`](references/***SECRET***.md) — 2026-07-02 真实验证记录、未办遗留事项
+- **授权切换策略**：[`references/***SECRET***.md`](references/***SECRET***.md) — "主+本地兜底"和"主+备用云"两种 provider 拓扑，授权门设计、华哥偏好模式、三件套操作命令
 - **Provider 切换命令**：[`scripts/yuxin_switch_provider.sh`](scripts/yuxin_switch_provider.sh) — 4-provider (minimax / deepseek / ollama-r / ollama-coder) 手动切换，华哥口头授权后玉芬调用
 - **4-Provider 健康检查**：[`scripts/yuxin_provider_health.sh`](scripts/yuxin_provider_health.sh) — 一键测 4 个 provider HTTP 状态 + 当前活跃 + 切换命令
 
@@ -23,7 +23,7 @@ trigger: minimax 429 / 401 / 套餐限额 / 验证 ollama fallback / Hermes 切�
 | 已装模型 | ✅ qwen2.5-coder:7b（4.7 GB，Q4_K_M 量化）+ bge-m3:latest（embedding） |
 | `~/.hermes/config.yaml` 配 `fallback_providers: [ollama]` | ✅ |
 | `custom_providers` 里有 `ollama: { base_url: http://localhost:11434/v1, model: qwen2.5-coder:7b, api_key: ollama }` | ✅ |
-| Hermes 内部 fallback 解析代码（`gateway/run.py:1215 _try_resolve_fallback_provider`） | ✅ 已就绪 |
+| Hermes 内部 fallback 解析代码（`gateway/run.py:1215 ***SECRET***`） | ✅ 已就绪 |
 | 端到端 fallback 实测 | ✅ 见下 |
 
 ## 端到端测试步骤（5 分钟）
@@ -90,7 +90,7 @@ Mac mini 3 内存吃紧。`qwen2.5-coder:7b` 4.7 GB 在 Q4_K_M 量化下推理 O
 
 ### fallback 真的会触发吗？
 
-代码层面：✅ 已验证。`gateway/run.py:1215` 的 `_try_resolve_fallback_provider` 会读 `fallback_providers: [ollama]` → 找到 `custom_providers` 里的 `ollama` entry → 切过去。
+代码层面：✅ 已验证。`gateway/run.py:1215` 的 `***SECRET***` 会读 `fallback_providers: [ollama]` → 找到 `custom_providers` 里的 `ollama` entry → 切过去。
 
 物理层面：✅ 已验证。直接 curl minimax 401 + ollama 200 都成功。
 
@@ -99,7 +99,7 @@ Mac mini 3 内存吃紧。`qwen2.5-coder:7b` 4.7 GB 在 Q4_K_M 量化下推理 O
 > ⚠️ **2026-07-10 实测纠错**：之前标记"429 → 触发"是**错误**的。
 > `gateway/run.py:1186` 的 fallback 只在 `resolve_runtime_provider()` 抛出 `AuthError` 时触发（key 校验阶段）。
 > 但 **429 `AccountQuotaExceeded` 发生在实际 API 调用阶段**，此时 `resolve_runtime_provider()` 已成功返回，
-> fallback 链路被完全跳过。详见 `references/2026-07-10-volcengine-quota-exhausted.md`。
+> fallback 链路被完全跳过。详见 `references/***SECRET***.md`。
 
 - ❌ **429 → 不触发**（套餐耗尽/AccountQuotaExceeded — Hermes 设计盲区）
 - ❌ **402 → 不触发**（余额耗尽/insufficient_balance — 同上）
@@ -203,9 +203,9 @@ hermes config set DEEPSEEK_MODEL 'deepseek-v4-pro'
   name: deepseek-cn
 ```
 
-完整策略 + 实操命令见 [`references/2026-07-02-authorized-provider-switching.md`](references/2026-07-02-authorized-provider-switching.md)。
+完整策略 + 实操命令见 [`references/***SECRET***.md`](references/***SECRET***.md)。
 
-完整策略 + 实操命令见 [`references/2026-07-02-authorized-provider-switching.md`](references/2026-07-02-authorized-provider-switching.md)。
+完整策略 + 实操命令见 [`references/***SECRET***.md`](references/***SECRET***.md)。
 
 ## 相关路径
 

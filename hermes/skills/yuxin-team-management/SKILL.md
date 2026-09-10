@@ -1,12 +1,14 @@
 ---
 name: yuxin-team-management
 description: |
-  渔芯 9-agent 集中管理方法论（2026-08-01 整理）。
+  渔芯 10-agent 集中管理方法论（2026-08-01 整理，2026-09-04 心博士入职扩至 10 人）。
   适用场景：华哥需要"重新整理同事 agent 系统文件"、"建集中目录树管理所有同事"、
-  或者其他类似"multi-agent 系统的 profiles 散落管理问题"。
-  触发条件：用户提到"重新整理 / 集中管理 / 统一视图 / 同事 agent 整理 / 团队管理视图"。
+  "新增一位专家型同事"或者其他类似"multi-agent 系统的 profiles 散落管理问题"。
+  触发条件：用户提到"重新整理 / 集中管理 / 统一视图 / 同事 agent 整理 / 团队管理视图 /
+  新增同事 / 复刻宽博士模式建专家"；或华哥发批量批复指令（"需拍板项目全选'是'" /
+  "同意" / "可以"）需要把待拍板清单逐项落地分发时（见 §十四 批量批复落地 SOP）。
 related_skills:
-  - multi-agent-local-orchestration   # 协作后端（registry / messages / SOP）
+  - ***SECRET***   # 协作后端（registry / messages / SOP）
   - hermes-gateway-profile-ops        # runtime / launchd / plist / LLM 路由
   - multi-agent-team-architecture     # 9-profile 拓扑 / 记忆分层
 ---
@@ -16,8 +18,13 @@ related_skills:
 ## 运维参考（按需加载）
 
 - `references/agent-health-scan.md` — 全员 Agent 健康码扫描：gateway PID + 飞书连接 + LLM 错误 + cron 执行，一键四维诊断（触发：检查同事是否正常）
+- `references/***SECRET***.md` — 玉芬每日管理进化扫描 8 项命令级配方：cron 健康（残留 vs 活报错分流）/ skill 容量正确计数 / kanban 权威源与 tasks.db 漂移 / 调研增量覆盖率审计 / agent 心跳 / RKR 积压分桶 / 工具版本 / 死飞书群 chat_id 审计（2026-09-04 首轮实战；触发：跑「玉芬每日管理进化」cron 或任何全公司资源巡检）
 - `references/approval-failure-diagnosis.md` — 飞书审批按钮 Unauthorized 诊断：session 过期 → approvals.mode: smart（触发：手动批准不了 / 按钮点不了）
 - `references/cron-jobs-provider-migration.md` — cron jobs.json 批量迁移废弃 provider：deepseek-direct → deepseek-cn 模板（触发：Unknown provider 报错）
+- `references/***SECRET***.md` — `Unknown provider 'glm-free'` 事故全记录 + 5 步诊断配方（per-profile 隔离排查 + config.yaml.bak-* 时间线重建 + 残留 vs 活报错区分）+ skill 容量审计正确计数命令（触发：任何 "Unknown provider 'X'" 报错 / provider 迁移后 cron 集体失败）
+- `references/***SECRET***.md` — **从零新增同事 Agent Profile 上线 SOP**（目录树/config 复刻/AGENTS+SOUL/launchd plist 改造/bootstrap/心跳脚本/cron×2 含 cronjob 工具 quirk/首跑/Mnemosyne 登记，2026-09-04 心博士实战全流程；触发：华哥拍板新增专家型同事）
+- `references/batch-approval-dispatch.md` — **华哥批量批复落地 SOP 详情**：全量扫描"待拍板/待定夺"清单 → 逐项按同意落地 → 批复原文登记到各 owner 实际读取的文档 → 记忆同步 → 分组汇报（2026-09-07 "需拍板项目全选'是'" 3 清单 15 项实战；触发：华哥批量同意类指令）
+- 现役名单（2026-09-04）：玉芬(default) / 阿福(afu) / 毛豆(maodou) / 老莫(laomo) / 黑豆(heidou) / 小宝(xiaobao) / 宽博士(quant) / 学习助手(zhenglishi) / 旺财(wangcai,Windows) / **心博士(psychology，2026-09-04 复刻宽博士模式入职：心理学专家、后台专家模式不接飞书、伦理红线写死 AGENTS.md、服务全公司 6 条线)**
 
 ---
 
@@ -136,7 +143,7 @@ with open('/Users/hua/.hermes/orchestration/registry.yaml') as f:
 # 模板见下方"附录：Python template"
 ```
 
-**坑：写 heredoc 字符串时，`python3 << EOF`（无引号 EOF）会让 bash 先解释 `$var` 和 `~`！必须用 `python3 << 'PYTHON_END'`（带引号）防 bash 注入。** 完整事件回放 + 修复代码 + 反模式表见 `references/2026-08-01-bash-heredoc-readme-pollution.md`。
+**坑：写 heredoc 字符串时，`python3 << EOF`（无引号 EOF）会让 bash 先解释 `$var` 和 `~`！必须用 `python3 << 'PYTHON_END'`（带引号）防 bash 注入。** 完整事件回放 + 修复代码 + 反模式表见 `references/***SECRET***.md`。
 
 ### Step 5：管理脚本
 放 4 个 sh 脚本到 `~/yuxin-team/scripts/`，所有都用 `chmod +x`。
@@ -255,7 +262,7 @@ for a in cfg['agents']:
 
 **恢复后验证**：所有任务 `paused_at → null`，`next_run_at` 显示下次调度时间。
 
-**根因**：8/4 凌晨 00:00 集体暂停，疑为 multi-agent-local-orchestration 改造时误操作。华哥直派的宽博士和学习助手未受影响。
+**根因**：8/4 凌晨 00:00 集体暂停，疑为 ***SECRET*** 改造时误操作。华哥直派的宽博士和学习助手未受影响。
 **整理方式**：华哥授权"按我专家意见处理"
 
 ---
@@ -359,9 +366,40 @@ cronjob action='list' | grep -E '(阿福|小宝|黑豆|老莫|毛豆|宽博|学�
 **场景 2（2026-08-08）**：华哥说"软件开发的项目已有了你可以去优化一下，在 6-产品研发"。玉芬花时间搜索后找到 `07-软件项目开发/`。
 **教训**：华哥提到"已有"的东西，优先用 `search_files` 在 `6-产品研发/` 下按编号/关键词搜，不要盲目在外面新建。
 
+**场景 3（2026-08-28）**：华哥买包月套餐后让"加大学习助手调研频率"，玉芬直接把 6 个调研 cron 全部 12h→6h。随后华哥问"学习助手不是项目轮流滚动调研的吗"——玉芬凭任务命名和错峰时间差最初也说不准。取证（jobs.json 结构 + 各任务 output 运行次数 120-124 次齐头并进 + incremental 状态文件各自独立）后确认是**并行制 + 3 分钟错峰**，不是轮换制。
+**教训**：① 对 fleet 任务做批量调整前，先确认真实架构（并行/轮换/依赖链），不要凭命名或印象；② 华哥用"不是 X 的吗"反问架构时，这是核对信号不是纠错信号——先跑证据（jobs.json / output 目录计数 / 状态文件）再回答，证据链反而能让华哥放心。详细架构核实结论见 `multi-cloud-llm-architecture` skill 的「学习助手/宽博士调研 fleet 架构」节。
+
 **通用反模式**：
 - ❌ 听到模糊需求 → 立即执行（按自己理解）
 - ✅ 听到模糊需求 → 先搜索现有项目/文件 → 确认理解 → 再执行
+
+---
+
+## 十四、华哥批量批复落地 SOP（2026-09-07 实战）
+
+**触发**：华哥发一句批量批复（"需拍板项目全选'是'" / "同意" / "可以"），不指明项目。含义 = 当时所有 agent 报告中挂起的"待拍板/待定夺"清单整体通过。**禁止反问"您指的是哪个？"**（同 §九 铁律：华哥批复 = 已批准，落地后汇报）。
+
+**五步流程**：
+1. **全量扫描待批清单**（不要只处理最近收到的一张）：
+   - `session_search`（sort=newest）：`"待您拍板" OR "待华哥定夺" OR "等您拍板" OR "请您拍板"`，再补 `拍板 OR 定夺` 一轮
+   - `search_files` 项目目录搜 `拍板|定夺|待华哥`，重点文件：`00-总报告.md`（待华哥定夺节）、`INDEX.md`（§五行动项 / 进度勾选）、同步清单 §八
+2. **逐项解读"是"**：是非题 → 直接通过；选择题（如域名 .com/.ai）→ 取方案文档里写明的默认值，汇报中单独标注"默认 X，可改"，不反向追问
+3. **批复原文登记到 owner 实际读取的位置**（只回飞书消息无效，owner cron 读的是文件）：
+   - 专家底座 `INDEX.md` §五：沿用既有格式 `- [x] **华哥拍板 <清单名>（<date> 批复"<原文>"）**：①...②...→ 下轮承接执行`；执行子项保持 `[ ]` 到做完为止
+   - 同步清单 §八 决策表：表头引语下加一行 `> ⚡ **<date> 华哥批复：N 项全选"是"，全部通过**`
+   - 项目文档：`## 待华哥定夺` 改 `## 华哥已定夺（<date> 批复"<原文>"）` + 逐项 ✅；INDEX 进度勾选该决策项并新增一条执行待办
+4. **现实世界动作降档**：涉监管提交 / 付费 / 外部账号（算法备案提交、域名购买、云账号）→ 批复记为"启动/准备"，注明到哪一步仍需华哥本人动作（公司实体资料、Cloudflare 账号等），到点再回来找他
+5. **记忆三连**：`mnemosyne_update` 改写旧的"待华哥定夺"记忆条目（留着会误导后续轮次）→ task:progress canonical 槽更新状态 → 新增批复记录条目（importance ≥0.7）
+
+**汇报格式**：按清单分组、每项一行 ✅、结尾单列"仍需华哥本人的选择/动作"。让华哥可抽查否决任何一项。
+
+**坑**：
+- 各 agent 措辞不同（待您拍板 / 等您拍板 / 待华哥定夺 / 待华哥拍板），单关键词搜索会漏清单——必须 OR 组合
+- 批复落地后，项目里其他"等华哥拍板"的引用文字要同步改，否则下轮 cron / 下个 agent 又把它当待办捞出来
+- session_search 大结果会 persisted 成单行 JSON 临时文件：grep 无行上下文可用，用 `terminal` 跑 `python3 - <<'EOF'` 解析（execute_code 在部分 profile 受审批模式限制，terminal 稳）
+- 心博士这类"唯一直属华哥"的专家 agent，批复要同时登记两处：底座 INDEX §五（cron 工作流读取点）+ 同步清单 §八（对齐文档），缺一处下轮就对不齐
+
+详细实战回放（3 清单 15 项 / 精确 patch 模式 / 汇报模板）见 `references/batch-approval-dispatch.md`。
 
 ---
 
@@ -633,4 +671,4 @@ profile.json + AGENTS.md + .env + memory/ + cron/ + launchd + skills/ + workspac
 
 **恢复后验证**：所有任务 `paused_at → null`，`next_run_at` 显示下次调度时间。
 
-**根因**：8/4 凌晨 00:00 集体暂停，疑为 multi-agent-local-orchestration 改造时误操作。华哥直派的宽博士和学习助手未受影响。
+**根因**：8/4 凌晨 00:00 集体暂停，疑为 ***SECRET*** 改造时误操作。华哥直派的宽博士和学习助手未受影响。

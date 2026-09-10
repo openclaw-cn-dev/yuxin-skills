@@ -11,19 +11,19 @@ metadata:
 
 # Knowledge Base (ChromaDB / RAG) Hub
 
-ChromaDB-backed knowledge-base workflows — embeddings, health, restore, blind-spot discovery. Two main sub-areas: embedding setup (`chromadb-sentence-transformers`) and operational health (`lookforge-knowledge-health`).
+ChromaDB-backed knowledge-base workflows — embeddings, health, restore, blind-spot discovery. Two main sub-areas: embedding setup (`***SECRET***`) and operational health (`lookforge-knowledge-health`).
 
 ## Quick Routing
 
 | Task | Reference |
 |------|-----------|
 | Bulk image asset organization (rename, verify, pipeline stages) | → `references/image-asset-organization.md` |
-| Replace failing ChromaDB built-in ONNX embeddings with sentence-transformers | → `references/chromadb-sentence-transformers.md` |
+| Replace failing ChromaDB built-in ONNX embeddings with sentence-transformers | → `references/***SECRET***.md` |
 | KB health-score, blind-spot discovery, query-log analysis (LookForge-style) | → `references/lookforge-knowledge-health.md` |
 | Probe the LookForge KB API | → `references/lookforge_api_probe.md` |
 | Test-case template for KB queries | → `references/lookforge_test_case_template.md` |
 | RAG quality tooling | → `references/rag_quality_tools.md` |
-| seg_meta investigation (recorded bug) | → `references/bug001_segment_metadata_investigation.md` |
+| seg_meta investigation (recorded bug) | → `references/***SECRET***.md` |
 | **Personal RAG / digital-twin pattern (影身 v0.1, 2026-07-02)** | → `references/personal-rag-digital-twin.md` |
 
 ## Scripts (`scripts/`)
@@ -38,7 +38,7 @@ ChromaDB-backed knowledge-base workflows — embeddings, health, restore, blind-
 ## Patterns
 
 ### When Built-In Embeddings Fail
-ChromaDB's bundled ONNX embedding model can fail with SSL timeouts or corruption in restricted environments. Fallback: pre-compute embeddings with sentence-transformers and pass them in. See `references/chromadb-sentence-transformers.md`.
+ChromaDB's bundled ONNX embedding model can fail with SSL timeouts or corruption in restricted environments. Fallback: pre-compute embeddings with sentence-transformers and pass them in. See `references/***SECRET***.md`.
 
 ### KB Health Monitoring
 `get_health_score()` + `query_log` + blind-spot discovery are the three levers for ongoing KB quality. LookForge Phase 1-4 deployment pattern is documented in `references/lookforge-knowledge-health.md`.

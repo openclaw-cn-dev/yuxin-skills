@@ -12,6 +12,17 @@ import sys, os, json, re, urllib.request, urllib.parse
 from datetime import datetime
 
 STATE_DIR = os.path.expanduser('~/.hermes/state/incremental')
+LOG_FILE = os.path.expanduser('~/.hermes/logs/incremental_check.log')
+
+
+def log_result(task, kind, outcome):
+    """记录每次检测结果(HIT/SKIP/ERR)，供管理进化扫描统计 LLM 触发 vs 跳过次数。"""
+    try:
+        os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"{datetime.now().isoformat()}\t{task}\t{kind}\t{outcome}\n")
+    except OSError:
+        pass
 
 
 def get_arxiv_latest(query):
@@ -49,9 +60,11 @@ def main():
             latest = None
     except Exception:
         # 网络失败等：静默（避免误报触发无意义调研）
+        log_result(task, kind, 'ERR')
         sys.exit(0)
 
     if not latest:
+        log_result(task, kind, 'NO_DATA')
         sys.exit(0)
 
     os.makedirs(STATE_DIR, exist_ok=True)
@@ -66,11 +79,13 @@ def main():
 
     if latest == prev:
         # 无更新 → 静默
+        log_result(task, kind, 'SKIP')
         sys.exit(0)
 
     # 有更新 → 记录 + 输出提示
     json.dump({'latest': latest, 'checked': datetime.now().isoformat()},
               open(state_file, 'w'))
+    log_result(task, kind, 'HIT')
     print(f'🆕 {task} 有新内容（{latest}）')
 
 

@@ -1,11 +1,11 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-08-21 12:20:49
+> 导出时间: 2026-09-09 12:14:19
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 80
-- Profiles: 10
-- Scripts: 119
+- Skills: 89
+- Profiles: 11
+- Scripts: 128
 - Plugins: 1
 
 ## 版本
@@ -22,6 +22,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - heidou
 - laomo
 - maodou
+- psychology
 - quant
 - test
 - xiaobao
@@ -29,7 +30,8 @@ Update available: 2659 commits behind — run 'hermes update'
 
 ## Skills 清单
 - ad-creative
-- afu-customer-service-evolution-protocol
+- afu-customer-service
+- afu-self-evolution-protocol
 - agents-md
 - ai-training-platform
 - ai-vision
@@ -39,11 +41,11 @@ Update available: 2659 commits behind — run 'hermes update'
 - autonomous-ai-agents
 - batch-file-renaming
 - browser
-- browser-tts-lecture
 - bugfix
 - byted-supabase
 - cad-automation
 - commit
+- company-law-5y-paid-in-tracker
 - creative
 - data-science
 - devops
@@ -51,37 +53,45 @@ Update available: 2659 commits behind — run 'hermes update'
 - docx
 - domain
 - edtech
+- eel-ras-blank-sku
 - email
 - feeds
-- feishu-voice-assistant
 - fetch
 - find-bugs
 - find-skills
+- fishfarmer-product
 - frontend
 - frontend-ui
 - gaming
 - gifs
 - github
+- heidou
 - hermes-ecosystem-entry.md
 - inference-sh
+- jtbd-ras-4q-template
 - knowledge-base
+- laomo-heartbeat
 - laomo-knowledge
+- maodou
+- maodou-cron-evolution-customer-research-loop
+- maodou-product
+- marketing-from-simulation
 - mcp
 - media
 - memory
 - minimax-fallback-to-ollama
-- minimax-vision
 - mlops
 - module
 - note-taking
-- openalex-aquaculture-paper-search
 - openclaw-gateway-setup
 - pdf
 - pptx
 - product
 - product-debugging
+- product-launch-playbook
 - productivity
 - project-monitoring-boundary
+- quant
 - ras-news-verification-playbook
 - red-teaming
 - refactoring-ui
@@ -91,6 +101,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - search
 - security
 - security-review
+- seed-customer-pitch-templates
 - skill-creator
 - skill-scanner
 - skill-writer
@@ -105,6 +116,5 @@ Update available: 2659 commits behind — run 'hermes update'
 - xlsx
 - yuxin-code-iron-law
 - yuxin-coding-workflow
-- yuxin-dashboard-v2-architecture
 - yuxin-self-evolution
 - yuxin-team-management

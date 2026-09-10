@@ -1,7 +1,7 @@
 ---
 name: bugfix
 description: "Library/framework bug fixes and version-compatibility workarounds — ChromaDB 0.4.x issues (NumPy 2.x, seq_id BLOB, Pydantic v2), and other session-specific bug fixes that don't fit a normal 'use the library' workflow. Load when a known third-party library throws an error that doesn't match current docs — first check this hub for known fixes before reinventing."
-version: 1.0.0
+version: 1.1.0
 author: Hermes Agent
 license: MIT
 metadata:
@@ -17,7 +17,7 @@ Session-specific bug fixes and version-compatibility workarounds for third-party
 
 | Symptom / Library Version | Reference |
 |---------------------------|-----------|
-| ChromaDB 0.4.x + NumPy 2.x → `AttributeError: np.float_`/`np.int_` (Apple Silicon / Docker) | → `references/chromadb-numpy2-applesilicon-fix.md` |
+| ChromaDB 0.4.x + NumPy 2.x → `AttributeError: np.float_`/`np.int_` (Apple Silicon / Docker) | → `references/***SECRET***.md` |
 | ChromaDB 0.4.x → `query()`/`peek()`/`count()` all fail with seq_id BLOB | → `references/chromadb-seq-id-blob-fix.md` |
 | ChromaDB Settings + Pydantic v2 → "extra fields not permitted" | → `references/pydantic-v1-v2-chromadb-fix.md` |
 | Python 3.9 → `TypeError: unsupported operand type(s) for \|: 'types.GenericAlias' and 'NoneType'` (PEP 604 union syntax) | → `references/python39-union-syntax.md` |
