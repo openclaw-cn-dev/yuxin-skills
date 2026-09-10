@@ -106,7 +106,7 @@ followUpQueueMode = "queue"
 computerUseAlwaysHidePictureInPicture = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-09-08T07:08:52Z"
+last_updated = "2026-09-10T08:19:40Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
