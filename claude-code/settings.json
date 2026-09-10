@@ -1,6 +1,6 @@
 {
   "env": {
-    "ANTHROPIC_"***"
+    "ANTHROPIC_AUTH_TOKEN": "[REDACTED]",
     "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5.3-flash",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME": "glm-5.3-flash",
