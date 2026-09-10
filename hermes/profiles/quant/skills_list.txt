@@ -22,6 +22,7 @@ pit-audit-protocol
 product
 productivity
 quant
+quant-data-source-research
 quant-workflow
 quantitative-research
 red-teaming

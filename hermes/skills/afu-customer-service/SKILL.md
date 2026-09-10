@@ -1,6 +1,6 @@
 ---
 name: afu-customer-service
-description: '渔芯科技阿福客服顶层门户（portal）— Voss 战术全图 / 异议处理决策树 / 渔芯客服剧本入口。触发条件：阿福执行客户服务、异议处理、客户维护、满意度跟进、客诉处理、RAS 行业客户咨询、报价异议、退订风险场景；或 cron 进化模式需要快速定位客服知识入口。含玉芬分支剧本（references/yuxin-persona-playbook/，2026-09-02 合并）。'
+description: '渔芯科技阿福客服顶层门户（portal）— Voss 战术全图 / 异议处理决策树 / 渔芯客服剧本入口。触发条件：阿福执行客户服务、异议处理、客户维护、满意度跟进、客诉处理、RAS 行业客户咨询、报价异议、退订风险场景；或 cron 进化模式需要快速定位客服知识入口。含玉芬分支剧本（references/yuxin-persona-playbook/，2026-09-02 合并）+ RAS 行业资讯核验与话术转写 SOP（references/***SECRET***/，2026-09-09 curator 合并，含假阳性 sniff test）。'
 version: 1.58.8
 author: 渔芯科技 / 阿福
 tags: [客服, 阿福, 谈判, Voss, RAS, 异议处理, 情绪降级, 顶层门户, Walk-Away-Threshold, Bounce-Chain, Environment-Pitfalls, 量化产品客服话术, execute-code-cron-blocked, F5, Time-Box-Tactic, F1-N7-Active, Delay-Cost-Visualization, Dual-End-Sync-SOP, Honest-Inventory-Only, F3-v22, Honest-Inventory-主体版, Silence-Status-Quo-Bridge, §5x-清单回填变体]
@@ -369,6 +369,8 @@ ls ~/.hermes/profiles/afu/skills/<skill>/references/ | wc -l
 ---
 
 ## 5. 关联子技能清单
+
+> 🗂️ 2026-09-09 curator 收纳：`references/***SECRET***/` — RAS 行业资讯核验与话术转写 SOP（阿福为客户准备行业趋势/竞品对比/补贴政策引用素材时必走；信源三件套 + 日期<90天门槛 + 假阳性 sniff test——识别 SEO 农场复刻旧闻）。原独立 skill 已归档。
 
 > 📌 **v1.58.0 重要修正（9/01 04:00 第 49 档实测）**：portal 历史上一直挂着"11 个 references"的声明，但本地 `~/.hermes/profiles/afu/skills/afu-customer-service/references/` 实际只有 4 个文件（走 F3 升级版 §1B Step 4 检测）。这是 F3 升级版"参考清单虚胖"问题——portal 在 8/24 cron 失败后建 portal 时列了 11 个 references（含"待补"），但后续只在 references/ 落地了 4 个。本档正式修正：删除 7 个"待补"声明，差额标"待 9 月底批量恢复"。**新增 1 个**：***SECRET***.md v1.0 主体版。
 

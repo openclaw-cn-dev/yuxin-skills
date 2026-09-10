@@ -402,15 +402,7 @@ approvals:
   : true
 command_allowlist:
 - delete in root path
-- shell command via -c/-lc flag
-- overwrite system file via redirection
 - script execution via -e/-c flag
-- kill hermes/gateway process (self-termination)
-- force kill processes
-- script execution via heredoc
-- pipe remote content to shell
-- stop/restart hermes gateway (kills running agents)
-- docker restart/stop/kill (container lifecycle)
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false
