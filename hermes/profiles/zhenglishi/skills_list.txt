@@ -43,3 +43,4 @@ xiaobao-trigger-content-closed-loop
 yuanbao
 zhenglishi
 zhenglishi-cron-skip-daily-closeout
+zhenglishi-workflow

@@ -18,6 +18,8 @@ gaming
 gifs
 github
 heidou-dawn-preparation-protocol
+heidou-protocols
+hermes-internals
 inference-sh
 laomo-r753-fallback6-marker
 maodou-cron-evolution-appendices
@@ -40,4 +42,5 @@ temp-probe
 testing
 xiaobao
 xiaobao-cron-self-evolution
+xiaobao-evolution-cron
 yuanbao

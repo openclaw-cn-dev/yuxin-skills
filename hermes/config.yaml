@@ -1,6 +1,6 @@
 model:
-  default: glm-5.3-flash
-  provider: zhipu-payg
+  default: GLM-5.3-flash
+  provider: custom:glm
 providers:
   deepseek-direct:
     api_key: "***"
@@ -18,7 +18,7 @@ providers:
     api_key: "***"
     base_url: https://open.bigmodel.cn/api/paas/v4
     model: glm-5.3-flash
-fallback_providers: '["zhipu-payg","zhipu-glm","deepseek-direct"]'
+fallback_providers: '["custom:glm","deepseek-direct"]'
 : {}
 toolsets:
 - hermes-cli
@@ -401,8 +401,9 @@ approvals:
   mcp_reload_confirm: true
   : true
 command_allowlist:
-- delete in root path
+- recursive delete
 - script execution via -e/-c flag
+- delete in root path
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false

@@ -371,6 +371,13 @@ comm -23 /tmp/referenced_skills.txt <(sed 's|^|productivity/|' /tmp/installed_sk
 - cron 周期任务（可选）—— 玉芬-自我提升模式 已存在
 - 失败累计 ≥ 5 次同类型
 
+## 关联 skill
+
+- **每日管理进化扫描(8项 cron)** → `productivity/yuxin-management-scan`(专用 SOP + scripts/scan_cron_health.py、scan_agent_activity.py)。本 skill 的 Phase 1 Signal Scan 是通用信号扫描;8 项固定扫描走那个专用 skill,不要在本 skill 里重复维护其步骤。
+
+### 版本检查捷径
+`hermes --version` 末行直接显示 "N commits behind — run 'hermes update'",不用自己 git fetch(外网常超时)。
+
 ## Pitfalls（实战教训）
 
 ### Cron 操作

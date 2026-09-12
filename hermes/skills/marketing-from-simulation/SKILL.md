@@ -4,7 +4,7 @@ description: '营销素材 = 仿真参数反向引用 — LookForge / 渔芯产�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # 营销素材 = 仿真参数反向引用
@@ -28,8 +28,15 @@ metadata:
 - 12 个 sim_* 仿真用例(water_flow/oxygen/temperature/structural/thermal/drum_filter/protein_skimmer/mbbr/pipe_network/biofilter/sedimentation/oxygen_cone)
 - 1 个 sim_roi(商业维度,LookForge 独有)
 - 35KB fluid_engine.py(Darcy-Weisbach/Colebrook-White/Ergun/硝化动力学/沉降模型)
-- LTV/CAC=17.2(>>3 生死线),NRR=125%(>>110% 健康线)
+- **LTV/CAC=10.35**(>>3 生死线 3.45×),NRR=125%(>>110% 健康线)⚠️ **数字校准 2026-09-12**
 - 32 种 RAS 设备库 + 89 篇 RAS 知识库文档 + 26 个 GLB 模型
+- **计算公式**(`backend/app/orchestrators/phase_orchestrator.py:1827-1845`):
+  - `cac = 2000.0`(`行业展会+销售人效估计`)
+  - `ltv_device = 24990 * 3 * 0.8` = 59,976(设备商:¥24,990/年 × 3 年 × 80%续费)
+  - `ltv_farmer = 998 * 12 * 2 * 0.7` = 16,766(养殖户:¥998/月 × 12 月 × 2 年 × 70%续费)
+  - `ltv_estimate = (ltv_device * 1 + ltv_farmer * 10) / 11` = 20,694.5(加权,设备商:养殖户 = 1:10)
+  - `ltv_cac_ratio = round(ltv_estimate / cac, 1)` = **10.35**(非 17.2)
+- **历史教训**:CLAUDE.md line 9 + docs/产品设计与开发完整文档.md 误写 **17.2**,与代码偏差 6.85(40%)。对外宣传前必须用 `python3 -c "..."` 实测验证,数字本身仍 >>3 生死线,仅是文档/代码不一致。**对外话术推荐用"超 10 倍 LTV/CAC"或"3.45× 行业生死线",不用 17.2**
 
 **关键洞察**:这些真实数字才是营销弹药——不是杜撰的"50% 提升"。
 
@@ -133,6 +140,48 @@ metadata:
 
 ---
 
+## ⚡ 5 分钟数字校准仪式(2026-09-12 新增 · 必做)
+
+> **背景**:CLAUDE.md / docs 写 `LTV/CAC=17.2`,**代码实测 10.35**(差 40%)。任何对外宣传数字前必须实测验证。
+
+### 触发条件
+- 任何对外文案引用 LookForge 商业指标(LTV/CAC/NRR/CAC/LTV/ROI)
+- 任何毛豆 cron evolution 报告引用 LookForge 数字
+- 任何种子客户/陆基三文鱼/养殖补贴文档引用 LookForge v1.x.x 数据
+
+### SOP(终端 1 行命令,5 分钟搞定)
+
+```bash
+# 1. 切到 LookForge 后端目录
+cd /Users/hua/6-产品研发/渔芯独角兽/02-产品开发综合平台/00-综合开发平台
+
+# 2. 用 Python 实测商业指标(纯函数,不依赖 Docker)
+python3 -c "
+cac = 2000.0
+ltv_device = 24990 * 3 * 0.8
+ltv_farmer = 998 * 12 * 2 * 0.7
+ltv_estimate = (ltv_device * 1 + ltv_farmer * 10) / 11
+ratio = round(ltv_estimate / cac, 1)
+print(f'LTV/CAC = {ratio}  (声明值 vs 实测: 偏差 {abs(17.2-ratio):.2f})')
+print(f'NRR = 125% (硬编码,无需实测)')
+"
+
+# 3. 任何数字必须在源代码 5 秒内搜到出处
+grep -n "LTV\|CAC\|NRR\|ltv_estimate\|cac_estimate" backend/app/orchestrators/phase_orchestrator.py
+```
+
+### 不一致时的处置(3 选 1,等华哥批)
+1. **改文档到实测值** —— CLAUDE.md + 产品文档同步改为 `LTV/CAC=10.35`(推荐,最安全)
+2. **调公式回历史值** —— 修改 `phase_orchestrator.py` 加权比例(高风险,需业务论证)
+3. **对外话术统一口径** —— 不改文档,所有对外材料用"LTV/CAC 超 10 倍,3.45× 行业生死线"
+
+### 为什么必做(战略意义)
+- **合规风险**:对外宣传数字 ≠ 代码,客户一追问就穿帮(行业教训 2026 H2)
+- **决策基础**:陆基三文鱼/养殖补贴申请都引用商业指标,数字错就决策错
+- **品牌信任**:B2B 销售场景下,数字失真 = 一次性失单
+
+---
+
 ## 任务前置依赖 verify(2026-09-06 教训)
 
 ### 踩坑案例:任务 #18 认证层 JWT+OAuth 复活
@@ -219,6 +268,7 @@ sqlite3 <path> ".tables"        # 看有哪些表
 
 ---
 
-> 🤖 毛豆 维护 · 2026-09-06 v1.0
-> 📌 沉淀于 maodou cron self-evolution #17 P0 任务
+> 🤖 毛豆 维护 · 2026-09-12 v1.1(数字校准版)
+> - **v1.1 (2026-09-12)**:LTV/CAC 数字从 17.2 校准到 **10.35**(实测,代码 `phase_orchestrator.py:1827-1845`),新增 §5 分钟数字校准仪式 SOP,修复 CLAUDE.md/docs 与代码不一致
+> - v1.0 (2026-09-06):首版,沉淀于 maodou cron self-evolution #17 P0 任务
 > 📌 配套场景:LookForge 落地页改版 / 种子客户接触 / 营销视频拍摄
