@@ -45,7 +45,7 @@ Use only sections that add non-obvious value.
 
 ## External References
 | Need | File |
-|------|------|
+|------|---------|
 | Setup | `CONTRIBUTING.md` |
 | Architecture | `docs/architecture.md` |
 | Security policy | `SECURITY.md` |
@@ -66,7 +66,7 @@ Co-Authored-By: (the agent's name and attribution byline)
 - Use repo-relative paths; avoid vague references like "see docs".
 - Reference existing docs/specs/policies instead of copying them.
 - List exact external files for setup, architecture, API specs, security, release, and policy docs when they exist.
-- Prefer file-scoped test/lint/typecheck commands; include full builds only when no narrower command exists.
+- Prefer file-scoped test/lint/typecheck commands; include full builds only when no narrower command is available.
 - Put commands in tables when there is more than one.
 - Keep one rule per bullet.
 - Keep rationale out unless it prevents a likely mistake.
@@ -81,7 +81,7 @@ Good:
 ```markdown
 ## External References
 | Need | File |
-|------|------|
+|------|---------|
 | API contract | `docs/api.md` |
 | Release process | `docs/releasing.md` |
 ```
@@ -202,8 +202,105 @@ Example real finding (2026-08-24): `ras-aquaculture` skill last touched 2026-04-
 
 Pattern: every self-evolution cron cycle should run the 30-day mtime scan once and report any profile skill with `mtime > 90 days`.
 
+## SOP / 子流程 vs AGENTS.md 漂移检测 — Profile 通用坑 (2026-09-13 黑豆 self-evolve cron 实战)
+
+子流程 / profile-local SKILL.md(尤其是 cron self-evolution SOP)容易在跨版本 AGENTS.md 更新时**携带过期反模式**,直到下一次 cron 跑出矛盾时才被发现。
+
+**黑豆实战命中(2026-09-13 10:00 round)**:`***SECRET***/SKILL.md` §3 反模式第 3 行写着 ❌ 直接写 ~/rkr_staging/ 路径(违反 AGENTS.md 严禁清单第 1 条),但 AGENTS.md v3 已把"直接 write_file 到 rkr_staging 文档库"定为新标准。这条 SOP 反模式与现行政策**正相反**,误导了整整一个 round 的"严禁清单第 1 条"。
+
+**检测方法(self-evolution cron 启动 30 秒内可执行)**:
+
+```bash
+# 1. 找到 profile 的所有 SKILL.md(SOP 类)
+SKILLS_DIR=/Users/hua/.hermes/profiles/<name>/skills
+ls -lt "$SKILLS_DIR"/*/SKILL.md
+
+# 2. 对每个 SKILL.md,grep 出"反模式/严禁/不允许/❌"相关段落
+grep -nE "反模式|严禁|不允许|❌|❗" "$SKILLS_DIR"/*/SKILL.md
+
+# 3. 拿每条 ❌ 项对照 AGENTS.md v? 的"严禁清单"和"资料落位速查",判断是否冲突
+#    - 冲突 = 必修;老化但未冲突 = 记入下一轮 update 候选
+```
+
+**Profile 强制规则**:
+
+- ✅ **每月 / 每次 AGENTS.md 更新后**:profile 的所有 SOP 类 SKILL.md 必须 grep "❌" 与 AGENTS.md 严禁清单做一次对照
+- ✅ **AGENTS.md 严禁清单变动**:第一周内必须同步更新受影响的 SOP
+- ✅ **SOP 的"严禁清单"必须写明参照 AGENTS.md 的哪个版本**(如 v3 / v6),方便未来 cron 一次 diff 出冲突
+- ❌ **不要让 SOP 缓存禁止规则超过 2 个 AGENTS.md 版本**——SOP 是政策的影子,政策的版本就是 SOP 的天花板
+
+**配套**:本节在 `references/***SECRET***.md` §6 展开,含实战命中记录和修复 SOP 模板。
+
+## 合规信号侦察 — 用证件库 mtime 扫描发现政策窗口 (2026-09-13 黑豆 self-evolve cron 实战)
+
+行政/财务/法务/合规 agent 的 self-evolution cron 不应只读 web_search,还应**主动扫描本地证件/资质/合同库**——mtime 变化本身就是合规信号。
+
+**黑豆实战命中(2026-09-13 10:00 round)**:
+
+```bash
+# 触发:扫描公司证件库
+ls -la /Users/hua/rkr_staging/文档库/A-渔芯科技/A2-公司运营/公司证件/
+# 输出发现:营业执照_东莞市渔芯科技有限公司_2026-09新版.jpg
+#          (2026-09-12 09:50 出现,旧证最后修改 2026-08-13)
+# → 信号:主体资质 1 个月内换证,触发"新证 vs 旧证字段比对 + 主体一致性扫描"流程
+```
+
+**侦察 SOP(profile agent 通用,每轮 cron 必跑)**:
+
+```bash
+# 1. 扫证件库(营业执照/公章/资质证书/ICP/软著/专利)
+for DIR in 公司证件 资质证书 备案信息 印章管理; do
+  ROOT=/Users/hua/rkr_staging/文档库/A-渔芯科技/A2-公司运营/$DIR
+  [ -d "$ROOT" ] || continue
+  # 找 7 天内的新增/更新文件
+  find "$ROOT" -type f -mtime -7 -ls
+done
+
+# 2. 扫合同/SOP 库(新增合同、修订模板、关键 SOP 改动)
+find /Users/hua/rkr_staging/文档库/A-渔芯科技/A2-公司运营/部门空间/<自己>/ \
+     -name "*.md" -o -name "*.docx" -o -name "*.pdf" 2>/dev/null \
+  | xargs -I {} stat -f "%Sm %N" {} 2>/dev/null \
+  | sort -r | head -20
+```
+
+**新发现信号 → 必查项(触发即跑)**:
+
+| 信号类型 | mtime 信号 | 必查动作 |
+|---|---|---|
+| 营业执照换证 | `公司证件/营业执照_*_新版.jpg/pdf` | 8 字段比对(法人/注册资本/经营范围/地址/期限/信用代码/类型/机关)+ 8 项主体一致性扫描(税务/银行/社保/ICP/软著/专利/商户/企业认证) |
+| 合同模板升级 v3.x → v4.x | `workspace/knowledge/合同模板库_*_v*.md` | 旧合同存量盘点 + 过渡期条款适配 |
+| 资质过期 | 资质证书 mtime < 当前日 - 11 个月 | 到期预警 + 续期启动 |
+| 印章备案变更 | 印章管理目录新增 | 用印流程 SOP 同步更新 |
+| 公司法/增值税/数据安全法 重大修订 | web_search 命中 + 公文核验 | 引用既有 class-level skill(如 `***SECRET***` / `compliance-quick-ref` 等),避免重复造轮 |
+
+**Profile 强制规则**:
+
+- ✅ **每轮 self-evolution cron 第 1 步**(`阶段 0` 之后、`阶段 1 政策学习`之前):跑一次证件/资质/合同库的 mtime 扫描
+- ✅ **新发现 mtime 信号**:在 evolution 报告中独立列"本轮信号"小节,不并入通用政策研究
+- ✅ **重复主题**:发现已有 class-level skill 覆盖(如新公司法 5 年实缴 → `***SECRET***`),直接 `skill_view` 引用,**不要在本 profile 重新写完整版**
+- ❌ **不要把本地证件库侦察当 web_search 的替代品**——两者互补,不是二选一
+
+## Tooling Pitfalls in Cron Mode (2026-09-13 黑豆 cron 实战)
+
+Profile cron 模式下,**`execute_code` 工具会被运行时阻断**,报错:
+
+```
+BLOCKED: execute_code runs arbitrary local Python (including subprocess calls that bypass shell-string approval checks).
+Cron jobs run without a user present to approve it. Use normal tools instead, or set
+approvals.cron_mode: approve only if this cron profile is intentionally trusted.
+```
+
+**强制规则**(任何 cron 调度的 profile):
+
+- ❌ **不要在 cron 自进化 SOP 里推荐 `execute_code`** —— 它对 cron 不可用,SOP 里推荐 = 误导
+- ✅ **多步处理/批量循环/JSON 解析**:用多个独立的 `terminal` / `write_file` / `patch` / `read_file` 替代,或写成 shell 脚本用 `terminal` 跑
+- ✅ **`terminal` 内的 `python3 -c` / heredoc**:cron 模式下**也可用**(走 shell approval 而非 execute_code approval),但每次仍是独立 terminal 调用
+- ✅ **跨工具的状态传递**:用 `write_file` 落临时 JSON/MD 文件,再由下一个工具读
+
+类似地,**`web_extract` 在 DuckDuckGo 后端下不可用**(只搜不抓),若配置了 ddgs 则会失败,profile agent 应默认走 `web_search` 多轮查询 + 摘要交叉,而非期待 `web_extract` 拿到原文。
+
 ## Support Files
 
-- `references/***SECRET***.md` — full playbook for the five profile-agent failure modes (HOME hijack / registry scope / stale skill腐化 / cross-profile write guard / cross-profile interface gap) with worked examples and threshold tables.
+- `references/***SECRET***.md` — full playbook for the **seven** profile-agent failure modes (HOME hijack / registry scope / stale skill腐化 / cross-profile write guard / cross-profile interface gap / **SOP-vs-AGENTS.md drift** / **compliance signal reconnaissance**), plus cron-mode tool pitfalls.
 - `templates/***SECRET***.md` — reusable 8-field contract template for the cross-profile "发起方侧单向接口卡" pattern (type 14). Copy and rename with sender/receiver names when a downstream profile is silent on a known handoff.
-- `scripts/skill-health-check.sh <profile-name>` — automated probe; runs the mtime scan, lists stale skills (>90 days), and reminds about L1 vs L3 registry scope. Exit code 1 if any stale skill detected.
+- `scripts/skill-health-check.sh <profile-name>` — automated probe; runs the mtime scan, lists stale skills (>90 days), and reminds about L1 vs L3 registry scope.

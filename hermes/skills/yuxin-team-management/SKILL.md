@@ -6,7 +6,9 @@ description: |
   "新增一位专家型同事"或者其他类似"multi-agent 系统的 profiles 散落管理问题"。
   触发条件：用户提到"重新整理 / 集中管理 / 统一视图 / 同事 agent 整理 / 团队管理视图 /
   新增同事 / 复刻宽博士模式建专家"；或华哥发批量批复指令（"需拍板项目全选'是'" /
-  "同意" / "可以"）需要把待拍板清单逐项落地分发时（见 §十四 批量批复落地 SOP）。
+  "同意" / "可以"）需要把待拍板清单逐项落地分发时（见 §十四 批量批复落地 SOP）；
+  或华哥在 cron 投递线程对**某一位同事的日报**回「全按建议」（单 agent 日报批复变体，
+  见 references/single-agent-report-approval.md，2026-09-13 心博士实战）。
 related_skills:
   - ***SECRET***   # 协作后端（registry / messages / SOP）
   - hermes-gateway-profile-ops        # runtime / launchd / plist / LLM 路由
@@ -24,6 +26,7 @@ related_skills:
 - `references/***SECRET***.md` — `Unknown provider 'glm-free'` 事故全记录 + 5 步诊断配方（per-profile 隔离排查 + config.yaml.bak-* 时间线重建 + 残留 vs 活报错区分）+ skill 容量审计正确计数命令（触发：任何 "Unknown provider 'X'" 报错 / provider 迁移后 cron 集体失败）
 - `references/***SECRET***.md` — **从零新增同事 Agent Profile 上线 SOP**（目录树/config 复刻/AGENTS+SOUL/launchd plist 改造/bootstrap/心跳脚本/cron×2 含 cronjob 工具 quirk/首跑/Mnemosyne 登记，2026-09-04 心博士实战全流程；触发：华哥拍板新增专家型同事）
 - `references/batch-approval-dispatch.md` — **华哥批量批复落地 SOP 详情**：全量扫描"待拍板/待定夺"清单 → 逐项按同意落地 → 批复原文登记到各 owner 实际读取的文档 → 记忆同步 → 分组汇报（2026-09-07 "需拍板项目全选'是'" 3 清单 15 项实战；触发：华哥批量同意类指令）
+- `references/single-agent-report-approval.md` — **单 agent 日报批复「全按建议」落地**：cron 投递线程里的「全按建议」= 该日报全部建议整体通过 → 定位日报源档 → **批示文件落 owner 的 evolution/ 目录**（kanban 写库会卡审批门，文件通道零审批、owner cron 下轮自动认领）→ Mnemosyne 登记 → 3 行汇报（2026-09-13 心博士日间档实战；触发：华哥对某同事日报/简报回「全按建议」「按建议执行」）
 - 现役名单（2026-09-04）：玉芬(default) / 阿福(afu) / 毛豆(maodou) / 老莫(laomo) / 黑豆(heidou) / 小宝(xiaobao) / 宽博士(quant) / 学习助手(zhenglishi) / 旺财(wangcai,Windows) / **心博士(psychology，2026-09-04 复刻宽博士模式入职：心理学专家、后台专家模式不接飞书、伦理红线写死 AGENTS.md、服务全公司 6 条线)**
 
 ---

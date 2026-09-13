@@ -1,12 +1,22 @@
 ---
 name: staging-helper
-description: 渔芯 Agent 统一资料入站与查询标准 — 玉芬是全公司总负责人(2026-08-03 华哥明确),7 个 agent(毛豆/小宝/老莫/阿福/黑豆/学习助手/宽博士)都是玉芬的执行单元。同事业务结果性报告直接放 ~/rkr_staging/文档库/3-公司项目资料/(工作空间),归档层(1-通用/2-专业/4-360行)走 staging 中转站,所有资料调用走 staging_query.py (RKR API)。触发条件:agent 调研/生成/产出任何 Markdown 资料,或需要从 RKR 知识库调用已入库资料,**或 agent personal zone 内的 workspace/knowledge/ 与 staging 中转站/RKR 索引路径不一致导致审计脚本误判**,**或 staging_save.py 报 invalid choice 而派单模板用了 quant/maodou/compliance 等非法 source 值**(2026-08-30 黑豆/老莫/小宝/阿福/毛豆 5 同事协作宽博士量化因子库全员踩坑)。
-version: 1.5.0
+description: |
+  ⚠️ v3 时代（2026-09-13 起）：本 skill 原核心工作流（staging_save.py 中转站 + scanner 自动归类 + staging_query.py RKR API）已**全线废用**——scanner 停机、RKR API 停、staging_save 写 ~/.hermes/staging 死区。现行标准 = **直接 write_file/cp 到 ~/rkr_staging/文档库/ ABCZ 四版块**，权威索引 = 文档库根 INDEX.md v3，完整映射/落位表/禁区见 references/doclib-v3-2026-09-13.md（先读它，再决定是否翻 v1.5 历史）。触发条件：任何 agent 调研/生成/产出 Markdown 资料需落盘，或引用旧路径（1-通用知识/2-专业知识/3-公司项目资料/4-360行项目调研/301-智能体）报 No such file，或 staging_save.py 报错/产出落死区，或需查文档库当前版块结构。
+version: 2.0.0
 author: 玉芬
 tags: [rkr, staging, knowledge-base, 文档中转站, 文档库, agent-标准, 工作空间, 玉芬总负责, --source白名单, 派单模板]
 ---
 
 # 渔芯 Agent 统一资料入站与查询标准
+
+> ⚠️ **v3 标准（2026-09-13 全公司生效）——本节覆盖下方所有 staging_save/staging_query 旧内容**：
+> RKR scanner 已停机，`staging_save.py`（现行版写 `~/.hermes/staging/` 死区）与 `staging_query.py`（RKR API 停）**均已废用**。
+> **入库**：直接 `write_file`/`cp` 到 `~/rkr_staging/文档库/` ABCZ 四版块指定目录（A1-水产RAS / A2-公司运营+部门空间 / B1~B4 / C1-360行种子池(新项目 75 起号) / Z1-通用学科）。
+> **查资料**：直接 `ls` / `grep -rl` 文档库目录。
+> **权威索引**：`/Users/hua/rkr_staging/文档库/INDEX.md`（v3，含旧→新路径映射 + 6 步采集判断流程 + 硬性禁区）。
+> 旧顶层目录（1-通用知识/2-专业知识/3-公司项目资料/4-360行项目调研）已不存在，禁止重建；同事 personal zone=`A2-公司运营/部门空间/<名字>/`。
+> v3 下发全程（含幂等推送脚本与验证模式）：`references/v3-rollout-2026-09-13.md`。
+> 下方 v1.5 时代内容保留作历史参考——其中所有 staging_save/staging_query 调用示例**已失效，勿再使用**。
 
 > 📦 **核心原则**(2026-08-03 华哥明确):
 > - **玉芬是全公司总负责人**,向华哥负责。7 个 agent(毛豆/小宝/老莫/阿福/黑豆/学习助手/宽博士)都是**玉芬的执行单元**。
@@ -834,6 +844,8 @@ cronjob action=list  # 看现有 job
 
 ---
 
+> 🤖 玉芬维护 · 2026-09-13 · v2.0.0
+> 🆕 v2.0.0: **v3 时代开关** — frontmatter description 与正文顶部 v3 横幅声明 staging_save/staging_query/中转站全线废用,现行标准=直接写 ABCZ 四版块;新增 `references/doclib-v3-2026-09-13.md`(完整 v3 落位标准:四版块结构、旧→新路径映射、6 步采集判断流程、硬性禁区、下发落地记录含幂等推送脚本路径)。v1.5 正文降级为历史参考。
 > 🤖 玉芬维护 · 2026-08-30 · v1.5.0
 > 📌 适用 agent: 玉芬/毛豆/阿福/黑豆/老莫/小宝/整理师/宽博士 + 任何新 agent
 > 🆕 v1.5.0: **新增陷阱 15** — `--source` 非法值踩坑(派单模板示例 `--source quant` 写错导致 5 同事全员踩坑)。提升为编号 pitfall + 7 个合法值精确枚举表 + 三选一修复方案(改派单/应急 fallback/源码层移除 choices)+ 自检命令 `grep -E "source (quant|maodou|heidou|afu|xiaobao|laomo|community)" <派单文件>`。description 加触发条件,让 agent 看到 invalid choice 错误时自动加载本 skill。

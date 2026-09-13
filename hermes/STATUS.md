@@ -1,11 +1,11 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-09-12 12:15:32
+> 导出时间: 2026-09-13 12:10:32
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 85
+- Skills: 86
 - Profiles: 11
-- Scripts: 129
+- Scripts: 134
 - Plugins: 1
 
 ## 版本
@@ -94,6 +94,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - refactoring-ui
 - research
 - research-collection
+- rkr-doclib-inventory
 - sales
 - search
 - security

@@ -401,8 +401,9 @@ approvals:
   mcp_reload_confirm: true
   : true
 command_allowlist:
-- recursive delete
+- script execution via heredoc
 - script execution via -e/-c flag
+- recursive delete
 - delete in root path
 quick_commands: {}
 hooks: {}

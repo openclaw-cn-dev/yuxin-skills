@@ -55,6 +55,37 @@ metadata:
 ❌ **不要在 evolution 报告中引用尚未存在的 skill**（如曾误引用"***SECRET***"）。
 ✅ 引用前用 `find ~/.hermes -name "<skill 名>"` 验证存在。
 
+❌ **不要用 `~/.hermes/...` 相对路径** — 沙盒 $HOME 会被劫持到 `~/.hermes/profiles/<其他 agent>/home/`，导致 heartbeat_check.py / staging_save.py / evolution 目录全部路径错乱。
+✅ **强制用绝对路径 `/Users/hua/.hermes/...`**，或每条命令前 `echo $HOME` 验证。
+> 实测 2026-09-13 08:00：`HOME=/Users/hua/.hermes/profiles/laomo/home`（应是 `/Users/hua`）。`~/.hermes/scripts/heartbeat_check.py` 因此报 `[Errno 2] No such file or directory`。修法：忽略该脚本，直接 `sqlite3 /Users/hua/.hermes/profiles/maodou/kanban.db "..."`。
+> 详见 `references/sandbox-home-hijack.md`。
+
+❌ **不要相信 `ls evolution/` 默认输出** — macOS 默认 `ls` 不显示隐藏文件，且目录文件多时易误读为"空"。**永远用 `ls -la` 或 `find`** 验证。
+> 实测 2026-09-13 08:00：进化目录实际有 200+ 历史报告，但 `ls` 不带 `-a` 输出让人误判为空。
+
 ---
 
-> 🤖 毛豆 · 2026-09-11 12:00 · cron evolution appendices v0.1
+## Cron 执行前 30 秒自检（强制）
+
+```bash
+# 1. 验证 HOME 没被劫持
+echo "HOME=$HOME"  # 必须是 /Users/hua，否则用绝对路径
+
+# 2. 验证任务系统（绕过坏掉的 heartbeat_check.py）
+sqlite3 /Users/hua/.hermes/profiles/maodou/kanban.db \
+  "SELECT count(*) FROM tasks WHERE assignee LIKE '%毛豆%' AND status NOT IN ('completed','cancelled','done');"
+
+# 3. 验证 evolution 目录真实状态
+ls -la /Users/hua/.hermes/profiles/maodou/evolution/ | tail -5
+```
+
+---
+
+## Support 文件索引
+
+- `references/sandbox-home-hijack.md` — 沙盒 $HOME 劫持的完整诊断与绕过手册（2026-09-13 实测）
+
+---
+
+> 🤖 毛豆 · 2026-09-11 12:00 · cron evolution appendices v0.2
+> 📌 2026-09-13 08:03 patch：补 $HOME 沙盒劫持 pitfall + 30 秒自检 + support 索引
