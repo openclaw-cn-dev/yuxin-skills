@@ -1,5 +1,5 @@
 model_provider = "ZAI"
-model = "glm-5.3-flash"
+model = "glm-5.3"
 model_reasoning_effort = "high"
 disable_response_storage = true
 wire_api = "responses"
@@ -161,6 +161,9 @@ enabled = true
 enabled = true
 
 [plugins."sentry@openai-api-curated"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
 enabled = true
 
 [features]
