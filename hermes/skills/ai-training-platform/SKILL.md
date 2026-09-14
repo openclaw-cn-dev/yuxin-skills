@@ -460,6 +460,28 @@ Run as a cron job every Monday. The workflow:
 
 Reusable script: `scripts/update_ai_jobs.py` (parameterized INSERT + expire + report; copy, fill `new_jobs`/`expire_ids`, run). The `term_ids` map in `references/job-database.md` is the authoritative one — verify IDs against `terms` before writing.
 
+#### Pitfall: `sqlite3 db < file.sql` does NOT stop on parse errors — retrying the fixed file creates DUPLICATE rows (2026-09-14 incident)
+
+The sqlite3 CLI prints parse errors but keeps executing subsequent statements. The weekly file (1 UPDATE-expire + N INSERTs) that fails on a mid-file quote bug has ALREADY committed everything before the error; re-running the corrected file then (a) re-expires the prior run's still-active inserts, (b) re-inserts every job as a duplicate with fresh autoincrement ids. Verified arithmetic from 2026-09-14: 3 attempts (3 quote bugs fixed one at a time) → 11 ghost rows (ids 48–58, all status='expired') duplicating the 7 real jobs (ids 59–65). The active set stays correct — each retry's UPDATE expires the prior copies — so the UI is unaffected and the corruption hides in expired-row counts only. **Tell-tale symptom: an "expired count larger than expected" in the weekly report.**
+
+**Prevention** — run the weekly file atomically (file starts with `BEGIN;` and ends with `COMMIT;`):
+```bash
+sqlite3 -bail "/path/to/ai_learning.db" < /tmp/ai_jobs_weekly_update.sql
+```
+`-bail` stops at the first error; BEGIN/COMMIT makes the run all-or-nothing so a failed attempt leaves zero partial state and can simply be re-run after the fix.
+
+**Recovery after an already-duplicated run**:
+```sql
+SELECT title, company, posted_date, COUNT(*) c FROM ai_jobs
+ GROUP BY title, company, posted_date HAVING c > 1;   -- find ghosts
+DELETE FROM ai_jobs WHERE id BETWEEN 48 AND 58;       -- 2026-09-14 leftover ghosts (expired dupes of the 7 live jobs)
+```
+
+**Root cause of the failed parses — ASCII apostrophes inside Chinese JD prose**: quoting a term inside requirements text as '数据元年' / '超级个体' / '大脑' with ASCII single quotes terminates the SQL string literal early (`Parse error near "数据元年"`). Use Chinese quotes “ ” for any quoted term in Chinese prose, and lint the file before executing (BSD grep lacks `-P`, use python):
+```bash
+python3 -c "import re,sys; s=open(sys.argv[1],encoding='utf-8').read(); bad=[l for l in s.splitlines() if re.search('[\u4e00-\u9fff]\'[\u4e00-\u9fff]',l)]; print('BAD:',bad[:3]) if bad else print('OK')" /tmp/ai_jobs_weekly_update.sql
+```
+
 ### Anti-Bot Challenges (verified 2026-08-03)
 
 Status of major Chinese job/news sites when scraped by Hermes browser tools in default local mode (no residential proxy):
@@ -489,6 +511,7 @@ See `references/job-scraping-recipes.md` for concrete selectors and extraction p
 
 - `execute_code` is BLOCKED in cron mode — use `terminal` with `python3 -c` or write-file-then-execute instead
 - **Heredoc pitfall**: `python3 << 'PYEOF' ... PYEOF` in terminal may be flagged by the security scanner (confusable Unicode detection on CJK text mixed with ASCII). Workaround: use `write_file` to create a `.py` file, then execute it with `python3 /path/to/script.py`. This avoids the scanner entirely and produces a re-runnable artifact.
+- **`skill_view` name-resolution failure (2026-09-14 verified)**: `skills_list` can show a skill while `skill_view(name)` returns `not found` — registry names may differ from the on-disk directory (e.g. registered `cron-mode-tool-constraints` lives at `skills/devops/***SECRET***/`; retrying the same name loops forever). Workaround that always works: locate the file with `search_files` (`pattern: **/<name>/SKILL.md`, `path: /Users/hua/.hermes`) and `read_file` it directly. Same fallback for reading a sibling-profile skill you must consult but not modify.
 - Pipe-to-interpreter (`curl | python3`) triggers security approval — split into two steps: download to temp file, then process
 - `terminal` network requests may time out after 30s — use `--max-time` flag
 
@@ -504,12 +527,12 @@ See `references/job-database.md` for full schema and example INSERT.
 
 There are now MULTIPLE "知渔" SQLite DBs — always confirm which path the task/cron actually points to before writing (do NOT assume the skill's documented 主目录), and re-locate when the named path is missing. **The cron prompt itself can carry a stale path**: on 2026-09-07 it still hard-coded 渔芯独角兽/知渔/db, which no longer exists. Discovery that worked: `find /Users/hua -name "ai_learning.db" -not -path "*/Library/*" -not -path "*/.Trash/*"`, then confirm the candidate holds data (`SELECT COUNT(*) FROM ai_jobs; SELECT COUNT(*) FROM terms;`) before writing.
 
-| Path | State (2026-09-07) |
+| Path | State |
 |---|---|
-| `/Users/hua/Documents/New project/ai-learning/db/ai_learning.db` | **LIVE** — docker compose + sqlite platform in the "New project" workspace (own AGENTS.md); 220 terms (T001–T220), ai_jobs 47 rows (9 active / 38 expired) |
-| `/Users/hua/6-产品研发/渔芯独角兽/知渔/db/ai_learning.db` | **GONE** — `知渔/` dir no longer exists under 渔芯独角兽/ |
-| `/Users/hua/6-产品研发/渔芯独角兽/00-基本完成/知渔/db/ai_learning.db` | parallel snapshot (287 terms incl. T227–T287; not re-verified 2026-09-07) |
-| `/Users/hua/6-产品研发/ok-KnowHow知渔/db/ai_learning.db` | older snapshot (not re-verified 2026-09-07) |
+| `/Users/hua/Documents/New project/ai-learning/db/ai_learning.db` | **LIVE** — docker compose + sqlite platform in the "New project" workspace (own AGENTS.md); 220 terms (T001–T220); ai_jobs at 65 rows (7 active / 58 expired) after the 2026-09-14 weekly run (ids 48–58 are a known leftover duplicate batch — see the `-bail` pitfall above) |
+| `/Users/hua/6-产品研发/渔芯独角兽/知渔/db/ai_learning.db` | **GONE** — `知渔/` dir no longer exists under 渔芯独角兽/ (cron prompts keep carrying this stale path — re-verify every run) |
+| `/Users/hua/6-产品研发/渔芯独角兽/00-基本完成/知渔/db/ai_learning.db` | parallel snapshot (287 terms incl. T227–T287; not re-verified since 2026-09-07) |
+| `/Users/hua/6-产品研发/ok-KnowHow知渔/db/ai_learning.db` | older snapshot (not re-verified since 2026-09-07) |
 
 Terms count drifts per copy (206 / 220 / 287) — a T-ID valid in one copy may not exist in another. Always validate term_ids against the LIVE terms table of the DB being written.
 

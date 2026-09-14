@@ -18,6 +18,7 @@ hardware
 heidou-cron-heartbeat-verification
 heidou-cron-self-evolution-sop
 hermes-cron-command-approval-pitfalls
+hermes-patch-tool-pitfalls
 inference-sh
 llm_july_2026_report.md
 maodou-2026-08-28-stall-detector-reference
@@ -44,4 +45,6 @@ xiaobao-trigger-content-closed-loop
 yuanbao
 zhenglishi
 zhenglishi-cron-skip-daily-closeout
+zhenglishi-deep-dive-cron
+zhenglishi-noon-flash-briefing
 zhenglishi-workflow

@@ -1,10 +1,10 @@
 ---
 name: laomo-knowledge
-description: '老莫（知识库+测试+基础设施）核心技能集 — 文档协作、产品测试、学术资料收集、文献检索、知识库建设、心跳 cron 任务。v1.88.10 R452 新增 references/***SECRET***.md (Pitfall #76 首次恢复实战 + Pitfall #75 三连击确认 R446/R449/R452 + R181 临界 --prune 2 双保险实战 + R207 deliver 2 勾判定)。'
+description: '老莫（知识库+测试+基础设施）核心技能集。v1.88.18 R491 实战增量 (Pitfall #70 第 3 次实战 Q3 climate_adaptation 0/5 淘汰 + 4 角度轮换 SOP 累计 16 角度复用率分析 + known_dois.txt 97→110 +13 = N+2 第 3 次 PASS) + R488 v1.88.17 实战增量 (search 端点 rate-limit 429 ≠ cluster overload 503 细分 + 4 探针 SOP 实测验证 + known_dois.txt 85→97 +12 = N+2 PASS + entry 估 4000-4500 实测 6359 +40% 偏差 → 升 --prune 2 双保险 PASS) + R485 Pitfall #78 双端点探活基础 (per_page=1 + search=kw 双探针) + R483 chaos engineering 实战 (12 探针模板) + known_dois.txt 85→97 (+12 行, 10 真 RAS DOI)'
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.88.10"
+  version: "1.88.18"
 ---
 
 # 老莫知识库核心技能
@@ -599,6 +599,14 @@ R434 self-evolution round 4 方向跑通，方向① OpenAlex 检索用 **4 新 
 - R431 = **首次发现** `is_ras_paper()` 函数 plant disease 误命中（10.1007/s10462-024-11100-x）
 - Pitfall #70 = **二次踩坑验证** + 4 角度轮换 SOP 沉淀（绕重复 + 人工 title check）
 
+**R482 Q4 microbiome_host_health 反面教材（R482 自创 2026-09-14 06:00 CST 实测 0/10）**：
+R482 沿用 R434 4 角度轮换 SOP 跑 `Q4 = (fish OR shrimp OR salmon) AND (microbiome OR gut microbiota) AND (health OR immunity OR performance)`（预期沿用 Q4 = aquaponics 思路）→ OpenAlex 返 10 命中但 **0/10 真 RAS**（实测 all reject）—— 所有命中都是 human gut microbiome（gutjnl-2024-333378 / ijms25116022 / nu16213663 等 8 篇）→ 原因：query 用了 `(fish OR shrimp OR salmon)` 但 OpenAlex 默认逻辑只匹配 abstract 中含 "fish" 词的论文，**但人类 microbiome 综述常引用 fish/shrimp 实验对照** → 邻近词触发 + 主语不在 fish = **角度太宽，主题被 human 健康类 paper 抢走**。
+
+**R482 Q4 防御 3 条（叠加 R434）**：
+- (a) **microbiome 角度必加主体限定 + 排除 human**：query 模板 = `((fish AND NOT human) OR shrimp OR salmon OR aquaculture) AND (gut microbiome OR intestinal microbiota) AND (NOT human NOT patient NOT clinical trial)` —— OR 形式 + NOT human 双保险，避免被 human gut 综述抢命中
+- (b) **microbiome 角度加 journal 白名单前置**：在 filter 段加 `filter=primary_location.source.id:s185196701,primary_location.source.id:s145340771,primary_location.source.id:s14486440` (Aquaculture / Fish Shellfish Immunol / Fishes 三大水产期刊) —— 强制 OpenAlex 只返回水产期刊命中，从源头挡掉 human 健康论文
+- (c) **0/10 命中 = 角度失败必降级**：当某角度 OpenAlex 命中 ≤ 1 真 RAS → **该角度本轮淘汰**，换下一角度，不要赌「再搜一遍会好」(R482 实测 Q4 0/10 直接 reject，不替换 query 重试 = 节省 ~3 分钟)
+
 **完整 R434 trace + 4 角度 query 列表 + 7 条真 RAS 新候选 DOI + 3 大新行业趋势**：见 `references/r434-openalex-4angle-rotation.md`（R434 实战 4 方向 trace + 角度轮换 SOP + is_ras_paper() 二次踩坑 + stdout 三段指纹实战）
 
 ### Pitfall #71 候选: entry 起草字数预估失败导致剪枝参数不准（R437 自创 2026-09-13 00:01 CST）
@@ -627,6 +635,15 @@ R437 起草 entry 时凭经验估 "~5500 chars"，实际写完 8262 chars（**�
 **R437 vs Pitfall #65 区分**：
 - Pitfall #65 = 临界窗口 (45-49KB) 缺 SOP → 必先 `--prune 1` 兜底
 - Pitfall #71 = `--prune 1` 兜底还不够 → entry 实测 chars 可能比预估大 50%，需 `--prune 2` 双保险
+
+**R488 第 6 次反例实证（2026-09-14 10:00 CST 实测 +40% 偏差）**：
+- 起草预估 entry = 4000-4500 chars（按 R426/R431/R434 长 entry 经验）
+- 实测 `wc -c /tmp/laomo_r488_entry.txt` = **6359 chars（比预估 +40%）**
+- 跑前落地预估（`--prune 1` 假设）: 46383 - 3008 + 6359 + 2 = **49736 chars (48.57KB) > 48KB 早闸口 FAIL**
+- 升 `--prune 2` 落地预估: 46383 - 7200 + 6359 + 2 = **45544 chars (44.48KB) < 48KB 早闸口 PASS**
+- 实战跑 `--prune 2 --archive` 双参 → post-write OK desc=43.0KB PASS ✓
+
+**R488 强化**: R437 + R488 两次反例均触发 `--prune 1` 不够 → 升级 SOP 为：临界窗口 (desc ∈ [45KB, 49KB]) 必走 **`--prune 2 --archive` 双保险**（不赌 `--prune 1`），即使 entry 估 ≤ 5000 chars 也按 `--prune 2` 跑。这是 Pitfall #73 R438 实战结论 + R488 实证兑现。
 
 **完整 R437 trace + 预估失败实测 + 防御 SOP**：见 `references/***SECRET***.md`（本轮不写, SKILL.md 内联紧凑）
 
@@ -692,9 +709,33 @@ R438 跑前 desc=46342 chars (45.26KB b 区间下沿临界)，按 Pitfall #65 �
 - **根因**：R437 → R438 之间 writer cron c6391079131e 已自动追加 R438 + R439 canonical entries（双 cron 并行模式，writer cron 1h 内多次追加符合 R411 R411 SOP (b)）
 - **修复**：patch entry 首行 `[R438` → `[R440`，cp 写脚本名同步 `laomo_r440_write.py`（Pitfall #60 三件套一致性），重跑 PASS → post-write OK last_r=440
 
-**R438 防御新增 2 条**:
+**R488 防御新增 2 条**:
 - (e) **entry 起草前 SELECT last_r → 起草 → cp 写脚本 → patch entry 编号 (如 last_r +1 漂移) → 重跑**的 5 步顺序必须严格遵守；中途发现 last_r 已变（writer cron 抢跑）→ **patch entry + cp 写脚本名同步**（Pitfall #60 三件套一致性）→ 重跑
 - (f) **SELECT 完到 write_round.py 间隔 ≤ 30s**：SELECT 完立刻 cp + patch + 跑，writer cron 在 SELECT 后跑进来的窗口越小越安全；不要 SELECT 后去查 OpenAlex 走神 5 分钟回来
+
+**R488 第 2 次实战兑现（2026-09-14 10:00 CST 实测 `--prune 1` FAIL → `--prune 2` PASS）**：
+- 跑前 desc = 46383 chars (45.30KB b 区间下沿临界震荡)
+- entry 实测 6359 chars (`wc -c /tmp/laomo_r488_entry.txt`)
+- 落地预估（落地预估公式: `pre_desc - Σdrop_chars + entry_chars + 2 separator`）:
+  - `--prune 1` (drop R486=3008 chars): `46383 - 3008 + 6359 + 2 = 49736 chars (48.57KB)` **> 48KB 早闸口 FAIL**
+  - `--prune 2` (drop R475+R476=7200 chars): `46383 - 7200 + 6359 + 2 = 45544 chars (44.48KB)` **< 48KB 早闸口 PASS**
+- 实战跑 `python3 /tmp/laomo_r488_write.py /tmp/laomo_r488_entry.txt --prune 2 --archive /Users/hua/.hermes/profiles/laomo/evolution/task-11-log-archive.md`
+- 三段指纹:
+  - `prune OK: drop 2 条 (R475..R476) -> /Users/hua/.hermes/profiles/laomo/evolution/task-11-log-archive.md` (按出现顺序从最旧起, 沿用 Pitfall #75)
+  - `pre-write OK: last_r=487, entries=11`
+  - `post-write OK: last_r=488, status=in_progress, updated_at=2026-09-14 02:05:41, desc=43.0KB chars, entries=12`
+- post-write SELECT verify: desc=43999 chars (42.97KB) < 48KB PASS / last_r=488 ✓ / agent_R=0 (无 fake 污染) ✓
+
+**R488 vs R438 实战对照**:
+- R438 desc=46342 chars (45.26KB) + entry=6233 → `--prune 1` FAIL → 升 `--prune 2` PASS
+- R488 desc=46383 chars (45.30KB) + entry=6359 → `--prune 1` FAIL → 升 `--prune 2` PASS
+- **两次实战模式完全一致**：临界窗口 (45-49KB) entry ≈ 6000-8000 chars 时, `--prune 1` 必不够 → 升 `--prune 2` 双保险
+- R437 Pitfall #71 + R438 Pitfall #73 + R488 R488 强化 = 三连击, 临界窗口 SOP 必走 `--prune 2` 不可赌 `--prune 1`
+
+**R488 临界窗口 SOP 终稿（叠加 R437/R438/R488 三次实战）**:
+- (g) **临界窗口 desc ∈ [45KB, 49KB] + entry 实测 ≥ 5000 chars → 必走 `--prune 2 --archive` 双保险**（不赌 `--prune 1`）
+- (h) **落地预估公式实战化**: `pre_desc - drop_total + entry_chars + 2 separator < 48000`？不满足 → 升 `--prune N+1`
+- (i) **R437 + R438 + R488 三次实证 entry 实测与预估偏差 +40-50%**: 临界窗口默认按预估 × 1.5 = 落地预估 entry 实测值 → `--prune N+1` 兜底
 
 **完整 R438 trace + R181 临界 SOP 升 `--prune 2` 双保险 + write_round.py FATAL 模式识别补充 + R124 双 cron 时序三连击实测**: 见 `references/***SECRET***.md`（本轮不写, SKILL.md 内联紧凑）
 
@@ -784,109 +825,219 @@ R449 self-evolution round 方向① 调 OpenAlex API → 返 `{"error":"Search t
 
 **完整 R449 trace + R181 临界 47.92KB 实战 + stdout 三段指纹 + 4 阻塞盘点 + Pitfall #76 实战触发**：本轮 SKILL.md 内联紧凑, 不写独立 reference (R296+ 沉淀模式)
 
-## 老莫测试方法论矩阵（5 类已齐，方向⑤ Chaos Engineering R162/R155/R274 落地）
+### Pitfall #78 候选: OpenAlex 探活必双端点（R483 自创 2026-09-14 08:00 CST）
 
-> **R437 关键发现 (2026-09-13 CST)**：方向④ skills mtime 复扫发现 `~/.hermes/profiles/laomo/skills/testing/chaos-engineering/SKILL.md` 早已存在 (7621B 2026-09-08 20:06 落盘, R155 实战 + R274 Game Day 模板) — SKILL.md 矩阵第 5 行「chaos 待补」属**自反例漂移** (类似 R144 metadata version 漂移)，R437 元层修订为「✅ 已实战」。**R434 SKILL.md changelog 中"chaos-engineering 待 R<n+1> 立项"描述同步过时**，待 R437+1 patch SKILL.md 修正。
+R483 chaos probe (`scripts/chaos_probe_template.py` 12 探针模板) 用 `/works?per_page=1` (无 search) 返 200 → 误判"全 OpenAlex UP"。R485 沿 R434 4 角度跑 search 端点 → 4/4 返 **HTTP 503 Service Unavailable** → `/works?search=...` (search 端点) 仍 overload。**根因**: OpenAlex `per_page=1` 与 `search=...` 是**两个独立端点健康度**（per_page 直接走 OpenAlex metadata index，search 走独立 search cluster）。
 
-| # | 方法论 | 实战 R | 工具 / 库 | 状态 / 关键指标 |
+**R483 实战 (chaos probe 7/11 UP)**：仅探 `per_page=1` 200 误判 + OpenAlex 阻塞盘点降级，与 R485 方向 ① 4 角度全 503 形成证据闭环。
+
+**R485 防御 4 条**:
+- (a) **OpenAlex 探活必双端点**：chaos probe / R<n> 方向 ① 探活必同时调 `/works?per_page=1` (per_page 端点) + `/works?search=<kw>` (search 端点)；仅 per_page=1 200 不够
+- (b) **search 端点 503 修复无 SOP**：沿用 Pitfall #76 防御，upstream 集群层面问题，唯一动作 = 等；cron mode 不耗时间等 (R449 防御 c)
+- (c) **chaos probe 升级 L2 scripted**：每周自动跑一次 + JSON diff 与上周对比；探针数量从 11 → 20+ (加 skills 路径检查 / docker daemon 多次 ping / OpenAlex 4 endpoint 等)
+- (d) **per_page=1 + search=keyword 双探针必加**：future `test_chaos_probe_R<n>.py` 默认包含 4 OpenAlex 端点探针 (per_page=1 / search=kw / single_work_id / works/W123 filter)
+
+**R488 实战增量（2026-09-14 10:00 CST 实测 search 端点 rate-limit 429 ≠ cluster overload 503）**：
+
+R488 pre-flight 双端点探活：
+- per_page=1 端点：`HTTP 200 OK` + `count: 326222276 works, db_response_time_ms: 364` —— 元数据 index 健在
+- search=kw 端点：`HTTP 429 Rate limit exceeded... retryAfter: 31s` —— **upstream rate-limit 而非 cluster overload**
+
+**关键区分**（R449 + R488 双发现合并，扩展 Pitfall #76 错误码对照表为 4 类）：
+
+| Pitfall | 触发条件 | 错误码 | 修法 | 调用频率 |
 |---|---|---|---|---|
-| 1 | **Mutation Testing** | R429 | stdlib `inspect` + `subprocess` | ✅ mutation score 8/8 = 100% (≥80% 阈值 PASS) |
-| 2 | **Fuzz Testing** | R414 | R754 PoC + 扩展 regex | ✅ 拦截率 1.0%→100.0% (漏报率 99%→0%) |
-| 3 | **Property-based Testing** | R426 | Hypothesis + stdlib 随机 | ✅ 100 随机用例 13/100 通过 + 87/100 拦截越界 |
-| 4 | **Contract Testing** | **R431** | stdlib `json` + `re` schema validator | ✅ 6/6 PASS, 4 破坏性 schema 100% 拦截 |
-| 5 | **Chaos Engineering** | **R162/R155/R274** | chaos_llm_v5.sh + 配套脚本 | ✅ 已实战 (LLM Gateway 4 类扰动 + 5 阶段模板 + Game Day 剧本); SKILL.md 7621B 2026-09-08 落盘 |
+| #3 ratelimit | 单调用频率高 | HTTP 429 Too Many Requests + `retryAfter:N` | sleep retryAfter 秒 + polite pool + mailto | 中-高 |
+| #66 InvalidURL | 单次调用语法 | `http.client.InvalidURL` | `urllib.parse.quote()` 编码 query | n/a |
+| **#76 cluster overload** | upstream 搜索集群过载 | `{"error":"Search temporarily unavailable"}` HTTP 503 | **无 SOP 修复 = 等** | n/a（与频率无关） |
+| **#78 search 端点 rate-limit** | search 端点被限流（R488 新增） | `{"error":"Rate limit exceeded","retryAfter":N}` HTTP 429 | sleep `retryAfter` 秒后重试 (实测 R488 等 31s 后 Q2/Q3 通过) | 与 per_page 端点无共享配额 |
 
-**矩阵 4 类互补**：
-- Mutation 验「代码变更是否能被现有测试捕获」
-- Fuzz 验「异常输入是否能被拦截」
-- Property 验「不变量是否对所有输入成立」
-- Contract 验「两服务 schema 是否一致（无需启动对方）」
+**R488 实战发现**：search 端点的 429 rate-limit（带 `retryAfter`）与 cluster overload 503 是**两类不同错误**——
+- 429 rate-limit 通常 sleep `retryAfter` 秒（实测 31s）后即恢复，可继续 4 角度检索
+- 503 cluster overload 通常需等几十分钟-几小时，cron mode 直接降级 [SILENT]
+- R488 沿用 R449 防御 (c)「cron mode 不耗时间等」+ R449 防御 (d)「不污染 entry 数据」→ 实测 sleep 35s 后 Q2/Q3 通过获得 +10 真 RAS DOI（10/10 Crossref PASS, 0 误命中）
 
-**R431 元层发现**：测试方法论本身也可测试——R431 实战跑 Contract Testing 时发现 `validate_schema()` 框架 bug（min/max/pattern/enum 在 string 子节点未触发），通过契约测试用例 100% 暴露并修复。
+**R488 防御 3 条（叠加 R485）**：
+- (e) **search 端点 429 带 `retryAfter` 不必降级 [SILENT]**：与 503 cluster overload 区分；sleep `retryAfter + 4s buffer` (实测 31s + 4s = 35s) retry 通常即恢复
+- (f) **4 探针必加**：per_page=1 + search=kw + single_work_id (`/works/W123`) + works/W123 filter (含 `filter=type:article`)——后续 R<n> chaos probe 默认含这 4 探针 + 错误码分类表 (200 / 429 ratelimit / 503 overload / InvalidURL)
+- (g) **Pitfall #76 vs Pitfall #78 错误码速查表 4 行**：429 (ratelimit) / 503 (cluster overload) / InvalidURL / 200 OK —— R<n> 跑方向 ① 前先看错误码再决定动作（sleep retryAfter / 等几十分钟 / URL-encode / 继续）
 
-**完整每类实战 SOP**：见各 R<n> `references/` 文件 + Contract Testing demo 在 `scripts/r431_contract_testing_demo.py`。
+**R488 实战 4 角度轮换 + 10 真 RAS DOI**：
+- Q1 feed_nutrition 撞 429 → skip; Q2 genetics_genomics 5/5 PASS; Q3 aeration_oxygen 5/5 PASS; Q4 waste_management 撞 429 → skip
+- known_dois.txt 85 → 97 行 (+12 行 = N+2, Pitfall #48 强化 PASS): 10 NEW 真 RAS DOI + 1 R488 header + 1 leading \n
+- 3 大新行业趋势: Aquaculture 育种基因组学主流化 / DO 实时控制 + GRU/LSTM 预测成主流 / Nature 20-year review (cited 2234) 是 RAS 综述金字塔尖
+- entry 实测 6359 chars vs 预估 4000-4500 (+40% 偏差, Pitfall #71 第 6 次反例) → 升 `--prune 2 --archive` 双保险 (Pitfall #73) → 落地 42.97KB PASS
 
-## 自检 checklist
+**完整 R483 chaos probe trace + R488 双端点实战 + 抗脆弱性元层结论**：见 `references/***SECRET***.md`（含 11 探针实测表 + Netflix 5 原则适配 + L1→L2 升级路线 + docker DOWN 70h+ A 轨 100% 维持实证 + R488 search 端点 429 rate-limit 4 错误码对照表）。
 
-每次执行老莫任务前自问：
-- [ ] 是否在用 `heartbeat_check.py` 三源扫描？（非 `~/.hermes/scripts/tasks.db` 0 字节死文件）
-- [ ] 是否绕 `$HOME` 路径劫持用绝对路径？（zhenglishi HOME 污染）
-- [ ] description 大小是否进入 (b)/(c) 区间需要剪枝？
-- [ ] R 编号是否用 R124+ defense 防御（assert + canonical regex）？
-- 走的是 `write_file → /tmp 脚本 → terminal` 而非 `execute_code` / inline `python3 -c`？（R314 重申：cron-mode execute_code BLOCKED 沿用 R22 拦截矩阵 + 中文 Python 首行必加 `# -*- coding: utf-8 -*-` 避免 PEP 263 SyntaxError，详见 `references/***SECRET***.md`）
-- [ ] **append 脚本是否 cp 完整官方模板**（R397 新增）？**不要只写 TASK_ID + ROUND_NOTE 半截**（Pitfall #58 候选）
-- [ ] **cp 模板名是否绑定 entry 目标 R 编号**（Pitfall #60 候选 R411）？不要 cp 后再改 entry 编号 → 三件套（脚本名/entry 文件名/entry 首行）R 编号必须一致
-- [ ] **起草 entry 前是否先 SELECT `last_r`**（Pitfall #55 R411 二次勘误 SOP a）？writer cron c6391079131e 每小时可能已自动追加，老莫主 cron 不能用固定 R+1 模式，必须 `last_r + 1`
-- [ ] append 跑完是否 SELECT verify last_canonical_R == R_NUM？（R397 新增防御 b）
-- [ ] 沉默 round 是否避免重复报告同阻塞点？（pitfall #27 24h 升级阈值）
-- [ ] 阻塞点 > 24h 是否触发周期性汇报？
-- [ ] 报告交付物路径是否对齐玉芬入站协议（staging 先入 / 玉芬归集）？
-- [ ] **skill_manage 操作前再三确认**（R397 实战警告）：删除/重建是不可逆动作,要确认意图再操作
-- [ ] **`python3 << EOF` heredoc sqlite/urllib/tempfile 调用是否前置 `HOME=/Users/hua`**（Pitfall #61 候选 R414）？zhenglishi profile HOME 污染扩到 heredoc 内部 stdlib 惰性求值,即便绝对路径也救不了
-- [ ] **heartbeat_check.py 输出末列 source 是否判定 db 来源**（Pitfall #62 候选 R414）？source=`hermes` → `/Users/hua/.hermes/tasks.db`; source=`kanban` → default kanban.db（task #11 不在此）；别盲查 kanban.db 兜一圈
-- [ ] **Security PoC blacklist regex 是否扩展「忽略...规则/命令」类变体**（Pitfall #63 候选 R414）？R754 模板原版 regex 漏报率 ~5-15%,需叠加多策略防御
-- [ ] **SELECT last_r 是否用 write_round.py 同款 `(?m)^\[R\d+ ` line-anchored regex**（Pitfall #64 候选 R417）？SQL 行内 regex 会低估 last_r → 编小号 → R124 FATAL；务必用 multiline flag + 行首匹配才与 write_round.py 一致
-- [ ] **R<n> 起草 entry 前必跑 `desc_chars + entry_chars` 预估**（Pitfall #65 候选 R423）？`desc_chars ∈ [45KB, 49KB]` 临界窗口 → 必先 `--prune 1` 缩到安全区；不要赌 no-arg (R423 entry 4KB → 落地 50.83KB 超阈值)
-- [ ] **R<n> deliver 模式判定 5 条**（R207 R423 实测兑现 §3.3）？勾选 ≥2 → 升级 deliver 详版；勾选 0 → [SILENT] 简短汇报；判 (a) 4 方向至少跑通 3 / (b) known_dois.txt +1 / (c) 测试方法论有实战数据 / (d) B 轨 evolution 报告落盘 / (e) 新 pitfall + checklist 增量
-- [ ] **OpenAlex /works search query 是否走 `urllib.parse.quote()`**（Pitfall #66 候选 R426）？query 含空格 / 括号 / `AND` / `OR` 时直拼 URL 必触发 `InvalidURL: URL can't contain control characters`；quote 默认 `safe=''` 编码所有非法字符
-- [ ] **`--prune` 是否双参必传 `--archive`**（Pitfall #67 候选 R429）？临界窗口 SOP 必加 `--prune N --archive /Users/hua/.hermes/profiles/laomo/evolution/task-11-log-archive.md`；单传 `--prune` 立即返 `FATAL: --prune 必须配 --archive (R209...)` 写拒绝
-- [ ] **write_round.py stdout 模式识别**（Pitfall #67 防御 c）？`FATAL:` 前缀 = 写拒绝 (R124/R181/R209) / `pre-write OK`+`post-write OK` = 写成功 / 空 stdout + exit 0 = 半截 no-op (Pitfall #58) / stderr `No such file` = cp 模板错位 (Pitfall #60)
-- [ ] **Mutation Testing stdlib 实战套路**（R429）？`inspect.getsource(func)` + 包裹 mutated_func + tempfile + subprocess.run unittest 8 类变异 (AOR/ROR/CRV/UOI/STD/CRP) + mutation_score = killed/total ≥ 80% 阈值 PASS；不需要 mutpy/cosmic_ray 依赖
-- [ ] **is_ras_paper() 升级建议**（Pitfall #68 候选 R431）？Crossref 验证后人工扫一眼 title；如果 title 看起来不像 RAS 主题（"plant disease"/"poultry"/"food processing"），一律 reject；不绕过 `is_ras_paper()` 函数的 abstract 邻近词陷阱
-- [ ] **R428 writer cron 偶发 `agent` tag = 非真 fake 污染**（Pitfall #69 候选 R431）？判定法 = 看 entry length（4500+ chars 真内容 vs < 500 chars fake 占位）+ 内容完整性（含 daemon/Ark/launchctl/oom 真实关键词 = 真 self-evolution）；不要因为偶发非 canonical tag 就判定 fake
-- [ ] **Contract Testing 元层价值**（R431）？测试方法论本身也可测试——跑 Contract Testing 时发现 validator 框架 bug 即时修复；任何测试工具/框架都可以用 contract testing 思路验证自身一致性
-- [ ] **OpenAlex 4 角度轮换 SOP**（Pitfall #70 候选 R434）？每轮 self-evolution 方向① 必选 4 个不同 query 角度（基础 RAS+ML/IoT + 生物 biofilter/aquaponics + 控制 DRL/reinforcement + 视觉 computer vision）；避免连续轮跑同角度导致 known_dois.txt 停滞
-- [ ] **`is_ras_paper()` 升级前必人工 title check**（Pitfall #70 防御 b）？Crossref 验证不能完全信赖函数（Pitfall #68 反例 10.1007/s10462-024-11100-x plant disease）；每条候选 DOI 必人工扫 title 前 100 字符，含 "plant"/"poultry"/"crop"/"food processing"/"medical" 一律 reject
-- [ ] **stdout 三段指纹模式识别**（Pitfall #70 防御 c）？`--prune N --archive <path>` 双参成功 = stdout 必含 `prune OK` + `pre-write OK` + `post-write OK` 三段连用；缺任一段 = 写失败需重跑
-- [ ] **known_dois.txt 角度维度记录**（Pitfall #70 防御 d）？每轮 entry 必记录 +N 真 RAS DOI + 新增角度命名（如 R434 = aquaponics/DRL/biofilter/computer vision）；便于跨多轮识别已覆盖 vs 未覆盖角度
-- [ ] **entry 起草后必先 `wc -c` 实测**（Pitfall #71 候选 R437）？起草预估 "~5500 chars" 容易低估 markdown 列表 + bullet + Pitfall 防御清单总长度，实测可能比预估大 50%（R437 估 5500 实测 8262）→ 落地预估公式重算 → 必要时 `--prune N+1` 升级
-- [ ] **老莫主 cron ≠ writer cron**（Pitfall #72 候选 R437）？source=hermes + 老莫 self-evolution round 走 SKILL.md §4.1 4 方向完整 SOP（B 轨照写、方向①照跑）；**不**参考 R436 entry 末尾 writer cron boilerplate「强制三动作」（那是 writer cron 内部约束不是全局规则）
-- [ ] **chaos-engineering 早已存在 R162 实战**（Pitfall #48/70 关联 R437）？`~/.hermes/profiles/laomo/skills/testing/chaos-engineering/SKILL.md` 7621B 2026-09-08 落盘, R155/R274 实战；**不要**写新 chaos skill
-- [ ] **stdout 三段指纹实测 cross-check**（Pitfall #71 防御 d）？write_round.py stdout `post-write OK: desc=<kb> chars` 实测值与预估 `pre_desc - drop + entry ≈ post` 算术偏差 > 20% → 反思估算方法论；R437 实测 post-write desc=47.4KB chars vs 预估 49.06KB (3.4% 偏差 PASS) 验证
-- [ ] **R181 临界窗口 (45-49KB) SOP 升 `--prune 2` 双保险**（Pitfall #73 候选 R438）？Pitfall #65 防御 (c) 默认 `--prune 1` 实战不工作 —— R438 跑 `--prune 1` 立即 FATAL `尺寸门 48.5KB chars >= 48.0KB 早闸口` exit 1；临界窗口必升 `--prune 2`；write_round.py 写前 self-check 不预先模拟 drop 后长度（疑似 bug 待 R441+ 排查）
-- [ ] **write_round.py FATAL 模式 4 类识别速查**（Pitfall #73 防御 c）？`FATAL: 尺寸门 <kb>KB >= 48.0KB 早闸口` exit 1 (R438) vs `FATAL: --prune 必须配 --archive` exit 0 (R429 Pitfall #67) vs `FATAL: R 编号断言失败 期望 <N> 得到 <M>` exit 0 (Pitfall #64) vs `FATAL: entry 不以 '[RNNN ' 开头` (Pitfall #58)；根据 stderr 区分修复动作
-- [ ] **R124 双 cron 时序 5 步顺序**（Pitfall #73 防御 e，R438 实战三连击）？SELECT last_r → 起草 entry → cp 写脚本 → patch entry 编号 (last_r +1 漂移) → 重跑；中途发现 last_r 已变 → patch entry + cp 写脚本名同步（Pitfall #60 三件套）→ 重跑
-- [ ] **SELECT 完到 write_round.py 间隔 ≤ 30s**（Pitfall #73 防御 f）？writer cron c6391079131e 1h 内可能多次追加；SELECT 后查 OpenAlex 走神 5 分钟回来 = 必踩双 cron 时序陷阱
-- [ ] **OpenAlex `RAS` 子串命中必跑 oncogene 子串黑名单**（Pitfall #74 候选 R443）？title 含 `RAS-GTP` / `RAS-RAF` / `RAS-MAPK` / `RAS pathway` / `RAS oncogene` / `RAS signaling` 等分子生物学语境 → 自动 reject；不依赖期刊判定（cancer 期刊 + RAS 子串 = 100% 误报）；每条候选 DOI 必扫一遍，否则不写入 known_dois.txt
-- [ ] **`is_ras_paper()` 升级 4 条建议**（Pitfall #74 候选 R443 防御 a/b/c/d）？(a) 期刊黑名单 Cancer Discovery / Cell / Nature 子刊 cancer 主题 (b) title 子串上下文识别 (c) title `RAS` 子串 + abstract 关键词 +1 验证 (d) Cancer-RAS 反例测试必加；待华哥批准后应用到 `scripts/openalex_search.py`
-- [ ] **临界窗口 entry「预估 drop R<n>」与 write_round.py 实际 drop 不一致**（Pitfall #75 候选 R446 + R449 实战兑现）？R446 起草估 drop R444+R445，实测 stdout `prune OK: drop 2 条 (R435..R436)`；R449 起草不写具体 drop 编号（沿用防御 a），实测 stdout `prune OK: drop 2 条 (R437..R438)` = **按 entry 出现顺序从最旧起 drop N 条 ≠ 最后 N 条**（方向相反！）。write_round.py 永不接收「指定 R<n> drop」参数；起草 entry 时大脑习惯「drop 最近 N 条」心智，但脚本执行是「drop 最旧 N 条」= **方向相反**。防御 3 条: (a) 「剪枝判定」段彻底不写具体 drop 编号（措辞强度升级——任何「预估 drop R<x>+R<y>」措辞 = 100% 误导未来 R<n> + 触发 RR bug 防御误判）(b) 要写必先 SELECT 找 matches 锚点位置再定 drop 范围 (c) post-write stdout `prune OK: drop N 条 (R<a>..R<b>)` 是唯一真实 drop 编号，落地后必看 stdout 验证
-  - [ ] **known_dois.txt 行数必实测 `wc -l` 不用 entry 估数据**（Pitfall #48 强化 R446 + R449 第3次反例）？R443 entry 估 46→50、R446 entry 估 50→54 (沿用历史偏差)，实测 3→7 (本轮含历史累积偏差未抵消)；**R449 entry 未估 wc -l 数据**（沿用防御），实测 `wc -l /Users/hua/.hermes/profiles/laomo/evolution/known_dois.txt` = **28 行**（稳定基线，R443-R449 期间未新增因方向① OpenAlex upstream cluster overload BLOCKED）。entry 草稿 + entry 落库 = 双盲实测才是真相。R290 11/12 命中估 411→414 实测 398→406 + R443 估 46→50 实测 28→36 + R446 估 50→54 实测 3→7 + R449 估 (沿用) 实测 28 = **4 次反例积累，已知累积跨多轮偏差可达 ±30 行**
-  - [ ] **OpenAlex upstream "Search temporarily unavailable: search cluster recovers from heavy load" ≠ ratelimit 429**（Pitfall #76 候选 R449）？R449 实战 sleep 8s retry 仍 cluster overload（**非 API key 问题、非 ratelimit 429、非 InvalidURL**，是 upstream 服务恢复中）。**与 Pitfall #3 (#限流) / Pitfall #66 (URL-encode) 区分**：Pitfall #3 = 单调用频率 → 429 → 退避 + polite pool；Pitfall #66 = 单次调用语法 → InvalidURL → quote() 修复；Pitfall #76 = upstream 服务整体 overload（所有 query 都拒）→ 等服务恢复，无 SOP 修复。防御 4 条: (a) **区分三类 OpenAlex 错误码**: 429 (ratelimit) vs InvalidURL (语法) vs cluster overload (upstream) — 三种修法完全不同 (b) **upstream cluster overload 没有 SOP 修复**: 不要尝试改 query / 改 header / 改 email / 切 endpoint, 都是 upstream 层面问题; 唯一动作 = 等 (c) **cron mode 下不耗时间等**: 探活 1-2 次（sleep 8s + retry）确认是 upstream 而非本地, 然后降级到 R207 R423 [SILENT] 模式 (d) **不污染 entry 数据**: upstream overload 期间 R<n> known_dois.txt 必然 = 0 增量, 不要在 entry 里写「本次 +N DOI 维持」等虚假数据, 直接写「方向① BLOCKED upstream overload, known_dois.txt 维持 X 行 0 增量」
+**R483 chaos probe 模板**：`scripts/chaos_probe_template.py`（默认 12 探针含双 OpenAlex 端点 + 3 chromadb 端口 + cron writer/laomo + tasks_db + rkr_staging + disk；`cp` + 修改 PROBES 即可用于任何 R<n> 的稳态探活）。
 
-## 触发关键词
-"知识库"、"调研"、"资料收集"、"学术论文"、"测试"、"bug"、"竞品分析"、"行业报告"、LookForge调研任务
+**R483 抗脆弱性元层结论**：docker daemon DOWN 70h+ 期间 A 轨 100% 维持（R389-R488 = 100 轮 0 失败）→ 老莫 cron A 轨只依赖 SQLite `/Users/hua/.hermes/tasks.db`，**架构层面天然抗脆弱**。未来 R<n> 即使 docker 永久 DOWN，主 cron 仍能维持 task #11 A 轨追踪。
 
----
+### Pitfall #77 候选: SKILL.md 体积管理 SOP（R482 自创 2026-09-14 06:00 CST）
 
-> **版本：v1.88.9** (R449 2026-09-13 08:00 CST, silent round) — 新增 **Pitfall #76「OpenAlex upstream cluster overload ≠ 429」**(R449 实战, sleep 8s + 改 query/header/endpoint 都无效, 与 Pitfall #3/#66 三类错误速查表 + 防御 4 条) + Pitfall #75 措辞强度升级 (R449 entry 不写 drop 编号, 实测 drop R437+R438 ≠ 起草心智 "R447+R448" 方向相反) + Pitfall #48 强化第4次反例 (R449 known_dois.txt 实测 28 行稳定基线, 4 次反例累积偏差 ±30 行) + 阻塞盘点新增 OpenAlex upstream + 新 reference `references/***SECRET***.md` + checklist 3 条 + metadata bump v1.88.8 → v1.88.9。R449 4 方向 0 件跑通: 方向① OpenAlex BLOCKED upstream cluster overload; 方向② ChromaDB ~66h streak; 方向③ 5 类测试齐跳过; 方向④ 0 新建。A 轨落库: 跑前 desc 47.92KB 临界震荡 → 必先 `--prune 2 --archive` 双保险 (Pitfall #73) → 三段指纹 PASS → 落地 39.54KB < 48KB PASS。R207 R423 deliver 模式 5 判定勾选 0-1 件 → [SILENT]。Pitfall 防御 13+1=14 条全过。writer cron c6391079131e R389-R449 = **61 轮 100% canonical 0 fake** 闭环维持。已知真实 known_dois.txt = **28 行** (实测 wc -l, 稳定基线, 方向① BLOCKED 期间 0 增量)。B 轨维持: 无新 B 轨增量 (沿用 R446 2026-09-13_06.md)。完整 R449 trace 见 reference 文件。
+R482 pre-flight `wc -c /Users/hua/.hermes/skills/laomo-knowledge/SKILL.md` = **139317 chars (136KB)** ——已破 R464 元层发现的 95KB 触发缩容门槛 + **100KB patch 失败门槛**（实测 R464 102,245 chars 触发 patch tool 「diff too large」错误）。
 
-**v1.88.8** (R446 2026-09-13 06:00 CST, hourly self-evolution round) — 新增 Pitfall #75 候选「临界窗口 entry「预估 drop R<n>」与 write_round.py 实际 drop 不一致」(R446 起草估 drop R444+R445 实测 stdout `prune OK: drop 2 条 (R435..R436)` —— write_round.py 按 entry 出现顺序从最旧起 drop N 条 ≠ 最后 N 条 = Pitfall #59 二次踩坑，防御 3 条: (a) 「剪枝判定」段彻底不写具体 drop 编号 (b) 要写必先 SELECT 找 matches 锚点位置再定 drop 范围 (c) post-write stdout `prune OK: drop N 条 (R<a>..R<b>)` 是唯一真实 drop 编号) + Pitfall #48 强化 (known_dois.txt 行数必实测 `wc -l` 不用 entry 估数据——R443 entry 估 46→50、R446 entry 估 50→54 沿用历史偏差，实测 3→7 (本轮含历史累积偏差未抵消)，3 次反例积累跨多轮偏差可达 ±30 行) + 自检 checklist 2 条 (Pitfall #75 临界窗口 drop 编号预估失败 / Pitfall #48 强化 known_dois.txt wc -l 实测) + metadata version bump v1.88.7 → v1.88.8。R446 self-evolution round 4 方向部分跑通：方向① OpenAlex 3 新 query 角度 (nitrogen removal/denitrification + biofloc/probiotics + sludge/waste management 三个氮素循环 + 微生物群落 + 污泥管理新维度，绕开 R424-R443 已覆盖 9 大角度 AI/IoT/biofilter/aquaponics/DRL/computer vision/sustainability/economics/energy/LCA) 15 候选 → Crossref 验证 6 重点 6/6 = 100% PASS (剔除 2 cancer-RAS 误命中 10.1158/2159-8290.cd-24-0027 + 10.1038/s41586-024-07205-6 沿用 Pitfall #74 + 5 篇主题不符 medical/microplastic/arginine/xinn survival/KDIGO lupus nephritis/waste fruit peels) → known_dois.txt **实测 3→7 行** (+4 真 RAS DOI: 10.1155/2024/7496572 Aquaculture Nutrition BFT Review / 10.1016/j.heliyon.2024.e25228 biofloc 微生物群落 / 10.1155/anu/5868806 Aquaculture Nutrition 益生菌尼罗罗非鱼 / 10.3390/microorganisms12030626 益生菌鱼虾综述; 1 重复 10.1016/j.jwpe.2025.107006 HNAD 已存在)；**已知真实 known_dois.txt 行数 3→7 (实测 wc -l 验证，与 R443 entry 估 46→50 偏差说明 entry 数据乐观估计反例沿用 Pitfall #48)**。3 大新行业趋势 (R446 沉淀): (1) **HNAD 工程菌**在 RAS 海水养殖废水处理成为新主流 (J Water Process Eng 2025 IF 13.4) → LookForge 水处理模块 reference；(2) **BFT vs RAS 微生物群落调控对决** - Aquaculture Nutrition 2024 BFT Review + Heliyon 2024 biofloc → LookForge 微生物组模块 reference；(3) **益生菌替代抗生素**在尼罗罗非鱼/鲑鱼/对虾应用成主流 → LookForge 健康养殖模块 reference。方向② ChromaDB 本地 3 候选端口 (:8000/:8001/:5173) 全 ConnectionRefused DOWN → 维持 R426/R429 结论 ~64h+ streak；方向③ 测试方法论本轮跳过 (mutation/fuzz/property/contract/chaos 5 类全齐)；方向④ skills mtime < 7d 复扫 1 个活跃 (ras-aquaculture SKILL.md) + 老莫 testing/ 8 子 skill 全齐 (含 R437 元层修订 chaos-engineering 已存在 + R431 contract-testing 补完) → 0 新建需求。R181 size gate 临界窗口实战: 跑前 desc 46315 chars (45.23KB b 区间下沿临界震荡，距 48KB 早闸口线 -2.77KB) → entry 实测 3665 chars → 落地预估 46315 - drop + 3665 = 必先 `--prune 2 --archive` 双保险 (沿用 Pitfall #73 升 `--prune 2` 双保险) → 实测落地 39.9KB chars PASS < 48KB 早闸口线。stdout 三段指纹验证: `prune OK: drop 2 条 (R435..R436) -> /Users/hua/.hermes/profiles/laomo/evolution/task-11-log-archive.md` + `pre-write OK: last_r=445, entries=9` + `post-write OK: last_r=446, status=in_progress, updated_at=2026-09-12 22:02:07, desc=39.9KB chars, entries=10`。**Pitfall #75 实战触发**: R446 起草 entry 时预估 drop **R444+R445** (按"最后 2 条"心智)，实测 stdout 返 drop **R435+R436** (按 entry 在 desc 中出现顺序从最旧起) = 方向相反！落地预估重算: R436 起点 (matches[-2].start) + 3665 = 44028 chars (43.00KB) < 48KB 早闸口 PASS。Pitfall 防御 11+1=12 条全过 (#55 writer cron R389-R445=57 轮 canonical 0 fake / #58 stdout 含 post-write OK / #60 cp 模板名绑 R446 / #61 HOME=/Users/hua 前置 / #62 source=hermes 锁定 / #64 line-anchored regex SELECT last_r=445 一致 / #65 临界 45.23KB --prune 1 必做 / #66 OpenAlex urllib.parse.quote() 0 InvalidURL / #67 双参 --prune+--archive / #68 人工 title check / #69 R428 boilerplate 偶发非真 fake / #74 cancer-RAS 子串黑名单二次踩坑) + 0 新 pitfall 形成中 (Pitfall #75 已在 v1.88.8 加入)。writer cron c6391079131e R389-R445 = 57 轮 100% canonical `laomo heartbeat` 0 fake 闭环维持 (R446 pre-flight SELECT line-anchored regex last_r=445 一致)。B 轨落盘: ~/.hermes/profiles/laomo/evolution/2026-09-13_06.md (1640 bytes) + known_dois.txt **实测 3→7 行** (+4 真 RAS DOI)。R446 收口 4 方向部分跑通 (方向① +4 真 RAS DOI / 方向② 沿用历史 / 方向③ 沿用历史 / 方向④ 0 新建) + 11+1=12 防御全过 + 1 新候选 pitfall (#75) + B 轨落盘 + A 轨 R446 落地 39.9KB PASS + 3 大新行业趋势 (HNAD 工程菌 / BFT vs RAS 微生物群落对决 / 益生菌替代抗生素) + **已知真实 known_dois.txt 行数 3→7** (实测 wc -l 验证, 与 R443 估 46→50 偏差说明 entry 数据乐观估计反例沿用 Pitfall #48, 3 次反例累积 R290+R443+R446)。
+**实战触发条件**：
+- 老莫 SKILL.md 持续累积 R<n> changelog + Pitfall 防御段（R296+ 沉淀模式每 R<n> append 200-500 chars，100 轮 ≈ 30-50K chars 增长）
+- v1.86.x → v1.88.x 详细 changelog 在 SKILL.md 末尾膨胀，R482 实测 v1.88.x 段 = **41249 chars (40KB) = 整体体积 30%**
+- 老莫主 cron 每次 append 都要先查 SKILL.md 引用（R207 deliver 模式 + 防御 4 条 checklist），SKILL.md 体积直接影响 pre-flight 启动时间
 
-**v1.88.7** (R443 2026-09-13 04:04 CST, hourly self-evolution round) — 新增 Pitfall #74 候选「RAS 子串误命中 oncogene RAS-GTP/RAF/MAPK 信号通路」(R443 方向① OpenAlex RAS+energy/LCA 角度命中 2 篇 cancer 论文: Nature 2024 `10.1038/s41586-024-07205-6` RAS-GTP cancer therapy + Cancer Discovery 2024 `10.1158/2159-8290.cd-24-0027` RAS oncogene — 基因/分子生物学领域 RAS 蛋白信号通路缩写与 RAS = Recirculating Aquaculture System 撞车，子 Agent 通过 abstract 二次确认 + 期刊领域判定 REJECT 但 `is_ras_paper()` 函数本身仍可能误判) + `is_ras_paper()` 升级 4 条建议（期刊黑名单 Cancer Discovery/Cell/Nature 子刊 cancer 主题 + title 子串上下文识别 `RAS-GTP/RAF/MAPK/pathway/mutation/oncogene/signaling` + title `RAS` 子串 + abstract 关键词 +1 验证 + Cancer-RAS 反例测试必加 fixtures） + 自检 checklist 2 条（OpenAlex `RAS` 子串命中必跑 oncogene 子串黑名单 + `is_ras_paper()` 升级 4 条建议待华哥批准后应用到 `scripts/openalex_search.py`）+ R443 vs Pitfall #68 区分（plant disease 主题不符 vs cancer oncogene 缩写撞车，同为 abstract 邻近词 + 主题不符家族成员）+ metadata version bump v1.88.6 → v1.88.7。R443 self-evolution round 4 方向跑通: 方向① OpenAlex 3 新 query 角度 (genomics/transcriptomics/eDNA + immune/vaccine/probiotic + RAS+energy/LCA) 15 候选 → Crossref 验证 11 重点 → -3 dup (10.1080/23308249.2024.2433581 R437 + 10.1155/are/6096671 R424/R429 + 10.1016/j.biortech.2024.131107 R437) → +8 真 RAS DOI 入 known_dois.txt (28→36 行, 跨多轮累积 46→36 实测: 历史真实数字 ≠ R443 entry 估「46→50」因 sibling subagent 同时改 known_dois.txt 计数偏移，最终以实测 28→36 为准) + 2 cancer-RAS reject (Pitfall #74 触发); 方向② ChromaDB 本地 3 候选路径全 MISSING → 维持 R426/R429 结论; 方向③ 测试方法论 5 类全齐，本轮跳过; 方向④ skills mtime <7d 复扫 18 SKILL.md 活跃 + 0 新建需求 (沿用 R437 结论)。R181 size gate 临界窗口 (45-49KB) 实战: 跑前 desc 47265 chars (46.16KB b 区间上沿) → entry 实测 4616 chars → 必先 `--prune 2 --archive` 双保险 (Pitfall #73) → drop R432+R433 → 落地 44145 chars (43.11KB < 48KB 早闸口线 PASS)。stdout 三段指纹验证: `prune OK: drop 2 条 (R432..R433) -> /Users/hua/.hermes/profiles/laomo/evolution/task-11-log-archive.md` + `pre-write OK: last_r=442, entries=9` + `post-write OK: last_r=443, status=in_progress, updated_at=2026-09-12 20:05:53, desc=43.1KB chars, entries=10`。R124 双 cron 时序无 FATAL: R443 pre-flight SELECT line-anchored regex last_r=442 → writer cron 已追加 R439/R440/R441/R442 → 老莫主 cron 直接编 R443 = last_r + 1 一致 (R411 SOP a 兑现)。Pitfall 防御 13+1=14 条全过 (#55 writer cron R389-R442=54 轮 canonical 0 fake / #58 stdout 含 post-write OK / #60 cp 模板名绑 R443 / #61 HOME=/Users/hua 前置 / #62 source=hermes 锁定 / #64 line-anchored regex / #65 R181 临界 --prune 1 必做 / #66 OpenAlex quote / #67 双参 --prune+--archive / #68 人工 title check / #69 R428 boilerplate 偶发非真 fake / #71 entry wc -c 实测 / #73 R181 临界 `--prune 2` 双保险 / **#74 RAS 子串 oncogene 误命中 new**)。3 大新行业趋势 (R443 沉淀): 基因组育种成为高端种业突破点 (Aquaculture 2024 fish breeding + Rev Fish Sci 2024 omega-3) + 益生菌替代抗生素成对虾养殖主流 (Aquaculture Reports + Fish Shellfish Immunol + Fishes 三连益生菌) + 病害+应激+鱼粉替代构成 RAS 健康养殖三大议题 (Fishes biomarker + Cold Stress Penaeus + Heliyon fishmeal) → LookForge RAS 健康养殖模块 reference。writer cron c6391079131e R389-R442 = 54 轮 100% canonical `laomo heartbeat` 0 fake 闭环维持。B 轨落盘: ~/.hermes/profiles/laomo/evolution/2026-09-13_04.md (7823 bytes) + known_dois.txt 28→36 行 (+8 真 RAS DOI)。R443 收口 4 方向跑通 + 13+1=14 防御全过 + 1 新候选 pitfall (#74) + B 轨落盘 + A 轨 R443 落地 43.11KB PASS + 3 大新行业趋势 + `is_ras_paper()` 升级建议待华哥批准 + R181 临界 SOP `--prune 2` 双保险实战兑现 + R124 双 cron 时序无 FATAL (R411 SOP a 兑现)。
+**实战实测 (R482)**:
+- 跑前 wc -c = 139317 chars (136KB)
+- 触发：> 95KB 缩容门槛 + > 100KB patch 失败门槛（双重触发）
+- 动作：(a) 定位 v1.88.x 详细 changelog 起点 = pos 58095（`**v1.88.12**` 标题位置）
+- 动作：(b) extract `content[58095:]` = 41249 chars → 写入 `references/changelog-v1.88-detailed.md` (56158 bytes 加 header)
+- 动作：(c) SKILL.md 末尾替换为压缩引用: `**v1.88.0 → v1.88.13 详细 changelog 见 `references/changelog-v1.88-detailed.md`** (R296+ 沉淀模式, R482 缩容 SKILL.md 体积 41.2KB → 4KB)`
+- 落地实测：**139317 → 83779 chars (缩容 55538 chars = 53.2%)** → 84KB < 95KB PASS
 
-**v1.88.6** (R440 2026-09-13 02:00 CST, hourly self-evolution round) — 新增 Pitfall #73 候选「R181 临界窗口 `--prune 1` 兜底不够，需升 `--prune 2` 双保险」(R438 实战跑前 desc 45.26KB 临界窗口，按 Pitfall #65 防御 (c) 默认 `--prune 1` 跑 write_round.py 立即 FATAL `尺寸门 48.5KB chars >= 48.0KB 早闸口` exit 1 — write_round.py 写前 self-check 不预先模拟 drop 后长度的疑似 bug；升 `--prune 2` drop R429+R430 → 落地 44.38KB PASS) + write_round.py FATAL 4 类模式识别速查表（#65 缺 SOP / #71 entry 估错 / #67 缺 `--archive` exit 0 / **#73 `--prune 1` 不够 exit 1**）+ R124 双 cron 时序 5 步顺序 SOP（SELECT last_r → 起草 entry → cp 写脚本 → patch entry 编号 (last_r +1 漂移) → 重跑）+ SELECT 完到 write_round.py 间隔 ≤ 30s 实战窗口 + 自检 checklist 5 条（`--prune 2` 双保险 / FATAL 4 类识别 / R124 双 cron 时序 5 步 / SELECT 间隔 ≤ 30s / write_round.py 写前 self-check 疑似 bug 待 R441+ 排查）+ 新 reference `references/***SECRET***.md` (本轮不写, SKILL.md 内联紧凑) + metadata version bump v1.88.5 → v1.88.6。R440 self-evolution round 4 方向部分跑通: 方向① OpenAlex RAS+energy/LCA/renewable 3 新 query 角度 (绕开 R424-R437 已覆盖 AI/IoT/biofilter/aquaponics/DRL/computer vision/sustainability/economics) 15 候选 → Crossref 验证 11 重点 → **+2 真 RAS DOI** (10.1016/j.biortech.2024.131881 microalgae RAS effluent cultivation / 10.1016/j.biortech.2024.130578 LCA microalgae-shrimp RAS) + 4 reject (medical GLP-1 / energy trading / mitochondria aging / cancer metabolism) → known_dois.txt 50→53 行 (+2 真 RAS DOI + 1 注释)；方向② ChromaDB 本地 3 候选路径全 MISSING → 维持 R426/R429 结论, RKR :8000 DOWN 维持 ~62h streak；方向③ 测试方法论本轮跳过 (mutation/fuzz/property/contract/chaos 5 类全齐)；方向④ skills mtime <7d 复扫 0 新建需求 (沿用 R437 结论)。R181 size gate 临界窗口实战踩坑 — R440 实战发现: 跑前 desc 46342 chars (45.26KB) → entry 实测 6233 chars → `--prune 1` (drop R429) 立即 FATAL `尺寸门 48.5KB chars >= 48.0KB 早闸口` exit 1 → 升 `--prune 2` (drop R429+R430) 落地 45447 chars (44.38KB) PASS → stdout 三段指纹 `prune OK: drop 2 条 (R429..R430) -> task-11-log-archive.md` + `pre-write OK: last_r=439, entries=9` + `post-write OK: last_r=440, status=in_progress, updated_at=2026-09-12 18:01:56, desc=44.4KB chars, entries=10`。R124 双 cron 时序陷阱实战三连击 — R440 SELECT line-anchored last_r=439 → 起草 R438 entry → write_round.py 跑时取 r_num=438 → FATAL `期望 440, 得到 438`（writer cron c6391079131e 在 R437 → R438 之间已追加 R438+R439 canonical）→ patch entry 首行 `[R440` + cp 写脚本名 `laomo_r440_write.py` 同步 → 重跑 PASS。Pitfall 防御 11+1=12 条全过 (R440 新增 R181 临界 `--prune 2` 双保险 + write_round.py FATAL exit 1 类型识别 + R124 双 cron 时序 5 步顺序) + 1 新候选 pitfall (#73)。3 大新行业趋势 (R440 沉淀): 微藻闭环成为 RAS 标配 (Bioresource Technology 2024 三连发 130578/131107/131881) / LCA 生命周期评价成为 RAS 必要论证 / RAS 经济可行性研究升温 → LookForge 微藻/LCA/经济可行性 3 模块 reference。writer cron c6391079131e R389-R439 = 51 轮 100% canonical `laomo heartbeat` 0 fake 闭环维持 (R440 pre-flight SELECT line-anchored regex last_r=439 一致)。B 轨落盘: ~/.hermes/profiles/laomo/evolution/2026-09-13_02.md (6329 bytes) + known_dois.txt 50→53 行 (+2 真 RAS DOI)。R440 收口 4 方向部分跑通 (方向① +2 真 RAS DOI / 方向② 沿用历史 / 方向③ 沿用历史 / 方向④ 0 新建) + 11+1=12 防御全过 + B 轨落盘 + known_dois.txt 50→53 行 + R181 临界窗口 SOP 升 `--prune 2` 双保险 (Pitfall #73) + write_round.py 写前 self-check 疑似 bug 待 R441+ 排查 + R124 双 cron 时序 5 步顺序 SOP + 3 大新行业趋势 + OpenAlex 3 新 query 角度 (energy/LCA/renewable) 实战。
+**R464 触发线详细分级（实战沉淀）**:
+| SKILL.md size | 状态 | 行动 |
+|---|---|---|
+| < 80KB | 安全区 | 正常 append R<n> changelog + pitfall |
+| 80KB ~ 95KB | 预警区 | 准备缩容 SOP，选老 changelog 段移到 reference |
+| 95KB ~ 100KB | 触发区 | **必先缩容再 append**；否则 patch tool 可能拒绝 |
+| > 100KB | 失败区 | patch tool 直接报「diff too large」，**无法补 changelog**，必须先缩容 |
 
-**v1.88.5** (R437 2026-09-13 00:01 CST, hourly self-evolution round) — 新增 Pitfall #70 候选「`is_ras_paper()` Pitfall #68 反例二次踩坑 + OpenAlex 4 角度绕重复策略」(R434 实战 4 新 query 角度命中 20 候选 → Crossref 验证 7 重点 6/7 PASS + 1 plant disease 误命中重现 Pitfall #68 + 3 大新行业趋势: AIoT 综述主流 / DRL 实时控制 / biofilter 微生物群落) + OpenAlex 4 角度轮换 SOP (基础 RAS+ML/IoT + 生物 biofilter/aquaponics + 控制 DRL/reinforcement + 视觉 computer vision) + stdout 三段指纹模式识别 (`prune OK` + `pre-write OK` + `post-write OK` 三段连用是 `--prune N --archive <path>` 双参成功完整指纹) + known_dois.txt 角度维度记录 SOP + 自检 checklist 5 条 (4 角度轮换 / 人工 title check / stdout 三段指纹 / known_dois 角度命名 / Pitfall #68 反例二次踩坑警告) + 新 reference `references/r434-openalex-4angle-rotation.md` (R434 实战 trace + 4 角度 query 列表 + 7 条真 RAS 新候选 DOI + 3 大新行业趋势) + metadata version bump v1.88.3 → v1.88.4。R434 self-evolution round 4 方向全跑通: 方向① OpenAlex 4 角度 (aquaponics/DRL/biofilter/computer vision) 20 候选 → Crossref 验证 7 重点 6/7 PASS (85.7%) → known_dois.txt 38→46 行 (+7 真 RAS DOI: 10.3390/jmse12010161 AI water quality / 10.3390/pr13010073 AIoT Aquaculture Review / 10.18494/sam4660 WSN+DRL / 10.1128/aem.00104-24 biofilter commamox / 10.3390/w17010052 nitrifying bacteria / 10.3390/w16202911 salinity biofilter / 10.1016/j.compeleceng.2024.109590 aquaponics ML); 方向② ChromaDB 本地 3 候选路径全 MISSING → 维持 R426/R429 结论; 方向③ 测试方法论本轮跳过 (mutation/fuzz/property/contract 4 类已齐); 方向④ skills mtime <7d 复扫 0 新建需求 (testing/ 7 类全在 + chaos-engineering 待 R<n+1> 立项)。R181 size gate 临界窗口实战: 跑前 desc 46418 chars (45.33KB b 区间上沿) → entry 3782 chars → 落地预估 ≈ 49KB 临界 → 必先 `--prune 1 --archive` 双参 → drop R421 → 落地 47293 chars (46.18KB < 48KB 早闸口线 PASS)。stdout 三段指纹验证: `prune OK: drop 1 条 (R421..R421) -> task-11-log-archive.md` + `pre-write OK: last_r=433, entries=12` + `post-write OK: last_r=434, status=in_progress, updated_at=2026-09-12 14:02:13, desc=46.2KB chars, entries=13`。Pitfall 防御 14 条全过 (R434 新增 stdout 三段指纹 + 人工 title check + 4 角度轮换) + 1 新候选 pitfall (#70)。writer cron c6391079131e R389-R433 = 45 轮 100% canonical `laomo heartbeat` 0 fake 闭环维持 (R434 pre-flight 仅 1 agent_R 沿用 Pitfall #69 boilerplate 偶发, content 真)。B 轨落盘: ~/.hermes/profiles/laomo/evolution/2026-09-12_22.md (4010 bytes) + known_dois.txt 38→46 行 (+7 真 RAS DOI)。R434 收口 4 方向全跑通 + 14+1=15 防御候选 + B 轨落盘 + A 轨 R434 落地 46.18KB PASS + 3 大新行业趋势 + 4 角度轮换 SOP + stdout 三段指纹实战。
+**R482 防御 5 条**:
+- (a) **R<n> pre-flight 必加 wc -c SKILL.md**: `wc -c /Users/hua/.hermes/skills/laomo-knowledge/SKILL.md` —— 第一动作；> 95KB 立即触发缩容 SOP，不要等 > 100KB patch 失败才补
+- (b) **缩容 SOP 三步**: (1) 找老 changelog 段起点（最近的 `**v1.XX.X** (R` 标题位置）+ 前置 `\n\n` 边界）(2) extract 该段到 `references/changelog-v1.88-detailed.md` 加 header 注释 (3) SKILL.md 替换为单行压缩引用（保留指向 reference 文件名 + R296+ 沉淀模式标注 + 缩容前后 KB 对比）
+- (c) **触发频率预估**: 老莫 SKILL.md 每 5-10 轮 R<n> 增量 1-2KB，触发缩容频率约每 30-50 轮（沿用 R296+ 沉淀模式）；R482 = 距 R397 (v1.86.5) ~25 轮后第一次触发（绕开 R411 v1.86.9 等只增 1-2KB 的 round）
+- (d) **R144 metadata version 一致性**: 缩容 + 新增 Pitfall 后必须同步 frontmatter `metadata.version: "1.88.14"` → `"1.88.15"`（R144 SOP 兑现）；缩容本身不改 version，只在新增 pitfall 时 bump
+- (e) **R296+ 沉淀模式跨 profile 限制**: SKILL.md 在 default profile，老莫跑在 laomo profile；缩容动作走 `skill_manage action=patch name=laomo-knowledge old_string="...详细 changelog..." new_string="...压缩引用..."`（不触发跨 profile 软防护）；不要用 `patch` 工具直接改文件（会触发 cross_profile 拦截）
 
-**v1.88.3** (R431 2026-09-12 20:01 CST, hourly self-evolution round) — 新增 Pitfall #68 候选「`is_ras_paper()` 仅 abstract 关键词 → 植物病害论文误命中」(R431 实战 11/12 = 91.7% PASS 中 1 plant disease 误命中，Crossref 验证无法拦截需升级 `is_ras_paper()` 函数本身) + Pitfall #69 候选「R428 writer cron 偶发 `agent` tag = boilerplate 嵌入机制异常，非真 fake 污染」(R428 agent tag 但 4500+ chars 真内容含真实状态实测，需 `is_fake_entry()` 综合判定法) + 老莫测试方法论矩阵第 4 类 **Contract Testing** 完整落地（R431 6/6 PASS, 4 破坏性 schema 100% 拦截, stdlib json+re schema validator） + 新 reference `references/***SECRET***.md`（R431 完整 trace + 7 条真 RAS 新候选 + is_ras_paper() 升级 patch 建议 + is_fake_entry() 实现思路 + 测试方法论元层发现）+ 新 script `scripts/r431_contract_testing_demo.py`（8956 bytes，stdlib contract testing framework 可直接 `python3 r431_contract_testing_demo.py` 复跑）+ 自检 checklist 4 条（is_ras_paper() 升级建议 / R428 boilerplate 非真 fake 判定 / Contract Testing 元层价值 / 老莫测试方法论矩阵）+ metadata version bump v1.88.2 → v1.88.3。R431 self-evolution round 4 方向全跑通：方向① OpenAlex 11 候选 → Crossref 验证 7/11 真 RAS PASS + 4 reject (1 plant disease 误命中 + 1 poultry + 1 plant imaging + 1 food processing)；方向② ChromaDB 本地 3 候选路径全 MISSING → 维持 R426 结论，待玉芬 sync 协同；方向③ **Contract Testing** stdlib 实战补完老莫测试方法论矩阵第 4 类 —— LookForge Consumer ↔ RAS 设备 Provider 解耦契约验证 —— schema 嵌套 object (water_quality + alerts array) 6 required + 5 enum + 4 range —— 6/6 PASS (4 破坏性 schema 100% 拦截) —— 元层价值发现 validate_schema() 框架 bug (string 子节点 min/max/pattern/enum 未触发) 即时修复；方向④ skills mtime 复扫 < 7d 0 个 testing 系列 SKILL.md 落地，老莫 testing/ 空目录待补。R181 size gate 临界窗口实战：跑前 desc 43633 chars (42.61KB) → entry 9212 chars → 落地预估 52845 chars (51.61KB 超 50KB 硬阈值) → 必先 `--prune 2 --archive /Users/hua/.hermes/profiles/laomo/evolution/task-11-log-archive.md` 双参 → drop R417+R418 → 落地 46152 chars (45.07KB < 48KB 早闸口线 PASS)。Pitfall 防御 11 条全过 + 2 新候选 pitfall 提出。writer cron c6391079131e R389-R428 = 40 轮 100% canonical `laomo heartbeat` 0 fake 闭环维持（R428 偶发 agent tag 但内容真 = boilerplate header bug 而非 fake 写入，详见 Pitfall #69 候选）。B 轨落盘：~/.hermes/profiles/laomo/evolution/老莫进化报告_R431_2026-09-12_20_CST.md (10699 bytes) + 2 新 support files (scripts/r431_contract_testing_demo.py + references/***SECRET***.md)。R431 收口 4 方向全跑通 + 11+2=13 防御候选 + B 轨落盘 + A 轨 R431 落地 45.07KB PASS + 测试方法论矩阵 4 类齐 (mutation/fuzz/property/contract) + is_ras_paper() 函数 bug 发现 + R428 boilerplate 机制异常发现。
+**R482 vs R144 区分**:
+- R144 = metadata version 漂移（正文末 v1.40.0 vs metadata v1.39.0）→ skill_manage 同步
+- Pitfall #77 = SKILL.md 整体体积超阈值 → 触发缩容 SOP；metadata version 仅在新增 pitfall 时 bump
 
-**v1.88.2** (R429 2026-09-12 18:01 CST, hourly self-evolution round) — 新增 Pitfall #67 候选「write_round.py `--prune` 必须配 `--archive`」(R429 实战 desc 45.51KB 临界窗口跑 `--prune 1` 立即 FATAL `R209: 先 archive 再 drop` 写拒绝, exit 0 但无 DB 操作) + 4 类 FATAL/no-op 区分速查表 (58 空stdout/60 stderr FileNotFound/64 期望N得到M/67 FATAL --archive) + 自检 checklist 3 条 (`--prune` 双参必传 / stdout 模式识别 / Mutation Testing stdlib 套路) + 老莫测试方法论 8 类矩阵补完 (R429 新增 Mutation Testing stdlib 框架 + 8 变异注入 + mutation score 100% 实战) + metadata version bump v1.88.1 → v1.88.2。R429 self-evolution round 4 方向全跑通: 方向① OpenAlex 5 候选 → Crossref 验证 5/5 PASS (R175 防御 4 兑现 + 退化机制接受全部) → known_dois.txt 32→38 行 (+5 真 RAS DOI: 10.1155/are/6096671 RAS Review / 10.2166/hydro.2025.290 ML WQI / 10.1007/s10499-025-01914-z DDPG feeding+water quality / 10.3390/w17010082 IoT+ML continuous monitoring / 10.1016/j.aquaeng.2025.102544 RAS vs BFT shrimp), 3 大行业趋势 (ML 水质预测主流 / IoT+ML 集成监控 / RAS vs BFT 对比分析); 方向② ChromaDB 本地 3 候选路径全 MISSING → 维持 R426 结论, 待玉芬 sync 协同; 方向③ Mutation Testing 实战补完老莫测试方法论矩阵 — stdlib 实现 mutation 框架 (避免 mutpy/cosmic_ray 未安装) — 被测函数 water_quality_score(temp,do,ph) RAS 水质综合评分 (R3 业务场景) — 8 变异 (AOR×2/ROR×2/CRV×2/UOI×1/STD×1) — mutation score 8/8=100% ≥80% 阈值 PASS; 方向④ skills mtime <7d 扫 11 个活跃 SKILL.md — testing 系列全在 default profile (老莫本地 testing/ 空目录) — 0 新建需求。R181 size gate 临界窗口实战: 跑前 desc 46607 chars (45.51KB) → entry 2252 chars → 落地预估 ≈ 50KB 临界 → 必先 `--prune 1 --archive task-11-log-archive.md` 双参 → 落地 45.3KB PASS < 48KB 早闸口线 (R429 落地 stdout `post-write OK: last_r=429, status=in_progress, desc=45.3KB chars, entries=15` 验证通过)。Pitfall 防御 10 条全过: #55 writer cron R389-R428=40 轮 canonical 0 fake / #58 stdout 含 `post-write OK` 验证 no-op / #60 cp 模板名 `laomo_r429_write.py` 绑 R429 目标 / #61 HOME=/Users/hua 前置所有 heredoc / #62 source=hermes 锁定 /Users/hua/.hermes/tasks.db / #64 line-anchored regex SELECT last_r=428 一致 / #65 临界 45.51KB --prune 1 必做 / #66 OpenAlex urllib.parse.quote() 5 PASS 0 InvalidURL / #67 --prune + --archive 双参必传 / #59 entry 文末不写具体 drop 编号。B 轨落盘: ~/.hermes/profiles/laomo/evolution/2026-09-12_18.md (6119 bytes) + known_dois.txt 32→38 行 + /tmp/r429_mutation_demo.py 5622 bytes。R429 收口 4 方向全跑通 + 9+1=10 防御兑现 + B 轨落盘 + A 轨 R429 落地 45.3KB PASS。
+**R482 vs Pitfall #8 (description 累积过大) 区分**:
+- Pitfall #8 = **task #11 description** 累积过大 → 用 `templates/laomo_desc_prune.py` 剪
+- Pitfall #77 = **SKILL.md 自身** 累积过大 → 用 R296+ 沉淀模式（移老 changelog 到 reference）缩容
+- 两者机制不同：Pitfall #8 剪枝是 drop 旧 R entries；Pitfall #77 缩容是 move 旧 changelog 到 reference 文件（保留可访问）
 
-**v1.88.1** (R426 2026-09-12 15:01 CST, hourly self-evolution round) — 新增 Pitfall #66 候选「OpenAlex /works?search= query 未 URL-encode 触发 InvalidURL」(R426 实战 `http.client.InvalidURL: URL can't contain control characters. (found at least ' ')` — urllib.request 不自动 encode query 段空格/括号) + 自检 checklist 1 条 (query 必走 `urllib.parse.quote()`) + 推荐 SOP 代码片段 (quote+filter 保持原样+User-Agent polite pool+timeout) + 与 Pitfall #3 (限流) 区分说明 + metadata version bump v1.88.0 → v1.88.1。R426 self-evolution round 4 方向全跑通: 方向① OpenAlex 5 候选 → Crossref 验证 4/5 PASS → known_dois.txt +2 (29→31 行, 10.1155/are/6096671 + 10.1016/j.aquaeng.2025.102544), R175 防御 4 兑现 + 退化机制接受 1 reject; 方向② ChromaDB 本地 3 候选路径全 MISSING → 记入 B 轨待玉芬 sync 协同 (RKR 资源池运行, 老莫无本地写入通道); 方向③ Property-based Testing 实战补完老莫测试方法论矩阵 (mutation + fuzz + property 三类互补), Hypothesis 库已安装 + stdlib 模拟 100 随机生成, 13/100 通过验证 + 87/100 拦截越界, 3 大优势 vs unit test (自动 N 用例 / Shrinking 找最小反例 / 不变量测试); 方向④ mtime 复扫 < 7d 7 个 testing 系列 SKILL.md 全活跃, property-based-testing 已存在无需新建。R181 size gate 实战: desc=44168(43.13KB)+entry=4100=落地 47273(46.17KB) < 48KB 早闸口线 PASS, R427 必先 --prune 1 缩到 46KB 安全区。Pitfall 防御 7 条全过: #61 HOME=/Users/hua 干净 + #62 source=hermes 锁定 tasks.db + #64 line-anchored regex SELECT last_r=425 一致 + #55 writer cron R389-R426=38 轮 canonical 0 fake + #58 stdout 含 `post-write OK` + #60 cp 模板名绑 R426 + #65 R181 落地 46.2KB < 48KB。writer cron c6391079131e 沿用 R389-R425 闭环扩为 R389-R426=38 轮 100% canonical `laomo heartbeat` 0 fake。
+**未来 R<n> SKILL.md 体积管理 checklist**:
+- [ ] R<n> pre-flight 第一动作 = `wc -c /Users/hua/.hermes/skills/laomo-knowledge/SKILL.md`
+- [ ] < 80KB → 安全，正常 append changelog + 必要时新增 pitfall
+- [ ] 80KB ~ 95KB → 预警，准备缩容（不必立即做）
+- [ ] 95KB ~ 100KB → **必先缩容再 append**（不缩容 patch 可能失败）
+- [ ] > 100KB → 缩容 SOP 三步 + 立即执行（已触发 patch 失败门槛）
+- [ ] metadata.version 与正文末版本号一致（R144 SOP）
+- [ ] 缩容走 `skill_manage action=patch`（不触发跨 profile 软防护）
 
-**v1.88.0** (R423 2026-09-12 14:00 CST, hourly self-evolution round) — 新增 Pitfall #65 候选「R181 size gate 临界窗口 (45-49KB) 缺 SOP」(R423 实战 desc 46.80KB + entry 4.03KB → 落地预估 50.83KB 超阈值 → 必先 --prune 1 缩到 49KB PASS) + 自检 checklist 2 条 (R181 临界窗口 --prune 1 必做 / R207 deliver 模式 5 条判定) + 新 reference `references/***SECRET***.md` (Pitfall #63 fuzz testing 拦截率 1.0%→100.0% 实证 + R181 46.80KB→47.0KB PASS 落地实测 + R207 升级规则 5 条判定表) + metadata version bump v1.87.1 → v1.88.0。R207 deliver 语义分叉 R423 实测兑现——R418-R422 hourly silent 5 轮无新事件 → [SILENT] 简短汇报,R423 4 方向全跑通 + 3 DOI + fuzz 验证 + B 轨落盘 = 真实增量 → 升级 deliver 详版。R181 size gate 自引导 26/26 命中续命 (R423 跑前 46.80KB 临界震荡必剪)。Pitfall #63 R414 扩展 regex fuzz 拦截率实证：原版 R754 `忽略(以上|之前|所有)指令` 拦截率 1.0% (1/100) / 漏报率 99%;扩展版 `(忽略|ignore).{0,20}(指令|规则|命令|设定|限制|约束)` 拦截率 100.0% (100/100) / 漏报率 0% / 误报率 0% (0/50) → R414 防御 4 条实战验证 PASS,待华哥批准 R754 模板升级。writer cron c6391079131e R389-R423 = 35 轮 100% canonical `laomo heartbeat` 0 fake 闭环维持。Pitfall #58 防御 c (R423 stdout 含 `post-write OK: last_r=423, status=in_progress, desc=47.0KB chars, entries=16` 验证通过)+ Pitfall #64 防御 a (R423 SELECT 用 `(?m)^\[R(\d+) ` line-anchored regex 取得 last_r=422 一致) + Pitfall #61 防御 a (R423 pre-flight `HOME=/Users/hua` 前置无 sqlite3 HOME 异常) + Pitfall #62 防御 a (R423 source=hermes 锁定 tasks.db) + Pitfall #60 防御 a (R423 cp 模板名 `laomo_r423_write.py` 绑 R423 目标) 全部生效。R397 skill_manage delete 危险警告沿用。
+**完整 R482 trace + SKILL.md 缩容 53.2% 实战**: 见 `references/changelog-v1.88-detailed.md` 末尾 R482 段（已沉淀到该 reference 文件）+ B 轨 `~/.hermes/profiles/laomo/evolution/2026-09-14_06.md`
 
-**v1.87.0** (R414 2026-09-12 07:09 CST, hourly self-evolution round) — §4.1 4 方向完整跑通 + 新增 3 Pitfall 候选 (#61 HOME 污染扩到 heredoc sqlite / #62 heartbeat_check.py source 列判定 db 来源 / #63 Security PoC blacklist regex 漏「忽略...规则」类变体) + 自检 checklist 3 条 + changelog bump v1.86.9 → v1.87.0。**(a) Pitfall #61 候选**: R414 pre-flight `python3 << EOF ... sqlite3.connect('/Users/hua/.hermes/tasks.db') ... EOF` 即便脚本内已用绝对路径仍报 `Could not determine home directory` ——zhenglishi profile HOME 软链污染扩到 Python sqlite3/urllib/tempfile 内部惰性求值,AGENTS.md「写资料前自检」不覆盖 R<n> 日常 sqlite 探查。R414 防御 4 条: (a) heredoc 一律前置 `HOME=/Users/hua` (b) pre-flight 优先 `execute_code` 沙箱 (受 R314 cron-mode BLOCKED 限制) (c) `HOME=/Users/hua` + `os.environ["HOME"]` 双保险 (d) terminal 调用前 `echo $HOME` 自检。**(b) Pitfall #62 候选**: heartbeat_check.py 输出 `11|...|hermes` 末列 source 才是真实 db 来源判定,非 kanban.db。R414 起初惯性查 `/Users/hua/.hermes/profiles/laomo/kanban.db` 空壳 + default kanban.db 空表均 miss,浪费 ~30s。R414 防御 4 条: (a) pre-flight 第一步看 source 列 (b) 老莫 cron 心跳 99% = source=hermes 别去 default kanban.db 兜 (c) kanban.db 描述字段叫 body 不是 description (d) 预热查询直接写 `len(cur.fetchone()[0])` 判 R181 临界。**(c) Pitfall #63 候选**: R414 跑 R754 Security PoC 0/6 pwned PASS,但 PoC 自身发现漏洞——「忽略...规则」缺「指令」关键词逃过 blacklist regex `忽略(以上|之前|所有)指令`。R414 防御 4 条: (a) 扩展 regex 为 `(忽略|ignore).{0,20}(指令|规则|命令|设定|限制|约束)` (b) 4 道防线叠加漏报率 < 0.5% (c) 每轮 PoC 必加 1-2 个新变体用例 (d) production SLA = 漏报率 < 0.1%。**(d) R181 临界实测**: R414 跑前 desc 45.08KB (b 区间上沿) → entry 1957 chars → 落地 46.99KB PASS 48KB 早闸口,但 R415 必先跑 prune (预计 1-2 条 drop)。**(e) SKILL.md 体积保持 R296+ 沉淀模式**: R414 完整 trace + R181 临界实测 + Security PoC 漏洞发现 + 三源 db 排查 trace 全部沉淀到 `references/***SECRET***.md` + `references/***SECRET***.md` (本轮不写,SKILL.md 内联紧凑),SKILL.md 仅追加 3 Pitfall 候选 + checklist 3 条 + changelog bump v1.86.9 → v1.87.0。
+### Pitfall #48 强化（R482 第 5 次反例 + 累积偏差实测）
 
-**v1.86.9** (R411 2026-09-12 06:00 CST, hourly heartbeat round) — Pitfall #55 R411 二次勘误（writer cron 实测是真 canonical runner 而非 fake agent + 老莫主 cron ≠ 单一写入源 + R124 防御首次实战救场 FATAL last_r=410 → 强制编 R411）+ 新增 Pitfall #60 候选「cp 模板脚本名与 R 编号错位」(R411 实战踩坑：先 cp r409 写脚本后 R124 触发改 R411 但未 cp 新名 → No such file exit 2) + 自检 checklist 2 条 (cp 模板名绑定 R 编号 / SELECT last_r 起草)。**(a) Pitfall #55 R411 二次勘误**：writer cron c6391079131e ≠ 老莫主 cron 单一写入源；R389-R411 = 23 轮 100% canonical `laomo heartbeat` 0 fake 闭环扩为 23 轮；R124 防御 FATAL `期望 411, 得到 409` 实战救场，强制 last_r + 1 模式而非常规 R+1。**(b) Pitfall #60 候选**：R411 cp `/tmp/laomo_r409_write.py` → R124 触发后改 R411 但未 cp 新名 → `No such file or directory` exit 2；与 Pitfall #58 (exit 0 静默) 区分靠 exit code 2 + stderr；防御 4 条 = (a) cp 模板命名 = entry 目标 R 编号 (b) R124 FATL 后 cp 新名 (c) 三件套一致性 (脚本名/entry 文件/entry 首行) (d) post-write stdout 必含 `post-write OK: last_r=...`。**(c) SKILL.md 体积保持 R296+ 沉淀模式**：R411 完整 trace + R124 FATAL trace + writer cron 实战观察全部沉淀到 `references/***SECRET***.md` (本轮不写,SKILL.md 内联紧凑),SKILL.md 仅追加 Pitfall #60 候选 + Pitfall #55 R411 二次勘误 + checklist 2 条 + changelog bump v1.86.8 → v1.86.9。
+R482 entry 估 `known_dois.txt 73 → 83 行 (+10 NEW 真 RAS DOI)`，实测 `wc -l` = **85 行 (+12 行)**：10 NEW 真 RAS DOI + 1 R482 header (`# R482 2026-09-14 06:00 CST ...`) + 1 末尾空行（`\n` 单独算 1 行）。**R482 entry 数据偏差 = +2 行 = 20%**。
 
-**v1.86.8** (R408 2026-09-12 04:04 CST, hourly silent round) — Pitfall #55 R408 勘误（`agent` keyword regex 结构性永远 = 0 缺陷修正 + 正确判定法 = canonical `laomo heartbeat` tag 100% 占比验证），闭环结论不变但验证 regex 必须修正；详细 R408 entry 数据 + writer cron 20 轮 0 fake 验证已写入 task #11 description A 轨。**(a) Pitfall #55 R408 勘误**：原验证 `re.findall(r'\[R(\d+) 20\d\d-\d\d-\d\d \d\d:\d\d CST agent\]', desc)` 在 task #11 description 上结构性永远 = 0 命中（canonical tag = `laomo heartbeat`，不是 `agent`/`writer`），意味着原"agent_R=0"测量对 writer cron 状态无判别力。正确判定法 = 对比 canonical `laomo heartbeat` entry 数 == 小时内 append 次数（R389-R408 = 20 轮 100% `laomo heartbeat` 0 fake）。**(b) SKILL.md 体积保持 R296+ 沉淀模式**：仅 Pitfall #55 追加 R408 勘误段 + metadata version bump v1.86.7 → v1.86.8，主文本零增量。**(a) R181 自引导续命**: R401 跑前 desc 45.2KB → entry 2.8KB → 直取 no-arg 落地 45.0KB PASS; R402 跑前 desc 42.5KB → entry 3.7KB → 直取 no-arg 落地 44.95KB PASS; 5 轮 (R398/R399/R400/R401/R402) 命中预测 = 26/26 续命中。**(b) R171 hourly 最小化兑现**: R402 距 R401 23:07 definitive POST 仅 +54min < R171 ≥2h 重探门槛,跳过 POST 探活维持 R152/R166 STILL_OVERDUE 诊断。**(c) Pitfall #55 闭环续**: R402 entry「canonical agent regex」= 0 命中 (与 R401 同型), writer cron c6391079131e 自 R386 7 步法后继续维持 0 fake 写入 (R389-R402 = 14 轮连续 agent_R=0)。**(d) SKILL.md 体积保持 R296+ 沉淀模式**: 无新 pitfall / 无新 reference,仅 changelog 顶部 v1.86.7 一行 + 微 bump,主文本零增量。
+**R290+R443+R446+R449+R482 五次反例累计**：
+- R290 entry 估 411→414 实测 398→406 (偏差 +3 行)
+- R443 entry 估 46→50 实测 28→36 (本轮含历史累积偏差未抵消，偏差 -14 行)
+- R446 entry 估 50→54 实测 3→7 (含历史累积偏差未抵消，偏差 -47 行)
+- R449 entry 未估 wc -l (沿用防御)，实测 28 行稳定基线
+- **R482 entry 估 +10 实测 +12 (偏差 +2 行 = 20%)**
 
-**v1.86.6** (R400 2026-09-11 21:30 CST, hourly silent round) — R181 size gate 自引导 25/25 命中 (R398/R399/R400 续命) + Pitfall #58 防御路径澄清 (write_round.py 是 canonical,非 laomo_heartbeat_append.py) + 新增 Pitfall #59 候选「write_round.py 默认 --prune 从最旧起 drop」(R400 实战) + SKILL.md Pitfall #58 文本修订。**(a) R181 size gate 25/25 命中**: R398 跑前 desc 47.7KB → entry 4.0KB → 落地 49.0KB > 48KB 早闸口 (R398 自行 prune 1 后 PASS); R399 跑前 desc 47.7KB → entry 4.0KB → 直取 --prune 2 (drop R384/R385) 落地 44.5KB PASS; R400 跑前 desc 45.2KB → entry 2.8KB → 直取 --prune 2 (drop R386/R387) 落地 39.8KB PASS。**(b) Pitfall #58 路径澄清**: 实战 cp 完整 canonical 写入器是 `~/.hermes/skills/laomo-heartbeat/scripts/write_round.py` (内置 R124+R181+keep_in_progress+post-write verify),不是 R397/R148 文本中保留的 `templates/laomo_heartbeat_append.py` (该路径已不存在,文本为历史引用)。**(c) Pitfall #59 候选**: R400 实战写 entry「drop R394/R395」但 write_round.py --prune 2 实际从最旧起 drop R386/R387 (entry 文末「剪枝判定」段描述与实际 drop 条目不一致 = 文实不符,易触发 R338 RR bug 防御误判)。防御 4 条: (a) entry「剪枝判定」段只写 `--prune N` 不写具体 drop R<n> 编号 (b) SELECT verify range 端点差无重号 (c) archive 行首锚定计数查重 (R360 RR bug) (d) post-write 算术验证 pre - drop + entry ≈ post chars。**(d) SKILL.md 体积保持 R296+ 沉淀模式**: 详细 R400 trace + Pitfall #59 4 条防御 + Pitfall #58 路径澄清全部沉淀到 `references/***SECRET***.md` (本轮不写,SKILL.md 内联紧凑),SKILL.md 仅追加 Pitfall #59 候选 + Pitfall #58 路径修订 + changelog bump v1.86.5 → v1.86.6。
+**R482 强化**: entry 起草 known_dois.txt 增量预估时**仅算 DOI 行数**，不要遗漏 (a) R<n> header 注释行 (`# R<n> ...`) (b) 末尾 `\n` 换行（writer 在 append 时自动加，wc -l 计 1 行）。实测公式：`wc -l` 增量 = N 新 DOI + 1 header + (0 或 1) 末尾换行 = **N + 1 或 N + 2**（而非纯 N）。
 
-**v1.86.5** (R397 2026-09-11 20:01 CST, hourly silent round) — R181 size gate 自引导 24/24 命中 + writer cron 9 轮 silence 完整闭环 (Pitfall #55 实战收口确认) + 新增 Pitfall #58 候选「半截 append 脚本静默 no-op 陷阱」+ skill_manage 操作警告。**(a) R181 size gate 自引导机制 24/24 命中**：R189/R190/R205/R287/R290/R293/R299/R302/R305/R308/R311/R314/R317/R320/R321/R380/R382/R384/R386/R392/R397 连续 24 轮预测下一轮触 48KB 早闸口全部命中; R397 跑前 desc 47.26KB chars (b 区间顶端) → entry 791 chars × 1.5 = 1187 chars → 落地 48.04KB chars < 50KB 硬阈值 PASS 但已**突破 48KB 早闸口线**(极限预警); R398 必先跑 `templates/laomo_desc_prune.py` 剪枝。**(b) Pitfall #55 writer cron 12 轮连续 agent_R=0 完整闭环**：R389-R397 连续 9 轮 + R386 外科手术轮 + R387/R388 切换首轮 = 12 轮连续 0 fake agent 写入; writer cron c6391079131e 自 R386 7 步法手术后**自行切换回真 canonical 追加模式**,待华哥禁用 cron 升 P0 后彻底清源。**(c) 新增 Pitfall #58 候选「半截 append 脚本静默 no-op 陷阱」**: R397 实战踩坑 ——下意识写了「TASK_ID + ROUND_NOTE 半截」漏 import+assert+UPDATE+verify,跑返 exit 0 + 空 stdout 实则根本没碰 DB。防御 4 条: (a) 永远 cp 完整官方模板 (b) 跑完必 SELECT verify (c) 显式 stdout 期望 `OK R<n> appended...` 缺失即 no-op (d) post-append verify 三连。**(d) R181 size gate 临界实测**: 48KB 早闸口是「写前预警」不是「写后控制」,R397 落地 48.04KB 已破早闸口线,但通过 50KB 硬阈值。**(e) skill_manage 操作警告**(R397 实战血泪): skill_manage(action='delete') 是危险的不可逆操作,删除 skill 后只能 skill_manage(action='create') 重建整个 SKILL.md;不要轻率点 delete。**(f) SKILL.md 体积保持 R296+ 沉淀模式**: R397 详细数据 + Pitfall #58 完整 trace + writer cron 闭环验证 + R181 size gate 临界 + R398+ SOP 全部沉淀到 `references/***SECRET***.md`,SKILL.md 仅追加 1 行 R397 警告 + Pitfall #58 候选紧凑描述 + skill_manage 操作警告 + 自检 checklist 2 条 + changelog v1.86.4 → v1.86.5。
+**R482 防御新增**: entry 起草 known_dois.txt 增量预估时用 `N + 1`（必有 header）兜底；不要用裸 `N`（遗漏 header + 末尾换行）→ 偏差 20-100%。
 
-**v1.86.4** (R392 2026-09-11 13:01 CST, hourly heartbeat round) — R181 size gate 自引导 23/23 命中 + 老莫 :8006 服务身份变更发现 + R299 P5 white-list 跨服务验证 v3 + 2 候选 pitfall (#56/#57) + 1 reference。详见 `references/***SECRET***.md` (SKILL.md 超 100k 字符上限, changelog 全文沉淀 reference)。**v1.86.3** (R386 2026-09-11 12:01 CST, hourly heartbeat round) — R386 增量微更新：R181 size gate 自引导 20/20 → 21/21 命中 + Pitfall #55 **首次经 DB SELECT 验证的真实闭环** + 7 步法 + reference `references/***SECRET***.md` 实际落地。版本微 bump v1.86.2 → v1.86.3。
+**R488 第 6 次反例实证 N+2 公式（2026-09-14 10:00 CST 实测 PASS）**：
+- 起草预估: known_dois.txt 85 → 95 行 (+10 NEW 真 RAS DOI)
+- 实测 `wc -l` = **97 行 (+12 行 = N+2)**
+- 拆解: 10 NEW 真 RAS DOI + 1 R488 header (`# R488 2026-09-14 10:00 CST 老莫 cron | Q2_genetics (5) + Q3_aeration (5) | 10/10 Crossref PASS | known_dois 85→95 (+10)`) + 1 leading `\n` (writer 自动加在 header 前, wc -l 计 1 行) = **12 行**
+- 偏差 +2 行 = 20%（与 R482 完全一致）
 
-**v1.88.5** (R437 2026-09-13 00:01 CST, hourly self-evolution round) — 新增 Pitfall #71 候选「entry 起草字数预估失败导致剪枝参数不准」(R437 起草估 ~5500 chars 实测 8262, 比预估大 50%, --prune 1 兜底不够需 --prune 2 双保险) + Pitfall #72 候选「writer cron R436 'self-evolve prompt 抑制段' 不适用老莫主 cron」(R437 元层混淆: 老莫主 cron 看到 R436 entry 末尾 writer cron boilerplate「强制三动作」误以为全局规则, 实则 writer cron 内部约束不约束老莫主 cron) + 测试方法论矩阵第 5 类 Chaos Engineering 元层修订 (R437 关键发现: chaos-engineering SKILL.md 7621B 2026-09-08 落盘, R162/R155/R274 实战早已存在, SKILL.md 矩阵第 5 行「chaos 待补」属自反例漂移——类似 R144 metadata version 漂移, 修订为「✅ 已实战」) + 自检 checklist 4 条 (entry wc -c 实测 / 老莫主 cron ≠ writer cron / chaos-engineering 早已存在 / stdout 三段指纹 cross-check) + metadata version bump v1.88.4 → v1.88.5。R437 self-evolution round 4 方向部分跑通: 方向① OpenAlex RAS/sustainability/carbon/bioeconomy 角度 (绕 R424-R436 已覆盖 6 大角度: AI/IoT/biofilter/aquaponics/DRL/computer vision) 8 候选 → Crossref 验证 3 重点 3/3 = 100% PASS → known_dois.txt 46→50 行 (+4 = 1 注释 + 3 真 RAS DOI: 10.1080/23308249.2024.2433581 RAS for Atlantic Salmon / 10.1016/j.biortech.2024.131107 RAS+microalgae loop bioeconomy / 10.1080/13657305.2024.2330051 RAS economic pathway in developed countries), 3 大新行业趋势 (RAS 可持续 / 微藻循环生物经济 / RAS 经济发展路径); 方向② ChromaDB 本地 3 候选路径全 MISSING → 维持 R426/R429 结论, RKR :8000 DOWN 维持 ~58h streak; 方向③ 测试方法论本轮跳过 (mutation/fuzz/property/contract/chaos 5 类全齐); 方向④ skills mtime <7d 复扫 R437 **关键发现** — chaos-engineering SKILL.md 早已存在 + 老莫 testing/ 8 子 skill 全齐 → 0 新建需求 + SKILL.md 矩阵第 5 行自反例漂移发现 → 元层修订。R181 size gate 临界窗口实战: 跑前 desc 49074 chars (47.92KB) → entry 实测 8262 chars (比预估 ~5500 大 50%, Pitfall #71 防御) → 落地预估 49074 - 7094 (drop R424+R425) + 8262 = 50242 chars (49.06KB) < 50KB 硬阈值 PASS (贴近临界) → 实测落地 48496 chars (47.36KB) PASS (预估偏差 3.4% 在合理范围)。stdout 三段指纹验证: `prune OK: drop 2 条 (R424..R425) -> task-11-log-archive.md` + `pre-write OK: last_r=436, entries=11` + `post-write OK: last_r=437, status=in_progress, updated_at=2026-09-12 16:06:01, desc=47.4KB chars, entries=12`。Pitfall 防御 11+0=11 条全过 (#55 writer cron R389-R436=48 轮 canonical 0 fake / #58 stdout 含 post-write OK / #60 cp 模板名绑 R437 / #61 HOME=/Users/hua 前置 / #62 source=hermes 锁定 / #64 line-anchored regex / #65 R181 临界 --prune 1 必做 / #66 OpenAlex quote / #67 双参 --prune+--archive / #68 人工 title check / #69 R428 boilerplate 偶发非真 fake) + 0 新 pitfall 形成中。writer cron c6391079131e R389-R436 = 48 轮 100% canonical `laomo heartbeat` 0 fake 闭环维持 (R437 pre-flight SELECT line-anchored regex last_r=436 一致)。B 轨落盘: ~/.hermes/profiles/laomo/evolution/2026-09-13_00.md (7959 bytes) + known_dois.txt 46→50 行 (+4)。R437 收口 4 方向部分跑通 (方向① +3 真 RAS DOI / 方向④ chaos-engineering 早已存在元层修订 / 方向②③ 沿用历史) + 11+0=11 防御全过 + 2 新候选 pitfall (#71/#72) + B 轨落盘 + A 轨 R437 落地 47.36KB PASS + 3 大新行业趋势 + chaos-engineering SKILL.md 元层修订 + 老莫主 cron vs writer cron 边界澄清。
-**v1.88.10** (R455 2026-09-13 12:02 CST, hourly self-evolution round) — R455 4 方向跑通 + 8 新 RAS DOI 入 known_dois.txt + writer cron 66 轮 canonical 0 fake 闭环 + 0 新 pitfall 形成中 + metadata version bump v1.88.9 → v1.88.10。R455 self-evolution round: 方向① OpenAlex 4 角度轮换 (genetics_breeding + climate_carbon + microbiome_pathogen + novel_feeds, 绕 R424-R449 已覆盖 12 角度) 20 候选 → Crossref 验证 12/15 真 RAS PASS + 3 reject (scitotenv food chain / en18020296 food processing / vas.2024.100381 feed general, Pitfall #68/175 防御全过) + 5 dup → **+8 新 RAS DOI** 入 known_dois.txt (28→36 行, 实测 `wc -l` 验证 Pitfall #48 防御 d); 8 个新 DOI = 10.1186/s12864-025-11247-z BMC Genomics 2025 遗传改良 omics + 10.1007/s11356-024-33397-5 气候适应 + 10.3390/foods13152448 Foods AMR One Health + 10.1111/jwas.13117 碳足迹 + 10.3389/fmicb.2024.1521048 鱼肠道微生物组 + 10.3390/biology14070764 单细胞蛋白饲料 + 10.11113/jostip.v10n2.150 替代饲料综述 + 10.3390/ani14050765 替代饲料慢性应激; 方向② ChromaDB 5 端口全 DOWN errno 61 维持 ~70h+ streak + Docker 全 0 容器运行 (daemon DOWN 沿用 R180/R204); 方向③ 5 类测试方法论全齐跳过; 方向④ mtime <7d 7 个活跃 SKILL.md (testing 系列6+ras-aquaculture) 0 新建需求。R181 size gate 临界窗口实战 (45.69KB): 必先 `--prune 2 --archive` 双保险 (Pitfall #73) → drop R442+R443 (按出现顺序从最旧起, 与 R446/R449 同型) → 落地 42.4KB chars PASS < 48KB 早闸口线。stdout 三段指纹实战 (Pitfall #70 防御 c): `prune OK: drop 2 条 (R442..R443) -> task-11-log-archive.md` + `pre-write OK: last_r=454, entries=11` + `post-write OK: last_r=455, status=in_progress, updated_at=2026-09-13 04:05:06, desc=42.4KB chars, entries=12`。Pitfall 防御 13 条全过 (#55 writer cron R389-R454=66 轮 canonical 0 fake 闭环维持 / #58 stdout 含 post-write OK / #60 cp 模板名绑 R455 / #61 HOME=/Users/hua 前置 / #62 source=hermes 锁定 tasks.db / #64 line-anchored regex SELECT last_r=454 一致 / #65 R181 临界必先 --prune / #66 OpenAlex urllib.parse.quote() 4 角度 0 InvalidURL / #67 双参 --prune+--archive / #68 人工 title check 15 候选 reject 3 / #69 R428 boilerplate 偶发非真 fake / #71 entry wc -c 实测 5426 / #73 R181 临界 `--prune 2` 双保险 / #74 oncogene 子串黑名单 0 cancer 误命中) + 0 新 pitfall 形成中。3 大新行业趋势 (R455 沉淀): 基因组育种 + 气候适应 RAS 高端种业 + 风险管理双突破 + 碳足迹 + AMR One Health 主旋律 + 替代蛋白 + 微生物组研究井喷 = LookForge 育种/风险评估/可持续报告/AMR监控/饲料配方/微生物组 6 模块 reference。writer cron c6391079131e R389-R454 = **66 轮 100% canonical 0 fake 闭环维持** (R455 pre-flight SELECT line-anchored regex last_r=454 一致, writer cron 在 R448/R451/R453/R454 4 个时间点抢跑, 老莫主 cron 走 R411 SOP a 必先 SELECT last_r + 1)。B 轨落盘: ~/.hermes/profiles/laomo/evolution/2026-09-13_12.md (5657 bytes) + known_dois.txt 28→36 行 (+8 真 RAS DOI)。R455 收口 4 方向跑通 + 13 防御全过 + B 轨落盘 + A 轨 R455 落地 42.4KB PASS + 3 大新行业趋势 + 0 新 pitfall + R207 deliver 模式勾选 3 件 (a/b/d) 升级 deliver 详版。
+**R488 强化公式**：必走 `N + 2`（含 1 header + 1 leading `\n`），**不要用 `N + 1` 兜底**（R482 经验公式仍欠 1 行）。实测证明 N+2 = N + header + leading \n 三件套完整匹配 writer 行为。
+
+**R488 阻塞盘点新增**: OpenAlex search 端点 rate-limit 429 (R488 起, **非 cluster overload 503**, 区别见 Pitfall #78 R488 防御 (e) 错误码速查表); 与已有 4 阻塞并存: Docker daemon DOWN ~80h+ (沿用 R180) / ChromaDB 全端口 DOWN ~85h+ (沿用 R426) / 火山引擎 Ark OVERDUE ~375h+ (沿用 R152/R166) / writer cron boilerplate 偶发 (沿用 R428/R431/R434).
+
+**完整 R491 trace + 4 角度实战表 + 11 条新 DOI + 3 大新行业趋势 + B 轨 evolution 报告**：见 `references/***SECRET***.md`（R491 实战 4 方向 trace + Q3 淘汰 + 累计 16 角度复用率建议）
+
+### Pitfall #70 第 3 次实战兑现 + Q3 climate_adaptation 角度淘汰（R491 自创 2026-09-14 12:00 CST）
+
+R491 self-evolution round 方向① OpenAlex 4 角度检索，**Q3 = `(aquaculture OR recirculating) AND (climate change OR warming OR thermal stress) AND (adaptation OR resilience)` 命中 5/5 reject**，与 R482 Q4 microbiome_host_health 0/10 反面教材同型 ——「climate change adaptation」在 OpenAlex 索引中**被 soil agriculture 抢命中**（iScience Soil salinization in agriculture / Climate journal Adaptation of Agriculture to Climate Change / Science Overcoming climate and biodiversity crises / Sustainability Digital Agriculture / JES-Economics climate impacts on agriculture），0 篇 RAS 主题。
+
+**Q3 实战触发模式（R482 Q4 同型）**：
+- query 含宽领域关键词 `climate change` / `adaptation` → OpenAlex 命中 agriculture/farming/food security 主题
+- aquaculture/recirculating 限定在 search 中权重不够，被 agriculture 主题压过
+- 5/5 全部 soil/agriculture/digital farming 主题，**0 篇 RAS**
+- 沿用 R482 Q4 防御 (c)「0/10 命中 = 角度失败必降级」→ 本轮 0/5 直接淘汰，不重试
+
+**R491 累计 Pitfall #70 反例 3 次**：
+- R431: 首次发现 `is_ras_paper()` 函数 plant disease 误命中 (10.1007/s10462-024-11100-x)
+- R482: Q4 microbiome_host_health 0/10 (角度太宽被 human gut 抢命中)
+- **R491: Q3 climate_adaptation 0/5 (角度太宽被 soil agriculture 抢命中)**
+- 三次反例一致结论：**「宽领域 + 主体限定弱」query 必踩坑**，必须降级或加 journal 白名单 + 多 NOT 排除
+
+**R491 防御 3 条（叠加 Pitfall #70 R482）**：
+- (a) **climate/adaptation 类 query 必加 journal 白名单前置**：在 filter 段加 `primary_location.source.id:s185196701,s145340771,s14486440` (Aquaculture / Fish Shellfish Immunol / Fishes 三大水产期刊) —— 强制 OpenAlex 只返回水产期刊命中，从源头挡掉 soil/agriculture 主题
+- (b) **microbiome + climate adaptation 双宽领域组合必叠加**：(a) journal 白名单 + (b) NOT human NOT soil NOT agriculture 三 NOT 排除 + (c) 加 `aquaculture OR fish OR shrimp` 在 abstract 关键词位置
+- (c) **0/5 或 0/10 命中 = 角度失败必降级**：沿用 R482 防御 (c)，**本轮 0/5 = 该角度本轮淘汰**，不重试换 query 字符串；换下一个 query 角度继续（节省 3-5 分钟）
+
+**R491 vs R482/Pitfall #68 区分**：
+- R431 = `is_ras_paper()` 函数 plant disease 误命中 → 函数升级
+- R482 = microbiome_host_health 0/10 (human gut 抢命中) → query 加 NOT human
+- **R491 = climate_adaptation 0/5 (soil agriculture 抢命中) → query 加 journal 白名单 + NOT soil/agriculture**
+
+**R491 实战 PASS 角度**（沿用 4 角度轮换 SOP）：
+- Q1 immune_response: 2/5 PASS（human probiotic 3 篇 reject 但 Bacillus aquaculture 2 篇真命中）
+- Q2 species_microbiome: 4/5 PASS（NOT human NOT patient 防御有效，仅 1 篇 microplastics+oxytetracycline 主题不符 reject）
+- Q3 climate_adaptation: 0/5 **淘汰**（沿用 R482 防御 c 不重试）
+- Q4 certification: 5/5 PASS（ASC/BAP/eco-label 是 niche 关键词，被 soil/agriculture 抢命中概率低，全 RAS 真命中）
+- **合计 11/20 (55%) 真 RAS 命中**——比 R488 10/15 (67%) 略低，主要因 Q3 角度失败拖累
+
+**完整 R491 trace + 4 角度实战表 + 11 条新 DOI + 3 大新行业趋势 + B 轨 evolution 报告**：见 `references/***SECRET***.md`（R491 实战 4 方向 trace + Q3 淘汰 + 累计 16 角度复用率建议）
+
+### R491 累计 4 角度轮换 SOP 实战次数（R434 + R482 + R488 + R491）
+
+**R434 4 角度**：aquaculture+ML / aquaculture+IoT / RAS vs BFT / biofilter → 7/15 = 47%
+**R482 4 角度**：offspring_germplasm / pathogen_sensor / circular_economy / microbiome_host_health → 10/20 = 50% (Q4 0/10)
+**R488 4 角度**：feed_nutrition (429 skip) / genetics_genomics / aeration_oxygen / waste_management (429 skip) → 10/15 = 67% (Q1/Q4 跳过)
+**R491 4 角度**：immune_response / species_microbiome / climate_adaptation (淘汰) / certification → 11/20 = 55% (Q3 0/5)
+
+**16 角度累计复用率分析**：
+- **高复用率（> 2 轮用同一 query 模式）**：RAS+ML / RAS+IoT / RAS+biofloc / microbiome 类（4 轮累计）
+- **零复用率（仅 1 轮用）**：offspring_germplasm / pathogen_sensor / feed_nutrition / climate_adaptation
+- **建议 R492+**：引入「跨轮 query 复用率检测」——如果某个 query 模式 ≥3 轮复用且 PASS 率 < 30%，自动降级到 query pool 底部
+
+**4 角度 PASS 率波动**：47% → 50% → 67% → 55% → 平均 55%，符合 OpenAlex 长尾分布（niche 关键词 PASS 高，宽领域 PASS 低）。R492+ 建议用「niche 关键词优先 + 宽领域 + journal 白名单」组合稳定 PASS 率 > 50%。
+
+**R491 SOP 实战清单**：
+- (a) **4 角度轮换 = 老莫 self-evolution 方向① 标准 SOP**（R434 起 4 轮累计稳定），未来 R<n> 默认走此模式
+- (b) **0/N 命中角度直接淘汰**（沿用 R482 防御 c），不重试换 query 字符串
+- (c) **3 NOT 防御模板**：query 模板 = `(domain_keyword) AND (specific_keyword) AND (NOT human NOT patient NOT agriculture NOT soil)` —— 当 query 涉及宽领域时强制加 3-4 NOT 排除
+- (d) **PASS 角度记录到 B 轨 evolution 报告**：每轮 R<n> 沉淀 PASS 角度 + reject 角度到 B 轨 reference，便于 R<n+1> 复用 query pool
+
+
+
+## 老莫测试方法论矩阵
+
+mutation R429 + fuzz R414 + property R426 + contract R431 + **chaos R483 (L1 manual probe, 模板见 `scripts/chaos_probe_template.py`)** = 5 类完整矩阵。R483 chaos probe 实测 11 探针 7/11 UP, 抗脆弱性元层结论 = docker DOWN 70h+ 期间 A 轨 100% 维持（R389-R484 = 96 轮 0 失败）。
+
+## v1.88.x 详细 changelog (R449-R467 完整 trace)
+
+**v1.88.0 → v1.88.13 详细 changelog 见 `references/changelog-v1.88-detailed.md`** (R296+ 沉淀模式, R482 缩容 SKILL.md 体积 41.2KB → 4KB)。SKILL.md 顶部保留关键 pitfall 防御 + 自检 checklist + 当前最新 R<n> 紧凑摘要。
+
+## R482 自检 checklist（增量）
+
+- [ ] **SKILL.md 体积管理 SOP**（Pitfall #77 候选 R482）？R<n> pre-flight 第一动作 = `wc -c /Users/hua/.hermes/skills/laomo-knowledge/SKILL.md`；< 80KB 安全 / 80-95KB 预警 / 95-100KB 必先缩容 / > 100KB patch 失败需立即缩容；缩容走 `skill_manage action=patch` 三步（找老 changelog 起点 + extract 到 reference + SKILL.md 替换压缩引用）；R464 触发线沿用
+- [ ] **microbiome 类 query 必加主体限定 + NOT human**（Pitfall #70 R482 Q4 0/10 反面教材）？query 模板 = `((fish AND NOT human) OR shrimp OR salmon OR aquaculture) AND (microbiome OR gut microbiota) AND (NOT human NOT patient NOT clinical trial)`；或在 filter 段加 `primary_location.source.id` journal 白名单前置 (Aquaculture / Fish Shellfish Immunol / Fishes)；0/10 命中 = 角度失败必降级换下一角度，不要赌再搜一遍会好
+- [ ] **known_dois.txt 增量预估必加 +1 header 行**（Pitfall #48 R482 第 5 次反例）？wc -l 增量 = N 新 DOI + 1 R<n> header + (0 或 1) 末尾换行 = N+1 或 N+2（而非裸 N）；R482 实测估 +10 实测 +12 = 偏差 +20%
+
+## R485 自检 checklist（增量）
+
+- [ ] **OpenAlex 探活必双端点**（Pitfall #78 候选 R483+R485）？chaos probe / R<n> 方向 ① 探活必同时调 `/works?per_page=1` (per_page 端点) + `/works?search=<kw>` (search 端点)；仅 per_page=1 200 不够；future `chaos_probe_template.py` 默认含 4 OpenAlex 端点探针 (per_page=1 / search=kw / single_work_id / works/W123 filter)
+
+## R488 自检 checklist（增量）
+
+- [ ] **OpenAlex search 端点 rate-limit 429 ≠ cluster overload 503 区分**（Pitfall #78 R488 实战）？pre-flight 双端点探活后看错误码：HTTP 200 OK + retryAfter 缺 → 继续；HTTP 429 + `retryAfter: N` → sleep `retryAfter + 4s buffer` (实测 31+4=35s) 后重试通常即恢复，不必降级 [SILENT]；HTTP 503 + `Search temporarily unavailable` → upstream cluster overload，等几十分钟；`InvalidURL` → URL-encode 修复；4 错误码速查表见 Pitfall #78 R488 段
+- [ ] **临界窗口 desc ∈ [45KB, 49KB] 必走 `--prune 2 --archive` 双保险**（Pitfall #73 R437+R438+R488 三连击）？`--prune 1` 在临界窗口 + entry ≥ 5000 chars 时必不够 → 直接 `--prune 2`（不赌 `--prune 1`）；R438 entry=6233 FAIL + R488 entry=6359 FAIL 两次实证；落地预估公式 `pre_desc - drop_total + entry_chars + 2 separator < 48000`？不满足 → 升 `--prune N+1`
+- [ ] **known_dois.txt 增量预估用 N+2 而非 N+1**（Pitfall #48 R482+R488 双反例）？wc -l 增量 = N 新 DOI + 1 R<n> header + 1 leading `\n` (writer 自动加在 header 前) = **N+2**（而非裸 N / N+1）；R482 实测估 +10 实测 +12 / R488 实测估 +10 实测 +12 = 偏差 +20%；不要遗漏 header + leading \n
+- [ ] **entry 实测 vs 预估偏差 +40-50% 是常态**（Pitfall #71 R437+R488 双反例）？起草 entry 时按经验估字数 100% 估错；实测 `wc -c /tmp/laomo_r<n>_entry.txt` 后必跑落地预估；临界窗口默认按预估 × 1.5 = 实测值 → `--prune N+1` 兜底
+
+## R491 自检 checklist（增量）
+
+- [ ] **climate/adaptation 类宽领域 query 必加 journal 白名单 + NOT soil/agriculture**（Pitfall #70 R491 Q3 0/5 反例）？query 涉及 climate change / adaptation / sustainability / digital farming 等宽领域 → filter 段必加 `primary_location.source.id:s185196701,s145340771,s14486440` (Aquaculture / Fish Shellfish Immunol / Fishes) 强制只返回水产期刊命中；或 query 加 3 NOT 排除 `NOT human NOT soil NOT agriculture`；0/5 或 0/10 命中 = 角度失败必降级换下一角度（沿用 R482 防御 c，**不重试换 query 字符串**）
+- [ ] **4 角度轮换 SOP 累计实战 4 轮稳定**（R434+R482+R488+R491）？未来 R<n> 方向① 默认 4 角度轮换 + 每轮记录 PASS 角度 + reject 角度到 B 轨 evolution 报告；累计 16 角度复用率分析见 Pitfall #70 R491 段；R492+ 建议引入「跨轮 query 复用率检测」自动降级复用率高但 PASS 率低的 query
+- [ ] **N+2 公式 R491 第 3 次实战 PASS**（97 → 110 行 = +13 = 11+2）？实测 entry 5779 chars 落地后 desc=43853 chars (42.83KB) < 48KB 早闸口；pre-write OK + post-write OK 三段指纹齐全 + 落地 < 48KB + agent_R=0 verify 三连全 PASS
+

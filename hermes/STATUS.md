@@ -1,11 +1,11 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-09-13 12:10:32
+> 导出时间: 2026-09-14 12:41:00
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 86
+- Skills: 88
 - Profiles: 11
-- Scripts: 134
+- Scripts: 137
 - Plugins: 1
 
 ## 版本
@@ -58,6 +58,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - fetch
 - find-bugs
 - find-skills
+- freecad-cad-generation
 - frontend
 - frontend-ui
 - gaming
@@ -87,6 +88,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - product
 - product-debugging
 - product-launch-playbook
+- product-management
 - productivity
 - project-monitoring-boundary
 - quant
