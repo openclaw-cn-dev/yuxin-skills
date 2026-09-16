@@ -4,7 +4,8 @@ description: '毛豆（产品经理）核心技能集 — 产品设计冲刺、�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.0.1"
+  version: "1.3.0"
+  changelog: "v1.3.0 (2026-09-15): 索引表升级 5 件套 → 6 件套（新增 Service Blueprint 渔芯版 v1.0）；新增 §六 Service Blueprint 嵌入 Sprint Day 3 + Phase 7 + 长期维护闭环；新增 §七 与其他方法论一句话定位表。"
 ---
 
 # 毛豆产品经理核心技能
@@ -48,6 +49,97 @@ sqlite3 /Users/hua/.hermes/profiles/maodou/kanban.db \
 2. **jobs-to-be-done**（需求洞察）：功能 vs 情感
 3. **lean-startup**（敏捷开发）：Build-Measure-Learn
 4. **multi-phase-pipeline**（多阶段产品开发）：Phase1-7
+
+## 方法论 6 件套索引（v1.3.0 — 2026-09-15 升级）
+
+渔芯落地版 = 母方法论 × 渔芯改造。所有渔芯版文档落位 `/Users/hua/rkr_staging/文档库/A-渔芯科技/A2-公司运营/部门空间/maodou/methodology/`，**不重复造轮子**。
+
+| # | 方法论 | 角色 | 何时调用 | 文档 |
+|---|--------|------|----------|------|
+| 1 | **BMC 渔芯版 v1.0** | 商业模式层（做什么） | 新项目立项 / LookForge Phase 1 调研收口 | `2026-09-13_BMC渔芯版_v1.0.md` |
+| 2 | **JTBD Canvas 渔芯版 v1.0** | 需求洞察层（为什么） | 客户访谈 / 种子客户画像 / 痛点分级 | skill `lookforge-jtbd-canvas` + `JTBD-渔芯版_v1.0_2026-09-15.md` |
+| 3 | **HW-Design Sprint v1.0 渔芯版** | 快速验证层（怎么试） | HW-001~018 硬件 3 天冲刺 | `HW-Design-Sprint_v1.0_渔芯版_2026-09-15.md` |
+| 4 | **Lean Canvas 渔芯版 v1.0** | 项目假设层（值不值得做） | 新 HW/SaaS 项目立项 Day 1-2 填完 | `2026-09-15_Lean-Canvas_渔芯版_v1.0.md` |
+| 5 | **Kano 渔芯版 v1.0** | 需求质量层（该不该做） | Sprint Day 1 末 30min 速分 / HW 功能取舍 | `Kano-渔芯版_v1.0_2026-09-15.md` |
+| 6 | **Service Blueprint 渔芯版 v1.0** ★ | 全生命周期层（怎么服务 10 年） | Sprint Day 3 末 + LookForge Phase 7 + 长期维护 | `Service-Blueprint_渔芯版_v1.0_2026-09-15.md` |
+| 7 | **multi-phase-pipeline** | 项目执行层（怎么做） | LookForge Phase 1-7 全流程 | skill `multi-phase-pipeline` |
+
+**调用顺序（产品立项 + 长生命周期流水线）**：
+
+```
+BMC（立项 Day 0）→ Lean Canvas（Day 1-2 假设验证）→ JTBD（Day 3-5 用户）
+→ HW-Sprint（Day 6-9 原型）→ multi-phase-pipeline（Day 10+ 落地）
+        ↑                                      ↑
+Kano 嵌入 Sprint Day 1 末                Service Blueprint 嵌入 Sprint Day 3 末 + Phase 7 + 长期维护
+```
+
+**升级机制**：每补全 1 个方法论 → 升 skill 一次 v(N+1)。0.1 minor bump 用于文档增量；1.0 major 用于方法论体系重构。
+
+## 五、Kano × Sprint × RICE 三角闭环（v1.2.0 新增 — 2026-09-15）
+
+渔芯 5 件套不是平铺，而是 **3 维决策矩阵**：
+
+| 维度 | 方法论 | 回答 |
+|------|--------|------|
+| **该做什么** | BMC / Lean Canvas | 立项 / 商业模式 |
+| **该不该做** | **Kano**（需求质量分级） | 功能是基本/期望/兴奋/反向/无差异 |
+| **先做哪个** | RICE（Reach/Impact/Confidence/Effort） | 排序执行 |
+
+**Sprint Day 1 嵌入 Kano 流程**（30min 速分）：
+
+1. 列出 Day 1 HMW 产出的所有功能点（通常 8-15 个）
+2. 团队投票（每人对每个功能打 M/O/A/I/R 5 类）
+3. 取众数 → Kano 类别
+4. **强约束**：
+   - M（基本型）必须全部做 → 列入 Backlog P0
+   - O（期望型）取 RICE 分数 Top 50%
+   - A（兴奋型）**≤2 个**（资源保护）
+   - I / R **剔除**
+
+**保鲜期机制**：每类标 `shelf_life`（6/12/24 月），到期自动触发重分类（IoT 类兴奋型 12 个月就过时）。
+
+**实战记录**：Kano 渔芯版首次落地 → HW-001 滚筒微滤机 Day 1 Sprint（2026-09-15 16 时档 cron 进化产出）。
+
+## 六、Service Blueprint 嵌入 Sprint + Phase 7 + 长期维护（v1.3.0 新增 — 2026-09-15）
+
+渔芯 6 件套不是平铺，而是 **4 维决策矩阵**（v1.2.0 三角 + 第 4 维）：
+
+| 维度 | 方法论 | 回答 |
+|------|--------|------|
+| **该做什么** | BMC / Lean Canvas | 立项 / 商业模式 |
+| **该不该做** | Kano | 功能 M/O/A/I/R 分类 |
+| **先做哪个** | RICE | 排序执行 |
+| **★ 怎么做售后** | **Service Blueprint** | 设备 10 年 MOT + 触点 + RACI |
+
+**Service Blueprint 渔芯版 5 大改造维度**（vs 原版）：
+
+1. **横轴** = 设备生命周期（10 年切片），非客户旅程
+2. **纵轴** = 5 道跨部门泳道（客户/销售/产品/售后/技术），非 2 道客户/后台
+3. **MOT 加权** = 经济损失 ¥ + 恢复时间 h + SOP 编号 + 兜底责任人
+4. **触点工具分层** = 4 类（人工/IoT/SaaS/文档），非 2 类（线上/线下）
+5. **生命周期叠加** = 调试 0-3 月 / 磨合 3-12 月 / 稳定 1-5 年 / 老化 5-10 年
+
+**3 个嵌入时点**：
+
+| 时点 | 动作 | 责任人 |
+|------|------|--------|
+| Sprint **Day 3 末** | 画蓝图 v0.1 草图（售前+调试+磨合 3 阶段） | 毛豆 |
+| LookForge **Phase 7 交付** | 升级 v1.0 完整 6 阶段 | 毛豆 + 售后 |
+| 设备**售出 3/12 个月 + 3/5/7 年** | 复盘升级 v1.1 / v2.0 / v3.0 | 毛豆 + 玉芬 |
+
+**实战记录**：Service Blueprint 渔芯版首次落地 → HW-001 滚筒微滤机（含 4 个 MOT：D7 反冲洗堵塞 ¥5万 / M3 滤网破损 ¥1万 / Y2 PLC 老化 ¥2万 / Y7 整机翻新 ¥3万）。
+
+## 七、与其他方法论一句话定位（v1.3.0 新增 — 2026-09-15）
+
+| 方法论 | 一句话定位 | 渔芯场景 |
+|--------|-----------|----------|
+| **BMC** | 商业模式（客户/价值/成本/收入） | 立项 Day 0 |
+| **Lean Canvas** | 项目假设（问题/解决方案/指标） | Day 1-2 |
+| **JTBD Canvas** | 用户为什么雇佣/解雇产品 | Day 3-5 |
+| **HW-Sprint** | 5 天原型验证（理解-定义-设想-原型-测试） | Day 6-9 |
+| **Kano** | 需求该不该做/做哪类（M/O/A/I/R） | Sprint Day 1 末 |
+| **Service Blueprint ★** | **设备全生命周期服务怎么做（售前-调试-磨合-稳定-老化-退役）** | **Sprint Day 3 + Phase 7 + 长期维护** |
+| **multi-phase-pipeline** | Phase 1-7 软件/产品执行流程 | Day 10+ 落地 |
 
 ## 公司两大品牌版块
 

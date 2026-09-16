@@ -10,4 +10,5 @@ jobs.json.bak.20260903-恢复正常
 logs
 output
 references
+scripts
 state

@@ -44,6 +44,7 @@ verify-cron-state-existence
 xiaobao-trigger-content-closed-loop
 yuanbao
 zhenglishi
+zhenglishi-cron-home-hijack-recovery
 zhenglishi-cron-skip-daily-closeout
 zhenglishi-deep-dive-cron
 zhenglishi-noon-flash-briefing

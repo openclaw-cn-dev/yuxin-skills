@@ -63,6 +63,7 @@ productivity
 research
 scorecard-marketing
 seed-customer-scout
+service-blueprint-yuxin
 skill-creator
 slack-gif-creator
 smart-home

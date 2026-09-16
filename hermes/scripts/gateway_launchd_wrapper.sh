@@ -11,6 +11,10 @@ export CODEX_HOME="/Users/hua/.codex"
 export CLAUDE_CONFIG_DIR="/Users/hua/.claude"
 export VIRTUAL_ENV="/Users/hua/.hermes/hermes-agent/venv"
 
+# v4 2026-09-14 宽博士:启动前 preflight — 项目搬家检测 + hermes_data 自动同步
+# 不阻塞(失败/超时静默,网关必须能起),退出码 0
+/Users/hua/.hermes/scripts/hermes_home_preflight.sh "$PROFILE" || true
+
 # 转发信号给 python 子进程
 PYTHON_PID=""
 trap 'kill -TERM $PYTHON_PID 2>/dev/null; exit 0' TERM INT
