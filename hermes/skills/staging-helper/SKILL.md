@@ -1,6 +1,6 @@
 ---
 name: staging-helper
-description: 渔芯 Agent 统一资料入站与查询标准 — 玉芬是全公司总负责人(2026-08-03 华哥明确),7 个 agent 是玉芬的执行单元。⚠️ **2026-09-13 v3 大变更**：RKR scanner 已停机、`staging_save.py`/`staging_query.py` 已**废用**(staging_save 写 ~/.hermes/staging 死区,RKR API 已停)——资料一律**直接写文件**到 ABCZ 四版块目录,权威索引=`~/rkr_staging/文档库/INDEX.md` v3。旧顶层目录(1-通用知识/2-专业知识/3-公司项目资料/4-360行项目调研)已不存在禁止重建;同事 personal zone 新址=`A-渔芯科技/A2-公司运营/部门空间/<名字>/`。触发条件:agent 产出任何 Markdown 资料、staging_save/staging_query 报错或写入后文件消失、或按旧文档库路径读文件报 No such file。v1.x 中转站/scanner 流程仅作历史参考勿再执行。
+description: 渔芯 Agent 统一资料入站与查询标准 — 玉芬是全公司总负责人(2026-08-03 华哥明确),7 个 agent 是玉芬的执行单元。⚠️ **2026-09-13 v3 大变更**：RKR scanner 已停机、`staging_save.py`/`staging_query.py` 已**废用**(staging_save 写 ~/.hermes/staging 死区,RKR API 已停)——资料一律**直接写文件**到 ABCZ 四版块目录,权威索引=`~/rkr_staging/文档库/INDEX.md` v3。旧顶层目录(1-通用知识/2-专业知识/3-公司项目资料/4-360行项目调研)已不存在禁止重建;同事 personal zone 新址=`A-渔芯科技/A2-公司运营/部门空间/<名字>/`。触发条件:agent 产出任何 Markdown 资料、staging_save/staging_query 报错或写入后文件消失、或按旧文档库路径读文件报 No such file。v1.x 中转站/scanner 流程仅作历史参考勿再执行。 含 RKR 文档库盘点/搬迁执行 SOP 档案（原 rkr-doclib-inventory 已并入）。
   ⚠️ v3 时代（2026-09-13 起）：本 skill 原核心工作流（staging_save.py 中转站 + scanner 自动归类 + staging_query.py RKR API）已**全线废用**——scanner 停机、RKR API 停、staging_save 写 ~/.hermes/staging 死区。现行标准 = **直接 write_file/cp 到 ~/rkr_staging/文档库/ ABCZ 四版块**，权威索引 = 文档库根 INDEX.md v3，完整映射/落位表/禁区见 references/doclib-v3-2026-09-13.md（先读它，再决定是否翻 v1.5 历史）。触发条件：任何 agent 调研/生成/产出 Markdown 资料需落盘，或引用旧路径（1-通用知识/2-专业知识/3-公司项目资料/4-360行项目调研/301-智能体）报 No such file，或 staging_save.py 报错/产出落死区，或需查文档库当前版块结构。
 version: 2.0.0
 author: 玉芬
@@ -862,3 +862,7 @@ cronjob action=list  # 看现有 job
 > 🆕 v1.2.0: 新增"3 层架构(写/读/个人)"心法 + pitfall 9/10/11/12 + 2 references + 1 template
 > 📝 v1.1.0: 批量迁移 + GitHub 同步 + cron 模式 + 4 个 references
 > 📝 v1.0.0: 初版,写/读双路径 + 8 个常见陷阱
+
+## RKR 文档库盘点与重组档案（curator 合并 · 原 rkr-doclib-inventory）
+
+三大版块结构事实（渔芯科技/渔芯社区/渔芯独角兽）、盘点方法论、62 万文件物理搬迁执行 SOP（2026-09-12 已完成零丢失）、文档库 INDEX 重建 SOP、清理分级审计。一次性搬迁已收口；再次盘点/迁移/清垃圾时读 `references/rkr-doclib-inventory.md`（执行日志与审计清单同在 references/rkr-doclib-*.md）。

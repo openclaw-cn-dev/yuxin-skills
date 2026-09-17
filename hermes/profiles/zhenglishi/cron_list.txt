@@ -1,5 +1,6 @@
 backup
 backups
+cron_output
 jobs.json
 jobs.json.bak-20260907-p62-rotate
 jobs.json.bak-20260913-v3

@@ -1,9 +1,9 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-09-16 12:41:06
+> 导出时间: 2026-09-17 12:48:10
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 92
+- Skills: 90
 - Profiles: 11
 - Scripts: 139
 - Plugins: 1
@@ -44,9 +44,12 @@ Update available: 2659 commits behind — run 'hermes update'
 - bugfix
 - byted-supabase
 - cad-automation
+- candidate-chapter-a5-rollout
 - commit
 - company-law-5y-paid-in-tracker
 - creative
+- cron-home-hijack-bypass
+- cron-self-evolution-toolkit
 - data-science
 - devops
 - diagramming
@@ -55,10 +58,10 @@ Update available: 2659 commits behind — run 'hermes update'
 - edtech
 - email
 - feeds
+- feishu-ops
 - fetch
 - find-bugs
 - find-skills
-- freecad-cad-generation
 - frontend
 - frontend-ui
 - gaming
@@ -67,16 +70,12 @@ Update available: 2659 commits behind — run 'hermes update'
 - heidou
 - hermes-ecosystem-entry.md
 - inference-sh
-- jtbd-phase3-landing-sop
 - knowledge-base
-- knowledge-organizer-self-evolution-sop
 - laomo-heartbeat
 - laomo-knowledge
+- laomo-openalex-known-dois-format-mismatch
 - lookforge
-- maodou-cron-evolution-appendices
-- maodou-cron-heartbeat-patch-pending-v1.11.0
 - maodou-product
-- maodou-product-patch-pending-v1.0.2
 - maodou-workflow
 - marketing-from-simulation
 - mcp
@@ -100,7 +99,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - refactoring-ui
 - research
 - research-collection
-- rkr-doclib-inventory
 - sales
 - search
 - security

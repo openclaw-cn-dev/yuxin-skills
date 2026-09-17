@@ -4,7 +4,7 @@ description: '渔芯资料收集技能 — 高效搜集行业信息、公司情�
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # 渔芯资料收集技能
@@ -353,6 +353,76 @@ print(t[:3500])"
 8. **报告可读性分层**（2026-09-07 固化）：给华哥的技术分析报告正文可保留专业细节与表格，但必须自带 3-5 句"大白话版"（比喻、零术语、结论先行）——华哥典型追问"用小白能听懂的话解释一下"，主动分层别等追问
 9. **轮换指令**：华哥说「XX 号项目加入调研轮换，继续深化」→ 按 `references/360hang-rotation-ops.md` 四步流程执行（清单行尾标记是闸门 + 3 个 daily-research cron 硬编码同步 + 项目 INDEX 状态 + 更新记录版本行）
 
+### Pitfall 16: 开源 license 风险分级 — 入选前先查 license 字段（2026-09-16 Claude Code 编程能力研究实测）
+GitHub API 返回的 license 字段不只是 NOASSERTION（无 license）一个雷区，实测抓到 3 类必须预警的：
+
+| SPDX | 含义 | 渔芯处理 |
+|------|------|----------|
+| **AGPL-3.0** | **传染型开源**——任何服务端集成必须开源整体代码 | **生产环境禁用**，仅 demo；不可嵌入 corp harness |
+| **NOASSERTION** | 作者未声明 license | **法务先审**，不可直接商用；仅 dev env 试用 |
+| **GPL-3.0 / GPL-2.0** | 强 copyleft，集成后整体必须 GPL | 法务审，决定是否绕开 |
+| **MIT / Apache-2.0** | 友好 license | **默认可用**，但仍要在风险登记表记一笔 |
+| **None**（即字段不存在或 null） | 极小/极新仓库常无 license | 与 NOASSERTION 等同处理 |
+
+**实测案例（9-16 增量研究）**：
+- `tommy0103/obelisk` ⭐499 — AGPL-3.0，session 可查询，**生产环境禁用**
+- `JuliusBrussee/caveman` ⭐105K — NOASSERTION，token 压缩，**法务先审**
+- `ruvnet/open-claude-code` ⭐500 — MIT 但描述写"clean-room reverse engineered"，触及上游 trade secret 风险 → **法务审过再决定**
+
+**GitHub API 解析金标准（已在 Pitfall 10 基础上强化）**：
+```python
+lic = r.get('license') or {}
+spdx = lic.get('spdx_id', 'NONE') if lic else 'NONE'
+# 预警分级
+if spdx in ('AGPL-3.0', 'AGPL-2.0'):
+    risk = 'P0_BAN'  # 传染型
+elif spdx in ('GPL-3.0', 'GPL-2.0'):
+    risk = 'P1_REVIEW'
+elif spdx == 'NOASSERTION' or spdx == 'NONE':
+    risk = 'P1_REVIEW'
+elif spdx in ('MIT', 'Apache-2.0', 'BSD-3-Clause', 'BSD-2-Clause'):
+    risk = 'OK'
+else:
+    risk = 'P2_CAUTION'
+```
+
+**写入报告的 SOP**：每篇调研报告的"反模式 / 警示"表里**必须**出现 license 风险行（不只是功能风险），玉芬能看到传染型/无 license 的项目一眼挑出来。
+
+### Pitfall 17: 仓库路径未知的"git/trees + raw fetch"两步定位法（2026-09-16 实测）
+任务说"查 anthropics/claude-code 的 /frontend-design SKILL.md 在哪"，但直接抓 `.claude/skills/frontend-design/SKILL.md` 返回 404——这种"文档说存在但 URL 不对"的场景通用解法：
+
+```bash
+# Step 1: 列主分支顶层目录结构（recursive=0 拿根级别即可，recursive=1 太重）
+curl -sL 'https://api.github.com/repos/<org>/<repo>/git/trees/main?recursive=0' | \
+  python3 -c "import json,sys; d=json.load(sys.stdin); [print(i['path']) for i in d['tree']]"
+
+# Step 2: 从树里筛目标路径（关键词匹配）
+# 例如找 frontend-design / SKILL.md / design 相关
+python3 -c "
+import json
+with open('/tmp/tree.json') as f: d = json.load(f)
+for i in d.get('tree',[]):
+    p = i.get('path','')
+    if any(k in p.lower() for k in ['design','skill','frontend']):
+        print(i['type'], '|', p)
+"
+
+# Step 3: 抓 raw 文件确认（已知路径后）
+curl -sL 'https://raw.githubusercontent.com/<org>/<repo>/main/<path>' -o /tmp/file.md
+```
+
+**适用场景**：
+- 上期报告标记 ⚠️ 的"路径未知"项需要结案时
+- 跟进"上游文档说存在但 GitHub URL 404"的情况
+- 找 plugin 实际结构（如 `plugins/<name>/skills/<name>/SKILL.md`）
+
+**避坑**：
+- `?recursive=1` 会拉整个仓库文件树，对超大仓库（anthropics/claude-code 等）会爆 API limit 或超时
+- `?recursive=0` 只列根目录 + 顶层子目录（`tree` 类型），足够定位
+- raw.githubusercontent.com 必须用 `main` 分支（不是 `master`，Anthropic 已切到 main）
+
+**实测案例**：9-09 报告标记的 `/frontend-design SKILL.md 路径未知`⚠️ 项，9-16 用此方法 5 分钟内结案——路径为 `plugins/frontend-design/skills/frontend-design/SKILL.md`，全文 9390 字节。
+
 ## 调研执行模式选择：子代理并行 vs 直研（2026-09-06 实测）
 
 - delegate_task 批量 web 调研子代理有 **600s 硬超时**：3 路并行各 14-24 次 API 调用全部 timeout 且**零落盘**（慢模型/慢外网下高发）
@@ -367,3 +437,11 @@ print(t[:3500])"
 - `references/***SECRET***.md` — OPC（一人公司）出海知识库快照：已验证单人公司案例收入表、GEO 工具竞品定价与空档、MoR 收款路径、中国生态、whois 域名批量查重 one-liner、CitedLens landing 模板指针
 
 - `references/***SECRET***.md` — 渔芯 01-开发中 项目池现状快照（五批补研后的资料厚度分布、华哥口头指令的项目简称↔目录名映射如「OPC出海」=研-AI时代OPC出海、富资料项目如工程施工大模型 34G 的构成），下次"丰富 XX 项目资料"类指令先查此表避免重新扫描全盘
+
+## 竞品网站深扫（curator 合并 · 原 competitor-website-scan）
+
+零依赖竞品情报：Hermes 原生 browser_navigate + browser_snapshot 全站扫描——域名发现（搜索/ICP/备案号兜底）→ 每个导航项逐页 snapshot → live chat 消息抓取 → 数据不一致发现 → 结构化 tear-down。适用：无 browse CLI/BROWSERBASE_API_KEY、中文站点、5-10 分钟快速拆解。完整 SOP 见 `references/competitor-website-scan.md`。
+
+## Subagent 报告真实性核验（curator 合并 · 原 verify-subagent-claims）
+
+delegate_task 返回含具体 claim 的研究报告时，采信前必做：列出全部具体 claim（DOI/数字/团队名/部署案例/日期）→ web_search 多源交叉验证（≥3 独立来源）→ 已验证才写入产出 / 存疑标注不删。实战教训：subagent 报告曾含真实 DOI 但混入无来源的百分比数字与未确认归属的团队名。高风险 claim 清单与核验流程见 `references/verify-subagent-claims.md`，批量核验脚本 `scripts/verify-claims.sh`。
