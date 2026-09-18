@@ -5,7 +5,7 @@
 - Skills：**96 个**（`ls ~/.codex/skills/ | wc -l` = 96，与 AGENTS.md "95" 差 1 = `.system/` hidden 目录的 imagegen 等内置项不计）
 - Marketplace：3 个（bundled / curated / primary-runtime），全部 local snapshot，**无 Git 远端可升**
 - 已装插件：**19 个 enabled**（bundled 7 / curated 7 / primary-runtime 5），未变
-- 飞书推送：**仍阻塞第 4 天**（app `cli_aaaefb812938dbcd` 已删 + 10217 死锁）—— 沿用 8-27/28 铁律走 final response 兜底
+- 飞书推送：**仍阻塞第 4 天**（app `<FEISHU_APP_ID>` 已删 + 10217 死锁）—— 沿用 8-27/28 铁律走 final response 兜底
 
 ## 新增 3 个 skill（GitHub trending 7 日内）
 
@@ -88,8 +88,8 @@ find ~/.codex/skills -name SKILL.md -not -path '*/.system/*' | wc -l
 
 ## 飞书推送现状（已 4 天阻塞）
 
-- `~/.hermes/.env` 唯一 bot = `cli_aaaefb812938dbcd`（8-27 已删）
-- `~/.codex/.tmp/plugins/plugins.json` 历史装过 `cli_aaaefb812938dbcd`（10217 死锁）
+- `~/.hermes/.env` 唯一 bot = `<FEISHU_APP_ID>`（8-27 已删）
+- `~/.codex/.tmp/plugins/plugins.json` 历史装过 `<FEISHU_APP_ID>`（10217 死锁）
 - 老大手动修法（P0）：
   1. 飞书开放平台建新 app → 拿 APP_ID + APP_SECRET → 写进 `~/.hermes/.env`
   2. 飞书客户端把新 bot 加进 home chat `oc_529aff7485ccc35de97a9e7233d665dd` + 加老大自己（chat 不能 0 人）

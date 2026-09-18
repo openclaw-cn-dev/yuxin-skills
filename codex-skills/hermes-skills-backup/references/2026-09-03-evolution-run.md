@@ -262,7 +262,7 @@ f751a8c5467c41500e505d90cb0eb8b70929080f    # ← 一致！
 ## 飞书推送
 
 - `last_delivery_error`: `live adapter send failed: [230002] Bot/User can NOT be out of the chat.`（沿用 8-26 + 0901 铁律，**阻塞第 9 天**）
-- 老大手动把 bot `cli_aaaefb812938dbcd` 加回 `oc_529aff7485ccc35de97a9e7233d665dd` 群才能恢复
+- 老大手动把 bot `<FEISHU_APP_ID>` 加回 `oc_529aff7485ccc35de97a9e7233d665dd` 群才能恢复
 - 本次报告内容走 cron 自动投递管道（不管 230002 也走），老大重新拉 bot 进群后能补看到历史
 
 ## `hermes send --file` 路径解析坑（0903 实测 + 立新铁律）

@@ -65,7 +65,7 @@ $ hermes send --to "feishu:oc_529aff7485ccc35de97a9e7233d665dd"
 hermes send: Feishu send failed: [230002] Bot/User can NOT be out of the chat.
 ```
 
-沿用 8-25 铁律：老大手动去飞书 home 群加 bot (`cli_aaaefb812938dbcd`) → 下个 cron 自动恢复推送。
+沿用 8-25 铁律：老大手动去飞书 home 群加 bot (`<FEISHU_APP_ID>`) → 下个 cron 自动恢复推送。
 
 ## 8-27 新增铁律
 

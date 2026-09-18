@@ -69,7 +69,7 @@ hermes cron list 2>&1 | grep -c "230002"
 **根因**：飞书 bot 应用被老大/平台从 home 群 `oc_529aff7485ccc35de97a9e7233d665dd` 移除。
 
 **修法（老大手动）**：
-1. 飞书 → 进入 home 群 → 群设置 → 群机器人 → 添加 → 搜 `cli_aaaefb812938dbcd` → 加回
+1. 飞书 → 进入 home 群 → 群设置 → 群机器人 → 添加 → 搜 `<FEISHU_APP_ID>` → 加回
 2. 等下个 cron 周期自动恢复
 
 **铁律**：cron 看到 230002 → 不重试 / 不切换 chat_id / 不动插件配置。直接放 final response 报告，等老大手动拉 bot。

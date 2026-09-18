@@ -40,7 +40,7 @@
 ## 飞书推送：仍阻塞第 5 天
 
 - 错误：`code=230002, msg=bot has been kicked` / `code=10217, msg=unauthorized`
-- `.env` 唯一 bot `cli_aaaefb812938dbcd` 已删
+- `.env` 唯一 bot `<FEISHU_APP_ID>` 已删
 - 阻塞来源：APP_ID/APP_SECRET env 未注入 + 7897 代理 alive（VPN 未启）
 - 修法：老大手动 (1) 飞书开放平台建新 app → (2) 写 .env → (3) 飞书客户端把 bot 加进 home chat + 加老大自己
 
