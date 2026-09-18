@@ -1,5 +1,5 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-09-17 12:52:25
+> 导出时间: 2026-09-18 13:25:30
 > 主机: huadeMac-mini-3.local
 
 ## 统计
@@ -10,10 +10,6 @@
 
 ## 版本
 Hermes Agent v0.15.1 (2026.5.29)
-Project: /Users/hua/.hermes/hermes-agent
-Python: 3.11.15
-OpenAI SDK: 2.24.0
-Update available: 2659 commits behind — run 'hermes update'
 
 ## Profiles
 - afu
@@ -99,7 +95,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - refactoring-ui
 - research
 - research-collection
-- sales
 - search
 - security
 - security-review
@@ -114,6 +109,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - voice
 - voice-interaction-system
 - webapp-testing
+- xiaobao-sales
 - xlsx
 - yuxin-code-iron-law
 - yuxin-coding-workflow

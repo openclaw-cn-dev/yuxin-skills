@@ -24,6 +24,8 @@ metadata:
 
 **报错路由**：230002（Bot 不在 chat）/ 232009（chat 已解散）/ 99991663（token 过期）→ 全部走实时枚举流程：每次重取 token → `GET /open-apis/im/v1/chats?page_size=50` → 按 name 匹配目标 → 发送。完整 Python 模板见 `references/feishu-channel-discovery.md`。channel 状态快照样例同文件。
 
+**⚠️ 禁裸跑探测 legacy 通知脚本（R587 2026-09-17 实测坑）**：`scripts/feishu_notify.py` 这类早期脚本**无 argparse/usage 守卫**，模块级直发——裸跑不带参数、甚至 `--help` 探测，都会立即把硬编码消息（如「Claude Code 更新通知」）真实发进目标群，无法撤回。铁律：**任何不熟悉的 notify 脚本，调用前先 `read_file` 看源码确认入口逻辑**（有无 `if __name__` 守卫、参数解析、硬编码 chat_id），确认安全后才执行；找"哪个脚本发哪个群"时用 `search_files`/`grep` 静态检索，禁用执行来探测。
+
 ## §2 多维表格 Bitable（把数据做成在线看板）
 
 概念：app（app_token）→ table（table_id）→ field（列）→ record（行）。流程：取 token → `POST /open-apis/bitable/v1/apps` 建表 → fields 加列（type：1 文本/2 数字/3 单选/5 日期/11 人员/17 附件）→ `records/batch_create`（≤500 条/批）。可复用脚本 `~/.hermes/scripts/tokens_to_bitable.py`。完整流程见 `references/feishu-bitable.md`。

@@ -373,7 +373,7 @@ comm -23 /tmp/referenced_skills.txt <(sed 's|^|productivity/|' /tmp/installed_sk
 
 ## 关联 skill
 
-- **每日管理进化扫描(8项 cron)** → `productivity/yuxin-management-scan`(专用 SOP + scripts/scan_cron_health.py、scan_agent_activity.py)。本 skill 的 Phase 1 Signal Scan 是通用信号扫描;8 项固定扫描走那个专用 skill,不要在本 skill 里重复维护其步骤。
+- **每日管理进化扫描(8 项 cron)** → `productivity/yuxin-management-scan`(专用 SOP + scripts/scan_cron_health.py、verify_deliver_targets.py)。本 skill 的 Phase 1 Signal Scan 是通用信号扫描;8 项固定扫描走那个专用 skill,不要在本 skill 里重复维护其步骤。(2026-09-17 已创建,此前为"引用了不存在的 skill"实例——cron prompt 引用不存在 skill 会静默跳过,新写 cron prompt 前先验证目标 skill 存在。)
 
 ### 版本检查捷径
 `hermes --version` 末行直接显示 "N commits behind — run 'hermes update'",不用自己 git fetch(外网常超时)。

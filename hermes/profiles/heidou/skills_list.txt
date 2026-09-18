@@ -33,7 +33,9 @@ gaming
 gifs
 github
 heidou-admin
+heidou-cron-self-evolution-sop
 heidou-skills-audit-v1.0_2026-09-02.md
+heidou-skills-audit-v1.1_2026-09-17.md
 heidou-workflow
 hermes-ecosystem-entry.md
 hooked-ux

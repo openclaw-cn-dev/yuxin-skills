@@ -1,8 +1,7 @@
 {
-  "last_sync": "2026-09-16T12:41:00+08:00",
-  "commit": "211defb",
-  "skills": 92,
+  "last_sync": "2026-09-18T13:25:42+08:00",
+  "skills": 90,
   "profiles": 11,
   "scripts": 139,
-  "broken_known": "16 tap placeholder/empty dirs + 6 mlops subdirs missing SKILL.md"
+  "broken_known": "6 mlops subdirs + productivity/ocr-and-documents missing SKILL.md (7 total)"
 }
