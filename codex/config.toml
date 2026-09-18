@@ -96,6 +96,9 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/算东算西"]
 trust_level = "trusted"
 
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/app-ai知识图谱"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
