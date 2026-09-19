@@ -19,23 +19,23 @@ providers:
     base_url: https://open.bigmodel.cn/api/paas/v4
     model: glm-5.3-flash
 fallback_providers: '["custom:glm","deepseek-direct"]'
-credential_pool_strategies: {}
+: {}
 toolsets:
 - hermes-cli
 agent:
   max_turns: 60
   gateway_timeout: 1800
-  restart_drain_timeout: 60
+  : 60
   api_max_retries: 3
   service_tier: ''
-  tool_use_enforcement: auto
-  task_completion_guidance: true
+  : auto
+  : true
   environment_probe: true
   environment_hint: ''
-  gateway_timeout_warning: 900
+  : 900
   clarify_timeout: 600
-  gateway_notify_interval: 180
-  gateway_auto_continue_freshness: 3600
+  : 180
+  : 3600
   image_input_mode: auto
   disabled_toolsets: []
 terminal:
@@ -55,11 +55,11 @@ terminal:
   container_cpu: 1
   container_memory: 5120
   container_disk: 51200
-  container_persistent: true
+  : true
   docker_volumes: []
-  docker_mount_cwd_to_workspace: false
+  : false
   docker_extra_args: []
-  docker_run_as_host_user: false
+  : false
   persistent_shell: true
 web:
   backend: ''
@@ -71,7 +71,7 @@ browser:
   record_sessions: false
   allow_private_urls: false
   engine: auto
-  auto_local_for_private_urls: true
+  : true
   cdp_url: ''
   dialog_policy: must_respond
   dialog_timeout_s: 300
@@ -80,7 +80,7 @@ browser:
     user_id: ''
     session_key: ''
     adopt_existing_tab: false
-    rewrite_loopback_urls: false
+    : false
     loopback_host_alias: host.docker.internal
 checkpoints:
   enabled: false
@@ -96,25 +96,25 @@ tool_output:
   max_bytes: 50000
   max_lines: 2000
   max_line_length: 2000
-tool_loop_guardrails:
+:
   warnings_enabled: true
   hard_stop_enabled: false
   warn_after:
     exact_failure: 2
     same_tool_failure: 3
-    idempotent_no_progress: 2
+    : 2
   hard_stop_after:
     exact_failure: 5
     same_tool_failure: 8
-    idempotent_no_progress: 5
+    : 5
 compression:
   enabled: true
   threshold: 0.5
   target_ratio: 0.2
   protect_last_n: 20
-  hygiene_hard_message_limit: 400
+  : 400
   protect_first_n: 3
-  abort_on_summary_failure: false
+  : false
 prompt_caching:
   cache_ttl: 5m
 openrouter:
@@ -128,9 +128,9 @@ bedrock:
     provider_filter: []
     refresh_interval: 3600
   guardrail:
-    guardrail_identifier: ''
+    : ''
     guardrail_version: ''
-    stream_processing_mode: async
+    : async
     trace: disabled
 auxiliary:
   vision:
@@ -216,36 +216,36 @@ display:
   personality: ''
   resume_display: full
   resume_exchanges: 10
-  resume_max_user_chars: 300
-  resume_max_assistant_chars: 200
-  resume_max_assistant_lines: 3
-  resume_skip_tool_only: true
+  : 300
+  : 200
+  : 3
+  : true
   busy_input_mode: interrupt
   interface: cli
-  tui_auto_resume_recent: false
+  : false
   tui_agents_nudge: true
   bell_on_complete: false
   show_reasoning: false
   streaming: false
   timestamps: false
-  final_response_markdown: strip
+  : strip
   persistent_output: true
-  persistent_output_max_lines: 200
+  : 200
   inline_diffs: true
-  file_mutation_verifier: true
-  turn_completion_explainer: true
+  : true
+  : true
   show_cost: false
   skin: default
   language: en
-  tui_status_indicator: kaomoji
-  user_message_preview:
+  : kaomoji
+  :
     first_lines: 2
     last_lines: 2
-  interim_assistant_messages: true
-  tool_progress_command: false
-  tool_progress_overrides: {}
+  : true
+  : false
+  : {}
   tool_preview_length: 0
-  ephemeral_system_ttl: 0
+  : 0
   platforms:
     telegram:
       streaming: true
@@ -260,7 +260,7 @@ display:
   copy_shortcut: auto
 dashboard:
   theme: default
-  show_token_analytics: false
+  : false
   oauth:
     client_id: ''
     portal_url: ''
@@ -272,8 +272,8 @@ tts:
   edge:
     voice: en-US-AriaNeural
   elevenlabs:
-    voice_id: pNInz6obpgDQGcFmaJgB
-    model_id: eleven_multilingual_v2
+    voice_id: 
+    model_id: 
   openai:
     model: gpt-4o-mini-tts
     voice: alloy
@@ -283,8 +283,8 @@ tts:
     sample_rate: 24000
     bit_rate: 128000
   mistral:
-    model: voxtral-mini-tts-2603
-    voice_id: c69964a6-ab8b-4f8a-9465-ec0925096ec8
+    model: 
+    voice_id: 
   neutts:
     ref_audio: ''
     ref_text: ''
@@ -309,7 +309,7 @@ stt:
     diarize: false
 voice:
   record_key: ctrl+b
-  max_recording_seconds: 120
+  : 120
   auto_tts: false
   beep_enabled: true
   silence_threshold: 200
@@ -322,7 +322,7 @@ context:
   engine: compressor
 memory:
   memory_enabled: true
-  user_profile_enabled: true
+  : true
   memory_char_limit: 2200
   user_char_limit: 1375
   provider: mnemosyne
@@ -332,22 +332,22 @@ delegation:
   base_url: ''
   api_key: "***"
   api_mode: ''
-  inherit_mcp_toolsets: true
+  : true
   max_iterations: 50
-  child_timeout_seconds: 600
+  : 600
   reasoning_effort: ''
-  max_concurrent_children: 3
+  : 3
   max_spawn_depth: 1
-  orchestrator_enabled: true
-  subagent_auto_approve: false
-prefill_messages_file: ''
+  : true
+  : false
+: ''
 goals:
   max_turns: 20
 skills:
   external_dirs: []
   template_vars: true
   inline_shell: false
-  inline_shell_timeout: 10
+  : 10
   guard_agent_created: false
 curator:
   enabled: true
@@ -363,23 +363,23 @@ honcho: {}
 timezone: ''
 slack:
   require_mention: true
-  free_response_channels: ''
+  : ''
   allowed_channels: ''
   channel_prompts: {}
 discord:
   require_mention: true
-  free_response_channels: ''
+  : ''
   allowed_channels: ''
   auto_thread: true
-  thread_require_mention: false
+  : false
   history_backfill: true
-  history_backfill_limit: 50
+  : 50
   reactions: true
   channel_prompts: {}
   dm_role_auth_guild: ''
   server_actions: ''
-  allow_any_attachment: false
-  max_attachment_bytes: 33554432
+  : false
+  : 33554432
 whatsapp: {}
 telegram:
   reactions: false
@@ -387,7 +387,7 @@ telegram:
   allowed_chats: ''
 mattermost:
   require_mention: true
-  free_response_channels: ''
+  : ''
   allowed_channels: ''
   channel_prompts: {}
 matrix:
@@ -399,12 +399,11 @@ approvals:
   timeout: 60
   cron_mode: deny
   mcp_reload_confirm: true
-  destructive_slash_confirm: true
+  : true
 command_allowlist:
-- script execution via heredoc
 - script execution via -e/-c flag
-- recursive delete
-- delete in root path
+- shell command via -c/-lc flag
+- script execution via heredoc
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false
@@ -427,23 +426,23 @@ cron:
   max_parallel_jobs: null
 kanban:
   dispatch_in_gateway: true
-  dispatch_interval_seconds: 60
+  : 60
   failure_limit: 2
-  worker_log_rotate_bytes: 2097152
-  worker_log_backup_count: 1
-  orchestrator_profile: ''
+  : 2097152
+  : 1
+  : ''
   default_assignee: ''
-  max_in_progress_per_profile: null
+  : null
   auto_decompose: true
-  auto_decompose_per_tick: 3
-  dispatch_stale_timeout_seconds: 14400
+  : 3
+  : 14400
 code_execution:
   mode: project
 tools:
   tool_search:
     enabled: auto
     threshold_pct: 10
-    search_default_limit: 5
+    : 5
     max_search_limit: 20
 logging:
   level: INFO
@@ -458,27 +457,27 @@ network:
   force_ipv4: false
 gateway:
   strict: false
-  media_delivery_allow_dirs: []
+  : []
   trust_recent_files: true
-  trust_recent_files_seconds: 600
+  : 600
 streaming:
   enabled: false
   transport: auto
   edit_interval: 0.8
   buffer_threshold: 24
   cursor: " \u2589"
-  fresh_final_after_seconds: 60.0
+  : 60.0
 sessions:
   auto_prune: false
   retention_days: 90
   vacuum_after_prune: true
   min_interval_hours: 24
-  write_json_snapshots: false
+  : false
 onboarding:
   seen:
     busy_input_prompt: true
-    openclaw_residue_cleanup: true
-    tool_progress_prompt: true
+    : true
+    : true
 updates:
   pre_update_backup: false
   backup_keep: 5
@@ -501,12 +500,12 @@ secrets:
     override_existing: true
     auto_install: true
     server_url: ''
-paste_collapse_threshold: 5
-paste_collapse_threshold_fallback: 5
-paste_collapse_char_threshold: 2000
+: 5
+: 5
+: 2000
 _config_version: 26
-FEISHU_APP_ID: "***"
-FEISHU_APP_SECRET: "***"
+FEISHU_APP_ID: 
+FEISHU_APP_SECRET: 
 replicate:
   token: "***"
 custom_providers:
@@ -522,7 +521,7 @@ mcp_servers:
   lookforge:
     command: /Users/hua/.hermes/hermes-agent/venv/bin/python3
     args:
-    - "/Users/hua/Desktop/\u6E14\u82AF\u79D1\u6280/6-\u4EA7\u54C1\u7814\u53D1/02-LookForge/backend/app/mcp/lookforge_mcp_server.py"
+    - "/Users/hua/Desktop/\u6E14\u82AF\u79D1\u6280/6-\u4EA7\u54C1\u7814\u53D1/02-LookForge/backend/app/mcp/.py"
     - --token-mode
     - user_access_token
     - --oauth
