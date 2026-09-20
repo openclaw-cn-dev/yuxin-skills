@@ -1,7 +1,7 @@
 {
-  "last_sync": "2026-09-19T12:06:33+08:00",
+  "last_sync": "2026-09-20T14:01:05+08:00",
   "skills": 90,
   "profiles": 11,
-  "scripts": 139,
-  "broken_known": "6 mlops subdirs + productivity/ocr-and-documents missing SKILL.md (7 total)"
+  "scripts": 140,
+  "broken_known": "13 placeholder dirs (only DESCRIPTION.md) + 3 empty dirs (apple has README only; frontend/red-teaming/testing empty); leaf dirs w/o SKILL.md listed in weekly report"
 }
