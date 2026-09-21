@@ -13,6 +13,7 @@ cron-tirith-traps
 data-science
 devops
 diagramming
+docker-mirror-403-workaround
 dogfood
 domain
 edge-ai-device-upgrade-tiering
@@ -31,6 +32,7 @@ heidou-cron-heartbeat-verification
 heidou-cron-self-evolution-sop
 heidou-saturated-cron-marginal-increment
 heidou-self-evolution-cron
+hermes-cron-saturated-marginal-increment
 hermes-github-sync-worktree
 hermes-patch-tool-pitfalls
 hermes-write-file-pitfalls

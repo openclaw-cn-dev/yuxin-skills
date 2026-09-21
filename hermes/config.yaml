@@ -403,6 +403,7 @@ approvals:
 command_allowlist:
 - script execution via -e/-c flag
 - shell command via -c/-lc flag
+- recursive delete
 - script execution via heredoc
 quick_commands: {}
 hooks: {}
@@ -504,8 +505,8 @@ secrets:
 : 5
 : 2000
 _config_version: 26
-FEISHU_APP_ID: 
-FEISHU_APP_SECRET: 
+FEISHU_APP_ID: "***"
+FEISHU_APP_SECRET: "***"
 replicate:
   token: "***"
 custom_providers:

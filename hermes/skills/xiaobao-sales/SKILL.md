@@ -130,6 +130,22 @@ cat ~/.hermes/profiles/xiaobao/skills/xiaobao-sales.md > /tmp/xiaobao_sales_body
 
 ## 📌 玉芬拍板事项（待 9/19 09:00 团队会提报）
 
+---
+
+## 📂 references/ 索引（2026-09-21 起持续累积）
+
+> 所有销售技巧详细话术 + 实战案例 + 失败红线，开始从 SKILL.md 内嵌章节抽出到独立 reference，避免单文件膨胀。
+>
+> 主源 = `~/.hermes/profiles/xiaobao/skills/xiaobao-sales.md`（profile 单文件，§一-§四十七全谱）
+
+| reference | 主题 | 配套主文件章节 |
+|---|---|---|
+| `references/***SECRET***.md` | §四十三 损失窗口锚定 | §四十三 |
+| `references/silence_close_44_2026-09-17.md` | §四十四 沉默成交法 | §四十四 |
+| **`references/jolt-decision-acceleration.md`** (2026-09-21) | §四十七 JOLT 决策加速法 | §四十七 |
+
+> 🔄 **维护提示**：未来 §四十八 起的新技巧，建议同步建 reference 文件，主 SKILL.md 只保留 4-6 行速记表，避免 §一-§四十七 那种单文件 14K+ 字符膨胀。
+
 1. **§十一-§三十二章节命名**：本 stub 按时间序/文件命名推测了 §11-§32 的对应关系，但玉芬 9/17 失误前原 canonical 命名未必如此 → 玉芬手上有原文档印象，请按原命名 patch
 2. **§37 桑德勒 vs §十 痛点漏斗去重**：profile 单文件 §十 = "桑德勒痛点漏斗"，但 templates_proposed 有 ***SECRET***.md → 是否合并 / 谁并谁 / §37 是否另指他章节 → 玉芬定
 3. **§45 是否入 canonical**：本档首次沉淀的"短视频 B2B 闭环"是否值得作为正式章节 → 玉芬拍板（参考：内容驱动漏斗 2026 是 RAS B2B 趋势，迟早要入）

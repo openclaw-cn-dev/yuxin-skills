@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# TODO(tech-debt): 改由 Claude Code/Codex 重写 — 2026-09-21 修复 arXiv 查询语法 bug 时两工具均调用失败(claude 无写权限、codex 超时),学习助手兜底自写,待登记技术债
 """增量检测脚本：数据源无更新则静默（exit 0 无输出），有更新则输出提示。
 用于调研任务的第一步，避免盲目调研烧 token。
 
@@ -26,8 +27,16 @@ def log_result(task, kind, outcome):
 
 
 def get_arxiv_latest(query):
+    # arXiv API 正确语法：裸词会被 API 忽略并返回全站最新流(假阳性)。
+    # 多词查询 → all:word1+AND+all:word2+...；已含 all:/AND/引号的查询视为已构造好，原样使用。
+    if ('all:' not in query) and (' AND ' not in query) and ('"' not in query):
+        query = '+AND+'.join('all:' + urllib.parse.quote(w, safe='')
+                             for w in query.split())
+    else:
+        # 预构造查询：空格编码为 +(%20 会被 400 拒绝)，引号必须编码为 %22(裸引号在 URL 中非法)
+        query = urllib.parse.quote(query, safe=':+%()').replace('%20', '+')
     url = ('http://export.arxiv.org/api/query?search_query='
-           + urllib.parse.quote(query)
+           + query
            + '&sortBy=submittedDate&sortOrder=descending&max_results=1')
     data = urllib.request.urlopen(url, timeout=30).read().decode('utf-8', errors='ignore')
     m = re.search(r'<published>([^<]+)</published>', data)
