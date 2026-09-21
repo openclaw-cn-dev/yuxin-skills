@@ -102,6 +102,12 @@ trust_level = "trusted"
 [projects."/Users/hua/Documents/Codex/2026-09-20/et"]
 trust_level = "trusted"
 
+[projects."/Users/hua/6-产品研发/渔芯网站"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Documents/Codex/2026-09-21/ui-ai-ai-30-ai-ai"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
@@ -130,7 +136,7 @@ followUpQueueMode = "queue"
 computerUseAlwaysHidePictureInPicture = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-09-20T12:02:07Z"
+last_updated = "2026-09-21T12:43:03Z"
 source_type = "local"
 source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
 
