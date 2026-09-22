@@ -1,3 +1,4 @@
+ai-cad-industry-scan-quarterly
 apple
 autonomous-ai-agents
 chromadb-dimension-mismatch-pitfall
@@ -38,6 +39,7 @@ hermes-patch-tool-pitfalls
 hermes-write-file-pitfalls
 inference-sh
 knowledge-base
+knowledge-organizer
 laomo-mcp-contract-testing
 laomo-patch-append-pattern
 maodou-cron-actionable-task-filter

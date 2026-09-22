@@ -1,4 +1,5 @@
 apple
+arxiv-qfin-digest
 autonomous-ai-agents
 creative
 data-science
@@ -19,6 +20,7 @@ mlops
 mlops-toolkit
 note-taking
 pit-audit-protocol
+portfolio-review-protocol
 product
 productivity
 quant
@@ -31,3 +33,4 @@ sklearn-calibration-usage-2026-09-07.md
 smart-home
 social-media
 software-development
+vectorbt-research-workflow

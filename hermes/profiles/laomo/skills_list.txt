@@ -9,6 +9,7 @@ canvas-design
 claude-api
 coding-agents
 creative
+cron-self-evolution-runbook
 data-science
 design-everyday-things
 design-sprint
@@ -25,6 +26,8 @@ frontend-ui
 gaming
 gifs
 github
+heidou-cron-self-evolution-sop
+heidou-saturated-cron-type18-marginal-increment
 hermes-ecosystem-entry.md
 hooked-ux
 inference-sh
@@ -43,6 +46,7 @@ note-taking
 predictable-revenue
 product-debugging
 productivity
+quant-self-evolution-loop
 red-teaming
 research
 scorecard-marketing
@@ -57,3 +61,4 @@ top-design
 web-artifacts-builder
 web-typography
 yuanbao
+yuxin-product-methodology-index

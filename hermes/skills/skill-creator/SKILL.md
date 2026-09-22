@@ -461,12 +461,13 @@ If you're in Cowork, the main things to know are:
 The agents/ directory contains instructions for specialized subagents. Read them when you need to spawn the relevant subagent.
 
 - `agents/grader.md` — How to evaluate assertions against outputs
-- `agents/comparator.md` — How to do blind A/B comparison between two outputs
+- `agents/comparator.md` — How to run blind A/B comparison between two skill versions
 - `agents/analyzer.md` — How to analyze why one version beat another
 
 The references/ directory has additional documentation:
-- `references/schemas.md` — JSON structures for evals.json, grading.json, etc.
 
+- `references/schemas.md` — JSON structures for evals.json, grading.json, etc.
+- `references/incremental-skill-maintenance.md` — **Maintenance path** (when updating an existing skill, not creating new): the defer-don't-fix pattern for structural flaws discovered mid-bump, with a worked example from freecad-cad-generation v1.0.3→v1.0.4.
 ---
 
 Repeating one more time the core loop here for emphasis:

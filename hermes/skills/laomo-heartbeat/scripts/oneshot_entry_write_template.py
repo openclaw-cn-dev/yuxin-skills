@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
-"""One-shot R-round entry write: probe -> entry build -> fixpoint fill -> projection assert -> direct_prune_write -> check superset.
+"""One-shot R-round entry write — hardened variant (R673, first-try proven 2026-09-22).
 
-R662-curator collection of the R611 one-shot recipe (2026-09-21, first-run proven).
-Reuses: /tmp entry file, subprocess to direct_prune_write.py (positional args),
-check list = suspended pruned ids + this round's real pruned ids + new R number.
+Upgrades the R662 original with three disciplines composed in one script:
+  1. probe ground-truth assert BEFORE the fixpoint loop (desc drift surfaces
+     early, not after write — R432 family);
+  2. derived slots @@P@@ (projection) / @@M@@ (margin) resolved inside the
+     same fixpoint loop as @@L@@ (R525: derived values must be computed, never
+     pre-filled);
+  3. R666 fingerprint gate inline before the writer call (CJK fingerprints
+     verbatim from the entry body + garbage scan), then R424 four-item check.
 
-EDIT POINTS (all constants at top):
-  BOIL       - suppression boilerplate text (keep updated per protocol)
-  PRUNE_N    - number of oldest entries to drop (0 = let wrapper auto-upgrade)
-  CHECK_IDS  - superset check list (extra ids are zero side-effect when count=0)
-  entry body - the only per-round text
+Chain: connect -> pre assert -> (optional span probe with R484 pos-0 branch)
+-> entry build -> fixpoint -> asserts -> write /tmp -> subprocess
+direct_prune_write positional args -> check superset output.
 
-Span probe includes the R484 pos-0 branch: the FIRST entry marker sits at
-position 0 with no preceding newline, so bare find(NL+marker) returns -1.
+EDIT POINTS: everything between the EDIT-PER-ROUND markers.
+Run: python3 this_script.py   (no args)
 """
+import re
 import sqlite3
 import subprocess
 import sys
@@ -22,20 +26,32 @@ DB = '/Users/hua/.hermes/tasks.db'
 TASK_ID = 11
 WRITER = '/Users/hua/.hermes/skills/laomo-heartbeat/scripts/direct_prune_write.py'
 ENTRY_PATH = '/tmp/lm_oneshot_entry.txt'
-
-NEW_R = 662          # EDIT: this round's R number
-PREV_R = 661         # EDIT: previous round's R number (for header)
-PRUNE_N = 2          # EDIT: 0 = no-arg wrapper
-CHECK_IDS = [637, 638, 639, 640, 662]   # EDIT: superset (suspended + real-pruned + new)
-
-NL = chr(10)
 GATE = 49152
 
+# ==================== EDIT PER ROUND ====================
+NEW_R = 673
+PREV_R = 672
+PRUNE_N = 1                       # 0 = no prune (projection uses pre+2+len)
+CHECK_IDS = [651, 652, 653, 673]  # superset: suspended + this round pruned + NEW_R
+SHED = 2228                       # span of oldest entry (--instr-r measured); None = probe below
+PRE_EXPECT = 47123                # previous round's probe desc chars (ground truth)
+# Fingerprints verbatim from TEMPLATE body; each must appear >= 1 time.
+FINGERPRINTS = ['二百三十二犯', '华哥充值账户 2117577211', 'dir1_paper_scan.py --dry-run']
+TEMPLATE = """[R673 2026-09-22 08:2x CST laomo] vs R672 +~33min (库锚 UTC ... = CST ... 刷锚正常 ✓)。hourly silent round mini (协议 step 5, R355 抑制段照贴)。
+
+【抑制段 (R355 boilerplate)】…（照贴当轮标准段）…
+
+【投影+drop】pre=@@PRE@@ chars; 本条 len=@@L@@; 无剪投影 = @@PRE@@+2+@@L@@ 必超闸口 → prune @@N@@ 预期; 剪后投影 = @@BASE@@+2+@@L@@ = @@P@@ < 49152 margin @@M@@ 预期 PASS; check = @@CHECK@@。
+
+keep_in_progress。
+"""
+# ========================================================
+
+NL = chr(10)
 db = sqlite3.connect(DB)
-c = db.cursor()
-c.execute('SELECT description FROM tasks WHERE id=%d' % TASK_ID)
-desc = c.fetchone()[0]
+desc = db.execute('SELECT description FROM tasks WHERE id=?', (TASK_ID,)).fetchone()[0]
 pre = len(desc)
+assert pre == PRE_EXPECT, 'desc drifted: %d != %d (re-probe before writing)' % (pre, PRE_EXPECT)
 
 
 def span(n):
@@ -50,60 +66,50 @@ def span(n):
     return (b - a - 2) if b > 0 else (len(desc) - a)
 
 
-# EDIT: choose which old entries to measure for shed estimate
-s_old = [span(PREV_R - 21), span(PREV_R - 20)]  # e.g. R639/R640 when PREV_R=661
-if any(s is None for s in s_old):
-    print('FATAL: span probe failed, run merged_round_probe --instr-r instead')
-    sys.exit(1)
+if PRUNE_N > 0 and SHED is None:
+    oldest = int(re.findall(r'(?m)^\[R(\d+) ', desc)[0])
+    SHED = span(oldest)
+    assert SHED, 'span probe failed'
 
-BOIL = (
-    '[self-evolve prompt suppression (R355 boilerplate)] per R355 three-factor test: '
-    '(1) task #11 stays in_progress forever (never completed, key cognition 1); '
-    '(2) blocklist non-empty (fill from status probe); '
-    '(3) R325/R338/R352/R355/R361 precedents: hourly silent round runs NO direction 1-4. '
-    'Forced three actions: (a) no direction 1 (pre-rebuild --append ban unchanged); '
-    '(b) no direction 5; (c) direction 1 dry-run only via dir1_paper_scan.py. '
-    'Cron prompt patch pending HuaGe/YuFen approval; re-affirm hourly until patched.'
-)
+base = pre if PRUNE_N == 0 else pre - SHED
+shed_note = 0 if PRUNE_N == 0 else SHED
 
-# EDIT: entry body. Keep @@L@@ self-reference slot.
-entry = (
-    '[R%d 2026-09-21 08:49 CST laomo] vs R%d +NNNmin (DB anchor UTC ... = CST ...; '
-    'archive mtime ... cross-check). hourly silent round mini.\n\n'
-    '[' + BOIL + ']\n\n'
-    '[Opening self-audit] ...\n\n'
-    '[R-numbering] last_r=%d probe ground truth OK +1 = R%d; R%d count=0 exclusive OK.\n\n'
-    '[Status] ...\n\n'
-    '[Ark] ...\n\n'
-    '[Ledger dual path] ...\n\n'
-    '[Writer/dir4] ...\n\n'
-    '[Projection+drop: pre=%d chars; oldest spans %d/%d; this entry len=@@L@@; '
-    'prune %d projection = %d+2+@@L@@ = %d margin %d expected PASS; '
-    'check superset = %s.]\n\n'
-    'keep_in_progress.'
-) % (NEW_R, PREV_R, PREV_R, NEW_R, NEW_R,
-     pre, s_old[0], s_old[1], PRUNE_N,
-     pre - sum(s_old), pre - sum(s_old) + 2, GATE - (pre - sum(s_old) + 2),
-     ' '.join(str(i) for i in CHECK_IDS))
 
-L = 2000
+def make(L):
+    p = base + 2 + L
+    t = (TEMPLATE.replace('@@PRE@@', str(pre))
+                 .replace('@@N@@', str(PRUNE_N))
+                 .replace('@@BASE@@', str(base))
+                 .replace('@@CHECK@@', ' '.join(str(i) for i in CHECK_IDS)))
+    return t.replace('@@L@@', str(L)).replace('@@P@@', str(p)).replace('@@M@@', str(GATE - p))
+
+
+L = len(TEMPLATE)
 for _ in range(30):
-    t = entry.replace('@@L@@', str(L))
+    t = make(L)
     if len(t) == L:
         break
     L = len(t)
 else:
-    print('FATAL: fixpoint not converged')
-    sys.exit(1)
+    sys.exit('FATAL: fixpoint not converged')
 assert '@@' not in t, 'placeholder residue'
 
-proj = pre - sum(s_old) + 2 + L
-assert proj < GATE, 'FATAL: prune-%d projection over gate: %d' % (PRUNE_N, proj)
+# R424 four-item check
+assert t.count('[R%d ' % NEW_R) == 1, 'marker count'
+assert t.rstrip().endswith('keep_in_progress。'), 'tail marker'
+# R666 fingerprint gate (fingerprints verbatim from TEMPLATE, garbage scan)
+for fp in FINGERPRINTS:
+    assert t.count(fp) >= 1, 'fingerprint missing: ' + fp
+for bad in ['@@', 'PROJ_PLACEHOLDER', 'LENPLACE', 'ARK_RESULT_PLACEHOLDER']:
+    assert bad not in t, 'garbage residue: ' + bad
+
+proj = base + 2 + L
+assert proj < GATE, 'FATAL: projection over gate: %d' % proj
 
 with open(ENTRY_PATH, 'w', encoding='utf-8') as f:
     f.write(t)
 
-print('entry_len:', L, '| pre:', pre, '| shed:', sum(s_old), '| proj:', proj, 'margin:', GATE - proj)
+print('entry_len:', L, '| pre:', pre, '| shed:', shed_note, '| proj:', proj, '| margin:', GATE - proj)
 
 cmd = ['python3', WRITER, ENTRY_PATH]
 if PRUNE_N > 0:
@@ -111,5 +117,6 @@ if PRUNE_N > 0:
 cmd += [str(i) for i in CHECK_IDS]
 r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
 print(r.stdout[-3000:])
-print(r.stderr[-500:] if r.stderr else '')
+if r.stderr:
+    print('STDERR:', r.stderr[-500:])
 sys.exit(r.returncode)
