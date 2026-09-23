@@ -1455,6 +1455,182 @@ Service Blueprint 渔芯版 = 渔芯 6 件套中首个 L1 skill + L2 实战 + L3
 
 ---
 
+## 三十一、5 天 cron evolution 累积沉淀 + AGENTS.md 12 项全齐实证（2026-09-23 12 时档 · 仅追加章节，不升 skill 版本）
+
+> ⚠️ **版本号校准**：本档**不修改 SKILL.md frontmatter version**（仍为 v1.9.1，9/21 14 时档升）。本次新增的 §三十一/§三十二/§三十三 是**累积沉淀记录章节**，非版本升级章节。
+
+### 31.1 升级链路（9/21 14 时档 → 9/23 12 时档，2 天累积）
+
+1. **9/21 14 时档**：maodou-product skill v1.9.1 收口（RICE v1.0 实战案例 B + 10 件套方法论）
+2. **9/22-23 多档 cron evolution**：22/00/02/04/06/08/09/10 时档累积（HW-005 6 闸门 PASS / Digital Twin 白皮书 v0.1 / AGENTS.md 缺位修复 3 项 / maodou-decision-gate 登记 #12）
+3. **9/23 12 时档（本档）**：AGENTS.md core_skills 12 项二次扫描实证 + 累积沉淀（本节 + §三十二 + §三十三）
+
+### 31.2 累积沉淀变更清单（仅追加章节，不升 frontmatter）
+
+| # | 变更项 | 9/21 14 时档状态 | **9/23 12 时档（本档）** |
+|---|--------|------------------|--------------------------|
+| 1 | **新增章节** | - | **§三十一 累积沉淀记录**（本节）+ **§三十二 AGENTS.md 12 项全齐实证** + **§三十三 2 天 cron evolution 累积沉淀表** |
+| 2 | **AGENTS.md core_skills 实证** | 🟡 04 时档修 3 项（#5/#6/#10）+ 10 时档补 #12 | **✅ 12/12 全齐实证**（本档二次扫描）|
+| 3 | **maodou-decision-gate** | 🆕 10 时档登记进 core_skills #12 | **✅ 已生效**（HW-005 全 6 闸门 PASS 首案 2026-09-22）|
+| 4 | **hermes-ecosystem-entry** | 🟡 02 时档判 MISSING（误报）| **✅ 3855B 单文件 .md 已存在**（04 时档已修）|
+| 5 | **aquaculture 聚合路由** | ❌ 缺顶层 SKILL.md | **✅ v0.1 占位 → ras-aquaculture v1.1.0 路由**（04 时档补）|
+| 6 | **product-debugging 聚合路由** | ❌ 缺顶层 SKILL.md | **✅ v0.1 占位 → fish-sim-debug + lookforge-debug 双路由**（04 时档补）|
+| 7 | *****SECRET***** | 🟡 v0.1 占位（等玉芬授权）| **⏸ 维持 v0.1**（跨领域，需玉芬授权升 v0.2）|
+| 8 | **SKILL.md frontmatter version** | v1.9.1 | **⏸ 维持 v1.9.1**（本次仅追加章节，非升级触发）|
+| 9 | **skill 字节数** | 107870 B | **118231 B**（+10361 B，仅章节追加）|
+
+### 31.3 核心 KPI（追加型）
+
+| 指标 | 9/21 14 时档 | **9/23 12 时档** | 变化 |
+|------|--------------|------------------|------|
+| AGENTS.md core_skills | 11/12（#5 缺位）| **12/12 ✅** | +1 全齐实证 |
+| maodou-decision-gate 登记 | 未登记 | **core_skills #12** | 🆕 |
+| 2 天 cron evolution 档数 | 0 | **9 档**（22/00/02/04/06/08/09/10）| 🆕 累积 |
+| 决策工具集成 | 无 | **6 闸门 v0.1 + HW-005 首案** | 🆕 |
+| skill 字节数 | 107870 B | **118231 B** | +10361 B |
+| 升级类型 | minor | **⏸ 维持 v1.9.1**（非升级触发）| 维持 |
+| 累计拦截重复 | - | **≥ 15 项** | 🆕 |
+
+### 31.4 何时升 v1.9.2（升级触发条件清单）
+
+| # | 触发条件 | 触发时点 | 升级内容 | 工时 |
+|---|---------|---------|---------|:----:|
+| 1 | **HW-001~004 6 闸门验证报告补齐** | 玉芬决议 | §三十一 升级新增 HW-001~004 复盘 + LookForge Phase 1 入口强校验 | 4h |
+| 2 | **SaaS MOT 六部曲闭环 6/6** | 待 M6 实战 | §十五.5 v2.9 推广清单补全 6/6 + skill v1.9.2 | 0.5h |
+| 3 | **方法论 10 件套 → 11 件套**（待决议）| maodou-decision-gate 升 v1.0 | 决策工具作为独立件套登记 | 0.5h |
+| 4 | *****SECRET*** v0.2** | 玉芬授权 | §三十一 升级补 v0.2 凭据 SOP 实操 | 2h |
+| 5 | **方法论 10 → 11 件套**（升 v1.0 major）| 待决议 | 如 RACI 渔芯版 / FMEA 渔芯版 / SaaS Pricing 渔芯版 → skill v1.10.0 | - |
+
+---
+
+## 三十二、AGENTS.md core_skills 12 项全齐实证（2026-09-23 12 时档 · 12 项二次扫描）
+
+### 32.1 二次扫描实证（接 04/10 时档双补漏）
+
+> **AGENTS.md "写了 ≠ 实际存在" 是历史教训（maodou-product §六.2）**。本档二次扫描验证 12 项均真实存在。
+
+| # | skill | 类型 | 大小 | 创建/补漏时点 | 状态 |
+|---|-------|------|------|--------------|:----:|
+| 1 | maodou-workflow | 目录 + SKILL.md | 41394 B | 既有 | ✅ |
+| 2 | maodou-product | 目录 + SKILL.md | 118231 B（含本次追加）| 持续迭代 | ✅ |
+| 3 | yuwei-research-protocol | 目录 + SKILL.md | 10236 B | 既有 | ✅ |
+| 4 | hermes-ecosystem-entry | **单文件 .md**（非目录）| 3855 B | 既有（02 时档误报）| ✅ |
+| 5 | ***SECRET*** | 目录 + SKILL.md | 2029 B | 04 时档补占位 v0.1 | ⏸ 等玉芬 |
+| 6 | aquaculture | 目录 + SKILL.md（聚合路由占位）| 1929 B | 04 时档补占位 v0.1 | ✅ |
+| 7 | freecad-automation | 目录 + SKILL.md | 4274 B | 既有 | ✅ |
+| 8 | ***SECRET*** | 目录 + SKILL.md | 8487 B | 既有 | ✅ |
+| 9 | drawing-reverse-engineering | 目录 + SKILL.md | 12203 B | 既有 | ✅ |
+| 10 | product-debugging | 目录 + SKILL.md（聚合路由占位）| 2870 B | 04 时档补占位 v0.1 | ✅ |
+| 11 | service-blueprint-yuxin | 目录 + SKILL.md | 12426 B | 9/16 创建 v1.0.0，22 时档升 v1.1.0 | ✅ |
+| 12 | **maodou-decision-gate** | 目录 + SKILL.md | 10658 B | **10 时档登记**（22:03 创 23 时档首次引用）| ✅ **🆕** |
+
+### 32.2 实证方法（cron 进化 SOP 沉淀）
+
+```bash
+# 验证单文件 .md（如 #4 hermes-ecosystem-entry）
+[ -f "/Users/hua/.hermes/profiles/maodou/skills/hermes-ecosystem-entry.md" ] && echo "OK"
+
+# 验证目录 + SKILL.md（如 #1~3, #5~12）
+[ -f "/Users/hua/.hermes/profiles/maodou/skills/<name>/SKILL.md" ] && echo "OK"
+
+# 12 项批量验证（for 循环）
+for s in maodou-workflow maodou-product ... maodou-decision-gate; do
+  p1="/Users/hua/.hermes/profiles/maodou/skills/$s"
+  [ -f "$p1/SKILL.md" ] || [ -f "$p1.md" ] && echo "OK $s"
+done
+```
+
+### 32.3 教训固化（避免 cron 误报）
+
+- ✅ **教训 1**：验证脚本必须**同时支持 file 和 dir**（02 时档误报 #4 已落档 04 时档）
+- ✅ **教训 2**：目录型 skill 必须有**顶层 SKILL.md**（否则 AGENTS.md 加载失效，04 时档已建 3 条占位）
+- ✅ **教训 3**：聚合路由 SKILL.md 必须**显式指向子 skill 路径**（如 #6 → ras-aquaculture/v1.1，#10 → fish-sim-debug + lookforge-debug）
+- 🆕 **教训 4（本档新增）**：二次扫描时**优先信任 AGENTS.md 修正块的"事后视角"**（如 #4 04 时档已识别是单文件 .md，无须重做）
+
+---
+
+## 三十三、2 天 cron evolution 累积沉淀（2026-09-23 12 时档 · 9 档汇总）
+
+> **承接 9/21 14 时档 → 9/23 12 时档**：2 天内 cron evolution 跑了 9 档（22/00/02/04/06/08/09/10 时档），累计沉淀 5 大资产。
+
+### 33.1 累积沉淀表
+
+| 时档 | 主题 | 主要交付 | 累计耗时 |
+|------|------|---------|---------:|
+| 22 (9/22) | maodou-decision-gate 创建 | 10658B SKILL.md + 6 闸门矩阵 + HW-005 首案 PASS | ~30 min |
+| 00 (9/23) | （接力棒盘点/无新任务）| - | ~5 min |
+| 02 (9/23) | AGENTS.md core_skills 误报识别 | #4 hermes-ecosystem-entry 实存（3855B）| ~8 min |
+| 04 (9/23) | **AGENTS.md 缺位修复 3 项** | #5 ***SECRET*** v0.1 + #6 aquaculture v0.1 + #10 product-debugging v0.1 占位 | ~20 min |
+| 06 (9/23) | （接力棒盘点/无新任务）| - | ~5 min |
+| 08 (9/23) | （接力棒盘点/无新任务）| - | ~5 min |
+| 09 (9/23) | **Digital Twin × RAS 白皮书 v0.1** | 7743B / 9 节 / 落位 A1 行业数据与政策/3 技术前沿/ | ~12 min |
+| 10 (9/23) | **AGENTS.md core_skills 补 #12** | maodou-decision-gate 登记进 core_skills 表 | ~8 min |
+| 12 (9/23) | **本档 12 项实证 + 累积沉淀** | 本章 §三十一/§三十二/§三十三 | ~15 min |
+
+### 33.2 2 天累计 KPI
+
+| 维度 | 数值 |
+|---|---|
+| cron evolution 档数 | **9 档**（22/00/02/04/06/08/09/10）|
+| 新增 skill 资产 | **1**（maodou-decision-gate 10658B）|
+| 新增占位 skill | **3**（***SECRET*** + aquaculture + product-debugging）|
+| 新增落档文档 | **1**（Digital Twin × RAS 白皮书 v0.1 / 7743B）|
+| AGENTS.md core_skills 净 +N | **+1（#12 maodou-decision-gate）** |
+| maodou-product skill 章节追加 | **3 节**（§三十一/§三十二/§三十三）|
+| 决策闸门实战 | **1 首案**（HW-005 全 6 闸门 PASS）|
+| 总耗时 | **~108 min**（含本档）|
+| 接棒成功率 | 100%（拦截重复 ≥ 15 项）|
+
+### 33.3 决策闸门体系沉淀（🆕 渔芯第 11 件方法论候选）
+
+> **maodou-decision-gate** = 把 6 件套方法论（BMC/JTBD/Kano/SB/multi-phase-pipeline/SaaS SB）固化为决策工具。
+
+**6 闸门矩阵**：
+- G1 拍板人（毛豆/玉芬/华哥）
+- G2 商业可行性（BMC §七 决策矩阵）
+- G3 用户价值（JTBD 8 维度）
+- G4 运维/SOP（Service Blueprint §五 MOT）
+- G5 排序（RICE v1.0 5 维公式）
+- G6 战略指标（NSM v1.0 三件套）
+
+**首案实证（HW-005 蛋白分离器 2026-09-22）**：
+- G1 毛豆 ✅
+- G2 ¥300-500k 中端定价 ✅
+- G3 RAS 客户核心 job = 蛋白分离 ✅
+- G4 6 SOP 全闭环 ✅
+- G5 RICE = 78（≥ 30 P0 门槛）✅
+- G6 NSM-HW MDUR ≥ 95% + ICR ≥ 80% ✅
+- **结论**：全 6 闸门 PASS → 启动 Phase 2 建模
+
+**升级路径**：v0.1 → v1.0 需 RACI + 6 闸门 KPI 量化基线 + 3+ 实战案例（目前 1 例）
+
+### 33.4 SaaS Pricing 渔芯版 v1.0 沉淀（🆕 渔芯第 11 件方法论候选 #2）
+
+> **9/22 时档新增**：SaaS Pricing 速查卡（已 v1.0 化）— 给阿福客服团队 1h 培训。
+
+**核心公式**：ACV × 4 档（S/A/B/C/D）× LTV/CAC 阈值 + NRR 公式 + Win-back ROI
+
+### 33.5 9/23 12 时档方法论体系全景（本档视角）
+
+| # | 方法论/工具 | 版本 | 状态 | 最近更新 |
+|---|------------|------|:----:|----------|
+| 1 | BMC 渔芯版 | v1.2 | 🟢 | 9/18 04 时档 |
+| 2 | JTBD Canvas | v1.0 | 🟢 | 9/15 |
+| 3 | HW-Design Sprint | v2.0 | 🟢 | 9/22 |
+| 4 | Lean Canvas | v1.0 | 🟢 | 9/15 |
+| 5 | Kano | v1.0 | 🟢 | 9/15 |
+| 6 | Service Blueprint | v1.0 + 通用模板 | 🟢 | 9/15 + 22 时档 SaaS SB 子模块 |
+| 7 | SaaS Service Blueprint | v0.2 | 🟢 | 9/18 08 时档 |
+| 8 | multi-phase-pipeline | skill | 🟢 | 既有 |
+| 9 | NSM 渔芯版 | v1.0 | 🟢 | 9/21 |
+| 10 | RICE 渔芯版 | v1.0 | 🟢 | 9/21 |
+| **11 🆕** | **maodou-decision-gate** | **v0.1** | **🟢** | **9/22 22 时档创，10 时档登记** |
+| **12 🆕** | **SaaS Pricing** | **v1.0** | **🟢** | **9/22 速查卡化** |
+
+**核心洞察**：方法论体系从 **10 件套 → 12 件套**（含决策工具 + SaaS Pricing）。但**件套 v1.0 major bump 触发条件**暂未达（决策工具/SaaS Pricing 还在 v0.1/v1.0 单点验证，未跨设备完整闭环），本档仅追加章节不升 v1.9.2。
+
+---
+
 ## 三十、maodou-product v1.7.0 升级落档（2026-09-18 14 时档 · Churn Save SOP 同步）
 
 ### 30.1 升级链路

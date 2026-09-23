@@ -1,6 +1,6 @@
 model:
-  default: GLM-5.3-flash
-  provider: custom:glm
+  default: MiniMax-M3
+  provider: minimax-cn
 providers:
   deepseek-direct:
     api_key: "***"
@@ -18,7 +18,7 @@ providers:
     api_key: "***"
     base_url: https://open.bigmodel.cn/api/paas/v4
     model: glm-5.3-flash
-fallback_providers: '["custom:glm","deepseek-direct"]'
+fallback_providers: '[]'
 : {}
 toolsets:
 - hermes-cli
@@ -401,8 +401,9 @@ approvals:
   mcp_reload_confirm: true
   : true
 command_allowlist:
-- script execution via -e/-c flag
+- find -delete
 - shell command via -c/-lc flag
+- script execution via -e/-c flag
 - recursive delete
 - script execution via heredoc
 quick_commands: {}

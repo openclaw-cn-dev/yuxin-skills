@@ -35,6 +35,7 @@ github-workflows
 hardware
 heidou-admin
 hermes-ecosystem-entry.md
+hermes-feishu-credential-update
 hermes-internals
 hermes-workarounds
 hooked-ux
@@ -46,6 +47,7 @@ laomo-knowledge
 lean-startup
 lookforge-jtbd-canvas
 made-to-stick
+maodou-decision-gate
 maodou-product
 maodou-skill-sync.md
 maodou-workflow

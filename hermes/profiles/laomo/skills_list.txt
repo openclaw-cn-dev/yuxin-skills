@@ -1,6 +1,7 @@
 algorithmic-art
 apple
 aquaculture
+arxiv-qfin-digest
 autonomous-ai-agents
 baoyu-visual-content
 brand-guidelines
@@ -10,6 +11,8 @@ claude-api
 coding-agents
 creative
 cron-self-evolution-runbook
+cron-self-evolution-xiaobao-pitfalls
+cron-task-gating-and-path-pitfalls
 data-science
 design-everyday-things
 design-sprint
@@ -26,6 +29,7 @@ frontend-ui
 gaming
 gifs
 github
+heidou-cron-evolution-references
 heidou-cron-self-evolution-sop
 heidou-saturated-cron-type18-marginal-increment
 hermes-ecosystem-entry.md
@@ -36,6 +40,8 @@ ios-hig-design
 knowledge-base
 lean-startup
 made-to-stick
+maodou-cron-heartbeat-path-resolver
+maodou-decision-gate
 maodou-product
 mcp
 media
@@ -43,9 +49,11 @@ mlops
 module
 negotiation
 note-taking
+portfolio-review-protocol
 predictable-revenue
 product-debugging
 productivity
+quant
 quant-self-evolution-loop
 red-teaming
 research
@@ -54,11 +62,15 @@ skill-creator
 slack-gif-creator
 smart-home
 social-media
+social-proof-ladder-b2b
 software-development
 testing
 theme-factory
 top-design
+vectorbt-research-workflow
 web-artifacts-builder
 web-typography
+xiaobao-b2b-sales-methods
+xiaobao-sales-anchor-methods
 yuanbao
 yuxin-product-methodology-index

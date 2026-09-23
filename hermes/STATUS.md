@@ -1,9 +1,9 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-09-22 14:19:08
+> 导出时间: 2026-09-23 12:10:11
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 90
+- Skills: 91
 - Profiles: 11
 - Scripts: 140
 - Plugins: 1
@@ -33,6 +33,7 @@ Update available: 2659 commits behind — run 'hermes update'
 - afu-customer-service
 - afu-self-evolution-protocol
 - agents-md
+- ai-tech-scheme-consolidation
 - ai-training-platform
 - ai-vision
 - algorithm
