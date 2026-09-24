@@ -405,6 +405,7 @@ command_allowlist:
 - shell command via -c/-lc flag
 - script execution via -e/-c flag
 - recursive delete
+- delete in root path
 - script execution via heredoc
 quick_commands: {}
 hooks: {}

@@ -1,13 +1,15 @@
 ---
 name: cron-home-hijack-bypass
-description: 'cron 启动 $HOME 劫持绕过 SOP — 检测 + 全套绝对路径绕过 + Python API 模板 + Git/SSH 同步专项 + **docker ps DOCKER_HOST 绝对路径专项(R616 老莫实证,R611/R615 也命中过)** + 实测记录（9 次劫持实测库）+ 反向救回 SOP（home 死区文件 5 步救回流程）。触发条件:任何 cron 自进化会话（黑豆/阿福/老莫/毛豆/小宝/宽博士/整理师等）第一次工具调用前必须先 echo $HOME 30 秒自检、避免脚本因路径错误白消耗一次 cron 配额;`docker ps`/`docker inspect` 走默认 socket 报 no such file 时改 `DOCKER_HOST=unix:///var/run/docker.sock` 直连;或发现 ~/.hermes/profiles/<自己>/home/.hermes/profiles/<自己>/ 有 .md 残留时走救回 SOP。'
+description: 'cron 启动 $HOME 劫持绕过 SOP — 检测 + 全套绝对路径绕过 + Python API 模板 + Git/SSH 同步专项 + **docker ps DOCKER_HOST 绝对路径专项(R616 老莫实证,R611/R615 也命中过)** + 实测记录（9 次劫持实测库）+ 反向救回 SOP（home 死区文件 5 步救回流程）。触发条件:任何 cron 自进化会话（黑豆/阿福/老莫/毛豆/小宝/宽博士/整理师等）第一次工具调用前必须先 echo $HOME 30 秒自检、避免脚本因路径错误白消耗一次 cron 配额;`docker ps`/`docker inspect` 走默认 socket 报 no such file 时改 `DOCKER_HOST=unix:///var/run/docker.sock` 直连;或发现 ~/.hermes/profiles/<自己>/home/.hermes/profiles/<自己>/ 有 .md 残留时走救回 SOP;
+**或 Codex CLI 每日 cron 巡检场景(`codex --version` / `codex plugin list` / `sync_codex_repo.sh`)** —— `codex plugin list` 在劫持下读错配置会报 "No marketplace plugins found",而真实插件清单在 `/Users/hua/.codex/config.toml` 的 `[plugins.*]` 段 + `~/.codex/plugins/cache/{openai-bundled,openai-primary-runtime,openai-api-curated}/` 目录(详见 references/codex-cli-cron-daily-pattern.md)。'
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.4.0"
+  version: "1.5.0"
   changelog_v1.4.0: "2026-09-18 11 R616 老莫 cron 实证 — 新增 §11 docker ps HOME 劫持专项（DOCKER_HOST=unix:///var/run/docker.sock 绝对路径直连）"
+  changelog_v1.5.0: "2026-09-24 10:05 R708 老莫 cron 第 13 次中招实证 — §7 表新增 R708 行（laomo 第四次中招,cron prompt 内嵌 `~/.hermes/...` 路径再证必踩,沿用 R683 SOP 绝对路径 `/Users/hua/.hermes/scripts/heartbeat_check.py 老莫` 首调一次过）"
   created: "2026-09-17 (新独立 umbrella · 原 productivity/knowledge-organizer/references/cron-home-hijack-bypass.md 提升; v1.2 新增 §3.4 Git/SSH 同步专项 + 第 9 次实录; v1.2.1 新增 references/***SECRET***.md 黑豆 #10 实测)"
-  updated: "v1.3.0 (2026-09-18 09:00): 整理师 09-18 09:00 心跳实测 #KO-16 self-hijack 第四次中招（累计 4 次 / 8 次心跳 = 50% 命中率）+ #KO-17 命中 5/10 连续 5 次心跳持平 + §10 新增 2 个 references（2026-09-18-ai-trends / ***SECRET***）+ §13 整理师方法论升级 MARS 三段式反思试点"
+  updated: "v1.5.0 (2026-09-24 10:05): 老莫 R708 cron 第 13 次中招（laomo 第四次）实证 + §7 表追加 R708 行 + 验证 R683 SOP 闭环持续有效（24 轮零相对路径调用零劫持，cron prompt 内 `~/` 路径 100% 踩坑）"
 ---
 
 # cron 启动 $HOME 劫持绕过 SOP（2026-08-21 00:00 实测 · 2026-09-17 v1.2 提升：新增 §3.4 Git/SSH 同步专项）
@@ -166,8 +168,16 @@ docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
 
 ### 11.4 决策树
 
-```
-docker ps 报错 "no such file"?
+## Codex CLI 每日 cron 巡检(玉芬/任何 profile)
+**codex plugin list 返回 "No marketplace plugins found"?**
+├─ HOME 劫持命中 → 走 references/codex-cli-cron-daily-pattern.md §3(PITFALL 23)
+│   改读 /Users/hua/.codex/config.toml 的 [plugins.*] + ~/.codex/plugins/cache/ 三目录
+├─ sync_codex_repo.sh 报 No such file or directory?
+│   └─ bash 调用时 ~ 已展开,改 `HOME=/Users/hua bash /abs/path/sync_codex_repo.sh`
+└─ 持续差异(期望 10 核心 vs 实际 14 配置缺 github/computer-use)?  如实汇报一次,不每次重报
+
+## Docker daemon 检测
+**docker ps 报错 "no such file"?**
 ├─ path 包含 $HOME/.docker/run/?  → HOME 劫持, PITFALL 11
 │  └─ 止步: DOCKER_HOST=unix:///var/run/docker.sock 直连
 ├─ path 包含 /var/run/docker.sock 拒绝连接?
@@ -204,15 +214,25 @@ cron 启动 `$HOME` 劫持**不是单 profile**——已观测到 **9 次劫持�
 | 2026-09-11 | **laomo** | 第四次 | 按 SOP 绕过（hermes sync cron 实录） |
 | 2026-09-12 | **zhenglishi** | 第五次 | 按 SOP 绕过（hermes sync cron 实录） |
 | 2026-09-13 12:10 | **laomo**（第二次中招） | **第六次（本 cron）** | 按 SOP 绕过,hermes 同步正常 push |
-| 2026-09-14 00:34 | **zhenglishi**（第二次中招） | **第七次（老莫心跳 cron）** | 绝对路径重跑即过；劫持诊断止步于「改绝对路径重跑」一步为合规线 |
+| 2026-09-14 00:34 | **zhenglishi**（第二次中招） | **第七次（老莫心跳 cron）** | 绝对路径重跑即过（`python3 /Users/hua/.hermes/scripts/heartbeat_check.py 老莫`）；劫持诊断止步于「改绝对路径重跑」一步为合规线，echo/skill_view 并行预调等多绕步属执行序违规（laomo-heartbeat 防线墙 R474 行实锤） |
+| **2026-09-24 08:07** | **laomo（第三次中招，玉芬 tokens_report cron）** | **第十次** | 按 SOP 绝对路径绕过 + §8.8 `env -i HOME=/Users/hua` 单命令 ad-hoc 绕过（实测可保留 `~/` 展开不重写代码） |
 | **2026-09-17 06:00** | **zhenglishi**（第三次中招） | **第八次（小宝 xiaobao cron 进化档）** | 第一次工具调用 `python3 ~/.hermes/scripts/heartbeat_check.py xiaobao` 报错（没先 echo 自检）；立即转绝对路径通过 |
 | **2026-09-17 12:45** | **zhenglishi**（第四次中招） | **第九次（老莫心跳 cron R587）** | 首调 `python3 ~/.hermes/scripts/heartbeat_check.py 老莫` 报错（cron prompt 内 `~` 按劫持后 $HOME 展开，同第八次型）→ 绝对路径重跑通过；本轮新 twist：`skill_view` 本档撞双名歧义（本档 vs 劫持 profile external_dirs 副本）→ read_file 绝对路径直读绕过 |
 | **2026-09-17 12:26** | **zhenglishi**（第四次中招） | **第九次（hermes 同步 cron）** | 踩出新坑：git 层也依赖 $HOME——init 静默失败留残缺 .git、ssh 认证挂；`export HOME=/Users/hua` + GIT_SSH_COMMAND 指向真实 .ssh 后恢复，详见 §3.4 |
-| **2026-09-18 08:15** | **laomo**（第三次中招） | **第十次（老莫心跳 cron R614）** | 首调 `python3 ~/.hermes/scripts/heartbeat_check.py 老莫` 报 file not found（R345 twist② 形态）→ 绝对路径重跑通过；同轮复测确认全相对路径 `skill_view(name='<skill>/SKILL.md')` 可一次命中（§5 已更新） |
+| **2026-09-18 08:15** | **laomo**(第三次中招) | **第十次(老莫心跳 cron R614)** | 首调 `python3 ~/.hermes/scripts/heartbeat_check.py 老莫` 报 file not found(R345 twist② 形态)→ 绝对路径重跑通过；同轮复测确认全相对路径 `skill_view(name='<skill>/SKILL.md')` 可一次命中(§5 已更新) |
+| **2026-09-24 02:31** | **heidou**(第 12 次,小宝 02 时档) | **第十二次(本档首例「静默 exit 0 变种」)** | **首调 `heartbeat_check.py xiaobao` 静默 exit 0 + stdout 空(被误判为「无任务」)→ 推迟到第 4 次调用 ls 才察觉 → 全程绝对路径绕过完成 evolution 5 方向 → 已沉淀为 P-34 evidence**;**警告**:`cron-home-hijack-bypass §2 铁律「先 echo $HOME」对此变种不够强**——agent 拿到 prompt 第一句是任务,不会主动做 30 秒自检,需升级为 prompt 模板硬约束(详见 `cron-self-evolution-toolkit/references/***SECRET***.md`) |
+| **2026-09-24 10:05** | **laomo**(第 13 次,第四次 laomo 中招,**老莫心跳 cron R708**) | **第十三次(R708 实证 R683 SOP 持续闭环)** | cron prompt 内嵌 `python3 ~/.hermes/scripts/heartbeat_check.py 老莫` 命令按劫持后 $HOME 展开 → 直接踩 R683 实证坑(`/Users/hua/.hermes/profiles/laomo/home/.hermes/scripts/heartbeat_check.py` 不存在,FileNotFoundError);立即转 `python3 /Users/hua/.hermes/scripts/heartbeat_check.py 老莫` 绝对路径一次过 → 任务行 `11\|AI 照片修复/老照片上色\|P1\|in_progress\|hermes` 一次出齐;**R683 SOP 自首次 09-23 16:01 踩坑以来 24 轮（R684..R708）零相对路径调用零劫持实证闭环**,本轮再次坐实 cron prompt 内 `~/` 形态 100% 命中劫持、必须由 agent 自行翻译为 `/Users/hua/...` 绝对路径执行;**R708 同时完成 R700 SKILL.md 异常升格事件结案 + v1.88.69 SKILL.md changelog 闭环 + P#133 v5 第三轮实证** |
 
 **结论**:cron 启动随机劫持到任一同事 profile home（afu/maodou/xiaobao/laomo/zhenglishi 都出现过，同一 profile 可重复），整理师 SOP 已稳定覆盖。
 
 **未来预测**:可能继续出现其他同事 profile（heidou/community/quant/psychology 等），但 SOP 是统一的——**用绝对路径 `/Users/hua/...` 前缀全套绕过**。另注：并非只有 shell `~` 中招——cron prompt 里写的 `~/...` 路径同样按劫持后的 `$HOME` 展开，即使 prompt 路径没过时也会 404；永远用 `/Users/hua/...` 绝对路径执行。
+
+> 📌 **R683 实证新增 (2026-09-23 16:01 CST, laomo)**: HOME 劫持**隐性规避 vs 显性踩坑**对比观察。
+>
+> - **R682 (15:04) 隐性规避**: 全程零相对路径调用, 全部走 sqlite3 直查 + 绝对路径, 无显性失败但不代表劫持消失。
+> - **R683 (16:01) 显性踩坑**: 首调 `python3 ~/.hermes/scripts/heartbeat_check.py 老莫` 直接命中劫持态 → 解析为 `/Users/hua/.hermes/profiles/laomo/home/.hermes/scripts/heartbeat_check.py` → FileNotFoundError。
+>
+> **核心教训**: 隐性规避可破 (R682), 显式 home 路径必踩 (R683)。**R684+ 全部调用起手走绝对路径**, 禁用 `~/` 和 `$HOME/` 形态。详见 `references/***SECRET***.md` (4 步 recovery + 形态触发表 + 跨 profile 推论)。
 
 ## 8. 待华哥/玉芬处理（不在本 SOP 范围）
 
@@ -269,3 +289,11 @@ cron 启动配置应改为：
 
 - `cron-self-evolution-toolkit`（§6 关联）— 跨 profile cron 自进化饱和判定与守夜档字节控制
 - `afu-self-evolution-protocol` — 通用 5 步骤协议 + Pitfall 1-22
+
+## 12. R708 laomo cron prompt `~/` 必踩复发闭环（2026-09-24 实证）
+
+详见 `references/***SECRET***.md`。
+
+- **核心**: cron prompt 第 1 步命令字面量 `python3 ~/.hermes/scripts/heartbeat_check.py 老莫` 100% 命中劫持（laomo 第四次中招，第 13 次实证），agent 必须先翻译为 `python3 /Users/hua/.hermes/scripts/heartbeat_check.py 老莫` 绝对路径再执行。
+- **R683 SOP 25 轮闭环**: 自 R683 09-23 16:01 立 SOP 以来 24+ 轮全零相对路径调用零劫持；R708 是反向证据补足。
+- **待 cron prompt 维护方拍板**: 把 `~/.hermes/...` 改为 `/Users/hua/.hermes/...` 或加 `env HOME=/Users/hua` 前缀（参考 §3.4 Git/SSH 同步专项同型解药）。
