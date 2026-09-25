@@ -1,7 +1,8 @@
 {
-  "last_sync": "2026-09-20T14:01:05+08:00",
-  "skills": 90,
+  "last_sync": "2026-09-25T13:58:49+08:00",
+  "commit": "2c1023c",
+  "skills": 88,
   "profiles": 11,
-  "scripts": 140,
-  "broken_known": "13 placeholder dirs (only DESCRIPTION.md) + 3 empty dirs (apple has README only; frontend/red-teaming/testing empty); leaf dirs w/o SKILL.md listed in weekly report"
+  "scripts": 141,
+  "broken_known": "17 empty umbrella dirs (apple/data-science/diagramming/domain/email/feeds/frontend-ui/frontend/gaming/gifs/inference-sh/mcp/note-taking/red-teaming/smart-home/social-media/testing) — historical constant, no new breakage"
 }
