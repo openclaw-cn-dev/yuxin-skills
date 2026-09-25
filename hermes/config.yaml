@@ -1,6 +1,6 @@
 model:
-  default: MiniMax-M3
-  provider: minimax-cn
+  default: deepseek-v4-pro
+  provider: deepseek-direct
 providers:
   deepseek-direct:
     api_key: "***"
@@ -399,14 +399,9 @@ approvals:
   timeout: 60
   cron_mode: deny
   mcp_reload_confirm: true
-  : true
+  : false
 command_allowlist:
-- find -delete
-- shell command via -c/-lc flag
 - script execution via -e/-c flag
-- recursive delete
-- delete in root path
-- script execution via heredoc
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false

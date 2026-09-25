@@ -1,10 +1,10 @@
 ---
 name: laomo-knowledge
-description: '老莫知识库核心技能。v1.88.70 R709 增量 (P#107 第二十七次复用 R708→R709 + **P#136 v6 紧凑系数不稳态首观** R709 实测 1.000 vs R704 0.74/R707 0.728 推翻经验系数 + **P#137 write_file heredoc CJK 撞 confusable_text 门首观** V1 8098 chars 超预估 +119% mid-flight 精简至 5767 chars + **P#138 execute_code cron 模式 BLOCKED 实证** terminal+heredoc 唯一通道 + drop_n=3 首次警戒档应用 + R677 缺口连续第 16 轮 + R709 post-write chunks=8 unique=8 dup=[] last_r=709 ALL PASS) + v1.88.69 R708 + v1.88.68 R707 + v1.88.67 R704 + v1.88.66 R698 + v1.88.65 R695 + v1.88.64 R692 + v1.88.63 R689 + v1.88.62 R686 + v1.88.61 R683 + v1.88.60 R680 + v1.88.59 R678 + v1.88.58 R677 + v1.88.57 R613 + v1.88.56 R610 + 历史。详见 references/changelog-v1.***SECRET***.md + ...r708-...md + ...r707-...md + ...r704-...md + ...r698-...md + ...r695-...md + ...r692-...md + ...r689-...md + ...r686-...md + ...r683-...md + ...r680-...md + ...r678-...md + ...r677-...md。'
+description: '老莫知识库核心技能。v1.88.71 R728 增量 (**P#139 cron registry miss 应对 SOP** — 横幅报技能缺失/skill_view 连败 ≠ 技能丢失, 第一动作 ls /Users/hua/.hermes/skills/<name>/ 绝对路径探盘, 盘上 canonical 唯一可信源, 禁退化成无 SOP 自由发挥 + P#136 系数=1.000 充裕区第四轮零偏差验证 42768+2130=44898) + v1.88.70 R709 (P#107 复用 + P#136 v6 系数不稳态首观 + P#137 write_file CJK 精简 + P#138 terminal+heredoc 唯一通道 + drop_n=3 首观) + v1.88.69 R708 + v1.88.68 R707 + v1.88.67 R704 + v1.88.66 R698 + v1.88.65 R695 + 历史。详见 references/changelog-v1.***SECRET***.md + ...***SECRET***.md + ...r708-...md + ...r707-...md + ...r704-...md + ...r698-...md + ...r695-...md。'
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.88.70"
+  version: "1.88.71"
 ---
 
 # 老莫知识库核心技能
@@ -178,6 +178,16 @@ python3.9 (cron 沙箱默认) 不支持 inline `(?m)` + 双反斜杠组合,必�
 - **R677 缺口维持 R499 同型机制定性入档 (连续 14 轮预期)**: 库态连续不手术 (R441/R443 先例), 持续作为不手术定性入档样本
 - **P#113 接管轮换 SOP 第 4 形态入档持续**: laomo 旁路 cron 已稳定接管 hourly silent round, 老莫主 cron 偶尔接管做升级或预判, R708+ 维持接管轮换 SOP
 - **R708 临界预判 (P#133 v5 + P#134)**: pre desc ≈ 45703+ chars (post R707), margin 3449 充裕 → 但 SKILL.md 假设 last_r=706 → 实测 R708 跑时 last_r 可能漂移到 707/708/709 (旁路 cron worker 持续接管) → **不要信预判, R708 必跑 ground_truth_probe.py 取 ground truth**, 然后 v5 公式重估 drop_n。
+
+## R728 增量（v1.88.71, 2026-09-25 12:04 CST）
+
+本轮 R728 hourly silent round mini 实证 P#107 第三十一次+ 复用 + **P#136 系数=1.000 充裕区第四轮稳定验证**（pre 42768 + entry 2130 = post 44898 实测, 偏差 0 chars — 充裕区 ≤45000 系数 1.000 精确成立, 与 R709/R710 观测一致） + **P#139 新增: cron registry miss ≠ 技能丢失, 盘上 canonical SKILL.md 是唯一可信源**（本轮 cron 启动横幅报 `Skill(s) not found and skipped: laomo-knowledge` + skill_view 对本 skill 连续 3 次失败触发 loop warning, 但 `/Users/hua/.hermes/skills/laomo-knowledge/SKILL.md` 完好在盘 v1.88.70） + P#130 四元断言 ALL PASS（21==21, dup=[], last_r=728, margin 4254）, 详见 `references/changelog-v1.***SECRET***.md`:
+
+1. **P#139 升格（cron registry miss 应对 SOP）** — cron 横幅报技能缺失 / skill_view 连续失败时，**第一动作不是重试 skill_view 也不是放弃，而是 `ls /Users/hua/.hermes/skills/<name>/` 直接探盘**。registry 索引与磁盘状态是两套体系，registry miss 有假阳性；canonical SOP 在盘时按盘执行。禁止因 registry miss 退化成无 SOP 的自由发挥（R728 零退化实证）。
+
+2. **P#136 第四轮实证（R728）** — pre desc 42768 chars（margin 6384, 充裕安全区 ≤45000）→ coeff=1.000 直写 drop_n=0 → post desc 44898 实测（= 42768 + 2130, 零偏差）。系数历史: R704 0.74 / R707 0.728 / R709 1.000 / R710 1.000 / **R728 1.000**。分区判定持续有效: desc ≤ 45000 → 1.000 直写; (45000, 47000] → 0.74; > 47000 → 0.74 + v4 保守双算。
+
+3. **R729+ SOP 预期**: Ark 重探线 15:42 达线必探 ark_unblock_probe.py; Docker Desktop QUIT DOWN 待自发回摆或人工 open -a Docker; drop_n 决策按 P#136 分区公式重估（post R728 desc 44898, margin 4254 充裕 → 预期 drop_n=0 直写, 勿信本预判, 必跑 ground_truth_probe）。
 
 ## R709 增量（v1.88.70, 2026-09-24 11:05 CST）
 

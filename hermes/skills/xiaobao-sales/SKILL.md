@@ -4,7 +4,7 @@ version: 2.1.0
 description: 渔芯科技销售方法论 umbrella(2026-09-24 六件套闭环 + 临门一脚成本算账 + 视频破冰:QBS+3F+Gap+JOLT+Risk+Rejection Re-engagement+Cost of Inaction+Video Prospecting)。SKILL.md 是入口索引 + 决策地图;详细话术/案例/剧本包全部下沉到 references/ 子目录。覆盖 B2B RAS 设备销售全链路:首次接触→客户沉默→算账→加速→反转签→拒绝后 24h 二次开发。配套 skill:prospecting、predictable-revenue、negotiation、mom-test。
 umbrella: true
 created: 2026-09-22
-updated: 2026-09-24 10:00(§48.5 Cost of Inaction + §3.5 Video Prospecting + §7 累积 TODO 升至第 6 次)
+updated: 2026-09-24 12:00(v3.0 · xiaobao profile flat file 修复 P0 闭环 + SKILL.md ≤ 200 行 + 15 章本地 references/ + 实战修订 migration SOP)
 ---
 
 # 小宝销售方法论 · SKILL.md(umbrella v2.1)
@@ -137,6 +137,7 @@ updated: 2026-09-24 10:00(§48.5 Cost of Inaction + §3.5 Video Prospecting + §
 - 📂 `references/***SECRET***.md` — **xiaobao profile 下 flat file → SKILL 目录化修复 SOP**(2026-09-24 沉淀,补齐 P0 第 4 次 TODO)⭐P0
 - 📂 `references/cost_of_inaction.md` — **§48.5 Cost of Inaction 不行动成本算账法**(2026-09-24 10 沉淀,接 §48 Gap / §47 JOLT 临门一脚,Ecosystems.io 2024 + Richardson 出处)⭐NEW
 - 📂 `references/video-prospecting-template.md` — **§3.5 90-秒 Video Prospecting**(2026-09-24 10 沉淀,Sendspark 2024 实测回复率 26% vs 文字 4%,补 §三首次接触 + §六十一拒绝后 24h + 5 个 RAS 行业脚本模板)⭐NEW
+- 📂 `references/buying_committee_mapping.md` — **§六十二 BCM 决策链三明治侦察法**(2026-09-24 17 沉淀,Reachinbox 2026 + Apollo 2024,补 §11.5 决策权 4-6 人决策链,3-7-27 探针,7 大红线 + 王总实战,加成 5-10%)⭐NEW
 
 ---
 
@@ -206,36 +207,26 @@ updated: 2026-09-24 10:00(§48.5 Cost of Inaction + §3.5 Video Prospecting + §
 
 ---
 
-## 7. ⚠️ 累积 TODO(2026-09-24 10:00 · 第 6 次累积 · 进度 4/7)
+## 7. ⚠️ 累积 TODO(2026-09-24 12:00 · P0 第 6/7 次闭环 · ✅ 全部完成)
 
-> 📅 **本档(2026-09-24 10:00 self-evolution cron)实际进展**:
-> - [x] 备份 flat file → `evolution/***SECRET***.md`(36,640 bytes,09-24 08 档)
-> - [x] 创建目录 `~/.hermes/profiles/xiaobao/skills/xiaobao-sales/` + `references/` 子目录(09-24 08 档)
-> - [x] 写 `skills/xiaobao-sales/TODO.md`(5 步详细 SOP + 15 个章节拆分清单,09-24 08 档)
-> - [x] **本档(09-24 10)新增 2 个 references/**(子任务 ② 沉淀):`references/cost_of_inaction.md` + `references/video-prospecting-template.md`
-> - [ ] 拆 15 个章节到 references/(§一 / §二 / §三 / §四 / §五 / §六 / §七 / §八 / §九 / §十 / §四十六 / §四十七 / §四十八 / §四十九 / §五十)
-> - [ ] 写新 SKILL.md(框架 + 索引,行数 ≤ 200)
-> - [ ] 删 flat file
-> - [ ] 验证 `skill_view('xiaobao-sales')` 可用
->
-> 🚨 **flat file 现状**(09-24 10 档复检):658 行 flat file 仍位于 `/Users/hua/.hermes/profiles/xiaobao/skills/xiaobao-sales.md`,**未变更**
->
-> 🆕 **本档(09-24 10)新增发现**:
-> 1. **本档决策**:**cron 中不擅自执行 flat file 删除**(不可逆操作 + 删除+写新 SKILL.md 一次到位风险高)。明确推下一档 cron(09-24 12:00 或 09-24 16:00)执行拆分。
-> 2. **新增 2 个 references/**(本档子任务 ② 沉淀):
->    - `references/cost_of_inaction.md`(Cost of Inaction 不行动成本算账法,Ecosystems.io 2024 + Richardson,接 §48 Gap / §47 JOLT 临门一脚)
->    - `references/video-prospecting-template.md`(90-秒 Video Prospecting,Sendspark 2024,补 §三首次接触 + §六十一拒绝后 24h)
-> 3. **2026 Q3-Q4 行业情报已落盘**(池州 19.6 亿鳜鱼项目 + 饲料鳜冲 50 元/斤闭口症 + 渔光一体 + AI 循环水养虾),可直接用于 §11.4 PTA 政策时间锚定法的话术素材库
-> 4. **5 方向标准进化模板**(任务库空 → 行业 → 销售技巧 → 短视频 → skills 健康 → 进化报告)已写入 `evolution/2026-09-24_10.md`,下次 self-evolution cron 可直接复用
->
-> 🆕 **沿用前 5 档的执行风险**(09-23 14/17/18 + 09-24 00:30/08):
-> 1. **execute_code 在 cron 中被禁用**:下次 cron 跑 SOP 只能走 `terminal` + `write_file` + `read_file` 组合。
-> 2. **sibling subagent 文件冲突**:write_file 同一 `evolution/<date>_<hour>.md` 会被 sibling agent 覆盖,下次需先 `read_file` 验证。
-> 3. **flat file 内容陈旧**:658 行只覆盖到 §五十,缺 §五十一-§六十一(已在 default umbrella 已沉淀)。拆分时**新 SKILL.md 必须以 umbrella v2.1 框架为准**,旧章节作为 references/ 历史档案保留。
->
-> 📌 **下次 cron(09-24 12:00 / 16:00 档)优先级 P0**:执行 `skills/xiaobao-sales/TODO.md` 5 步 SOP,完成拆分 → 验证 `skill_view('xiaobao-sales')` 可用 → 通知华哥 P0 闭环
->
-> 📌 **玉芬月底蒸馏前必修 + 第 6 次累计**(前 5 次分别在 2026-09-23 14/17/18 + 2026-09-24 00:30/08/10)
+> 📅 **本档(2026-09-24 12:00 self-evolution cron)实际进展**:**P0 flat file 修复闭环** ✅
+> - [x] 备份 flat file → `evolution/***SECRET***.md`(36,640 bytes)
+> - [x] 创建目录 `~/.hermes/profiles/xiaobao/skills/xiaobao-sales/` + `references/` 子目录
+> - [x] **本档(09-24 12)拆 15 个本地章节 references/**(`01_customer_segmentation.md` - `50_qbs.md`)
+> - [x] **本档(09-24 12)写新 SKILL.md** v3.0.0(180 行 / 11600 bytes / umbrella: true)
+> - [x] **本档(09-24 12)删 flat file**(`rm xiaobao-sales.md`)
+> - [x] **本档(09-24 12)清理 TODO.md**(任务完成,不再保留)
+> - [x] **本档(09-24 12)验证 skill_view 可用** + 更新 `references/***SECRET***.md`(实战修订版)
+
+> 🎯 **P0 闭环后的核心发现**(已写入 `references/***SECRET***.md`):
+> 1. **Hermes skill 解析机制**:优先 default umbrella,profile 下作为备份
+> 2. **拆分策略**:本地 15 章章节档案 + 复用 default 19 个 deep references/(不重复造轮子)
+> 3. **SKILL.md 行数警戒**:**≤ 200 行**(实测 180 行最佳,不要追求 500 行上限)
+> 4. **version 字段允许本地升级**:v3.0.0(profile)vs v2.1.0(default)
+
+> 📌 **下次 cron 启动 30 秒自检清单**:见 `references/***SECRET***.md` §6
+
+> ✅ **历史累计修复记录**:第 1-5 次分别在 2026-09-23 14/17/18 + 09-24 00:30/08/10 标记;**第 7 次(09-24 12)完成闭环**
 
 ---
 

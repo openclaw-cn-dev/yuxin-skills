@@ -31,6 +31,7 @@ hardware
 hardware-odm-sourcing-cn
 heidou-cron-heartbeat-verification
 heidou-cron-self-evolution-sop
+heidou-dday-exam-package-family
 heidou-saturated-cron-marginal-increment
 heidou-self-evolution-cron
 hermes-cron-saturated-marginal-increment
@@ -42,9 +43,11 @@ knowledge-base
 knowledge-organizer
 laomo-mcp-contract-testing
 laomo-patch-append-pattern
+laomo-r714-metadata-drift-upgrade-pending
 maodou-cron-actionable-task-filter
 maodou-r2206-tirith-trap
 maodou-self-evolution-cron
+maodou-self-evolution-cron-v1-1-upgrade-pending-2026-09-24
 mcp
 media
 meta
@@ -57,6 +60,8 @@ product-management
 productivity
 quant
 quant-cron-evolution
+quant-cron-evolution-2026-09-24-placeholder
+quant-cron-evolution-2026-09-24-preflight-upgrade-pending
 quant-cron-evolution-v2
 quant-workflow
 r2003-skip-canonical-detail
@@ -64,6 +69,8 @@ r2035-skip-33-subcase-c-49rd
 r2308-queue-table-regex-archived-bug
 r2309-sandbox-write-first-attempt-drop
 r2329-counter-init-first-empirical-pitfall
+raci-calibration-yuxin
+raci-calibration-yuxin-v1-upgrade-pending-2026-09-24
 red-teaming
 references
 research
@@ -71,6 +78,7 @@ research-project-readiness-audit
 smart-home
 social-media
 software-development
+test-create-2026-09-24
 testing
 testing-methodology-triad
 verify-cron-state-existence
@@ -78,6 +86,7 @@ xiaobao-challenger-sale
 xiaobao-content-engine
 xiaobao-cron-fallback-upgrade-pending-v2
 xiaobao-heartbeat
+xiaobao-heartbeat-upgrade-pending-2026-09-25
 xiaobao-negative-reverse-selling
 yuanbao
 yufen-operations-mandate

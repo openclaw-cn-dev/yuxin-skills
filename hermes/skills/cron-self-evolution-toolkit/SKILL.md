@@ -26,6 +26,7 @@ metadata:
 - `references/***SECRET***.md`(黑豆 02 时档首例,4 大动作 + 5 段模板 + 字节控制 + 反向保险)
 - `references/***SECRET***.md`(七轮识别信号 + 7 段报告模板 + 3 大治理产出)
 - `references/***SECRET***.md`(🆕 毛豆 04 时档首例,4 大素材类 + 14 节大纲模板 + RACI 总表模板 + Mermaid 触发链 + ROI 量化)
+- `references/***SECRET***.md`(🆕 黑豆 round 69 首例 · 节前冲刺期 5 轮实证 + 24h 行动清单 v1.0 模板 + 8 节点结构 + 5 步流程 + 8 风险检查 + 3 次复用 ROI)
 
 > 📌 **跨模式产物复用**:起草型档若产出可复用模板/清单,**必须落到 `templates/`** 而非仅落 `memory/`。本档首例 = `templates/***SECRET***.2.md`(黑豆 10 时档 round 68,协调会议程 v2.2 模板 v1.0,9-29 实战后反哺升级)。
 

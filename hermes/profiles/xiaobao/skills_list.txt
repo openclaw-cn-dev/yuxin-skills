@@ -69,5 +69,4 @@ web-typography
 xiaobao-heartbeat
 xiaobao-objection-aio
 xiaobao-sales
-xiaobao-sales.md
 yuanbao

@@ -111,9 +111,7 @@ with open(ENTRY_PATH, 'w', encoding='utf-8') as f:
 
 print('entry_len:', L, '| pre:', pre, '| shed:', shed_note, '| proj:', proj, '| margin:', GATE - proj)
 
-cmd = ['python3', WRITER, ENTRY_PATH]
-if PRUNE_N > 0:
-    cmd.append(str(PRUNE_N))
+cmd = ['python3', WRITER, ENTRY_PATH, str(PRUNE_N)]
 cmd += [str(i) for i in CHECK_IDS]
 r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
 print(r.stdout[-3000:])
