@@ -5,7 +5,7 @@ metadata:
   author: 渔芯科技
   version: "1.7.0"
   created: "2026-09-17 curator consolidation"
-  updated: "2026-09-24 · v1.7.0 新增 §1.9 P-35 execute_code 禁用 + sibling subagent 文件冲突近失事故证据 (小宝 08 时档首例:execute_code 在 cron 中 BLOCKED 显式拒绝 + write_file _warning 字段 sibling 冲突不拒绝 + 3 道防线 SOP + 实操替代路径表);references/***SECRET***.md"
+  updated: "2026-09-26 · v1.7.1 新增 §1.7.5 P-34 第三种静默根因:被查任务库空壳化+脚本吞错(HOME 正常也发生,heartbeat 空输出三变种总表 + sqlite3 三源独立直查纪律 + prompt 引用 skill 缺失恢复路径 + 接力档验收实测纪律;黑豆 round 80 首例);references/***SECRET***.md | 2026-09-24 · v1.7.0 新增 §1.9 P-35 execute_code 禁用 + sibling subagent 文件冲突近失事故证据 (小宝 08 时档首例:execute_code 在 cron 中 BLOCKED 显式拒绝 + write_file _warning 字段 sibling 冲突不拒绝 + 3 道防线 SOP + 实操替代路径表);references/***SECRET***.md"
   absorbed: [***SECRET***, ***SECRET***, ***SECRET***, ***SECRET***]
 ---
 
@@ -218,6 +218,16 @@ if (档数 ≥8) AND (产物池已有全量产出 v2.x) AND (复盘新鲜度 <2h
 | HOME=/Users/hua 正常 | 无需触发本档,正常业务流 |
 
 **完整 evidence 见 `references/***SECRET***.md`(事故回放 + 三道防线 + 与 §7 11 例对比表 + 配套动作清单)**
+
+### 1.7.5 🆕 P-34 第三种静默根因:任务库空壳化 + 脚本吞错(2026-09-26 黑豆 10 时档 round 80 首例)
+
+> **触发特征**:HOME 正常(=`/Users/hua`,未劫持)+ `heartbeat_check.py <profile>` stdout 空 + exit 0 → 空输出根因**不在劫持,而在被查库本身**
+> **根因**:桌面 tasks.db(`/Users/hua/Desktop/渔芯科技/团队协作/tasks.db`)已空壳化(sqlite3 直查报 `no such table: tasks`),脚本 `query_desktop_tasks` 只做 `os.path.getsize` 检查、不校验表存在性,sqlite3 异常被吞 → 三源查询静默少一路 + exit 0
+> **静默空输出三变种总表**:① 镜像旧脚本吞 OperationalError(round 73 首例)、② 劫持态无 scripts 目录 Errno 2(round 74-79)、③ 🆕 被查库空壳化吞 sqlite 异常(round 80 首例,HOME 正常)——**空输出 ≠ 劫持专属信号**
+> **强制纪律(升级)**:heartbeat 空输出**永远**需要 sqlite3 直查三源背书(kanban 真源 `/Users/hua/.hermes/kanban.db` + 桌面 tasks.db + `~/.hermes/tasks.db`)才可判「无任务」;每源独立确认 exit 与行数,不采信合并口径
+> **prompt 引用 skill 缺失的恢复路径**:prompt 列出的 skill(如 heidou-admin / ***SECRET***)skill_view 查无时,先用绝对路径 `read_file /Users/hua/.hermes/profiles/<自己>/skills/<name>/SKILL.md` 确认磁盘在位与否——注册表与磁盘存在不一致窗口(round 73 + round 80 两次实证),磁盘在位即可续作,并在 evolution 报告 §0 段标注上报
+> **接力档验收纪律(配套)**:验收上档产物必须 find/grep/ls 重新实测(mtime 在位 / grep 口径 / 文件通道),不采信「上档已闭环」自述——与 P-36 反向交叉验证同精神
+> **完整 evidence 见 `references/***SECRET***.md`**(round 80 实测命令 + 三变种对比 + 恢复路径 + 验收纪律)
 
 ---
 

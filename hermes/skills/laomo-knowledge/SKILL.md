@@ -1,17 +1,21 @@
 ---
 name: laomo-knowledge
-description: '老莫知识库核心技能。v1.88.71 R728 增量 (**P#139 cron registry miss 应对 SOP** — 横幅报技能缺失/skill_view 连败 ≠ 技能丢失, 第一动作 ls /Users/hua/.hermes/skills/<name>/ 绝对路径探盘, 盘上 canonical 唯一可信源, 禁退化成无 SOP 自由发挥 + P#136 系数=1.000 充裕区第四轮零偏差验证 42768+2130=44898) + v1.88.70 R709 (P#107 复用 + P#136 v6 系数不稳态首观 + P#137 write_file CJK 精简 + P#138 terminal+heredoc 唯一通道 + drop_n=3 首观) + v1.88.69 R708 + v1.88.68 R707 + v1.88.67 R704 + v1.88.66 R698 + v1.88.65 R695 + 历史。详见 references/changelog-v1.***SECRET***.md + ...***SECRET***.md + ...r708-...md + ...r707-...md + ...r704-...md + ...r698-...md + ...r695-...md。'
+description: '老莫知识库核心技能。v1.88.72 R739 增量 (**P#140 gateway 探测 launchctl 口径** — pgrep -f 短模式对 ai.hermes.gateway-* launchd label 假阴性, 在场判定一律 launchctl list | grep gateway, pgrep 空返回不单独定论 + **P#137 v2 pre-write 精确投影闭环** wc -m 实测→逐档 drop_n 投影 margin→patch 回填实测数字→直写, 投影 vs 落盘差 1.1% + P#136 系数 1.000 第五轮验证 2016→2039) + v1.88.71 R728 增量 (**P#139 cron registry miss 应对 SOP** — 横幅报技能缺失/skill_view 连败 ≠ 技能丢失, 第一动作 ls /Users/hua/.hermes/skills/<name>/ 绝对路径探盘, 盘上 canonical 唯一可信源, 禁退化成无 SOP 自由发挥 + P#136 系数=1.000 充裕区第四轮零偏差验证 42768+2130=44898) + v1.88.70 R709 (P#107 复用 + P#136 v6 系数不稳态首观 + P#137 write_file CJK 精简 + P#138 terminal+heredoc 唯一通道 + drop_n=3 首观) + v1.88.69 R708 + v1.88.68 R707 + v1.88.67 R704 + v1.88.66 R698 + v1.88.65 R695 + 历史。详见 references/changelog-v1.***SECRET***.md + ...***SECRET***.md + ...r708-...md + ...r707-...md + ...r704-...md + ...r698-...md + ...r695-...md。'
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.88.71"
+  version: "1.88.72"
 ---
 
 # 老莫知识库核心技能
 
+> R733 增量（2026-09-25）：R 轮执行纪要 + 2 个新 pitfall——① curl 循环内 shell 变量展开（`${p%%/*}`）过不了安全扫描 hostname 门，状态采集一律 URL 字面量；② skill_view 命中 profile 镜像旧拷贝 vs skill_manage 命中 canonical 的库命名空间分裂，patch 前先版本号对账，无把握时走 references/ 追加。详见 `references/changelog-v1.88-r733.md`
+
 ## 职责定位
 
 老莫负责渔芯知识库建设与维护、产品测试、学术资料收集。
+
+> 📚 **references/ 索引**：`references/***SECRET***.md` — 多源汇编速查表 playbook（R737 AI法典 v0.2 先例：16域502条→56.9K chars）。覆盖：委托提取落盘设计 → 子代理超时接管（JSON结构核验+QC三门：key格式审计/短内容扫描/重号甄别）→ 程序化拼装（衍生列三档生成+自适应压缩拟合）→ 验收断言 → 口径核验纪律（任务描述数字门槛=上游自述，须对源文件独立盘点）。触发：任何「N 个源目录汇编成单文件 ≤X 字符」类任务。
 
 ## 心跳任务处理（cron）工作流 — R<n> 编号防御体系
 
@@ -178,6 +182,16 @@ python3.9 (cron 沙箱默认) 不支持 inline `(?m)` + 双反斜杠组合,必�
 - **R677 缺口维持 R499 同型机制定性入档 (连续 14 轮预期)**: 库态连续不手术 (R441/R443 先例), 持续作为不手术定性入档样本
 - **P#113 接管轮换 SOP 第 4 形态入档持续**: laomo 旁路 cron 已稳定接管 hourly silent round, 老莫主 cron 偶尔接管做升级或预判, R708+ 维持接管轮换 SOP
 - **R708 临界预判 (P#133 v5 + P#134)**: pre desc ≈ 45703+ chars (post R707), margin 3449 充裕 → 但 SKILL.md 假设 last_r=706 → 实测 R708 跑时 last_r 可能漂移到 707/708/709 (旁路 cron worker 持续接管) → **不要信预判, R708 必跑 ground_truth_probe.py 取 ground truth**, 然后 v5 公式重估 drop_n。
+
+## R739 增量（v1.88.72, 2026-09-26 12:09 CST）
+
+本轮 R739 hourly silent round mini 实证 **P#140 新增（gateway 探测 launchctl 口径）** + **P#137 v2 pre-write 精确投影闭环首次落地** + P#136 系数=1.000 充裕区第五轮验证（2016→2039, 比率 1.011）+ Ark 达线重探 STILL_OVERDUE 新锚 R739（vs R735 末锚 +6h01m, 403 零成本, key 指纹零漂移）+ P#130 四元断言 ALL PASS（27==27 / dup=[] / last_r=739 / 连续 713..739, margin 1726 充裕）, 详见 `references/changelog-v1.***SECRET***.md`：
+
+1. **P#140（新增 pitfall）：gateway / launchd 服务在场判定一律 launchctl 口径** — R739 实证 `pgrep -f gateway-laomo` 返回空, 但 `launchctl list | grep gateway` 显示 `ai.hermes.gateway-laomo` PID 88791 状态 0 在场（与 R738 报告一致）。根因: launchd label 带 `ai.hermes.` 前缀, 与进程 cmdline 不共享短模式串, `pgrep -f` 按 cmdline 匹配 → 短模式假阴性。**SOP**: 在场判定 `launchctl list | grep gateway`（PID + 退出状态 0 为准）; pgrep 空返回不得单独定论"不在场", 至少二次复核。同型适用全部 `ai.hermes.gateway-*` label（quant/default/zhenglishi）与其他 launchd 托管服务。
+
+2. **P#137 v2 升格：pre-write 精确投影闭环** — R739 落地范式: entry 草稿落盘 → `wc -m /tmp/r<n>_entry.txt` 实测 chars → 对候选 drop_n=1/2/3 逐一算 post 投影 margin（充裕区 P#136 系数 1.000, 投影即落点）→ 用 patch 把 entry 决策段的预估数字（~估）回填为实测数字 → `direct_prune_write.py` 直写。R739 实测投影 margin 1749 vs 落盘后 1726（差 23 chars ≈ 1.1%, 投影可信）。收益: 避免 mid-flight drop_n 升档与 entry 二次返工, 台账决策段数字与库内实测一致可审计。
+
+3. **R740+ SOP 预期**: conservative-merge 强制; Ark ≥16:03 达线必探 ark_unblock_probe.py（R739 新锚 12:03 + 4h）; Docker 观察 lookforge 栈持稳 + :8006 恢复（R739 观测 000, vs R738 200 → SPA 下线入档）; gateway 探测按 P#140 launchctl 口径; R741 临界预判勿信本节, 必跑 ground_truth_probe。
 
 ## R728 增量（v1.88.71, 2026-09-25 12:04 CST）
 

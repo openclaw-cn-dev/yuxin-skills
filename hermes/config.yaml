@@ -1,6 +1,6 @@
 model:
-  default: deepseek-v4-pro
-  provider: deepseek-direct
+  default: GLM-5.3-flash
+  provider: custom:glm
 providers:
   deepseek-direct:
     api_key: "***"
@@ -401,6 +401,7 @@ approvals:
   mcp_reload_confirm: true
   : false
 command_allowlist:
+- SQL DROP
 - script execution via -e/-c flag
 quick_commands: {}
 hooks: {}

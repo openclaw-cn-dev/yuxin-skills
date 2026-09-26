@@ -38,6 +38,7 @@ inference-sh
 internal-comms
 ios-hig-design
 knowledge-base
+laomo-workflow
 lean-startup
 made-to-stick
 maodou-cron-heartbeat-path-resolver

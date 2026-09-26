@@ -13,9 +13,13 @@ coding-agent-delegation
 creative
 cro-methodology
 cron-heartbeat-cross-validation
+cron-heartbeat-startup-hijack-and-db-write-gate
 cron-obsolescence-audit-placeholder
+cron-report-unmeasurable-channel-rule
 cron-research-3projects
 cron-research-3projects-3projects-coding
+cron-round-execution-channels
+cron-sandbox-exec-and-skill-shadow-2026-09-26
 data-science
 design-everyday-things
 design-sprint
@@ -34,6 +38,7 @@ gifs
 github
 heidou-admin
 heidou-cron-self-evolution-sop
+heidou-cron-verification-pending-patches
 heidou-skills-audit-v1.0_2026-09-02.md
 heidou-skills-audit-v1.1_2026-09-17.md
 heidou-workflow
@@ -46,11 +51,13 @@ ios-hig-design
 kanban
 laomo-knowledge
 lean-startup
+life-stream-watermark-report-lessons-2026-09-26
 loss-aversion-framing
 made-to-stick
 maodou-product
 mcp
 media
+meta
 mlops
 mlops-toolkit
 module
@@ -59,6 +66,7 @@ negotiation
 note-taking
 policy-triple-verification
 predictable-revenue
+product
 product-debugging
 productivity
 quant
@@ -79,6 +87,8 @@ social-media
 software-development
 testing
 theme-factory
+tokens-report-home-hijack-and-secret-redaction-2026-09-26
+tool-routing-session-lessons
 top-design
 web-artifacts-builder
 web-typography

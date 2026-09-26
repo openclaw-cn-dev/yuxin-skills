@@ -39,9 +39,15 @@ sqlite3 /Users/hua/.hermes/profiles/maodou/kanban.db \
 
 ## ❌ heartbeat_check.py 已坏（2026-09-08 实测）
 
-`python3 ~/.hermes/scripts/heartbeat_check.py 毛豆` 报错指向 `/Users/hua/.hermes/profiles/zhenglishi/home/.hermes/scripts/heartbeat_check.py`，路径错乱（沙盒 $HOME 劫持）。
+`python3 ~/.hermes/scripts/heartbeat_check.py 毛豆` 报错指向 `/Users/hua/.hermes/profiles/zhenglishi/home/.hermes/scripts/heartbeat_check.py`，路径错乱（沙盒 $HOME 劫持，劫持目标每次不同：quant/zhenglishi 都出现过）。
 
 **修法**：忽略该脚本，直接 sqlite3 查 kanban.db，5 秒搞定。
+
+## ❌ cron 会话 skill 注册表错绑（2026-09-25 19 时档实测）
+
+cron 自进化会话里 `skill_view('maodou-product')` 报 **not found**，其返回的 available_skills 全是 zhenglishi 的技能（***SECRET*** 等）——沙盒把 skill 注册表解析到了别的 profile，但 SKILL.md 文件本身完好在盘（maodou-product v1.10.0，155KB）。cron 提示里的 `[IMPORTANT: skill(s) not found and skipped]` 同源，**不要当真、不要误判 skill 丢失**。
+
+**修法**：一律 `read_file /Users/hua/.hermes/profiles/maodou/skills/<name>/SKILL.md` 绝对路径读原文；skill_manage 若同样错绑则改用 patch 工具直接编辑绝对路径。
 
 ## 核心技能调用
 

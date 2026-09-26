@@ -17,7 +17,7 @@ changelog:
    - **⭐ LookForge 产品研发（最高优先级）**
      - Phase 1-6 多阶段产品研发流程管理
      - 与建筑AI助手团队协作
-     - 工具目录：`/Users/hua/Desktop/渔芯科技/6-产品研发/05-LookForge RAS系统仿真/`
+     - 工具目录：`/Users/hua/6-产品研发/渔芯独角兽/02-产品开发综合平台/00-综合开发平台/`（2026-09-26 迁移后现址；旧路径 Desktop/渔芯科技/6-产品研发/05-LookForge RAS系统仿真 已不存在）
      - 技术栈：Next.js 15 + FastAPI + PostgreSQL + ChromaDB
 
 2. **产品设计**：需求分析、PRD输出、UI/UX评审
