@@ -8,7 +8,9 @@ description: |
   新增同事 / 复刻宽博士模式建专家"；或华哥发批量批复指令（"需拍板项目全选'是'" /
   "同意" / "可以"）需要把待拍板清单逐项落地分发时（见 §十四 批量批复落地 SOP）；
   或华哥在 cron 投递线程对**某一位同事的日报**回「全按建议」（单 agent 日报批复变体，
-  见 references/single-agent-report-approval.md，2026-09-13 心博士实战）。
+  见 references/single-agent-report-approval.md，2026-09-13 心博士实战）；
+  或华哥下达组织收缩/降载令（「关闭其它智能体」「只保留 X」「节省 token」）需要批量暂停
+  cron 时（见 §十五 组织收缩 SOP，2026-09-27 实战，references/org-shrink-2026-09-27.md）。
 related_skills:
   - ***SECRET***   # 协作后端（registry / messages / SOP）
   - hermes-gateway-profile-ops        # runtime / launchd / plist / LLM 路由
@@ -27,7 +29,11 @@ related_skills:
 - `references/***SECRET***.md` — **从零新增同事 Agent Profile 上线 SOP**（目录树/config 复刻/AGENTS+SOUL/launchd plist 改造/bootstrap/心跳脚本/cron×2 含 cronjob 工具 quirk/首跑/Mnemosyne 登记，2026-09-04 心博士实战全流程；触发：华哥拍板新增专家型同事）
 - `references/batch-approval-dispatch.md` — **华哥批量批复落地 SOP 详情**：全量扫描"待拍板/待定夺"清单 → 逐项按同意落地 → 批复原文登记到各 owner 实际读取的文档 → 记忆同步 → 分组汇报（2026-09-07 "需拍板项目全选'是'" 3 清单 15 项实战；触发：华哥批量同意类指令）
 - `references/single-agent-report-approval.md` — **单 agent 日报批复「全按建议」落地**：cron 投递线程里的「全按建议」= 该日报全部建议整体通过 → 定位日报源档 → **批示文件落 owner 的 evolution/ 目录**（kanban 写库会卡审批门，文件通道零审批、owner cron 下轮自动认领）→ Mnemosyne 登记 → 3 行汇报（2026-09-13 心博士日间档实战；触发：华哥对某同事日报/简报回「全按建议」「按建议执行」）
+- `references/org-shrink-2026-09-27.md` — 组织收缩实战回放：9→2 agent、孤儿 cron 扫描、cron ID 混用事故回滚、`*/90` 语法坑（触发：执行收缩/降载令、批量暂停恢复 cron）
+- `references/research-fleet-rotation.md` — 研项目轮换舰队标准模式：README-as-ledger 结构、纳入轮换 SOP、频率调整语法、暂停恢复与收官降频（触发：新增研项目接入轮换、调整调研频率）
 - 现役名单（2026-09-04）：玉芬(default) / 阿福(afu) / 毛豆(maodou) / 老莫(laomo) / 黑豆(heidou) / 小宝(xiaobao) / 宽博士(quant) / 学习助手(zhenglishi) / 旺财(wangcai,Windows) / **心博士(psychology，2026-09-04 复刻宽博士模式入职：心理学专家、后台专家模式不接飞书、伦理红线写死 AGENTS.md、服务全公司 6 条线)**
+
+> ⚠️ **2026-09-27 起运行态收缩为双智能体**（华哥令）：仅玉芬(default) + 宽博士(quant)在跑，其余 7 人 cron 全部暂停（profile/记忆/技能保留，job_id 见 Mnemosyne `org-shrink-2agents-20260927`）。名单本身仍有效——恢复即 resume。
 
 ---
 
@@ -403,6 +409,27 @@ cronjob action='list' | grep -E '(阿福|小宝|黑豆|老莫|毛豆|宽博|学�
 - 心博士这类"唯一直属华哥"的专家 agent，批复要同时登记两处：底座 INDEX §五（cron 工作流读取点）+ 同步清单 §八（对齐文档），缺一处下轮就对不齐
 
 详细实战回放（3 清单 15 项 / 精确 patch 模式 / 汇报模板）见 `references/batch-approval-dispatch.md`。
+
+---
+
+## 十五、组织收缩 / 降载令 SOP（2026-09-27 实战）
+
+**触发**：华哥口语化收缩令，如「关闭其它智能体，只保留玉芬与宽博士」「节省 token」。这是对整个 agent 舰队的批量重组指令，必须先盘点再动手。
+
+**五步流程**：
+1. **盘点**：`cronjob(action='list')` 全量列出 → 按 profile / prompt 角色分组成「同事 → cron 列表」。注意心跳与自我进化是同事的两件套，漏一个就是半关闭。
+2. **暂停而非删除**（`action='pause'`）：profile/记忆/技能/cron 配置全保留，一条 resume 可整体恢复。华哥的"关闭"= 停运转，不是销毁（同 §记忆「降级=功能降级到不出错」原则）。
+3. **孤儿 cron 扫描（关键！）**：暂停同事的"心跳+自进化"后，必须再跑一次 `list`/jobs.json 统计，检查该同事名下**散装的第三类任务**——研项目轮换、平台专项等非心跳/自进化命名的 cron 极易漏网（9-27 实战：学习助手 10 个主 cron 暂停后，8 个研项目轮换 cron 仍在 90m/1h 高频烧 token，被第二次"节省 token"令才堵住）。分类标准是 prompt 里 `你是<同事名>`，不是任务名。
+4. **保留项识别**：基础设施 watchdog（token/磁盘/fallback/记忆压缩）≠ 同事 cron，不随收缩暂停；「唯一直属华哥」的专家（宽博士）职能保留但可降频（每 2h → 工作日每日 1 次）。
+5. **汇报 + 登记三连**：按同事分组的暂停清单 + 保留三线（玉芬/直属专家/基础设施）+ 恢复方式一句话；Mnemosyne canonical 记录收缩令 + 全部 job_id（恢复时不用重新考古）。
+
+**已知坑**：
+- **cron ID 混用事故（9-27 实痛）**：`cronjob update` 前必须核对 job_id ↔ name 一致——把已暂停的小宝自进化误当宽博士更新了 prompt，靠返回 payload 的 name/profile 字段当场发现回滚。铁律：update 前按名字重新搜 list 确认 ID；update 后立即检查返回的 name/profile 是否为目标任务。
+- **cron 表达式 `*/90` 无效**：标准 cron 分钟域只支持 0-59，`*/90` 被静默钳制（next_run 落回整点）。>60 分钟间隔必须用调度器原生 `every 90m` 间隔语法。遇到"改了 schedule 但 next_run 不符合预期"先怀疑这个。
+- **收缩令会覆盖同日的旧拍板**：上午"研项目频率翻倍"、下午"关闭学习助手"——按时间后令覆盖前令执行，汇报里明确说一句"X 点的 Y 拍板已被本令覆盖"，让华哥知情可逆。
+- **批量暂停前可留证据**：jobs.json 在 `~/.hermes/cron/`，重要收缩可建议华哥备份（历史 .bak 文件即此前收缩的痕迹）。
+
+实战回放（25 cron 暂停/8 研项目补刀/宽博士降频/事故回滚全记录）见 `references/org-shrink-2026-09-27.md`。
 
 ---
 

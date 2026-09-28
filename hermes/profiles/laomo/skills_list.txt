@@ -38,6 +38,7 @@ inference-sh
 internal-comms
 ios-hig-design
 knowledge-base
+laomo-knowledge
 laomo-workflow
 lean-startup
 made-to-stick

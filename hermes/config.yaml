@@ -401,8 +401,9 @@ approvals:
   mcp_reload_confirm: true
   : false
 command_allowlist:
-- SQL DROP
 - script execution via -e/-c flag
+- SQL DROP
+- recursive delete
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false

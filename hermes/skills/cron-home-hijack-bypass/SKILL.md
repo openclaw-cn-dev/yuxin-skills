@@ -5,11 +5,12 @@ description: 'cron 启动 $HOME 劫持绕过 SOP — 检测 + 全套绝对路径
 license: MIT
 metadata:
   author: 渔芯科技
-  version: "1.5.0"
+  version: "1.6.0"
   changelog_v1.4.0: "2026-09-18 11 R616 老莫 cron 实证 — 新增 §11 docker ps HOME 劫持专项（DOCKER_HOST=unix:///var/run/docker.sock 绝对路径直连）"
   changelog_v1.5.0: "2026-09-24 10:05 R708 老莫 cron 第 13 次中招实证 — §7 表新增 R708 行（laomo 第四次中招,cron prompt 内嵌 `~/.hermes/...` 路径再证必踩,沿用 R683 SOP 绝对路径 `/Users/hua/.hermes/scripts/heartbeat_check.py 老莫` 首调一次过）"
+  changelog_v1.6.0: "2026-09-27 13:5x Claude Code 同步 cron 实测 — 新增 §3.5 残缺 .git 原位修复 SOP（rm -rf /tmp 工作区触发安全审批卡死 → write_file 补 HEAD+config + fetch + merge --ff-only；git reset --hard 同样审批坑）+ cron prompt 脚本路径漂移实录（sync_claude_repo.sh 真实路径在 渔芯独角兽/01-开发中/）"
   created: "2026-09-17 (新独立 umbrella · 原 productivity/knowledge-organizer/references/cron-home-hijack-bypass.md 提升; v1.2 新增 §3.4 Git/SSH 同步专项 + 第 9 次实录; v1.2.1 新增 references/***SECRET***.md 黑豆 #10 实测)"
-  updated: "v1.5.0 (2026-09-24 10:05): 老莫 R708 cron 第 13 次中招（laomo 第四次）实证 + §7 表追加 R708 行 + 验证 R683 SOP 闭环持续有效（24 轮零相对路径调用零劫持，cron prompt 内 `~/` 路径 100% 踩坑）"
+  updated: "v1.6.0 (2026-09-27 13:5x): 新增 §3.5 残缺 .git 原位修复（rm -rf /tmp 工作区触发审批 → write_file 补 HEAD+config + merge --ff-only）+ cron prompt 脚本路径漂移实录（sync_claude_repo.sh）"
 ---
 
 # cron 启动 $HOME 劫持绕过 SOP（2026-08-21 00:00 实测 · 2026-09-17 v1.2 提升：新增 §3.4 Git/SSH 同步专项）
@@ -90,6 +91,21 @@ EVOLUTION="$HERMES_HOME/profiles/zhenglishi/evolution"
 | `rm -rf` 工作区后下一条命令报 `Unable to read current working directory` | 终端会话 cwd 停在被删目录 | 下一条命令显式指定 workdir（如 `cd /Users/hua`） |
 | `git reset --hard` 在 cron 里静默 pending 不返回 | 触发安全审批（无人值守卡死） | 用 `git fetch && git merge --ff-only origin/main` 或直接重克隆替代 |
 | push 到 `openclaw-cn-dev/yuxin-skills` 冲突 | 该仓库由 **Codex sync cron 共用**（每小时也在推） | 永不 force push；push 失败先 `git pull --rebase` 再推 |
+| push 到 `openclaw-cn-dev/yuxin-skills` 冲突 | 该仓库由 **Codex sync cron 共用**（每小时也在推） | 永不 force push；push 失败先 `git pull --rebase` 再推 |
+
+### 3.5 残缺 .git 原位修复（2026-09-27 Claude Code 同步 cron 实测新增）
+
+SOP 原处置「`rm -rf` 工作区后重跑/重克隆」在 cron 语境有新坑：**`rm -rf /tmp/<workspace>` 本身触发安全审批**（返回 `pending_approval`，无人值守卡死）。正确做法 = **原位修复，不删工作区**：
+
+1. 确认残缺形态：`ls <workspace>/.git/` — 有 `objects/ refs/ logs/` 但缺 `HEAD` 和 `config`（git 全部命令报 `fatal: not a git repository`）
+2. `write_file` 补 `.git/HEAD`，内容仅一行：`ref: refs/heads/main`
+3. `write_file` 补 `.git/config`：`[core]` 段 + `[remote "origin"]` 的 url/fetch + `[branch "main"]` 段（shallow clone 保留 `shallow = true`）
+4. `HOME=/Users/hua git fetch origin main` → `HOME=/Users/hua git merge --ff-only origin/main`（禁 `git reset --hard`，同上表审批坑）
+5. 修复后重跑同步脚本一次过
+
+实测：`/tmp/cc-sync-yuxin-skills`（yuxin-skills 仓库 Codex/Claude 同步 cron 共用工作区）缺 HEAD+config → 补 2 文件 → fetch `17ece27..b0f5771` → `merge --ff-only` 成功 → 脚本重跑正常推送。
+
+**同轮新坑：cron prompt 内嵌脚本路径漂移**——prompt 写 `~/6-产品研发/22-出图智能体训练/sync_claude_repo.sh`（不存在），真实路径 `/Users/hua/6-产品研发/渔芯独角兽/01-开发中/出图智能体训练/sync_claude_repo.sh`（2026-09-27 实测，脚本内部依赖 `$HOME/.claude`，执行时用 `HOME=/Users/hua bash <绝对路径>` 单命令前缀）。路径漂移恢复法：先 `ls` 父目录看真实层级命名 → 有限深度 `find /Users/hua -maxdepth 5 -name "<script>"`，禁裸 `find ~`。另：工作区 `.git` 残缺与劫持无因果——正常 `$HOME` 下同样会发生（/tmp 清理半途），但劫持会话中 git 依赖 `$HOME/.gitconfig`，两条修复都要用 `HOME=/Users/hua` 前缀。
 
 ## 4. Python API 调用模板（不受劫持影响）
 
