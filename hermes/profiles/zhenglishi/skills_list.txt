@@ -12,7 +12,6 @@ cron-tirith-traps
 data-science
 devops
 diagramming
-dogfood
 domain
 edge-ai-device-upgrade-tiering
 edge-ai-hardware-spec-budget
@@ -39,6 +38,7 @@ knowledge-base
 laomo-mcp-contract-testing
 laomo-patch-append-pattern
 laomo-r714-metadata-drift-upgrade-pending
+ledger-r2839-appendix
 long-cycle-task-closure-audit
 maodou-cron-actionable-task-filter
 maodou-r2206-tirith-trap
@@ -82,7 +82,6 @@ xiaobao-heartbeat
 xiaobao-heartbeat-upgrade-pending-2026-09-25
 xiaobao-negative-reverse-selling
 xiaobao-sales
-yuanbao
 yufen-operations-mandate
 zhenglishi-cron-skip-daily-closeout
 zhenglishi-deep-dive-cron

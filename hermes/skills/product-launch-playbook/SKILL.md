@@ -1,6 +1,6 @@
 ---
 name: product-launch-playbook
-description: 渔芯新产品从 Stage 0 立项到上线收费的全流程类级 playbook — 三画布产品定义 + 种子客户调研、JTBD-4C 立项决策过滤、HTML 原型大样、全平台脚手架搭建、上线合规手续（ICP/软著/备案）、收款与发票基建。触发条件：华哥/产品经理说"立项/做新产品/新功能定义/出大样/出原型/参考同类产品/要不要做 X/上线要办什么手续/ICP/软著/怎么收费/开发票"，或任何渔芯产品 Stage 0 → launch 流程。
+description: 渔芯新产品从 Stage 0 立项到上线收费的全流程类级 playbook — 三画布产品定义 + 种子客户调研、JTBD-4C 立项决策过滤、HTML 原型大样、全平台脚手架搭建、上线合规手续（ICP/软著/备案）、收款与发票基建、硬件预装集成架构（模块预装平板/设备：工作台 vs 单独App、双算力分工、华为/HarmonyOS 测试通道）。触发条件：华哥/产品经理说"立项/做新产品/新功能定义/出大样/出原型/参考同类产品/要不要做 X/上线要办什么手续/ICP/软著/怎么收费/开发票/预装到平板/集成到设备/端侧模型/测试样机"，或任何渔芯产品 Stage 0 → launch 流程。
 ---
 
 # 产品立项到上线全流程 Playbook（类级）
@@ -17,6 +17,7 @@ description: 渔芯新产品从 Stage 0 立项到上线收费的全流程类级 
 | 4. 快速搭建（做出来） | `references/yuxin-product-bootstrap/` | 从零到全平台（桌面 PWA + 移动端 + Chrome 插件）或轻量单文件 MVP；编号查重（根目录+渔芯独角兽两处）+ 端口验证 + UI 验收四步法（navigate→click→vision→console） |
 | 5. 合规手续（能不能上） | `references/product-compliance/` | 上线证照速查：ICP 备案/许可证、软著、收费合规、APP 上架；**核心判断线：产品出现在线支付按钮即触发 ICP 许可证义务** |
 | 6. 收款发票（怎么收钱） | `references/payment-invoice-setup/` | 可复用发票 widget + 法务合规 + 三阶段开票路线图 |
+| 7. 硬件预装集成（装进设备） | `references/hardware-preload-integration.md` | 多功能模块预装平板/设备的集成架构决策：工作台总 App vs 单独 App、双算力架构（端侧 LLM vs CPU/GPU 仿真）、云/端算力分工、HarmonyOS 6 时代华为平板测试通道、工信部预装可卸载合规 |
 
 ## 使用纪律
 

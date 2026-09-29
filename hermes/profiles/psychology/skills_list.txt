@@ -9,7 +9,6 @@ cron-self-evolution-workflow
 data-science
 devops
 diagramming
-dogfood
 domain
 email
 external-api-rate-limit-defense
@@ -43,4 +42,3 @@ testing
 xiaobao
 xiaobao-cron-self-evolution
 xiaobao-evolution-cron
-yuanbao
