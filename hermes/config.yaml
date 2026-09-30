@@ -401,6 +401,7 @@ approvals:
   mcp_reload_confirm: true
   : false
 command_allowlist:
+- delete in root path
 - script execution via -e/-c flag
 - SQL DROP
 - recursive delete

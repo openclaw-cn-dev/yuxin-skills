@@ -231,6 +231,7 @@ cron 启动 `$HOME` 劫持**不是单 profile**——已观测到 **9 次劫持�
 | 2026-09-12 | **zhenglishi** | 第五次 | 按 SOP 绕过（hermes sync cron 实录） |
 | 2026-09-13 12:10 | **laomo**（第二次中招） | **第六次（本 cron）** | 按 SOP 绕过,hermes 同步正常 push |
 | 2026-09-14 00:34 | **zhenglishi**（第二次中招） | **第七次（老莫心跳 cron）** | 绝对路径重跑即过（`python3 /Users/hua/.hermes/scripts/heartbeat_check.py 老莫`）；劫持诊断止步于「改绝对路径重跑」一步为合规线，echo/skill_view 并行预调等多绕步属执行序违规（laomo-heartbeat 防线墙 R474 行实锤） |
+| 2026-09-29 12:19 | **zhenglishi**（第三次中招） | **第八次（hermes sync cron）** | 按 SOP 绝对路径绕过，push 成功无新坑。注意：sync_hermes_repo.sh / sync_claude_repo.sh 脚本头已内置 `export HOME="/Users/hua"`（09-17/09-18 修复）——**脚本级自防是已落地的根治模式**，新写 cron 依赖脚本可直接照抄 |
 | 2026-09-26 14:4x | **zhenglishi**（第三次中招） | **第八次（R740 老莫心跳实测）** | 绝对路径重跑一调过；当轮 entry 曾误记「第7例/二次中招」系口径错位（漏数本表第 1-6 行），累计口径以本表为准 |
 | **2026-09-24 08:07** | **laomo（第三次中招，玉芬 tokens_report cron）** | **第十次** | 按 SOP 绝对路径绕过 + §8.8 `env -i HOME=/Users/hua` 单命令 ad-hoc 绕过（实测可保留 `~/` 展开不重写代码） |
 | **2026-09-17 06:00** | **zhenglishi**（第三次中招） | **第八次（小宝 xiaobao cron 进化档）** | 第一次工具调用 `python3 ~/.hermes/scripts/heartbeat_check.py xiaobao` 报错（没先 echo 自检）；立即转绝对路径通过 |

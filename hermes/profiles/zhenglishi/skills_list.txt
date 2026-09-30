@@ -33,6 +33,7 @@ heidou-saturated-cron-marginal-increment
 hermes-cron-saturated-marginal-increment
 hermes-patch-tool-pitfalls
 hermes-write-file-pitfalls
+huage-directive-resource-reallocation
 inference-sh
 knowledge-base
 laomo-mcp-contract-testing

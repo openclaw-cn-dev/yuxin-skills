@@ -27,7 +27,7 @@ metadata:
 
 > 📚 **references/ 索引**：`references/***SECRET***.md` — 多源汇编速查表 playbook（R737 AI法典 v0.2 先例：16域502条→56.9K chars）。覆盖：委托提取落盘设计 → 子代理超时接管（JSON结构核验+QC三门：key格式审计/短内容扫描/重号甄别）→ 程序化拼装（衍生列三档生成+自适应压缩拟合）→ 验收断言 → 口径核验纪律（任务描述数字门槛=上游自述，须对源文件独立盘点）。触发：任何「N 个源目录汇编成单文件 ≤X 字符」类任务。
 
-> 🔬 **scripts/ark_probe.py — Ark 账户/模型 canonical 探针**（v1.88.73 R741 落库）：models list（账户级 403/200）+ seedream 4 模型 POST（ModelNotOpen 判别）+ chat 2 模型 POST。key 从 /Users/hua/.hermes/.env 装载无硬编码 secret。**R742+ 必调此副本**（desc 历史引用的 ark_unblock_probe.py 盘上不存在，/tmp/ark_probe.py 是临时件勿赌存活）。Ark 状态机三分法 + verdict 详见 `references/changelog-v1.88-r741-ark-***.md`。
+> 🔬 **scripts/ark_probe.py — Ark 账户/模型 canonical 探针**（v1.88.73 R741 落库）：models list（账户级 403/200）+ seedream 4 模型 POST（ModelNotOpen 判别）+ chat 2 模型 POST。key 从 /Users/hua/.hermes/.env 装载无硬编码 secret。**R742+ 必调此副本**（desc 历史引用的 ark_unblock_probe.py 盘上不存在，/tmp/ark_probe.py 是临时件勿赌存活）。Ark 状态机三分法 + verdict 详见 `references/changelog-v1.88-r741-ark-***.md`。**R754 指针（旁路写入，canonical 侧增量正文在 profile 侧 SKILL.md）**：Ark 全 6 模型统一 404 NotFound（vs R747/R749 混合态，models 200 零 403 不变），新 definitive 锚 R754 09-29 20:08、重探线 9-30 00:08，详见 `references/changelog-v1.88-r754-ark-***.md`。
 
 > 🔬 **scripts/visual_snapshot_http.py — 视觉回归冒烟探针**（v1.88.76 R746 落库）：剥离 script/style 取文本级 DOM 快照 hash（status/title/n_resources/text_hash/text_len 五字段），stdlib 零依赖。用法 `python3 scripts/visual_snapshot_http.py baseline|compare <url> [baseline.json]`，默认基线 /tmp/visual_baseline.json（长期基线建议落盘到项目目录防 /tmp 失活）。R746 实证 :8006 baseline→PASS→篡改服务重放 DETECTED。局限：纯 CSS 视觉变化不敏感；像素级需 Playwright（环境可用时升级）。
 

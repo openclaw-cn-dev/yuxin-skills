@@ -585,9 +585,17 @@ rm RACI_v0.1.md && write new RACI_v0.2.md
 > **🆕 23 时档补充(小宝)**:两段式拿到 HTML 后若正文被前端折叠(如"查看余下全文"按钮点击/JS 展开无效),退路 = 搜索引擎缓存摘要 + 多独立信源交叉验证补全关键数字,并在素材库诚实标注"原文摘要实读+旁证交叉"而非"全文实读"——口径红线仍守,但实读深度不虚报。
 > **🆕 跨 profile 复现 + web_extract 修复键(毛豆 2026-09-27 06 时档·第 2 环境实证)**:① 两段式落盘解析在毛豆环境同型复现通过(curl -o /tmp/x.html 落盘 + 另起 terminal python3 解析,扫描放行)——确认为跨 profile 通用路径,非小宝环境专属;② web_extract 报 search-only 时的**精确报错串** = "DuckDuckGo (ddgs) is a search-only backend and cannot extract URL content. Set web.extract_backend to firecrawl, tavily, exa, or parallel" —— 性质是**后端配置态而非工具能力缺失**,durable 修复 = hermes config 将 `web.extract_backend` 设为 firecrawl / tavily / exa / parallel 任一(config owner 操作);两个独立 profile 报同一错误串 → 直接断定共享后端配置,不再逐 profile 试探浪费调用;配置未改前抓正文一律走本节两段式。
 
-## 1.13 🆕 拍板包产出型 · 第 8 种进化模式 + 删除先考古前置（2026-09-26 毛豆 18 时档首例）
+### 1.12.1 🆕 P-39 会话内长任务的多工具编排反哺（2026-09-29 玉芬 B 档技能库大整理 + 运营计划立项双任务实证）
 
-> 📌 **触发条件**（三连）：① 任务库存在悬置"等华哥/玉芬拍板"的 P0/P1 任务（连续 ≥2 档零漂移：status/勾选 `[x]` 计数/desc 末条均未变）+ ② 无更高优先级接力棒 + ③ 卡点=决策信息不足而非审批意愿
+> **本节是主会话（非 cron）对 toolkit 的反哺**：同一天内连续跑两类大任务（技能库 10-profile 去重+瘦身、运营项目立项+多 cron 派发），沉淀出可复用的编排模式。四模式均为 2026-09-29 单日实测通过（117 副本删除零事故、17 个巨型文件全瘦身、3 个 cron 含中途改向）。
+>
+> **模式 A：先扫后删的批量去重（适用任何"多副本收敛"类任务）**
+> 1. 写独立 python 扫描脚本落 /tmp（按全文件 sha1 组合指纹分类：IDENTICAL/一致无正本/DIFFERENT/独有 四类分账）→ 2. 报告人可读后再写执行脚本（执行脚本内置指纹复核，防扫描与执行间文件变化）→ 3. 删前 `shutil.copytree` 到 archive 目录再 `shutil.rmtree` → 4. 抽验 GONE/STILL-EXISTS
+> **模式 B：巨型单文件瘦身（>100KB SKILL.md / 报告 / 日志通用）**：按 `##` 节切分，保留 frontmatter+前 N 节，其余外置 `references/split_NN_slug.md`，正文追加「已外置章节索引」节；超长行(>2000 字符)单独压缩外置；**同 md5 的 N 份副本只瘦一份再 cp 分发**（省 5/6 工时）
+> **模式 C：多 cron 并行派发的 prompt 变更流**：建新 cron（cronjob create 含 enabled_toolsets/deliver=local）→ 手动触发首轮（不等整点）→ **sleep 轮询落盘验证**（首轮 8-10 分钟，10×30s 不够再续）→ 用 python heredoc 改 jobs.json 的 prompt（中文 \u 转义，patch 工具匹配不上，必须 json.load→str.replace→json.dump ensure_ascii=False 回写→重新 load 校验）→**改完不重启即生效**
+> **模式 D：差量重跑而非全量重跑**：华哥中途给新约束（如"出海改沙特"）时，不重写 cron prompt 全文，只 str.replace 定向替换受影响方向行 + prompt 头部追加「阶段约束」块——旧产出依然有效，新轮次自动走新方向
+
+## 1.13 🆕 拍板包产出型 · 第 8 种进化模式 + 删除先考古前置（2026-09-26 毛豆 18 时档首例）
 > 🎯 **核心动作**：只读考古（git/网络/引用复核）把开放问题压缩成"已发生事实 + ≤4 选项 + 默认推荐"拍板包 → 落盘 + 任务 desc 追加"第 N 轮推进"登记（status 维持 pending）。华哥拍板成本压到 3-5 分钟勾选
 > 📊 **字节**：拍板包 5-8 KB + evolution 4-6 KB；**强制前置**：去留类任务先"删除先考古"（git log --diff-filter-D → show <del>~1:<path> → 遗产三分类：已复活/已被取代/未回收），已删除 ≠ 已作废（实证 backend1 d5acf5ff→d809ab16 OAuth 血缘链）
 > 📐 **静默守候纪律**：上档已落盘拍板包 → 本档不重复追加 desc（"增量不改结论"），新事实才以 §N 追加（#21 §10 PatSnap 预研先例）
