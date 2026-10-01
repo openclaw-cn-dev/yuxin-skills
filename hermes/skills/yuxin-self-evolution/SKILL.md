@@ -434,3 +434,8 @@ comm -23 /tmp/referenced_skills.txt <(sed 's|^|productivity/|' /tmp/installed_sk
 - **每轮自进化都该有"业务可落地输出"**——纯系统修复或纯学习科普都不够
 - **写笔记前先看产品代码** 比只看行业资料更有价值（产品空白 = 提案金矿）
 - **6 段式模板** 已成为玉芬笔记的标准结构（背景/触发/发现/落地/反思/行动）
+
+
+## 结构化研究笔记工作流（原 yuxin-self-improvement,2026-10-01 收纳）
+
+模式 B（学习笔记）的完整落地流程:按五大研究方向选主题 → 一手资料搜集（搜索结果先存 JSON 防拦截、HTML 用 write_file 写提取脚本解析）→ 结构化笔记落盘 ~/Desktop/渔芯科技/9-学习笔记/玉芬自我提升/。工作流正文 + 2026-06 研报档案 20+ 篇(HR 三巨头薪酬/AI 工程师带宽/用友 AI 替代实证/年报对标等):`references/research-notes-archive/self-improvement-workflow.md`(档案在其 references/ 子目录)。

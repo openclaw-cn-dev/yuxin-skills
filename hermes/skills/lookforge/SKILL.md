@@ -31,7 +31,7 @@ Phase 1 调研收口后用推荐 prompt 生成候选方向：读 Phase 1 调研�
 
 1. **JTBD 标签注入** — 给每个创意打 job 标签（对齐 §1 的标签体系）
 2. **前端分组视图** — 按 job 类型分组展示创意
-3. **智能排序** — RICE/影响力排序落位（复用 `maodou-methodology-toolbox` 的 rice_score.py）
+3. **智能排序** — RICE/影响力排序落位（复用 `maodou-product skill (方法论工具箱 section, references/methodology-toolbox/)` 的 rice_score.py）
 
 完整 SOP 与界面规格见 `references/jtbd-phase3-landing-sop.md`。
 

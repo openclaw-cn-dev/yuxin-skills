@@ -138,3 +138,8 @@ ERRC框架：消除/减少/提升/创造。
 
 ## 触发关键词
 "销售"、"转化"、"客户"、"线索"、"报价"、"合同"、"自媒体"、"内容创作"、"抖音"、"视频号"、品牌故事
+
+
+## 内容推广工作流（原 content-promotion-workflow,2026-10-01 收纳）
+
+跨平台推广内容工厂（公众号/抖音 V1 + 知乎/B站/视频号/小红书 V2 + MCP 适配层 V2.5,飞书审核闭环）。华哥说「做推广工作流」「内容工厂」「全平台发布」或任何产品需要自动/半自动跨平台内容分发时加载。架构与 V1/V2/V2.5 路线图 + 发布就绪度探测:`references/content-promotion/content-promotion-workflow.md`;发布探针脚本与飞书发布/MCP server/模板选择器模板在 `references/content-promotion/{scripts,templates}/`;HG 运营平台发布链路档案与 8 平台发布审计在同目录。

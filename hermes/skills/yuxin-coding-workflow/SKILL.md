@@ -324,7 +324,7 @@ terminal(command="rm -f /tmp/my_check.py")
 
 **场景**：把任意 Python 后端模块（ChromaDB / RKR / 飞书 / 第三方 API）封装成 MCP Server，让 Codex / Hermes 双端可调用。
 
-**模板**（参考 `content-promotion-workflow/templates/mcp_server_starter.py`）：
+**模板**（参考 `xiaobao-sales/references/content-promotion/templates/mcp_server_starter.py`）：
 
 ```python
 import sys
@@ -585,7 +585,7 @@ for path in ['/api/health', '/api/qigua?method=time']:
 - **代码铁律本体**:`yuxin-code-iron-law` — 2026-08-03 华哥明确,优先级最高,触发条件 + 兜底 + TODO 标注规约
 - **玉芬核心 skill**:`yuxin-self-evolution` — Signal Scan → Plan → Execute → Reflect
 - **代码风格**:项目内一致命名(本项目用 `app/core/`、`tests/unit/`)
-- **测试先行**:`test-driven-development` — RED-GREEN-REFACTOR
+- **测试先行**:`systematic-debugging/references/tdd-red-green-refactor.md` — RED-GREEN-REFACTOR（原 test-driven-development，已收纳）
 - **远程 CC 流程**(backup):`hermes-agent` skill — 仅在玉芬自己写不动时降级使用
 
 ## 参考

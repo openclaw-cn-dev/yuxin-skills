@@ -167,6 +167,10 @@ Kano 嵌入 Sprint Day 1 末                Service Blueprint（硬件）       
 **实战记录**：Service Blueprint 渔芯版首次落地 → HW-001 滚筒微滤机（含 4 个 MOT：D7 反冲洗堵塞 ¥5万 / M3 滤网破损 ¥1万 / Y2 PLC 老化 ¥2万 / Y7 整机翻新 ¥3万）。
 
 
+## 方法论工具箱 v1.3（原 maodou-methodology-toolbox,2026-10-01 收纳）
+
+9 件套速查表（JTBD/Lean Canvas/Service Blueprint/LCC/USM/AARRR/BMC/RICE/Kano）+ 闭环图 + HW Sprint Day 1 实战模板 + RICE 打分脚本:见 `references/methodology-toolbox/methodology-toolbox-overview.md`(kano/lean-canvas/service-blueprint v1.0 spec、rice_score.py、rice_requirements.csv 同目录)。本 SKILL.md 的「方法论 14 件套索引」为权威版本,工具箱文件作速查表与模板源。
+
 ## 已外置章节索引（瘦身）
 
 以下章节内容已移至 references/，需要时按文件名读取：
