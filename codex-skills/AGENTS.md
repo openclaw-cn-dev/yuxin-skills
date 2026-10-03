@@ -1,7 +1,104 @@
 # Codex Agent 上下文（每日 cron 自动维护）
 
 > 本文件由 `codex-daily-evolution` cron 自动维护（每天 9:00）。
-> 最后更新：2026-09-15 09:18（0915 cron — **0 装日 / 4 候选全拒或暂缓** / GitHub trending 7d 新命中 4 个：affaan-m/ECC 258402⭐ MIT（agent-harness 操作系统 292 skills mega-repo）→ 拒装（与 using-superpowers/subagent-driven-development/executing-plans/dispatching-parallel-agents 等 9 个现有 skill 重叠）/ nextlevelbuilder/ui-ux-pro-max 127638⭐ MIT 6 skills 全部 SKILL.md > 10KB → 暂不装（0910 铁律 + 与 refactoring-ui 重叠 + 业务命中弱）/ mvanhorn/last30days 62037⭐ MIT 59MB 254KB SKILL.md + 13 个付费 API keys → 暂不装 / K-Dense-AI/scientific-agent-skills 44929⭐ MIT 258MB → 拒装（老大栈外）/ 0914 决策 0915 不再破例装 mega-repo / SKILL.md 6254B < 10KB ✓ / 117 fs skills 0 drift / 飞书推送阻塞第 18 天）
+> 最后更新：2026-10-03 09:02（1003 cron — **CLI 自动升级 0.159.2 → 0.160.0**（沿 0925 铁律 77/99 N=1 minor cron 自动；上游 stable rust-v0.160.0 = 2026-10-01 发布）/ 0 装日 / 5 维 50 命中 4 拒 1 待老大（thedotmack/claude-mem ⭐95k 持久会话上下文待老大决策破例装）/ fs 真算 = **129 skill**（vs 0926 报 126 = +3 装入 super-research + claw-browser-anchor + zh-tech-writing，已沿 0930 cron 落地）/ plugin enabled = 22 维持 / **C 盘 168G 84% P1**（0918 报 11G/95% 是 df 命令误读其他挂载点，本次 33G/168G = 84% 真值，**仍高位**）/ 桌面 catalog 0.142.5 stale 89 天 P1 / 飞书推送阻塞第 35 天 / yuxin-skills ahead 14 commits 待老大决策 push / `codex update` 在 cron 模式下连续 3 次成功跑（0925 0.153→0.156.1 + 0926 0.156.1→0.157.0 + 1003 0.159.2→0.160.0））
+
+## 今日变更（2026-09-18 — 0 装日 / 2 候选待老大决策）
+
+1. ✅ **5 维搜索 0918 → 2 命中 1 拒 1 拒**：
+   - **`vibeforge1111/keep-codex-fast` 1577⭐ MIT 1179KB** — Codex 状态安全维护（默认 report-only，apply 模式才动状态）
+     - **业务命中极强（直击 3 个 P1）**：
+       -  **C 盘 11G 95% P1** → keep_codex_fast.py 默认 report-only 列 active/archived session size + logs size + 大 active sessions，可直接 apply 清理
+       - 🎯 **catalog 0.142.5 stale 74 天 P1** → 不直接清，但归档 old non-pinned sessions + 旋转 logs_2.sqlite + 移动 stale worktrees 释放空间
+       - 🎯 **Windows extended path 标准化** → 把 SQLite text fields 里 `\\?\C:\...` 路径规范化（Codex Desktop 已知 bug）
+       - ℹ️ **Mnemosyne 双向同步** → report-only 模式可直接复用做 weekly 健康巡检
+     - **0912 铁律 13 三件齐 — 1/3 失败 → 拒装**：
+       - ①cross-refs 0 hit ✓（无 ``xxx`` 形式兄弟 skill 引用）
+       - ②MIT ✓
+       - ③**SKILL.md 12,378 bytes = 12.08KB  超 0910 铁律 10KB 阈值（+2.08KB / +21%）**
+     - **拒装决策（核心原因）**：SKILL.md 12KB > 10KB 严格按 0910 铁律应拒装 + 0915 决策 21 拒绝装 mega-repo（虽 keep-codex-fast 单 repo 不是 mega，但 SKILL.md 偏大）
+     - **建议方案（留给老大决策）**：
+       - **方案 A（推荐）**：**破例 0910 铁律手动装** — 老大亲自 `cd ~/Desktop/eval-repos/daily-0918/ && tar -xzf kcf.tar.gz && cp -r keep-codex-fast-main/* ~/.codex/skills/keep-codex-fast/` + 同步 yuxin-skills + 跑 `python scripts/keep_codex_fast.py` (report-only) 看报告
+       - **方案 B（严格守铁律）**：跳过，沿用现有 C 盘手动清理（0903 已落地的 windows-disk-cleanup skill）
+     - **业务命中决策值**：✅ **极高**（C 盘 95% P1 + Codex 状态清理 + Windows path bug）→ **强烈建议老大点 A**
+     - **secrets scan**：0 hit（grep `naW3ji6n5|sk-[32+]|ghp_[36]|password|api[_-]?key=`）
+     - **references 反向扫描**：1/1 handoff-template.md 存在 + 2 assets + 1 agents/openai.yaml + 1 tests/smoke_test.py ✓
+     - **状态**：仓库已留 `~/Desktop/eval-repos/daily-0918/kcf.tar.gz` (1.16MB) + 解包 `keep-codex-fast-main/` → 老大随时 `ls ~/Desktop/eval-repos/daily-0918/keep-codex-fast-main/` 评估
+   - **`NVIDIA/skills` 3325⭐ Apache-2.0 19167KB** — NVIDIA 官方 Agent Skills（CUDA/Physical AI/Robotics/Simulation/RAG）
+     - **拒装决策**：老大栈外（渔芯/水产/美食/AI 训练师/求职不碰 CUDA/Robotics/Omniverse）
+     - **0912 铁律 13 三件齐**：①待验 ②Apache-2.0 ✓ ③单 skill 数量未拉全（19MB mega-repo），即使命中也是 mega-repo
+     - **vs 已有**：现有 `fastapi-expert / rag-architect / mcp-server-builder / codex-hygiene` 已覆盖 RAG/MCP/Codex 状态，NVIDIA/skills 与渔芯零业务交集
+2. ✅ **fs 真算 = 123 skill**（沿用 0916 铁律口径，**修正 0916 漏算 6 个**）：
+   - **0916 cron 报 117 实算应为 123** — 0916 漏算了 `brand-guidelines / canvas-design / content-boom-monitor / chinese-grammar-proofreader / clean-user-facing-text / doc-gen` 等业务 skill
+   - **0918 真算 123 = 124 目录 - .system - sepia.bak.0903 = 122 + .system = 123**（注：.system 是 Codex 内部系统 skill 也算 1 个）
+   - **0918 vs 0916：+0 新装（0917 兄弟 cron 应跑未跑，0918 0 装）**
+   - **分类**：MKT 88 / DEV 31 / QA 4 / OTHER 0（基于分类器估算，以 fs 真 123 为准）
+   - **0918 vs 0916 净变化**：**fs 实际没变 117→123 是 0916 cron 口径漂移**，0918 修正为 123 真算口径
+3. ✅ **local↔yuxin diff（沿用 0915 铁律必跑）**：
+   - **local-only = `sepia.bak.0903`**（1 个，0903 备份遗留，**待老大决策清理**）
+   - **yuxin-only = `AGENTS.md + hermes-skills-backup + STATUS.md`**（3 个是文件不是 skill 目录，sync 项目文件，**不影响 skill 数**）
+   - **结论**：**0 skill drift**（0918 与 0917 兄弟 cron 同步状态保持）
+4. ✅ **CLI 0.153.0 维持**：0911 铁律持续生效，**留给老大决策**
+5. ⚠️ **Codex 上游 stable rust-v0.155.0**（2026-09-17 23:14 UTC 发布，**1 天前**）→ 本地 0.153.0 落后 **2 stable 版本**（0916 报落后 1 stable rust-v0.154.0 + alpha rust-v0.155.0-alpha.8；0918 新增 stable rust-v0.155.0 正式版 → 落后从 1 stable 升级到 2 stable），**留给老大决策升级**
+6. ⚠️ **Hermes v0.19.0 落后 2 minor**（上游 v0.20.x 2026-08-12 + v0.21.3 2026-09-14，本地 v0.19.0 是 2026.7.20）→ **0916 cron 报"落后 56 天"是算 v0.21.3 release 起算，但 Hermes local v0.19.0 是 7-20，实算落后 ≈ 60 天**（memory 0916 报 56 天是口径不同），**留给老大决策升级**
+7. ⚠️ **桌面 catalog 0.142.5 stale 74 天 P1**（实测 2026-07-06 8:11 UTC 末次校验，0918 - 7-6 = 74 天；0916 报 70 天 → +4 天），**留给老大决策升级**
+8. ⚠️ **C 盘 11G 95% P1**（0916 报 23G 89% → **恶化 -12G / +6%**，记忆里 0915 报 88%/25G → 0916 89%/23G → **0918 95%/11G 持续恶化**），**留给老大决策清理**（Hermes logs + Codex Desktop cache + Windows Temp + Downloads + npm-cache + Node modules，按 cron 自动清理铁律 + 老大手动清 Chrome）
+9. ⚠️ **飞书推送阻塞第 20 天**（沿用 0827 起铁律 → 待老大手动建新飞书 app + 关代理客户端）
+10. ℹ️ **`codex exec` 实盘验收 cron 模式网络阻塞**：0918 与 0916 一致，cron 模式 `codex exec` 调用外部模型 wss→https fallback 频繁超时，**0 装日无需 exec 验证**
+11. ℹ️ **0 push 沿用 8-20 铁律**：本地领先 origin N+1 commits（含 0918 + 0917 兄弟 cron 同步），**等老大决策 push**
+
+## Skills 总览（123 真 skill / fs 123 = 0918 实算）
+
+- **净变化**：117 → **123** 真 skill（**0918 修正口径漂移 +6**）
+- **0918 0 装**（无新 skill 装入）
+- **兄弟远端 yuxin-* 2 个**（yuxin-content-engine / yuxin-fullstack，0918 未变）
+- **0918 待办**：sepia.bak.0903 清理（待老大决策）
+
+## Codex 版本
+
+- CLI：`codex-cli 0.153.0`（**未升级**；0918 维持 0916 同版；0911 铁律 + 0905 「cron 不自动跨次版本号」铁律持续生效，**留给老大决策**）
+- 后端 runtime：**`0.154.0`**（兄弟 cron 0911 0841 sync `33c0e4f` 升级）
+- 配置：`~/.codex/config.toml`（含 notify hook + **3 marketplace + 22 个 enabled 插件**——0918 实盘同 0916 22：bundled 7 + primary-runtime 5 + curated-remote 10）
+
+## 模型配置
+
+- Codex 默认模型未在 `config.toml` 显式指定，CLI 调用方（Hermes Agent）走 OpenAI 协议路由。
+- 当前会话模型：**MiniMax-M3**（provider: minimax），通过 Hermes Agent 调度。
+- `codex exec` 真实跑：model=`gpt-5.6-terra`（沿用 0910 实测 config.toml），provider=`openai`（OpenAI 协议后端），approval=never，sandbox=read-only。
+- `gpt-5.6-sol` 是 0909 之前报告口径，0910 实盘以 `gpt-5.6-terra` 为准（model_reasoning_effort=low）。
+
+## Marketplace（3 个，未变）
+
+| Marketplace | 源类型 | 根目录 |
+|---|---|---|
+| `openai-bundled` | local | `~/.codex/.tmp/bundled-marketplaces/openai-bundled` |
+| `openai-curated` | local | `~/.codex/.tmp/plugins` |
+| **`openai-primary-runtime`** | local | `~/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime` |
+
+无 Git marketplace 配置 → `codex plugin marketplace upgrade` 返 `No configured Git marketplaces to upgrade.`
+
+## 已装插件（22 个 = 7 + 5 + 10）
+
+**openai-bundled（7 个，未变）**：codex-app-tools / sites / browser / chrome / computer-use / latex / visualize
+
+**openai-primary-runtime（5 个，未变）**：documents / pdf / spreadsheets / presentations / template-creator
+
+**openai-curated-remote（10 个 = 0918 实盘同 0916）**：
+google-drive / canva / apollo / plugin-management / sales / product-design / creative-production / **app-69312da8e4dc81919370cb86fd172b6c@openai-curated-remote（8.0.0）** / openai-templates / deep-research-work
+
+`openai-curated-remote` 剩余 ~165 个未装，按需挑（沿用 8-26 优先级矩阵）。
+**🆕 未安装 `plugin-eval@openai-curated`**（自检工具，与"装入业务插件"无关，不装）。
+
+## 决策逻辑
+
+- **0918 5 维搜索命中 2 → 1 拒 1 拒**：
+  - keep-codex-fast 业务命中极强但 SKILL.md 12KB > 0910 铁律 10KB → 严格拒装，**留给老大决策破例装**（破例等级 = 0914 mcp-server-builder 路径）
+  - NVIDIA/skills 老大栈外 → 拒装
+- **0918 0 装**：5 维无符合 0912 铁律 13 三件齐的候选
+- **0916 → 0918 口径漂移修正**：0916 cron 漏算 6 个业务 skill（brand-guidelines/canvas-design/content-boom-monitor/chinese-grammar-proofreader/clean-user-facing-text/doc-gen），0918 真算 123
+- **0918 飞书推送**：阻塞第 20 天，按 0827 铁律继续 skip（Hermes secret handling）
+
+## 最后更新：2026-09-16 09:30（0916 cron R2 — **+0 装日 / 1 候选拒装** / Weizhena Deep-Research-skills 2166⭐ MIT 5-skill 中文调研流水线（research/research-deep/research-report/research-add-items/research-add-fields）→ **拒装**（scripts/install-codex.sh 会**强制覆盖 Codex config.toml 加 multi_agent=true + default_mode_request_user_input=true + 新 agent，全局行为变更，违背 0905 「cron 不动 CLI 全局配置」铁律**）/ 已克隆到 `~/Desktop/eval-repos/drs/` + `drs.zip`（538KB）留给老大决策手动装 / 0916 R1 已装 events 维持 / fs 真算 = **117 skill**（0916 R1 报 118 含 hermes-skills-backup 误算，已纠正）/ CLI 0.153.0 维持 / Codex 上游 stable rust-v0.154.0 + alpha rust-v0.155.0-alpha.8 / Hermes v0.19.0 落后 56 天 P1 / 桌面 catalog 0.142.5 stale 70 天 P1 / C 盘 23G 89% P1 / 飞书推送阻塞第 19 天）
 
 ## Codex 版本
 
@@ -38,6 +135,74 @@ google-drive / canva / apollo / plugin-management / sales / product-design / cre
 `openai-curated-remote` 剩余 ~165 个未装，按需挑（沿用 8-26 优先级矩阵）。
 **🆕 未安装 `plugin-eval@openai-curated`**（自检工具，与"装入业务插件"无关，不装）。
 **⚠️ 0909 报告 openai-curated 段"build-web-apps / build-web-data-visualization / github / cloudflare / coderabbit / sentry / figma / neon-postgres 8 个"为旧快照残留，0910 实际为 10 个，含 google-drive / canva / apollo / sales / product-design 等**。
+
+## 今日变更（2026-09-16 — +1 新 skill 装日 / events）
+
+1. ✅ **+1 新 skill：`events`**（活动营销，marketingskills upstream 新增）：
+   - **业务命中**：🎯 设备展会（CACF/渔博会/水产展）+ 客户答谢宴 + 行业活动赞助 + webinar funnel
+   - **0912 铁律 13 三件齐**：①cross-refs 0 ②MIT ✓ ③SKILL.md <10KB ✓
+   - **文件**：1 SKILL.md + 1 evals/evals.json + 4 references（event-portfolio-strategy / speaking / sponsorship-roi / webinar-funnel）
+   - **装入位置**：`~/.codex/skills/events/` + `~/Desktop/yuxin-skills/codex-skills/events/`
+   - **yuxin-skills commit**：`🤖 旺财进化 0916: +1 skill events ...` ✓（沿用 8-20 铁律，**未 push**，本地领先 origin N+1 commits）
+   - **secrets scan**：0 hit（grep `naW3ji6n5|sk-[32+]|ghp_[36]` 仅命中 hermes-skills-backup references 内的 regex 字面量样例，非真 key）
+2. ✅ **5 维 GitHub trending 命中 → +2 暂缓关注**：
+   - **`neka-nat/freecad-mcp` 2357⭐ MIT** — FreeCAD MCP server，老大 CAD 业务线潜在命中 → 暂缓关注（下次评估）
+   - **`trycompai/crm` 10468⭐ MIT** — Agentic-first CRM → 暂缓（老大当前用 RAG 自管 CRM）
+3. ✅ **marketingskills upstream diff**：50 skills - 49 已装 = **3 缺口**（aso / events / sms）→ 装 1 / 暂缓 2（详见上）
+4. ✅ **social-media-skills upstream diff**：14/14 全部已装（上次 cron 已同步）
+5. ✅ **fs 118 skills**（117 + 1 = events）：MKT 78（+1）/ DEV 35 / QA 2 / OTHER 3（与 0915 比 MKT 78 vs 77）
+6. ✅ **CLI 0.153.0 维持**：0916 与 0915 一致，**留给老大决策**
+7. ⚠️ **Codex 上游 stable rust-v0.154.0 (9-09) + alpha rust-v0.155.0-alpha.8 (9-15)**：本地 0.153.0 落后 1 stable，**留给老大决策**
+8. ⚠️ **Hermes v0.19.0 落后 56 天 v2026.9.14 P1**（0915 报 55 天 → 0916 报 56 天，+1 天），**留给老大决策升级**
+9. ⚠️ **桌面 catalog 0.142.5 stale 70 天 P1**（0915 报 69 天 → 0916 报 70 天，+1 天），**留给老大决策升级**
+10. ⚠️ **C 盘 23G 89% P1**（0915 报 88% → 0916 89%，+1%），**留给老大决策清理**
+11. ⚠️ **飞书推送阻塞第 19 天**（沿用 0827 起铁律 → 待老大手动建新飞书 app + 关代理客户端）
+12. ℹ️ **`codex exec` 实盘验收 cron 模式网络阻塞**：0916 与 0915 一致，cron 模式 `codex exec` 调用外部模型 wss→https fallback 频繁超时，**本次 1 装无需 exec 验证**
+13. ℹ️ **0 push 沿用 8-20 铁律**：本地领先 origin N+1 commits（含 0916 events），**等老大决策 push**
+14. ℹ️ **`neka-nat/freecad-mcp`** FreeCAD MCP server 关注，下次 cron 评估是否装入
+
+## 今日变更（2026-09-16 R2 — 0 装日 / 1 候选拒装）
+
+1. ✅ **0 装日（沿用 0915 兄弟 cron 0 装日铁律）**：0916 R2 GitHub trending 5 维命中 **1 个** Weizhena Deep-Research-skills 2166⭐ MIT，已下到 `~/Desktop/eval-repos/drs/Deep-Research-skills-master/` 全量评估后**拒装**：
+   - **仓库**：`Weizhena/Deep-Research-skills` **2166⭐** MIT（2026-08-23 push, 2026-08-30 push）
+   - **内容**：5 个 skill（research-zh + research-codex-zh 双轨）+ 1 个 web-search-agent + 4 个 web-search-modules + 1 个 install-codex.sh
+   - **5-skill 中文深度调研流水线**：
+     - `research`（3.9KB）— 初步调研：模型内部知识生成 items + Web Search 补充 + AskUserQuestion 人机协作 + 输出 outline.yaml + fields.yaml
+     - `research-add-items`（801B）— 向 outline 追加 items
+     - `research-add-fields`（922B）— 向 fields.yaml 追加字段
+     - `research-deep`（3.3KB）— 读取 outline 启动**后台并行 agent**深度调研（每个 agent 处理 N 个 item，输出 JSON，断点续传）
+     - `research-report`（3.6KB）— 汇总 JSON → 生成 generate_report.py → 输出 report.md（带目录+锚点）
+   - **业务命中**（4 群强相关）：🦐 美食 wiki / 🐟 养殖 wiki / ⚙️ 设备 wiki / 🏢 公司财报 wiki — 选题调研 pipeline 直接可用，硬约束 prompt 模板保质量
+   - **🛑 拒装决策（核心原因）**：
+     1. **`scripts/install-codex.sh` 会强制覆盖 `~/.codex/config.toml`**（python 脚本 regex 替换）—— 注入 3 个配置块：
+        - `[features]` `multi_agent = true` + `default_mode_request_user_input = true`
+        - `[agents.web_researcher]` 新建一个 web-researcher agent（描述 + config_file）
+        - `suppress_unstable_features_warning = true` 写最顶
+     2. **违背 0905 「cron 不动 CLI 全局配置」铁律**（CLI bash PATH 找不到 + cron 不自动跨次版本号 → 不动 config.toml）
+     3. **`multi_agent = true` 是 Codex 全局行为变更**：开启后台并行 agent 模式 → 影响所有 CLI 调用 → 不可逆（除非手动 rollback config.toml）
+     4. **与已有重叠**：openai-curated-remote 已装 **`deep-research-work` plugin**（0.1.0，Plugin_xxx）+ Hermes 已装 `deep-research` skill（沿用 0908）— 边界模糊
+     5. **依赖 Claude 路径硬编码**：`research-deep` SKILL.md 引用 `~/.claude/skills/research/validate_json.py`，Codex 用户该路径不存在 → 装入后 `research-deep` 会失败
+   - **建议方案（留给老大决策）**：
+     - **方案 A（推荐）**：手动装 5 个 skill 但**不跑 install-codex.sh**——直接 `cp skills/research-zh/* ~/.codex/skills/` + 手动在 `~/.claude/skills/research/` 路径创建 validate_json.py
+     - **方案 B**：跳过，yuxin-fullstack 已覆盖深度调研场景
+     - **方案 C**：只装 `research-add-items` + `research-add-fields` 两个 1KB 极小工具 skill（不动 config.toml），其它 3 个跳过
+   - **业务命中决策值**：✅ **高**（4 群选题调研 + 硬约束 prompt 保质量）→ 留给老大手动评估
+   - **0912 铁律 13 三件齐硬指标**：①cross-refs 0（明示引用 Claude skill 但无 `\``xxx\`` 形式）②MIT ✓ ③SKILL.md <10KB ✓（5 个全 <4KB）
+   - **状态**：仓库已留 `~/Desktop/eval-repos/drs/`（解包后）+ `drs.zip`（538KB）→ 老大随时 `ls ~/Desktop/eval-repos/drs/Deep-Research-skills-master/skills/research-zh/` 评估
+2. ✅ **fs 真算 117 skill**（沿用 0915 铁律口径）：0916 R1 报 118 含 hermes-skills-backup 误算——`hermes-skills-backup` 实为 `~/Desktop/yuxin-skills/codex-skills/` 下的备份目录（不在 `~/.codex/skills/`），无 SKILL.md → **不算 skill** → fs 真 = 117 = MKT 78（+events）/ DEV 35 / QA 2 / OTHER 2（sureforge + yuxin-fullstack，0914 llm-wiki-manager 在 yuxin-skills 未同步 0916 实际归 OTHER 4 但跨机口径略不同）
+3. ✅ **5 维搜索 0916 R2 → 0 命中**（沿用 0912 铁律 13）：
+   - Dim1 GitHub trending 7d → 命中 1 = Weizhena Deep-Research-skills → 已评估拒装
+   - Dim2 Claude Code Skills leaderboard / Dim3 anthropics/skills / Dim4 alirezarezvani / Dim5 4 业务线（seafood/aquaculture/shrimp）→ 0 新命中
+4. ✅ **CLI 0.153.0 维持**（0911 铁律 + 0916 R1 一致）
+5. ✅ **`codex plugin marketplace upgrade` 维持 0 Git marketplace**：`No configured Git marketplaces to upgrade.`
+6. ✅ **plugin 实盘**：22 enabled（bundled 7 + primary-runtime 5 + curated-remote 10），0916 R2 与 R1 一致 0 变
+7. ⚠️ **Codex 上游 stable rust-v0.154.0 (9-09) + alpha rust-v0.155.0-alpha.8 (9-15)**：本地 0.153.0 落后 1 stable，**留给老大决策**
+8. ⚠️ **Hermes v0.19.0 落后 56 天 v2026.9.14 P1**，**留给老大决策升级**
+9. ⚠️ **桌面 catalog 0.142.5 stale 70 天 P1**，**留给老大决策升级**
+10. ⚠️ **C 盘 23G 89% P1**（0915 88% → 0916 89%），**留给老大决策清理**
+11. ⚠️ **飞书推送阻塞第 19 天**（沿用 0827 起铁律 → 待老大手动建新飞书 app + 关代理客户端）
+12. ℹ️ **`codex exec` 实盘验收 cron 模式网络阻塞**：0916 R2 与 R1 一致，cron 模式 `codex exec` 调用外部模型 wss→https fallback 频繁超时，**0 装日无需 exec 验证**
+13. ℹ️ **0 push 沿用 8-20 铁律**：本地领先 origin N+2 commits（含 0916 R1 events + 0916 R2 拒装 + AGENTS.md patch），**等老大决策 push**
 
 ## 今日变更（2026-09-15 — 0 装日 / 4 候选全拒或暂缓）
 
