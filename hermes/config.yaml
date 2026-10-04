@@ -403,8 +403,6 @@ approvals:
 command_allowlist:
 - delete in root path
 - script execution via -e/-c flag
-- SQL DROP
-- recursive delete
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false

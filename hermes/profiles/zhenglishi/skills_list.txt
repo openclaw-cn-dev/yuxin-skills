@@ -8,6 +8,7 @@ company-ops-agent-management
 creative
 cron-model-provider-troubleshooting
 cron-research-3projects
+cron-rolling-skip-research
 cron-tirith-traps
 data-science
 devops
@@ -40,6 +41,7 @@ laomo-mcp-contract-testing
 laomo-patch-append-pattern
 laomo-r714-metadata-drift-upgrade-pending
 long-cycle-task-closure-audit
+management-scan-toolchain
 maodou-cron-actionable-task-filter
 maodou-r2206-tirith-trap
 maodou-self-evolution-cron-v1-1-upgrade-pending-2026-09-24

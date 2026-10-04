@@ -9,6 +9,7 @@ metadata:
   changelog_v1.4.0: "2026-09-18 11 R616 老莫 cron 实证 — 新增 §11 docker ps HOME 劫持专项（DOCKER_HOST=unix:///var/run/docker.sock 绝对路径直连）"
   changelog_v1.5.0: "2026-09-24 10:05 R708 老莫 cron 第 13 次中招实证 — §7 表新增 R708 行（laomo 第四次中招,cron prompt 内嵌 `~/.hermes/...` 路径再证必踩,沿用 R683 SOP 绝对路径 `/Users/hua/.hermes/scripts/heartbeat_check.py 老莫` 首调一次过）"
   changelog_v1.6.0: "2026-09-27 13:5x Claude Code 同步 cron 实测 — 新增 §3.5 残缺 .git 原位修复 SOP（rm -rf /tmp 工作区触发安全审批卡死 → write_file 补 HEAD+config + fetch + merge --ff-only；git reset --hard 同样审批坑）+ cron prompt 脚本路径漂移实录（sync_claude_repo.sh 真实路径在 渔芯独角兽/01-开发中/）"
+  changelog_v1.6.1: "2026-10-01 12:2x hermes sync cron 第 14 次实证 — §7 表新增（zhenglishi 第 4 次中招）; 新 twist: 劫持态 `ls ~/.hermes/profiles/` 返回嵌套残留的 3 条目假有效列表（真值 11）——假有效数据比 0/报错更隐蔽"
   created: "2026-09-17 (新独立 umbrella · 原 productivity/knowledge-organizer/references/cron-home-hijack-bypass.md 提升; v1.2 新增 §3.4 Git/SSH 同步专项 + 第 9 次实录; v1.2.1 新增 references/***SECRET***.md 黑豆 #10 实测)"
   updated: "v1.6.0 (2026-09-27 13:5x): 新增 §3.5 残缺 .git 原位修复（rm -rf /tmp 工作区触发审批 → write_file 补 HEAD+config + merge --ff-only）+ cron prompt 脚本路径漂移实录（sync_claude_repo.sh）"
 ---
@@ -240,6 +241,7 @@ cron 启动 `$HOME` 劫持**不是单 profile**——已观测到 **9 次劫持�
 | **2026-09-18 08:15** | **laomo**(第三次中招) | **第十次(老莫心跳 cron R614)** | 首调 `python3 ~/.hermes/scripts/heartbeat_check.py 老莫` 报 file not found(R345 twist② 形态)→ 绝对路径重跑通过；同轮复测确认全相对路径 `skill_view(name='<skill>/SKILL.md')` 可一次命中(§5 已更新) |
 | **2026-09-24 02:31** | **heidou**(第 12 次,小宝 02 时档) | **第十二次(本档首例「静默 exit 0 变种」)** | **首调 `heartbeat_check.py xiaobao` 静默 exit 0 + stdout 空(被误判为「无任务」)→ 推迟到第 4 次调用 ls 才察觉 → 全程绝对路径绕过完成 evolution 5 方向 → 已沉淀为 P-34 evidence**;**警告**:`cron-home-hijack-bypass §2 铁律「先 echo $HOME」对此变种不够强**——agent 拿到 prompt 第一句是任务,不会主动做 30 秒自检,需升级为 prompt 模板硬约束(详见 `cron-self-evolution-toolkit/references/***SECRET***.md`) |
 | **2026-09-24 10:05** | **laomo**(第 13 次,第四次 laomo 中招,**老莫心跳 cron R708**) | **第十三次(R708 实证 R683 SOP 持续闭环)** | cron prompt 内嵌 `python3 ~/.hermes/scripts/heartbeat_check.py 老莫` 命令按劫持后 $HOME 展开 → 直接踩 R683 实证坑(`/Users/hua/.hermes/profiles/laomo/home/.hermes/scripts/heartbeat_check.py` 不存在,FileNotFoundError);立即转 `python3 /Users/hua/.hermes/scripts/heartbeat_check.py 老莫` 绝对路径一次过 → 任务行 `11\|AI 照片修复/老照片上色\|P1\|in_progress\|hermes` 一次出齐;**R683 SOP 自首次 09-23 16:01 踩坑以来 24 轮（R684..R708）零相对路径调用零劫持实证闭环**,本轮再次坐实 cron prompt 内 `~/` 形态 100% 命中劫持、必须由 agent 自行翻译为 `/Users/hua/...` 绝对路径执行;**R708 同时完成 R700 SKILL.md 异常升格事件结案 + v1.88.69 SKILL.md changelog 闭环 + P#133 v5 第三轮实证** |
+| **2026-10-01 12:2x** | **zhenglishi**(第 4 次中招) | **第十四次(hermes sync cron)** | 首轮 `ls ~/.hermes/skills/ \| wc -l` 返回 0 且 stderr 暴露 `/Users/hua/.hermes/profiles/zhenglishi/home/.hermes/skills/: No such file or directory` 一步识破;⚠️ **新 twist: 劫持态 `ls ~/.hermes/profiles/` 不报错不返回 0,而是返回嵌套残留 `laomo quant zhenglishi` 3 条目「假有效」列表**(真值 11)——假有效数据比空值/报错更隐蔽,若只看「有输出」就采信会得出 Profiles=3 的错误基线;防御 = profiles 统计必须用绝对路径 + 与 `reports/hermes-sync-baseline.json` 上轮值交叉校验,数量骤降 60%+ 即可疑;全程绝对路径零浪费调用 |
 
 **结论**:cron 启动随机劫持到任一同事 profile home（afu/maodou/xiaobao/laomo/zhenglishi 都出现过，同一 profile 可重复），整理师 SOP 已稳定覆盖。
 
