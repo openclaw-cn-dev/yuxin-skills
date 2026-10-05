@@ -4,6 +4,7 @@ autonomous-ai-agents
 chromadb-dimension-mismatch-pitfall
 claude-code-cli-maintenance
 claude-code-skills-ecosystem-tracking
+codex-cli-maintenance
 company-ops-agent-management
 creative
 cron-model-provider-troubleshooting

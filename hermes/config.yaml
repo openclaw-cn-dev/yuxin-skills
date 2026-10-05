@@ -503,8 +503,8 @@ secrets:
 : 5
 : 2000
 _config_version: 26
-FEISHU_APP_ID: "***"
-FEISHU_APP_SECRET: "***"
+FEISHU_APP_ID: 
+FEISHU_APP_SECRET: 
 replicate:
   token: "***"
 custom_providers:
