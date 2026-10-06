@@ -86,4 +86,5 @@ yufen-operations-mandate
 zhenglishi-cron-skip-daily-closeout
 zhenglishi-deep-dive-cron
 zhenglishi-noon-flash-briefing
+zhenglishi-r3455-walk-cycling-canonical-mapping
 zhenglishi-workflow
