@@ -41,7 +41,28 @@ enabled = true
 [plugins."browser@openai-bundled"]
 enabled = true
 
+[plugins."chrome@openai-bundled"]
+enabled = true
+
 [plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."build-web-apps@openai-api-curated"]
+enabled = true
+
+[plugins."coderabbit@openai-api-curated"]
+enabled = true
+
+[plugins."figma@openai-api-curated"]
+enabled = true
+
+[plugins."linear@openai-api-curated"]
+enabled = true
+
+[plugins."sentry@openai-api-curated"]
+enabled = true
+
+[plugins."superpowers@openai-api-curated"]
 enabled = true
 
 [features]
