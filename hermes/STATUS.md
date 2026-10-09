@@ -1,11 +1,11 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-10-06 14:08:46
+> 导出时间: 2026-10-09 13:33:36
 > 主机: huadeMac-mini-3.local
 
 ## 统计
 - Skills: 120
 - Profiles: 11
-- Scripts: 148
+- Scripts: 149
 - Plugins: 1
 
 ## 版本

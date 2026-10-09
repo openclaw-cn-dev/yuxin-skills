@@ -1,11 +1,14 @@
 ai-cad-industry-scan-quarterly
 apple
 autonomous-ai-agents
+bounded-research-sprint
 chromadb-dimension-mismatch-pitfall
 claude-code-cli-maintenance
 claude-code-skills-ecosystem-tracking
 codex-cli-maintenance
+community-workbench-dev
 company-ops-agent-management
+compliant-site-collection
 creative
 cron-model-provider-troubleshooting
 cron-research-3projects
@@ -33,6 +36,7 @@ heidou-cron-toolchain-2026-09
 heidou-dday-exam-package-family
 heidou-saturated-cron-marginal-increment
 hermes-cron-saturated-marginal-increment
+hermes-maintenance-sync
 hermes-patch-tool-pitfalls
 hermes-write-file-pitfalls
 huage-directive-resource-reallocation
@@ -66,6 +70,8 @@ raci-calibration-yuxin-v1-upgrade-pending-2026-09-24
 red-teaming
 references
 research
+research-cron-manual-fallback
+research-project-bootstrap
 short-name-map
 skillmd-frozen-write-channel
 smart-home
@@ -74,6 +80,7 @@ software-development
 test-create-2026-09-24
 testing
 testing-methodology-triad
+tirith-scanner-upgrade-pending-2026-10-09
 verify-cron-state-existence
 xiaobao-challenger-sale
 xiaobao-content-engine
@@ -83,6 +90,8 @@ xiaobao-heartbeat-upgrade-pending-2026-09-25
 xiaobao-negative-reverse-selling
 xiaobao-sales
 yufen-operations-mandate
+yuxin-community-workbench-dev
+yuxin-company-ops-upgrade-pending-2026-10-09
 zhenglishi-cron-skip-daily-closeout
 zhenglishi-deep-dive-cron
 zhenglishi-noon-flash-briefing
