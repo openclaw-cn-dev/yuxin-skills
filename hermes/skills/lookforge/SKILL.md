@@ -1,12 +1,12 @@
 ---
 name: lookforge
-description: "LookForge 多阶段产品研发平台类级技能 — Phase 1-7 全流程总纲 + Phase 1 完成后的智能推荐方向 prompt（JTBD 标签注入 + 智能排序 V1.0 模板）+ P0/P1 路线图包的市场侧重估技术（4 类外部信号 × 真实成本/失败案例交叉校验）+ Phase 3 创意落地 3 步法（JTBD 标签注入 + 前端分组视图 + 智能排序）。触发：LookForge Phase 1/3 落地、Phase 1 完成后选方向、路线图 P0/P1 估时复核、JTBD 标签注入、创意分组/排序前端视图。"
+description: "LookForge 多阶段产品研发平台类级技能 — Phase 1-7 全流程总纲 + Phase 1 完成后的智能推荐方向 prompt（JTBD 标签注入 + 智能排序 V1.0 模板）+ P0/P1 路线图包的市场侧重估技术（4 类外部信号 × 真实成本/失败案例交叉校验）+ Phase 3 创意落地 3 步法（JTBD 标签注入 + 前端分组视图 + 智能排序）+ §5 营销素材零失真方法论（所有对外数字 100% 反向引用 simulation SCHEMA，原 marketing-from-simulation 已并入）。触发：LookForge Phase 1/3 落地、Phase 1 完成后选方向、路线图 P0/P1 估时复核、JTBD 标签注入、创意分组/排序前端视图、出对外宣传文案/营销视频脚本/邮件主题/种子客户弹药库。"
 license: MIT
 metadata:
   author: 渔芯科技
   version: "1.0.0"
   created: "2026-09-17 curator consolidation"
-  absorbed: [phase1-recommend-prompt, market-reweight-p0, jtbd-phase3-landing-sop]
+  absorbed: [phase1-recommend-prompt, market-reweight-p0, jtbd-phase3-landing-sop, marketing-from-simulation]
   related: [maodou-product, multi-phase-pipeline, product-launch-playbook]
 ---
 
@@ -40,3 +40,11 @@ Phase 1 调研收口后用推荐 prompt 生成候选方向：读 Phase 1 调研�
 - 运维/部署/验证 SOP：`devops/lookforge-ops`（Docker 端到端验证、路径权威真相）
 - ChromaDB 排障：`product-debugging/lookforge-chromadb-debug`
 - MCP 集成：`productivity/lookforge-mcp-hermes`
+
+## §5 营销素材零失真方法论（2026-10-09 curator 合并 · 原独立 skill `marketing-from-simulation` 整档收纳）
+
+> 📂 **整档位置**：`references/marketing-from-simulation/`（SKILL.md + references/）。对外宣传前整档阅读。
+> 🎯 **铁律**：LookForge / 渔芯产品对外宣传时,所有参数/数字/性能数据必须 **100% 反向引用自 `simulation_service.py` 等真实代码 SCHEMA,禁止杜撰**。
+> 🔑 **适用产物**：着陆页 Hero / 营销邮件 / demo 视频脚本 / 种子客户清单「弹药库」。
+> 🔑 **核心动作**：出文案前先读 simulation 层 SCHEMA → 每个数字标注代码出处 → 无出处的数字直接删除或改为定性描述 → 交付前跑「数字↔代码」双向核对。
+> ⚠️ 触发词：为 LookForge / 渔芯任何产品出对外宣传文案、营销视频脚本、邮件主题,或种子客户开发前的弹药库准备。

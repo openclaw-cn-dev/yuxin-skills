@@ -1,9 +1,9 @@
 ---
 name: yuxin-code-iron-law
 description: 渔芯科技全公司铁律 — 代码/脚本/工具开发优先经 Claude Code 或 Codex。华哥 2026-08-03 明确，2026-08-14 修正为"优先"而非"必须"：同事不会调用 Claude Code 不应导致不写代码，不会用或失败时直接自写（加 TODO 标注），把活干完优先于工具洁癖。所有 9 个 profile (玉芬+8 同事+community) AGENTS.md 顶部已固化。v1.3 实测双工具链都可用:Claude Code 用 `claude -p --allowedTools "Read,Edit,Write,Glob,Grep"`(代码首选,5/5 任务 100% 成功),Codex 用 `cat /tmp/p.txt | codex exec --skip-git-repo-check -s danger-full-access`(大型 JSON/数据整合首选,2 分 20 秒写 243 行)。两个反模式:无 --allowedTools 卡 300s 超时;缺 -s danger-full-access 报 read-only sandbox。2026-08-29 新增 UI 设计铁律：设计定位四问+主题化架构+六项验收（华哥"UI 开发要提升到设计的层面"）。v1.4(2026-08-29 华哥批准)新增 UI 设计铁律:竞品调研先行 / CSS 变量主题化 / 用户主题选择权 / 六项验收。
-version: 1.4
+version: 1.5
 created: 2026-08-03
-updated: 2026-08-29
+updated: 2026-10-09 (v1.5 curator 合并 yuxin-coding-workflow)
 priority: highest
 ---
 
@@ -354,3 +354,4 @@ codex exec "需求: ..." --sandbox danger-full-access
 | **v1.3** | **2026-08-03** | **🔴 重大修正**:实测 Codex CLI 加齐 `--skip-git-repo-check -s danger-full-access` 完全可用(2 分 20 秒写 243 行 iron_law.json),反悔 v1.2 陷阱 5 "Codex 仍不可用" 误判;新增 Codex 优先级 B;新增 references/codex-exec-working-pattern.md |
 | **v1.4** | **2026-08-29** | **🎨 新增 UI 设计铁律**(华哥批准):竞品调研先行 / CSS 变量主题化 / 用户主题选择权 / 六项验收 / 审美进化机制。首例=情商助手 38 六主题。9 份 AGENTS.md 顶部同步追加一行。完整规范见 `~/6-产品研发/公共组件/UI调研与设计规范.md`。固化流程沉淀至 `references/***SECRET***.md` |
 | **v1.4.1** | **2026-08-29** | 新增 `references/***SECRET***.md`(铁律固化 6 步标准流程,含幂等批量补丁脚本与 grep 验证法) |
+| **v1.5** | **2026-10-09** | **curator 合并**:原独立 skill `yuxin-coding-workflow` 整档收纳至 `references/yuxin-coding-workflow/`(玉芬执行编码/实现任务的直写工作流 — Hermes 工具直接写代码、不生成远程 CC SWITCH 指令包、Hermes 编码任务触发的加载入口)。关系:铁律定义「优先级链与合规边界」(本文件),coding-workflow 定义「玉芬自己动手时的具体执行流」(子参考)。触发词扩展:华哥说"你自己写吧"/"相信你"、想生成"给 CC 跑的开工 prompt"时 → 先读本文件调用链,确认走自写兜底后按 references/yuxin-coding-workflow/ 执行 |

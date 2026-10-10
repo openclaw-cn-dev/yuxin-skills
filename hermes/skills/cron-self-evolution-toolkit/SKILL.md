@@ -1,12 +1,12 @@
 ---
 name: cron-self-evolution-toolkit
-description: "Cron self-evolution 饱和/降本/守夜/日间决策树工具集(跨 profile:黑豆/阿福/老莫/毛豆/小宝/宽博士/整理师)。三条件饱和判定;§1 全饱和静默兜底+软跳过+午间 mini+§1.4 守夜档极简(同日≥8档+二饱一鲜+晚间→≤4KB);§1.3 三种进化模式(起草/接力/治理)+PITFALL A-H;§1.5 分析型(全闭环+项目活跃→行业信号/闸门/备料);§1.6 早间接力型(凌晨+D-Day→3-5KB 倒计时刷新);§1.7 P-34 静默 HOME 劫持+空壳库吞错;§1.8 具象备料型(大纲+RACI+Mermaid,ROI 3x);§1.9 P-35 execute_code cron 禁用+sibling 冲突;§1.10 P-36 RACI 整合失真反向验证;§1.11 缺席合并验收型;§1.12 P-37 curl 管道被拦→两段式落盘解析+web_extract search-only 修复键(extract_backend 配置态);§1.13 拍板包产出型+删除先考古;§1.14 P-38 双活技能库双向漂移对账(canonical↔镜像缺文件/SKILL.md 分叉→diff 对账+分叉处置矩阵);§1.15 分析→反哺型·第 9 种进化模式(弹药打光+职责同构情报→同构三筛→patch domain skill 闭环)。触发:cron 心跳无任务自进化、静默/降级判定、字节控制、evolution 报告结构、治理缺位、execute_code 被拒替代路径、web 全文实读被拦、跨 profile 技能库双向缺文件/分叉对账(P-38)。"
+description: "Cron self-evolution 饱和/降本/守夜/日间决策树工具集(跨 profile:黑豆/阿福/老莫/毛豆/小宝/宽博士/整理师)。三条件饱和判定;§1 全饱和静默兜底+软跳过+午间 mini+§1.4 守夜档极简(同日≥8档+二饱一鲜+晚间→≤4KB);§1.3 三种进化模式(起草/接力/治理)+PITFALL A-H;§1.5 分析型(全闭环+项目活跃→行业信号/闸门/备料);§1.6 早间接力型(凌晨+D-Day→3-5KB 倒计时刷新);§1.7 P-34 静默 HOME 劫持+空壳库吞错;§1.8 具象备料型(大纲+RACI+Mermaid,ROI 3x);§1.9 P-35 execute_code cron 禁用+sibling 冲突;§1.10 P-36 RACI 整合失真反向验证;§1.11 缺席合并验收型;§1.12 P-37 curl 管道被拦→两段式落盘解析+web_extract search-only 修复键(extract_backend 配置态);§1.13 拍板包产出型+删除先考古;§1.14 P-38 双活技能库双向漂移对账(canonical↔镜像缺文件/SKILL.md 分叉→diff 对账+分叉处置矩阵);§1.15 分析→反哺型·第 9 种进化模式;§1.16 跨 cron session 数据真实性铁律子库(原 ***SECRET*** 整档收纳);§1.17 $HOME 劫持绕过 SOP 子库(原 cron-home-hijack-bypass 整档收纳)。触发:cron 心跳无任务自进化、静默/降级判定、字节控制、evolution 报告结构、治理缺位、execute_code 被拒替代路径、web 全文实读被拦、跨 profile 技能库双向缺文件/分叉对账(P-38)、cron 数据真实性存疑/前次报告数字引用、$HOME 劫持检测绕过/docker socket/git ssh 同步路径错。"
 metadata:
   author: 渔芯科技
-  version: "1.10.0"
+  version: "1.11.0"
   created: "2026-09-17 curator consolidation"
-  updated: "2026-09-27 · v1.10.0 新增 §1.15 分析→反哺型·第 9 种进化模式(毛豆 06 时档首例:决策弹药打光+核心职责同构情报流 → 同构三筛≤2条深挖 → curl 两段式实读(P-37) → patch domain skill 闭环,产出=skill bump+报告交叉引用,报告 3-6KB;区别于 §1.5 分析型停报告层不落 skill) | P-37 跨 profile 复现(毛豆同型通过)+web_extract 修复键(报错串'Set web.extract_backend to firecrawl/tavily/exa/parallel'=共享后端配置态,config owner 修复,未改前走两段式) | 2026-09-26 · v1.9.1 新增 §1.14 P-38 双活技能库双向漂移(canonical↔profile镜像互相缺文件+SKILL.md分叉两版本 → 全量diff -rq对账SOP+分叉处置矩阵:领先覆盖/保留分歧待审/双活入档/补齐验证;软守卫拦截退路=可写侧或/tmp再terminal cp;每次现跑diff不凭上次结论;小宝23时档首例46=46) | 2026-09-26 · v1.9.0 新增 §1.13 拍板包产出型·第 8 种进化模式 + 删除先考古前置（毛豆 18 时档首例：悬置 ≥2 档拍板任务零漂移 → 只读考古压缩成事实+≤4 选项+默认推荐拍板包 + desc 第 N 轮推进登记 + 静默守候纪律；去留类任务先 git 考古遗产三分类——已复活/已被取代/未回收，已删除≠已作废；references/***SECRET***.md） |2026-09-26 · v1.8.1 新增 §1.12 P-37 web 全文实读被安全扫描拦截(curl|python3 管道形态必挂起 → 两段式落盘解析:curl -o 落盘 + 另起调用解析;HTTP 明文站改走 HTTPS 镜像;小宝 17 时档首例) | 2026-09-26 · v1.8.0 新增 §1.11 缺席合并验收型·第 7 种进化模式(黑豆 17 时档 round 81 首例:D-Day 分时轴中段档缺席 → 当前档合并承担验收,缺席声明+逐项实测+硬闸可打勾清单,字节 4-8 KB;伴生「红灯路径时效过期变质原则」:窗口过期≠义务过期,按点执行→立即补做;references/***SECRET***.md) | 2026-09-26 · v1.7.1 新增 §1.7.5 P-34 第三种静默根因:被查任务库空壳化+脚本吞错(HOME 正常也发生,heartbeat 空输出三变种总表 + sqlite3 三源独立直查纪律 + prompt 引用 skill 缺失恢复路径 + 接力档验收实测纪律;黑豆 round 80 首例);references/***SECRET***.md | 2026-09-24 · v1.7.0 新增 §1.9 P-35 execute_code 禁用 + sibling subagent 文件冲突近失事故证据 (小宝 08 时档首例:execute_code 在 cron 中 BLOCKED 显式拒绝 + write_file _warning 字段 sibling 冲突不拒绝 + 3 道防线 SOP + 实操替代路径表);references/***SECRET***.md"
-  absorbed: [***SECRET***, ***SECRET***, ***SECRET***, ***SECRET***]
+  updated: "2026-10-09 · v1.11.0 curator 合并 — 新增 §1.16 吸收子库一(原独立 skill ***SECRET*** v1.24 整档收纳 references/***SECRET***/,含 §25-§35 全部数据真实性铁律) + §1.17 吸收子库二(原独立 skill cron-home-hijack-bypass 整档收纳 references/cron-home-hijack-bypass/,含 DOCKER_HOST/Git/SSH 专项+死区救回);description 同步扩展触发词 | 2026-09-27 · v1.10.0 新增 §1.15 分析→反哺型·第 9 种进化模式(毛豆 06 时档首例:决策弹药打光+核心职责同构情报流 → 同构三筛≤2条深挖 → curl 两段式实读(P-37) → patch domain skill 闭环,产出=skill bump+报告交叉引用,报告 3-6KB;区别于 §1.5 分析型停报告层不落 skill) | P-37 跨 profile 复现(毛豆同型通过)+web_extract 修复键(报错串'Set web.extract_backend to firecrawl/tavily/exa/parallel'=共享后端配置态,config owner 修复,未改前走两段式) | 2026-09-26 · v1.9.1 新增 §1.14 P-38 双活技能库双向漂移(canonical↔profile镜像互相缺文件+SKILL.md分叉两版本 → 全量diff -rq对账SOP+分叉处置矩阵:领先覆盖/保留分歧待审/双活入档/补齐验证;软守卫拦截退路=可写侧或/tmp再terminal cp;每次现跑diff不凭上次结论;小宝23时档首例46=46) | 2026-09-26 · v1.9.0 新增 §1.13 拍板包产出型·第 8 种进化模式 + 删除先考古前置（毛豆 18 时档首例：悬置 ≥2 档拍板任务零漂移 → 只读考古压缩成事实+≤4 选项+默认推荐拍板包 + desc 第 N 轮推进登记 + 静默守候纪律；去留类任务先 git 考古遗产三分类——已复活/已被取代/未回收，已删除≠已作废；references/***SECRET***.md） |2026-09-26 · v1.8.1 新增 §1.12 P-37 web 全文实读被安全扫描拦截(curl|python3 管道形态必挂起 → 两段式落盘解析:curl -o 落盘 + 另起调用解析;HTTP 明文站改走 HTTPS 镜像;小宝 17 时档首例) | 2026-09-26 · v1.8.0 新增 §1.11 缺席合并验收型·第 7 种进化模式(黑豆 17 时档 round 81 首例:D-Day 分时轴中段档缺席 → 当前档合并承担验收,缺席声明+逐项实测+硬闸可打勾清单,字节 4-8 KB;伴生「红灯路径时效过期变质原则」:窗口过期≠义务过期,按点执行→立即补做;references/***SECRET***.md) | 2026-09-26 · v1.7.1 新增 §1.7.5 P-34 第三种静默根因:被查任务库空壳化+脚本吞错(HOME 正常也发生,heartbeat 空输出三变种总表 + sqlite3 三源独立直查纪律 + prompt 引用 skill 缺失恢复路径 + 接力档验收实测纪律;黑豆 round 80 首例);references/***SECRET***.md | 2026-09-24 · v1.7.0 新增 §1.9 P-35 execute_code 禁用 + sibling subagent 文件冲突近失事故证据 (小宝 08 时档首例:execute_code 在 cron 中 BLOCKED 显式拒绝 + write_file _warning 字段 sibling 冲突不拒绝 + 3 道防线 SOP + 实操替代路径表);references/***SECRET***.md"
+  absorbed: [***SECRET***, ***SECRET***, ***SECRET***, ***SECRET***, ***SECRET***, cron-home-hijack-bypass]
 ---
 
 # Cron Self-Evolution Toolkit — 饱和判定 · 守夜降本 · 日间节奏 · 报告结构
@@ -640,6 +640,20 @@ rm RACI_v0.1.md && write new RACI_v0.2.md
 > **筛选纪律**：扫描结果数十条只深挖 ≤2 条——信噪比优先级 = 技术栈同构 > 方法可移植 > 泛行业新闻；筛掉的不进报告，避免分析型「4 大方向堆表格」膨胀
 > **同档可叠加 P-37**：本模式几乎必然触发全文实读 → 与 §1.12 组合使用
 > ❌ DON'T：不要无筛选堆情报进报告（回退成分析型膨胀）；不要为凑产出把弱相关新闻 patch 进 skill（污染 references）；侦察未打光时优先走 §1.13 拍板包型，本型是「弹药打光后的第二优先」
+
+## 1.16 🆕 吸收子库一：跨 cron session 数据真实性铁律（原独立 skill `***SECRET***` v1.24，2026-10-09 curator 整档收纳）
+
+> 📂 **整档位置**：`references/***SECRET***/`（SKILL.md 含 v1.23/v1.24 全部 §25-§35 + references/ 含 ghost-task-recon 等实战案例）。**本节只放索引入口**，加载场景整档阅读。
+> 🎯 **一句话铁律**：任何 cron session 启动后，不引用前次 evolution 报告/任务结果/历史对话的具体数字（文件数、字节数、日期、归属人、版本号），一律自己 `ls / du / SQL / stat` 重新验证。
+> 🔑 **核心章节速查**（详见其 SKILL.md）：§25 evolution 目录朴素 ls 字典序错位（四件套）；§26 profile-local SKILL.md 在 disk 但 skill_view 加载失败（注册表盲区 + read_file fallback）；§27 连续 cron 缺档后首档协议；§28 skill 内容位置误判「目录层 vs profile 私有层 vs default 共享层」三陷阱；§29 跨 profile 脚本 $HOME 劫持；§30 相邻 cron 档双工作业风险（<2h+完整 = 切换勘误档）；§32 tasks.db 多候选路径「空壳陷阱」（真库=/Users/hua/.hermes/tasks.db）；§33 skill_view 同 profile 三连失败批量 fallback；§34 饱和接力档精确路由（4 模式矩阵）；§35 幽灵任务侦察三步法（grep 特征变量 → 实库验证 → git log 交叉）。
+> ⚠️ **与 §1.7 P-34 的关系**：P-34 是「HOME 劫持静默」单坑的检测配方；本子库是「数据真实性」全谱系铁律（30+ 坑家族），P-34 场景同样适用本子库 §29 的跨 profile 劫持判定。
+
+## 1.17 🆕 吸收子库二：cron 启动 $HOME 劫持绕过 SOP（原独立 skill `cron-home-hijack-bypass`，2026-10-09 curator 整档收纳）
+
+> 📂 **整档位置**：`references/cron-home-hijack-bypass/`（SKILL.md 含检测 + 全套绝对路径绕过 + Python API 模板 + Git/SSH 同步专项 + DOCKER_HOST 专项 + 9 次劫持实测库 + home 死区 5 步救回流程 + references/）。
+> 🎯 **30 秒启动自检**（所有 cron 自进化会话第一次工具调用前必做）：`echo $HOME` → 期望 `/Users/hua`；若为 `/Users/hua/.hermes/profiles/<自己>/home/` → `export HOME=/Users/hua` + 全部路径改绝对路径。
+> 🔑 **专项速查**：① `docker ps` 报 no such file（默认 socket）→ `DOCKER_HOST=unix:///var/run/docker.sock` 直连；② Git/SSH 同步在劫持态下 git config / known_hosts 找不到 → 绝对路径 `GIT_SSH_COMMAND` + `git -C`；③ Python 脚本内 `Path.home()`/`expanduser("~")` 在 cron 会全部解析到 profile 镜像 home → 一律写死 `/Users/hua/...`；④ home 死区救回 5 步（定位 → 比对 → 迁移 → 校验 → 防复发）见其 SKILL.md 反向救回 SOP。
+> ⚠️ **与 §1.7 P-34 的关系**：P-34 防线检测「静默空输出」；本子库给出劫持**发生后的完整绕过 + 救回**执行层 SOP。两者配套使用：先 §1.7 检测，命中后走本子库绕过。
 
 ---
 
