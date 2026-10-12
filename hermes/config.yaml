@@ -1,6 +1,7 @@
 model:
-  default: GLM-5.3-flash
-  provider: custom:glm
+  default: deepseek-v4-pro
+  provider: deepseek-cn
+  base_url: https://api.deepseek.com/v1
 providers:
   deepseek-direct:
     api_key: "***"
@@ -401,6 +402,7 @@ approvals:
   mcp_reload_confirm: true
   : false
 command_allowlist:
+- script execution via heredoc
 - recursive delete
 - script execution via -e/-c flag
 quick_commands: {}
@@ -516,6 +518,14 @@ custom_providers:
     GLM-5.3-flash:
       name: GLM-5.3-flash
   model: GLM-5.3-flash
+- api_key: "***"
+  api_mode: chat_completions
+  base_url: https://api.deepseek.com/v1
+  model: deepseek-v4-pro
+  models:
+    deepseek-v4-pro:
+      name: "DeepSeek V4 Pro (\u534E\u54E5\u6388\u6743\u5207\u6362)"
+  name: deepseek-cn
 mcp_servers:
   lookforge:
     enabled: true
