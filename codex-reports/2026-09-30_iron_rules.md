@@ -15,13 +15,13 @@
 
 ## 🆕 铁律 95 — boss-control profile `.env` 与 default profile `.env` 是两个独立 app 鉴权域（**本次会话实盘**）
 
-**症状**：本次 8am cron（9 点旺财 9 点 cron 是同一链路）发现 `boss-control` profile 的 `.env` 现存 ID `cli_aaabff1a56799bed` 实测返 `code 10217 app has been deleted`——**9-26 memory 误以为此 ID 可用·9-30 实测破灭**。
+**症状**：本次 8am cron（9 点旺财 9 点 cron 是同一链路）发现 `boss-control` profile 的 `.env` 现存 ID `<FEISHU_APP_ID>` 实测返 `code 10217 app has been deleted`——**9-26 memory 误以为此 ID 可用·9-30 实测破灭**。
 
-**沿 0926 第 7 阶段**（`cli_aaaefb812938dbcd` + `cli_aaa9cb9476381be3` 都死）—— 9-30 进一步发现：**boss-control profile 的 ID 也死了**。
+**沿 0926 第 7 阶段**（`<FEISHU_APP_ID>` + `<FEISHU_APP_ID>` 都死）—— 9-30 进一步发现：**boss-control profile 的 ID 也死了**。
 
 **两个 profile 鉴权域完全独立**：
-- **default profile**（`~/.env` 或 `~/AppData/Local/hermes/.env`）：FEISHU_APP_ID = `cli_aaaefb812938dbcd` 或 `cli_aaa9cb9476381be3`（沿 0827 / 8-26 / 9-21 / 9-26 累计 4 次 10217）
-- **boss-control profile**（`~/AppData/Local/hermes/profiles/boss-control/.env`）：FEISHU_APP_ID = `cli_aaabff1a56799bed`（9-30 第 5 次 10217）
+- **default profile**（`~/.env` 或 `~/AppData/Local/hermes/.env`）：FEISHU_APP_ID = `<FEISHU_APP_ID>` 或 `<FEISHU_APP_ID>`（沿 0827 / 8-26 / 9-21 / 9-26 累计 4 次 10217）
+- **boss-control profile**（`~/AppData/Local/hermes/profiles/boss-control/.env`）：FEISHU_APP_ID = `<FEISHU_APP_ID>`（9-30 第 5 次 10217）
 - 两个 app 在飞书后台是**完全独立的两个 app**（不同 app_id + 不同 secret + 不同权限配置）
 - 任一 app 在飞书后台被老大整删 → 该 profile 的所有 cron 都 10217
 - 两个 app 同时 10217 = **老大可能 4 业务线都整删过飞书 app**
@@ -42,7 +42,7 @@
 
 ## 🆕 铁律 96 — memory 校验铁律（**本次会话实盘·最大新学习**）
 
-**症状**：本次 cron 沿用 0926 + 0927 memory 里的"可用 token ID"直推 → 10217 失败 → 才发现 **memory 里 4 天前的结论（"9-26 备用 ID `cli_aaabff1a56799bed` 可用"）已失效**。
+**症状**：本次 cron 沿用 0926 + 0927 memory 里的"可用 token ID"直推 → 10217 失败 → 才发现 **memory 里 4 天前的结论（"9-26 备用 ID `<FEISHU_APP_ID>` 可用"）已失效**。
 
 **沿 0921 铁律 51 + 0926 铁律 79**：memory 里的 ID / version / 状态都是**历史快照**，**4 天就可能失效**。
 
@@ -115,7 +115,7 @@
 - 08:00 `python search_toutiao.py --source sogou --rag ...` → 3 条占位失效（连续 26 天·87%）
 - 08:01 `python rag_query_v2.py "白灼虾"` → InternalError（沿 0926 chroma hnsw 第九次损坏）
 - 08:01 `python rag_query_v2.py "对虾养殖"` → InternalError（沿 0926）
-- 08:02 `terminal` 实测 `cli_aaabff1a56799bed` → `code 10217 app has been deleted`（沿用铁律 96 实测，不信 memory）
+- 08:02 `terminal` 实测 `<FEISHU_APP_ID>` → `code 10217 app has been deleted`（沿用铁律 96 实测，不信 memory）
 - 08:02 4 维度分析产出（基于头条 43 条有效数据）
 - 08:03 final response 直接日报（**跳过飞书推送**——token 10217 阻塞 + 沿 0926 飞书错误码第 8 阶段）
 - 08:03 写本地 md 备份 `搜索抓取/20260930_080300_8am_cron_report.md`（沿用铁律 71 落档模式）
@@ -158,16 +158,16 @@
 
 # 🆕 2026-09-30 cron 09:00 实跑：铁律 98（追加）
 
-> 0930 09:00 cron 实跑再次校正版。本次 cron **重大发现**：default profile `cli_aaaefb812938dbcd` token endpoint 实测 **code=0 msg=ok**（**破 9-26 / 0930 08:03 memory "default 10217 全死" 结论**），但 `im/v1/messages` 推送 `oc_529aff7485ccc35de97a9e7233d665dd` 返 `230002 Bot/User can NOT be out of the chat`。**token 鉴权 OK ≠ push 可用**，必须实测消息接口。
+> 0930 09:00 cron 实跑再次校正版。本次 cron **重大发现**：default profile `<FEISHU_APP_ID>` token endpoint 实测 **code=0 msg=ok**（**破 9-26 / 0930 08:03 memory "default 10217 全死" 结论**），但 `im/v1/messages` 推送 `oc_529aff7485ccc35de97a9e7233d665dd` 返 `230002 Bot/User can NOT be out of the chat`。**token 鉴权 OK ≠ push 可用**，必须实测消息接口。
 
 ## 铁律 98：default token endpoint code=0 ≠ push 可用（chat_id 错配 = 230002）
 
-**症状**：本次 cron 实测 `cli_aaaefb812938dbcd` token endpoint 返 `code=0 msg=ok` —— **破 9-26 memory "default 10217"** + **破 0930 08:03 铁律 95 "default 3 ID 全 10217"** 结论。但推 `oc_529aff7485ccc35de97a9e7233d665dd`（8 点 cron 配的 home channel）返 `code=230002 msg=Bot/User can NOT be out of the chat`。
+**症状**：本次 cron 实测 `<FEISHU_APP_ID>` token endpoint 返 `code=0 msg=ok` —— **破 9-26 memory "default 10217"** + **破 0930 08:03 铁律 95 "default 3 ID 全 10217"** 结论。但推 `oc_529aff7485ccc35de97a9e7233d665dd`（8 点 cron 配的 home channel）返 `code=230002 msg=Bot/User can NOT be out of the chat`。
 
 **根因**：
 - token endpoint 鉴权 OK ≠ bot 已被加入 chat
 - 飞书 app 加 chat 是**手动邀请 / 应用开启**操作（不在 token endpoint 鉴权层）
-- default profile `cli_aaaefb812938dbcd` token **已恢复**（**老大可能已重建飞书 app 或恢复原 app**），但 bot 还没被加进 8 点 cron 配的 home channel
+- default profile `<FEISHU_APP_ID>` token **已恢复**（**老大可能已重建飞书 app 或恢复原 app**），但 bot 还没被加进 8 点 cron 配的 home channel
 
 **沿 0930 铁律 96**："memory 里写的可用 ID 必须实测 code 0 才算真可用" — **本次实测验证 default token 已恢复**，但 memory 没更新铁律 95 的"全 10217"结论 → 错报。
 
