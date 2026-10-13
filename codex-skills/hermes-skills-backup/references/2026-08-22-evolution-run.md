@@ -131,7 +131,7 @@ git push origin main 2>&1 | grep "https://github.com"
 cd /c/Users/Administrator/Desktop/yuxin-skills
 
 # 1) AppSecret 字面量扫描
-git grep -nE "naW3ji6n5RMDhWTOjTPIudCRWCZ6djmn" 2>/dev/null
+git grep -nE "naW***i6n5" 2>/dev/null
 # 期望：空
 
 # 2) cli_aaa AppID 字面量扫描（**注意 12-18 字符之间**）

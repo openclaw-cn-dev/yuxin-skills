@@ -219,7 +219,7 @@ git status --short
 # ?? sources/   ← 0830 后新增 untracked 目录，不动
 
 # 2. secrets 红化前置 SOP
-git grep -nE "naW3ji6n5RMDhWTOjTPIudCRWCZ6djmn" 2>&1 | head
+git grep -nE "naW***i6n5" 2>&1 | head
 # (empty)
 
 git grep -nE "cli_aaa[a-z0-9]{12,18}" 2>&1 | head

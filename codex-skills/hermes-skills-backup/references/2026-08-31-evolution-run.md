@@ -45,7 +45,7 @@ cp -r forward-implementation-first/examples /c/Users/Administrator/Desktop/yuxin
 
 # 4. secrets 红化前置（沿用 0820 铁律）
 cd /c/Users/Administrator/Desktop/yuxin-skills
-git grep -nE "naW3ji6n5RMDhWTOjTPIudCRWCZ6djmn" 2>/dev/null  # 期望空
+git grep -nE "naW***i6n5" 2>/dev/null  # 期望空
 git grep -nE "cli_aaa[a-z0-9]{12,18}" 2>/dev/null  # 期望空
 
 # 5. commit（不 push，沿用 0820 secret-scanner 铁律）
@@ -53,7 +53,7 @@ git add codex-skills/forward-implementation-first/
 git commit -m "🤖 旺财进化 0831: +1 Codex skill (forward-implementation-first 126⭐ Vuk97 - 产物真实优先于管理簿记 命中老大反伪结果红线)"
 
 # 6. 验：commit 后再扫一遍（防 commit 钩子引入新 secret）
-git grep -nE "naW3ji6n5RMDhWTOjTPIudCRWCZ6djmn" HEAD 2>/dev/null
+git grep -nE "naW***i6n5" HEAD 2>/dev/null
 git grep -nE "cli_aaa[a-z0-9]{12,18}" HEAD 2>/dev/null
 ```
 

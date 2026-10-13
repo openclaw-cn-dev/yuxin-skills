@@ -1942,7 +1942,7 @@ git clone --depth 1 git@github.com:<owner>/<repo>.git
 
 # 2. secrets 红化前置（沿用 0820 secret-scanner 铁律）
 cd ~/Desktop/eval-repos/<repo>
-git grep -nE "(sk-[a-zA-Z0-9]{20,}|cli_aaa[a-z0-9]{12,18}|naW3ji6n5RMDhWTOjTPIudCRWCZ6djmn|CwIB2L)" 2>&1 | head
+git grep -nE "(sk-[a-zA-Z0-9]{20,}|cli_aaa[a-z0-9]{12,18}|naW***i6n5|CwIB2L)" 2>&1 | head
 # 输出空 = OK；有 hit = 拒装该 skill
 
 # 3. 看 SKILL.md head 确认不依赖外部凭据 / 不要求 OAuth / 不收费
