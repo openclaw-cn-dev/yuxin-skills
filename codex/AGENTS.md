@@ -1,7 +1,7 @@
 # Codex Agent 上下文（每日 cron 自动维护）
 
 > 本文件由 `codex-daily-evolution` cron 自动维护（每天 9:00）。
-> 最后更新：2026-10-13 09:02（1013 cron — **CLI 0.162.1 维持**（上游 stable rust-v0.162.1 = 2026-10-09，已对齐）/ **+1 天 0 装** / 5 维 cache spot-check 仅 anthropics/skills + thedotmack/*（沿铁律 92 + 1012 限 spot-check）/ fs 真算 = **129 skill**（vs 1012 cron 报 129 一致，0 漂移；分类器同 MKT 79 / DEV 46 / OTHER 4）/ plugin enabled = 22 维持 / **C 盘 161G 81% P1**（vs 1012 报 80%，+1%；可用 40G 比 1012 42G 减 2G 持续紧）/ 桌面 catalog 0.142.5 stale 99 天 P1（+1 天）/ 飞书推送阻塞第 45 天（+1，沿 1003 +10 天；home channel 仍 230002，default token code=0 + boss-control 10217 全平台不可用，**dm 私聊 oc_73f7b3adfe5b12e15961e9cd1fc52d00 实测可推送 code=0**（沿铁律 103）等老大拍板重定向）/ yuxin-skills ahead 16 commits 待老大决策 push（+1）/ `codex update` 在 cron 模式下连续 5 次成功跑（0925/0926/1003/1012/1013）/ openai/skills 仓库 2026-06-22 已 deprecate #496 PR，迁移到 anthropics/skills 5 维 cache 持续空 / thedotmack/claude-mem 100.1k⭐（1012 报 99.7k 涨 0.4k；今日实测 pushed=2026-10-13 持续活跃）持续待老大决策破例装）
+> 最后更新：2026-10-13 09:02（1013 cron — **CLI 0.162.1 维持**（上游 stable rust-v0.162.1 = 2026-10-09，已对齐）/ **+1 天 0 装** / 5 维 cache spot-check 仅 anthropics/skills + thedotmack/*（沿铁律 92 + 1012 限 spot-check）/ fs 真算 = **129 skill**（vs 1012 cron 报 129 一致，0 漂移；分类器同 MKT 79 / DEV 46 / OTHER 4）/ plugin enabled = **27 修正**（1012 报 22 → 实算 27 = bundled 7 + primary 5 + **curated-remote 15**（1012 漏算 5 个：gmail / google-calendar / google-contacts / pages / sites / work-pets），**持续累计不是 1013 新装**）/ **C 盘 161G 81% P1**（vs 1012 报 80%，+1%；可用 40G 比 1012 42G 减 2G 持续紧）/ 桌面 catalog 0.142.5 stale 99 天 P1（+1 天）/ 飞书推送阻塞第 45 天（+1，沿 1003 +10 天；home channel 仍 230002，default token code=0 + boss-control 10217 全平台不可用，**dm 私聊 oc_73f7b3adfe5b12e15961e9cd1fc52d00 实测可推送 code=0**（沿铁律 103）等老大拍板重定向）/ yuxin-skills ahead 16 commits 待老大决策 push（+1）/ `codex update` 在 cron 模式下连续 5 次成功跑（0925/0926/1003/1012/1013）/ openai/skills 仓库 2026-06-22 已 deprecate #496 PR，迁移到 anthropics/skills 5 维 cache 持续空 / thedotmack/claude-mem 100.1k⭐（1012 报 99.7k 涨 0.4k；今日实测 pushed=2026-10-13 持续活跃）持续待老大决策破例装）
 
 ## 今日变更（2026-10-13 — +1 天 0 装 / 5 维 cache spot-check 仅 anthropics/skills + thedotmack）
 
@@ -77,7 +77,7 @@
 - CLI：**`codex-cli 0.162.1`**（1013 cron 沿 1012 实测，与上游 stable rust-v0.162.1 = 2026-10-09 已对齐；`codex --version` + `npm list -g @openai/codex` 双验一致，沿 1012 铁律 109）
 - 上游 stable rust-v0.162.1 = 2026-10-09 发布（距今 4 天）
 - 桌面 catalog 0.142.5 stale 99 天 P1（沿 0926 铁律 80 缓存失真，**留给老大决策升级**）
-- 配置：`~/.codex/config.toml`（含 notify hook + **3 marketplace + 22 个 enabled 插件**）
+- 配置：`~/.codex/config.toml`（含 notify hook + **3 marketplace + 27 个 enabled 插件** = bundled 7 + primary 5 + curated-remote 15）
 
 ## 模型配置
 
@@ -96,16 +96,16 @@
 
 无 Git marketplace 配置 → `codex plugin marketplace upgrade` 返 `No configured Git marketplaces to upgrade.`
 
-## 已装插件（22 个 = 7 + 5 + 10）
+## 已装插件（27 个 = 7 + 5 + 15）
 
 **openai-bundled（7 个，未变）**：codex-app-tools / sites / browser / chrome / computer-use / latex / visualize
 
 **openai-primary-runtime（5 个，未变）**：documents / pdf / spreadsheets / presentations / template-creator
 
-**openai-curated-remote（10 个 = 0918 实盘同 0916）**：
-google-drive / canva / apollo / plugin-management / sales / product-design / creative-production / **app-69312da8e4dc81919370cb86fd172b6c@openai-curated-remote（8.0.0）** / openai-templates / deep-research-work
+**openai-curated-remote（15 个 = 1013 实算修正 1012 漏算 5）**：
+google-drive / canva / apollo / plugin-management / sales / product-design / creative-production / **app-69312da8e4dc81919370cb86fd172b6c@openai-curated-remote（8.0.0）** / openai-templates / deep-research-work / **gmail / google-calendar / google-contacts / pages / sites / work-pets**（1012 漏算）
 
-`openai-curated-remote` 剩余 ~165 个未装，按需挑（沿用 8-26 优先级矩阵）。
+`openai-curated-remote` 剩余 ~160 个未装，按需挑（沿用 8-26 优先级矩阵）。
 **🆕 未安装 `plugin-eval@openai-curated`**（自检工具，与"装入业务插件"无关，不装）。
 
 ## 决策逻辑
