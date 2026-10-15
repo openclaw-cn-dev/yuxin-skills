@@ -158,6 +158,13 @@ grep -c "old_string" /path/to/file  # 旧字符串应减少
 grep -c "new_string" /path/to/file  # 新字符串应增加
 ```
 
+**变体（2026-10-14 工作台修复实测）**：文件确实改了、回声也逐条报「任务完成」，但**改出的代码带编译错**——Claude Code 不跑 tsc/cargo，它自己不知道错了。md5/grep 只能证明「改了」，证明不了「改对」。编译型项目必须加跑对应编译门：
+- TS/前端：`npx tsc --noEmit`（本 session 一批 4 文件编辑回声全部报成功，tsc 抓出 TS2345 类型缺口 → 追加一份增量任务书才修掉）
+- Rust：`cargo check`（顺带暴露死代码 warning）
+- Python：`python3 -c "import ast; ..."` 或 import 冒烟
+
+节奏：每批委派完成 → 立即跑编译门 → 有错写增量任务书交回 Claude Code 修 → 再跑门到绿，然后才 commit。
+
 ### 陷阱 5(已废):`codex exec` 报 "not trusted"
 
 **v1.2 时的误判**:`codex exec "..." --sandbox danger-full-access` 报 "Not inside a trusted directory and --skip-git-repo-check was not specified",即使加 `--skip-git-repo-check` 仍会进 read-only sandbox。
@@ -190,8 +197,8 @@ Run Claude Code interactively here once and accept the trust dialog
 **workdir 选择(已实测可用 vs 不可用)**:
 - ✅ `/Users/hua/Documents/`(trust=True)
 - ✅ `/Users/hua/系统文件夹/Claude/`(trust=True)
+- ✅ `/Users/hua/6-产品研发/渔芯社区/渔芯工作台/`(2026-10-14 实测:`claude -p --allowedTools "Read,Edit"` 任务书模式连续 4 次成功——8-30 的「6-产品研发 继承 trust=False」结论已过时;路径黑名单会随信任状态漂移,以 30 秒探针实测为准,勿凭旧黑名单直接跳自写)
 - ❌ `/Users/hua`(trust=False)—— 别用它当 workdir
-- ❌ `/Users/hua/6-产品研发/...`(继承父路径 trust=False)
 
 **修复模式("拷到 trusted 目录再调")**:
 ```bash
@@ -219,6 +226,8 @@ for k, v in d.get('projects', {}).items():
 - 第 2 次仍失败 → **立即自写 + 文件首行 `# TODO(tech-debt): 改由 Claude Code/Codex 重写 — 失败原因: <原因>`**
 - 不要无限等:写脚本 + 跑测试任务 5 分钟必 kill 走兜底(不是网络抖动,是 trust 阻塞或代理排队)
 - 简单读文件任务(< 1KB 输入)30 秒无输出 = 异常
+- **`claude -p` 偶发整批挂死,同一会话早前明明成功**(2026-10-14 实测:前 4 个任务书 5-60s 全成,第 5 个 240s 零输出无进程残留;怀疑与华哥本机开着的交互式 Claude Code 会话互抢网关队列)。处置:kill/确认无残留 → 换纯 Bash 自写(任务书内容照搬),不要重试第三次;YAML/JSON/纯配置类本就在自动豁免清单里,直接自写完全合规
+- **`~/.claude.json` 的 projects 信任表有容量上限,老条目会被挤掉**——上周探针是 True 的路径这周可能变 False 或整条消失。所以探针必须每次会话现跑,禁止引用记忆里的旧结论
 
 ### 优先级(2026-08-03 实测后修正)
 
@@ -355,3 +364,4 @@ codex exec "需求: ..." --sandbox danger-full-access
 | **v1.4** | **2026-08-29** | **🎨 新增 UI 设计铁律**(华哥批准):竞品调研先行 / CSS 变量主题化 / 用户主题选择权 / 六项验收 / 审美进化机制。首例=情商助手 38 六主题。9 份 AGENTS.md 顶部同步追加一行。完整规范见 `~/6-产品研发/公共组件/UI调研与设计规范.md`。固化流程沉淀至 `references/***SECRET***.md` |
 | **v1.4.1** | **2026-08-29** | 新增 `references/***SECRET***.md`(铁律固化 6 步标准流程,含幂等批量补丁脚本与 grep 验证法) |
 | **v1.5** | **2026-10-09** | **curator 合并**:原独立 skill `yuxin-coding-workflow` 整档收纳至 `references/yuxin-coding-workflow/`(玉芬执行编码/实现任务的直写工作流 — Hermes 工具直接写代码、不生成远程 CC SWITCH 指令包、Hermes 编码任务触发的加载入口)。关系:铁律定义「优先级链与合规边界」(本文件),coding-workflow 定义「玉芬自己动手时的具体执行流」(子参考)。触发词扩展:华哥说"你自己写吧"/"相信你"、想生成"给 CC 跑的开工 prompt"时 → 先读本文件调用链,确认走自写兜底后按 references/yuxin-coding-workflow/ 执行 |
+| v1.5.1 | 2026-10-14 | 陷阱 4 增补「编译型项目必须跑编译门验证」变体——CC 回声报成功但代码带编译错（tsc/cargo/ast），md5/grep 只证「改了」不证「改对」；节奏=批完→跑门→错则增量任务书回修→绿才 commit |

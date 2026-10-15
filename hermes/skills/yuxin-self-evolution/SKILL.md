@@ -373,7 +373,7 @@ comm -23 /tmp/referenced_skills.txt <(sed 's|^|productivity/|' /tmp/installed_sk
 
 ## 关联 skill
 
-- **每日管理进化扫描(8 项 cron)** → `productivity/yuxin-management-scan`(专用 SOP + scripts/scan_cron_health.py、verify_deliver_targets.py)。本 skill 的 Phase 1 Signal Scan 是通用信号扫描;8 项固定扫描走那个专用 skill,不要在本 skill 里重复维护其步骤。(2026-09-17 已创建,此前为"引用了不存在的 skill"实例——cron prompt 引用不存在 skill 会静默跳过,新写 cron prompt 前先验证目标 skill 存在。)
+- **每日管理进化扫描(8 项 cron)** → 工具链 skill 是 **`management-scan-toolchain`**(位于 zhenglishi profile,10-04 实战固化:state.db 只读查询/gateway 停转检测/token spike 归因/jobs.json.bak diff)。⚠️ cron prompt 引用的 `productivity/yuxin-management-scan` **从未在 L1 落地,是坏引用**(2026-10-12 再次验证静默跳过)——要么在 L1 补建该 skill,要么改 cron prompt 指向真实名字。2026-10-12 实战 fallback 顺序:读 `~/.hermes/cron/jobs.json`(default+8 profile)→ error 按 last_error 根因分类(429 配额类=看重置时间判断自愈,内容类=单独看)→ kanban.db+tasks.db 查 P0 阻塞 → du skills 目录 → stat profiles/*/ mtime 判心跳 → 报告落 `~/.hermes/reports/management_evolution/YYYY-MM-DD.md`。**429 告警纪律**:先看配额重置时间,已重置的不要标高风险(10-12 GLM 周配额 16 个 error 全部自愈型,真正高风险是 MiniMax Token Plan 无重置的 laomo/zhenglishi)。本 skill 的 Phase 1 Signal Scan 是通用信号扫描,8 项固定扫描以本条为准。
 
 ### 版本检查捷径
 `hermes --version` 末行直接显示 "N commits behind — run 'hermes update'",不用自己 git fetch(外网常超时)。

@@ -1,7 +1,6 @@
 model:
-  default: deepseek-v4-pro
-  provider: deepseek-cn
-  base_url: https://api.deepseek.com/v1
+  default: GLM-5.3-flash
+  provider: custom:glm
 providers:
   deepseek-direct:
     api_key: "***"
@@ -403,8 +402,9 @@ approvals:
   : false
 command_allowlist:
 - script execution via heredoc
-- recursive delete
 - script execution via -e/-c flag
+- delete in root path
+- recursive delete
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false

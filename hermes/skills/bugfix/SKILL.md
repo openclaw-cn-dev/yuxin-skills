@@ -21,7 +21,9 @@ Session-specific bug fixes and version-compatibility workarounds for third-party
 | ChromaDB 0.4.x → `query()`/`peek()`/`count()` all fail with seq_id BLOB | → `references/chromadb-seq-id-blob-fix.md` |
 | ChromaDB Settings + Pydantic v2 → "extra fields not permitted" | → `references/pydantic-v1-v2-chromadb-fix.md` |
 | Python 3.9 → `TypeError: unsupported operand type(s) for \|: 'types.GenericAlias' and 'NoneType'` (PEP 604 union syntax) | → `references/python39-union-syntax.md` |
+| jsdom (vitest) tests fail with `TypeError: RequestInit: Expected signal ("AbortSignal {}") to be an instance of AbortSignal` — Node ≥20/24 undici brand check rejects jsdom's AbortSignal in `new Request(url, { signal })` | → `references/***SECRET***.md` |
 | pydantic-settings → code default value ignored, app serves stale version number from `.env` | → `references/pydantic-env-override.md` |
+| vitest jsdom + Node ≥19 built-in undici → react-router `createMemoryRouter` tests die with Unhandled Rejection `RequestInit: Expected signal (...) to be an instance of AbortSignal` | → `references/***SECRET***.md` |
 
 ## Scripts
 
