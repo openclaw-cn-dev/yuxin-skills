@@ -47,5 +47,6 @@ metadata:
 ## §5 相关
 
 - 发消息用 Hermes 原生 send_message（platform:oc_xxx）优先于手写 API；cron 报告走 origin auto-delivery，不手动 send（防 duplicate_target）。
+- **官网/工作台发布运维**（非飞书面，但同属对外发布）：见 `references/***SECRET***.md` — lookforge.net 生产拓扑、workbench_release.json 单一事实来源热切、桌面/CI 包发布流程、应用内检查更新契约。触发：工作台新版本上线、官网安装包更新、用户下载到旧版。
 - `productivity/feishu-api-notify` — 直发 REST 通知的完整凭据/签名细节（保留独立入口）。
 - `productivity/feishu-drive-file-management` — 云盘文件管理 844 行主技能（保留独立入口）。
