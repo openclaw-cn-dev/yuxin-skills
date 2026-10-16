@@ -10,6 +10,7 @@ community-workbench-dev
 company-ops-agent-management
 compliant-site-collection
 creative
+creative-project-research-first-methodology
 cron-model-provider-troubleshooting
 cron-research-3projects
 cron-rolling-skip-research
@@ -61,6 +62,8 @@ pbt-x-llm-properties
 product
 product-management
 productivity
+project-deep-dive-cron
+purchase-comparison
 quant
 quant-cron-evolution-2026-09-24-placeholder
 quant-cron-evolution-2026-09-24-preflight-upgrade-pending
