@@ -17,3 +17,5 @@ scratch
 scripts
 skip_lines
 state
+tmp_r3932
+tmp_r3938

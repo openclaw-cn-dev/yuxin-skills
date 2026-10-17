@@ -2,6 +2,7 @@ ai-cad-industry-scan-quarterly
 apple
 autonomous-ai-agents
 bounded-research-sprint
+canonical-skip-a-sop-v96-pc-subdict-6-field-override
 chromadb-dimension-mismatch-pitfall
 claude-code-cli-maintenance
 claude-code-skills-ecosystem-tracking

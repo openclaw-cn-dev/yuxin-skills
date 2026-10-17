@@ -1,11 +1,11 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-10-16 12:06:12
+> 导出时间: 2026-10-17 12:03:54
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 115
+- Skills: 108
 - Profiles: 11
-- Scripts: 164
+- Scripts: 165
 - Plugins: 1
 
 ## 版本
@@ -35,7 +35,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - agents-md
 - ai-training-platform
 - ai-vision
-- algorithm
 - algorithmic-art
 - apple
 - aquaculture
@@ -46,7 +45,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - browser
 - bugfix
 - byted-supabase
-- cad-automation
 - canvas-design
 - claude-api
 - commit
@@ -64,14 +62,12 @@ Update available: 2659 commits behind — run 'hermes update'
 - dogfood
 - domain
 - drive-motivation
-- edtech
 - email
 - feeds
 - feishu-ops
 - fetch
 - find-bugs
 - find-skills
-- frontend
 - frontend-design
 - frontend-ui
 - gaming
@@ -111,7 +107,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - productivity
 - project-monitoring-boundary
 - quant
-- red-teaming
 - refactoring-ui
 - research
 - research-collection
@@ -128,13 +123,11 @@ Update available: 2659 commits behind — run 'hermes update'
 - software-development
 - staging-helper
 - storybrand-messaging
-- testing
 - theme-factory
 - top-design
 - traction-eos
 - ux-heuristics
 - voice
-- voice-interaction-system
 - web-artifacts-builder
 - web-typography
 - webapp-testing
