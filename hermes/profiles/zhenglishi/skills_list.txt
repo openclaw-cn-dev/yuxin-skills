@@ -37,6 +37,7 @@ heidou-cron-self-evolution-sop
 heidou-cron-toolchain-2026-09
 heidou-dday-exam-package-family
 heidou-saturated-cron-marginal-increment
+hermes-agent-maintenance
 hermes-cron-saturated-marginal-increment
 hermes-maintenance-sync
 hermes-patch-tool-pitfalls
@@ -48,6 +49,7 @@ laomo-mcp-contract-testing
 laomo-patch-append-pattern
 laomo-r714-metadata-drift-upgrade-pending
 long-cycle-task-closure-audit
+management-scan-session-notes
 management-scan-toolchain
 maodou-cron-actionable-task-filter
 maodou-r2206-tirith-trap
