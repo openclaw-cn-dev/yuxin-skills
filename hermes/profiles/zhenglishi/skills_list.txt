@@ -25,6 +25,7 @@ edge-ai-hardware-spec-budget
 email
 excel-ledger-cross-audit
 external-ai-draft-integration
+external-cron-interleave-recovery
 finance-legal
 frontend-ui
 fuzz-testing
@@ -41,6 +42,7 @@ hermes-agent-maintenance
 hermes-cron-saturated-marginal-increment
 hermes-maintenance-sync
 hermes-patch-tool-pitfalls
+hermes-skill-library-skill-md-size-limit
 hermes-write-file-pitfalls
 huage-directive-resource-reallocation
 inference-sh
@@ -72,12 +74,15 @@ quant-cron-evolution-2026-09-24-placeholder
 quant-cron-evolution-2026-09-24-preflight-upgrade-pending
 quant-cron-evolution-v2
 quant-workflow
+r4158-canonical-round-audit
 raci-calibration-yuxin-v1-upgrade-pending-2026-09-24
 red-teaming
 references
 research
 research-cron-manual-fallback
 research-project-bootstrap
+research-project-bootstrap-upgrade-pending-20261019
+research-r4073-pitfall-ck2-counter-bump-semantics
 short-name-map
 skillmd-frozen-write-channel
 smart-home
@@ -101,5 +106,6 @@ yuxin-company-ops-upgrade-pending-2026-10-09
 zhenglishi-cron-skip-daily-closeout
 zhenglishi-deep-dive-cron
 zhenglishi-noon-flash-briefing
+zhenglishi-per-pool-specialized-cron
 zhenglishi-r3455-walk-cycling-canonical-mapping
 zhenglishi-workflow

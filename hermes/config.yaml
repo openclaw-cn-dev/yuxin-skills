@@ -402,6 +402,7 @@ approvals:
   : false
 command_allowlist:
 - script execution via -e/-c flag
+- script execution via heredoc
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false
