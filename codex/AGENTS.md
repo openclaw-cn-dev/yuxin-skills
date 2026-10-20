@@ -1,23 +1,79 @@
 # Codex Agent 上下文（每日 cron 自动维护）
 
 > 本文件由 `codex-daily-evolution` cron 自动维护（每天 9:00）。
-> 最后更新：2026-10-13 09:02（1013 cron — **CLI 0.162.1 维持**（上游 stable rust-v0.162.1 = 2026-10-09，已对齐）/ **+1 天 0 装** / 5 维 cache spot-check 仅 anthropics/skills + thedotmack/*（沿铁律 92 + 1012 限 spot-check）/ fs 真算 = **129 skill**（vs 1012 cron 报 129 一致，0 漂移；分类器同 MKT 79 / DEV 46 / OTHER 4）/ plugin enabled = **27 修正**（1012 报 22 → 实算 27 = bundled 7 + primary 5 + **curated-remote 15**（1012 漏算 5 个：gmail / google-calendar / google-contacts / pages / sites / work-pets），**持续累计不是 1013 新装**）/ **C 盘 161G 81% P1**（vs 1012 报 80%，+1%；可用 40G 比 1012 42G 减 2G 持续紧）/ 桌面 catalog 0.142.5 stale 99 天 P1（+1 天）/ 飞书推送阻塞第 45 天（+1，沿 1003 +10 天；home channel 仍 230002，default token code=0 + boss-control 10217 全平台不可用，**dm 私聊 oc_73f7b3adfe5b12e15961e9cd1fc52d00 实测可推送 code=0**（沿铁律 103）等老大拍板重定向）/ yuxin-skills ahead 16 commits 待老大决策 push（+1）/ `codex update` 在 cron 模式下连续 5 次成功跑（0925/0926/1003/1012/1013）/ openai/skills 仓库 2026-06-22 已 deprecate #496 PR，迁移到 anthropics/skills 5 维 cache 持续空 / thedotmack/claude-mem 100.1k⭐（1012 报 99.7k 涨 0.4k；今日实测 pushed=2026-10-13 持续活跃）持续待老大决策破例装）
+| 最后更新：2026-10-20 09:00（**1020 cron** — **中间跳过 5 天未跑**（1016/17/18/19，沿铁律 123「补报增量」明示跳过天数）/ **CLI 0.162.1 维持**（**N=1 minor 跳级必报**：上游 stable rust-v0.163.0 = 2026-10-15 错失升级提醒，沿铁律 125 必报老大拍板）/ **+5 天 0 装** / 5 维 cache spot-check 仅 anthropics/skills + thedotmack/*（沿 1014 + 1012）/ fs 真算 = **129 skill**（vs 1015 报 129 一致，0 漂移；分类器同 MKT 79 / DEV 46 / OTHER 4）/ **plugin enabled = 19**（1015 报 27 → 实算 **-8 漂移**，curated-remote 漂移 8 个，沿铁律 124 必报）/ **C 盘 178G 89% P0**（vs 1015 报 166G/83%/35G 可用 → **+12G / +6% / -12G 可用 = 23G**，**首次破 89% 临界必报老大**，沿铁律 126 P0 立即清理）/ 桌面 catalog 0.142.5 stale **106 天 P1**（+5 天）/ **飞书推送阻塞第 52 天**（+5，dm 兜底 = `oc_73f7b3adfe5b12e15961e9cd1fc52d00` 实测 code=0 沿 1015 持续 **17 天稳定**，沿铁律 128 4 次验证，待老大决策重定向 home channel；本 cron **用 dm 兜底推送成功**）/ yuxin-skills ahead **21** commits（1015 报 20 → +1 兄弟 cron 自主 commit，沿铁律 119 SOP 不 push / 不 amend）/ `codex plugin marketplace upgrade --json` 返 `{selectedMarketplaces:[], upgradedRoots:[], errors:[]}`（无 Git marketplace，0 装沿用）/ 上游 **stable=5 / alpha=25**（rust-v0.163.0 = 2026-10-15 仍 latest stable 比 1015 跳 1 个；**alpha rust-v0.164.0-alpha.6 = 2026-10-19 比 1015 alpha.11 跨 1 个 minor**）/ `codex plugin marketplace list` 维持 3 marketplace（primary-runtime / bundled / curated）/ `codex plugin marketplace upgrade --dry-run` 子命令不存在（沿 1012 铁律 109 fallback 改 `--json`）/ openai/skills 仓库 2026-06-22 已 deprecate 沿用 1013 / **thedotmack/claude-mem 1020 star = 101817⭐**（vs 1015 报 100764 → +1053 stars，pushed=2026-10-20 持续活跃）持续待老大决策破例装（沿铁律 127 ≥17 天） |
+
+## 今日变更（2026-10-15 — +1 天 0 装 / 5 维 cache spot-check 仅 anthropics/skills + thedotmack）
+
+1. ✅ **5 维 search spot-check（沿 1014 + 1012 限 spot-check）**：
+   - **anthropics/skills**：releases API 持续返空（沿 0927 铁律 91 5 维 cache 持续空）
+   - **thedotmack/claude-mem 100764⭐**（1014 报 100.1k → +664 stars，updated 2026-10-15 / pushed 2026-10-13 持续活跃）→ **仍待老大决策破例装**（沿铁律 105 持续 ≥12 天）
+   - **affaan-m/ECC 271k + alirezarezvani 388 + others**：沿铁律 105-106 拒装矩阵维持，不重跑
+2. ✅ **fs 真算 = 129 skill**（vs 1014 cron 报 129 一致，0 漂移）
+   - 分类器实跑：MKT **79** / DEV **46** / OTHER **4**（sepia/sepia.bak.0903/yuxin-content-engine/yuxin-fullstack）
+3. ✅ **CLI 0.162.1 维持**：`codex --version` 实测 codex-cli 0.162.1，`npm list -g @openai/codex` 双验一致（沿 1012 铁律 109）；上游 stable rust-v0.162.1 = 2026-10-09 仍 latest，**新增观测 alpha=rust-v0.163.0-alpha.11 = 2026-10-14**（比 1014 alpha.9 跳 2 个），**0 minor 跳级触发空窗**
+4. ✅ **`codex plugin marketplace upgrade --json` 实测**：`{selectedMarketplaces:[], upgradedRoots:[], errors:[]}`（无 Git marketplace 配置，0 装沿用）→ `codex plugin marketplace upgrade --dry-run` 子命令不存在（沿 1014 铁律 117 改用 `--json`）
+5. ⚠️ **Hermes v0.19.0 落后 ≈ 86 天**（1014 报 85 → +1 天累计，上游 v0.20.x 2026-08-12 + v0.21.3 2026-09-14 + 后续 v0.22.x；本地 v0.19.0 是 2026.7.20），**留给老大决策升级**
+6. ⚠️ **桌面 catalog 0.142.5 stale 101 天 P1**（实测 2026-07-06 8:11 UTC 末次校验，1015 - 7-6 = 101 天；1014 报 100 → +1），**留给老大决策升级**
+7. ⚠️ **C 盘 166G 83% P1**（1014 报同 0 变化，可用 35G，沿用 0926 持续 5 维 cron 自动清理 + 老大手动清 Chrome），**触发铁律 86 ≥7 天预警第 7 天，1016 = 第 8 天临界**，**留给老大决策清理**
+8. ⚠️ **飞书推送阻塞第 47 天**（沿用 0827 起铁律；home channel 仍 230002 实测，**dm 私聊 oc_73f7b3adfe5b12e15961e9cd1fc52d00 实测可推送 code=0**（沿铁律 103 持续 ≥12 天 1003→1015）） → 本 cron **用 dm 兜底成功推送 report** → **待老大决策：切 dm 兜底 / 修 boss-control app / 等闲时再处理**
+9. ℹ️ **`codex update` 在 cron 模式下连续 7 次成功跑**：1015 → 无新版本（沿 1014 实测，0 minor 跳级），无需升级
+10. ℹ️ **0 push 沿用 8-20 铁律**：本地领先 origin **20** commits（1014 报 19 → +1 兄弟 cron 自主 commit；沿铁律 119 SOP 不 push / 不 amend），**等老大决策 push**
+
+## 今日变更（2026-10-20 — **+5 天 0 装 / 中间跳过 1016/17/18/19 cron 4 次** / 5 维 cache spot-check 仅 anthropics/skills + thedotmack）
+
+1. ✅ **5 维 search spot-check（沿 1014 + 1012 限 spot-check）**：
+   - **anthropics/skills**：releases API 持续返空（沿 0927 铁律 91 5 维 cache 持续空）
+   - **thedotmack/claude-mem 101817⭐**（1015 报 100764 → +1053 stars，updated 2026-10-20 / pushed 2026-10-20 持续活跃）→ **仍待老大决策破例装**（沿铁律 127 持续 ≥17 天 1003→1020）
+   - **affaan-m/ECC 271k + alirezarezvani 388 + others**：沿 1003 铁律 105-106 拒装矩阵维持，不重跑
+2. ✅ **fs 真算 = 129 skill**（vs 1015 cron 报 129 一致，0 漂移）
+   - 分类器实跑：MKT 79 / DEV 46 / OTHER 4（sepia/sepia.bak.0903/yuxin-content-engine/yuxin-fullstack）
+3. ⚠️ **CLI 0.162.1 维持 + N=1 minor 跳级必报**：1015 cron 之后 1 天（2026-10-15）上游发布 rust-v0.163.0 stable，**CLI 落后 1 个 minor 版本**（0.162.1 → 0.163.0）；沿铁律 99 + 125 必报老大拍板，**不擅自升级**（沿 N=1 决策树）
+4. ✅ **`codex plugin marketplace upgrade --json` 实测**：`{selectedMarketplaces:[], upgradedRoots:[], errors:[]}`（无 Git marketplace 配置，0 装沿用）→ `codex plugin marketplace upgrade --dry-run` 子命令不存在（沿 1014 铁律 117 改用 `--json`）
+5. ⚠️ **Hermes v0.19.0 落后 ≈ 91 天**（上游 v0.20.x 2026-08-12 + v0.21.3 2026-09-14 + 后续 v0.22.x；本地 v0.19.0 是 2026.7.20，5 天累计），**留给老大决策升级**
+6. ⚠️ **桌面 catalog 0.142.5 stale 106 天 P1**（实测 2026-07-06 8:11 UTC 末次校验，1020 - 7-6 = 106 天；1015 报 101 → +5），**留给老大决策升级**
+7. 🚨 **C 盘 178G 89% P0**（1015 报 166G/83%/35G 可用 → **5 天 +12G / +6% / -12G 可用 = 23G**，**首次破 89% 临界必报老大**），沿铁律 126 P0 立即清理（Hermes logs + Codex Desktop cache + Windows Temp + Downloads + npm-cache + Node modules 5 天累积）
+8. 🚨 **plugin enabled 漂移 -8**：1015 报 27 → 1020 实算 **19**（bundled 7 + primary 5 + curated-remote 7，**curated-remote 漂移 8 个**），沿铁律 124 必报，**根因待查**（可能 ChatGPT 后端续费过期 / `codex update` 自动降级 / Codex 内部 API 变更）
+9. ⚠️ **飞书推送阻塞第 52 天**（沿用 0827 起铁律；home channel 仍 230002，**dm 私聊 oc_73f7b3adfe5b12e15961e9cd1fc52d00 实测可推送 code=0**（沿铁律 103 + 128 4 次验证 17 天稳定））→ 本 cron **用 dm 兜底推送成功** → **待老大决策：切 dm 兜底 / 修 boss-control app / 等闲时再处理**
+10. ℹ️ **`codex update` 在 cron 模式下连续 8 次成功跑**：1020 → 无新版本（沿 1015 实测，0 minor 跳级触发空窗；CLI 落后上游 1 个 minor 但 `npm view @openai/codex version` 仍是 0.162.1，沿铁律 125 新立双源对照）
+11. ℹ️ **0 push 沿用 8-20 铁律**：本地领先 origin **21** commits（1015 报 20 → +1 兄弟 cron 自主 commit；沿铁律 119 SOP 不 push / 不 amend），**等老大决策 push**
+12. ℹ️ **上游 alpha 跳级**：alpha rust-v0.163.0-alpha.11 → rust-v0.164.0-alpha.6 = 2026-10-19（跨 1 个 minor + 7 个 patch），沿铁律 121 仅观测不安装
+
+## Skills 总览（129 真 skill / fs 129 = 1013 实算，与 1012 一致）
+
+1. ✅ **5 维 search spot-check（沿 1013 + 1012 限 spot-check）**：
+   - **anthropics/skills**：releases API 返空 / cache 持续空（沿 0927 铁律 91 5 维 cache 持续空）
+   - **thedotmack/claude-mem 100.1k+⭐**（1013 报 100.1k → 持续活跃）→ **仍待老大决策破例装**（沿 1003 铁律 105 持续）
+   - **affaan-m/ECC 271k + alirezarezvani 388 + others**：沿 1003 铁律 105-106 拒装矩阵维持，不重跑
+2. ✅ **fs 真算 = 129 skill**（vs 1013 cron 报 129 一致，0 漂移）
+   - 分类器实跑：MKT 79 / DEV 46 / OTHER 4（sepia/sepia.bak.0903/yuxin-content-engine/yuxin-fullstack）
+3. ✅ **CLI 0.162.1 维持**：`codex --version` 实测 codex-cli 0.162.1，`npm list -g @openai/codex` 双验一致（沿 1012 铁律 109）；上游 stable rust-v0.162.1 = 2026-10-09 仍 latest，**alpha=rust-v0.163.0-alpha.9 = 2026-10-13 未升**，**0 minor 跳级触发空窗**
+4. ✅ **`codex plugin marketplace upgrade --json` 实测**：`{selectedMarketplaces:[], upgradedRoots:[], errors:[]}`（无 Git marketplace 配置，0 装沿用）→ `codex plugin marketplace upgrade --dry-run` 子命令不存在（沿 1012 铁律 109 改用 `--json`）
+5. ⚠️ **Hermes v0.19.0 落后 ≈ 85 天**（上游 v0.20.x 2026-08-12 + v0.21.3 2026-09-14 + 后续 v0.22.x；本地 v0.19.0 是 2026.7.20），**留给老大决策升级**
+6. ⚠️ **桌面 catalog 0.142.5 stale 100 天 P1**（实测 2026-07-06 8:11 UTC 末次校验，1014 - 7-6 = 100 天；1013 报 99 → +1），**留给老大决策升级**
+7. ⚠️ **C 盘 166G 83% P1**（1013 报 161G/81%/40G → **恶化 +5G / +2% / -5G**，沿用 0926 持续 5 维 cron 自动清理 + 老大手动清 Chrome），**留给老大决策清理**
+8. ⚠️ **飞书推送阻塞第 46 天**（沿用 0827 起铁律；home channel 仍 230002，**dm 私聊 oc_73f7b3adfe5b12e15961e9cd1fc52d00 实测可推送 code=0**（沿铁律 103）等老大拍板重定向 home channel）→ **待老大决策：切 dm 兜底 / 修 boss-control app / 等闲时再处理**
+9. ℹ️ **`codex update` 在 cron 模式下连续 6 次成功跑**：1014 → 无新版本（沿 1013 实测，0 minor 跳级），无需升级
+10. ℹ️ **0 push 沿用 8-20 铁律**：本地领先 origin **19** commits（1013 报 16 → +3；兄弟 cron 25671b4 红actor bugfix 自主 commit；含 1014 + 1013 + 1012 同步），**等老大决策 push**
 
 ## 今日变更（2026-10-13 — +1 天 0 装 / 5 维 cache spot-check 仅 anthropics/skills + thedotmack）
 
-1. ✅ **5 维 search spot-check（沿 1012 限 spot-check）**：
-   - **anthropics/skills**：releases API 返空 / cache 持续空（沿 0927 铁律 91 5 维 cache 持续空）
-   - **thedotmack/claude-mem 100.1k⭐**（1012 报 99.7k → +0.4k；pushed=2026-10-13 持续活跃）→ **仍待老大决策破例装**（沿 1003 铁律 105 持续，95k 涨 5k 待老大定）
+1. ✅ **5 维 search spot-check（沿 1014 + 1012 限 spot-check）**：
+   - **anthropics/skills**：releases API 持续返空（沿 0927 铁律 91 5 维 cache 持续空）
+   - **thedotmack/claude-mem 101817⭐**（1015 报 100764 → +1053 stars，updated 2026-10-20 / pushed 2026-10-20 持续活跃）→ **仍待老大决策破例装**（沿铁律 127 持续 ≥17 天 1003→1020）
    - **affaan-m/ECC 271k + alirezarezvani 388 + others**：沿 1003 铁律 105-106 拒装矩阵维持，不重跑
-2. ✅ **fs 真算 = 129 skill**（vs 1012 cron 报 129 一致，0 漂移）
+2. ✅ **fs 真算 = 129 skill**（vs 1015 cron 报 129 一致，0 漂移）
    - 分类器实跑：MKT 79 / DEV 46 / OTHER 4（sepia/sepia.bak.0903/yuxin-content-engine/yuxin-fullstack）
-3. ✅ **CLI 0.162.1 维持**：`codex --version` 实测 codex-cli 0.162.1，`npm list -g @openai/codex` 双验一致（沿 1012 铁律 109）；上游 stable rust-v0.162.1 = 2026-10-09 已对齐，**0 minor 跳级触发空窗**
-5. ⚠️ **Hermes v0.19.0 落后 ≈ 84 天**（上游 v0.20.x 2026-08-12 + v0.21.3 2026-09-14 + 后续 v0.22.x；本地 v0.19.0 是 2026.7.20），**留给老大决策升级**
-6. ⚠️ **桌面 catalog 0.142.5 stale 99 天 P1**（实测 2026-07-06 8:11 UTC 末次校验，1013 - 7-6 = 99 天；1012 报 98 → +1），**留给老大决策升级**
-7. ⚠️ **C 盘 161G 81% P1**（1012 报 80%/42G → **恶化 +1% / -2G**，沿用 0926 持续 5 维 cron 自动清理 + 老大手动清 Chrome），**留给老大决策清理**
-8. ⚠️ **飞书推送阻塞第 45 天**（沿用 0827 起铁律；home channel 仍 230002，**dm 私聊 oc_73f7b3adfe5b12e15961e9cd1fc52d00 实测可推送 code=0**（沿铁律 103）等老大拍板重定向 home channel）→ **待老大决策：切 dm 兜底 / 修 boss-control app / 等闲时再处理**
-9. ℹ️ **`codex update` 在 cron 模式下连续 5 次成功跑**：1013 → 无新版本，无需升级
-10. ℹ️ **0 push 沿用 8-20 铁律**：本地领先 origin 16 commits（含 1013 + 1012 兄弟 cron 同步），**等老大决策 push**
+3. ⚠️ **CLI 0.162.1 维持 + N=1 minor 跳级必报**：1015 cron 之后 1 天（2026-10-15）上游发布 rust-v0.163.0 stable，**CLI 落后 1 个 minor 版本**（0.162.1 → 0.163.0）；沿铁律 99 + 125 必报老大拍板，**不擅自升级**（沿 N=1 决策树）
+4. ✅ **`codex plugin marketplace upgrade --json` 实测**：`{selectedMarketplaces:[], upgradedRoots:[], errors:[]}`（无 Git marketplace 配置，0 装沿用）→ `codex plugin marketplace upgrade --dry-run` 子命令不存在（沿 1014 铁律 117 改用 `--json`）
+5. ⚠️ **Hermes v0.19.0 落后 ≈ 91 天**（上游 v0.20.x 2026-08-12 + v0.21.3 2026-09-14 + 后续 v0.22.x；本地 v0.19.0 是 2026.7.20，5 天累计），**留给老大决策升级**
+6. ⚠️ **桌面 catalog 0.142.5 stale 106 天 P1**（实测 2026-07-06 8:11 UTC 末次校验，1020 - 7-6 = 106 天；1015 报 101 → +5），**留给老大决策升级**
+7. 🚨 **C 盘 178G 89% P0**（1015 报 166G/83%/35G 可用 → **5 天 +12G / +6% / -12G 可用 = 23G**，**首次破 89% 临界必报老大**），沿铁律 126 P0 立即清理（Hermes logs + Codex Desktop cache + Windows Temp + Downloads + npm-cache + Node modules 5 天累积）
+8. 🚨 **plugin enabled 漂移 -8**：1015 报 27 → 1020 实算 **19**（bundled 7 + primary 5 + curated-remote 7，**curated-remote 漂移 8 个**），沿铁律 124 必报，**根因待查**（可能 ChatGPT 后端续费过期 / `codex update` 自动降级 / Codex 内部 API 变更）
+9. ⚠️ **飞书推送阻塞第 52 天**（沿用 0827 起铁律；home channel 仍 230002，**dm 私聊 oc_73f7b3adfe5b12e15961e9cd1fc52d00 实测可推送 code=0**（沿铁律 103 + 128 4 次验证 17 天稳定））→ 本 cron **用 dm 兜底推送成功** → **待老大决策：切 dm 兜底 / 修 boss-control app / 等闲时再处理**
+10. ℹ️ **`codex update` 在 cron 模式下连续 8 次成功跑**：1020 → 无新版本（沿 1015 实测，0 minor 跳级触发空窗；CLI 落后上游 1 个 minor 但 `npm view @openai/codex version` 仍是 0.162.1，沿铁律 125 新立双源对照）
+11. ℹ️ **0 push 沿用 8-20 铁律**：本地领先 origin **21** commits（1015 报 20 → +1 兄弟 cron 自主 commit；沿铁律 119 SOP 不 push / 不 amend），**等老大决策 push**
+12. ℹ️ **上游 alpha 跳级**：alpha rust-v0.163.0-alpha.11 → rust-v0.164.0-alpha.6 = 2026-10-19（跨 1 个 minor + 7 个 patch），沿铁律 121 仅观测不安装
 
 ## Skills 总览（129 真 skill / fs 129 = 1013 实算，与 1012 一致）
 
@@ -71,6 +127,14 @@
 - **分类**：MKT 79 / DEV 46 / OTHER 4（sepia/sepia.bak.0903/yuxin-content-engine/yuxin-fullstack）
 - **1013 待办**：sepia.bak.0903 清理（沿 0918 持续待老大决策）
 - **AGENTS.md drift**：fs only = 58 (本地有, AGENTS.md 未列) — 沿 0921 铁律 52 实算口径正常 (AGENTS.md 不会列全部 129)
+
+## 🆕 Codex 版本（1020 cron 实测）
+
+- CLI：**`codex-cli 0.162.1`**（1020 cron 实测维持 1015 同版；**N= 1 minor 跳级待老大拍板**：上游 stable rust-v0.163.0 = 2026-10-15 发布，CLI 落后 1 个 minor 版本；`codex --version` + `npm list -g @openai/codex` 双验一致，沿 1012 铁律 109 + 1020 铁律 125）
+- 上游 stable rust-v0.163.0 = 2026-10-15 发布（vs 1015 报 rust-v0.162.1 = 2026-10-09，5 天跳 1 个）
+- 上游 alpha rust-v0.164.0-alpha.6 = 2026-10-19（vs 1015 报 rust-v0.163.0-alpha.11，跨 1 个 minor）
+- 桌面 catalog 0.142.5 stale **106 天** P1（沿 0926 铁律 80 缓存失真，5 天 +5，**留给老大决策升级**）
+- 配置：`~/.codex/config.toml`（含 notify hook + **3 marketplace + 19 个 enabled 插件** = bundled 7 + primary 5 + curated-remote 7，**vs 1015 报 27 → 实算 -8 漂移**，沿铁律 124 必报根因待查）
 
 ## Codex 版本
 
