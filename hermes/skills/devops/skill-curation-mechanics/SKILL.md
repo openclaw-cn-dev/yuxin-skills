@@ -5,7 +5,15 @@ description: Curator/consolidation passes on the Hermes skill library — verifi
 
 # Skill 库整理（curator pass）的工具机制与安全 SOP
 
+> 🛠️ 配套脚本：`scripts/auto_slim_skillmd.py` —— SKILL.md 超 90KB 自动按节切分瘦身（保前40%节+外置 references/split_overflow.md，零丢失）。支持传文件路径或无参扫描全树（自动跳过 .archive 与 references），跑完用标准验收命令复核。
+
 2026-09-02 全库 curator 合并（89→54，35 个归档）实测沉淀。**再跑 curator pass 必读。**
+
+> 🔥 **2026-10-20 zhenglishi 层 pass 实测（华哥新规：cron 机制债沉淀降级）**：调研任务结束/删除 → 其 cron 机制技能**立即降级归档，不等季度 pass**。四类直接 DEMOTE：① `*-upgrade-pending-*` 升级债（挂靠 cron 已停/已迭代，升级窗口已关）② 其他 profile 前缀托管件（xiaobao-/heidou-/laomo-/maodou-/quant-cron-，按"回归各自名下"原则归档）③ 一次性复盘（r数字审计、canonical-skip 单次、test 占位符）④ 已停项目专属机制。定级流程：拉两份 jobs.json（default+目标 profile）提活跃 cron 主题集 → 技能逐个对照 KEEP/DEMOTE → review 类看 description 定案。实测 111→81（30 归档，26 个确系机制债）。类目容器/现役工作流/通用工具坑/跨项目方法论 = KEEP（***SECRET*** 通用方法论、red-teaming 方法库均定 KEEP）。
+>
+> **超重自动瘦身脚本**：`scripts/auto_slim_skillmd.py`（按 `## ` 切节、保 frontmatter+前 40% 节、余节外置 `references/split_overflow.md` 零丢失）——首战实测 99→86KB / 98→63KB / 92→17KB 全达标。验收命令不变：`find . -name SKILL.md -not -path "*.archive*" -size +90k | wc -l` = 0。
+>
+> **机制债反弹是常态**：9-29 清零后两个月又积出超重与升级债——季度 pass 节奏合理，勿拉长。
 
 > 🔥 **2026-09-29 B 档「共享正本模式」全库大整理已完成**（华哥拍板）：profile 层实体拷贝去重（2,330→1,610）+ 巨型 SKILL.md >100KB 清零（17 个拆 references）+ 入库铁律写进 `03_collaboration_protocol.md §七`（通用技能只写共享根 / 角色前缀技能只写自己 profile / SKILL.md 上限 90KB / 季度 pass 制度化）。**完整 6-Phase 执行流水线（三类指纹比对/提升正本/按节切分/超长行压缩/超集判定）见 `references/***SECRET***.md`**——下次 pass（含季度 pass）先读它再动手。
 
@@ -24,6 +32,13 @@ description: Curator/consolidation passes on the Hermes skill library — verifi
 - 同 md5 的多 profile 副本（如 research-paper-writing×6）：只瘦 master 一份再 `cp` 分发，不跑 6 遍。
 - 脚本 `scripts/skill_slim_exec.py`（白名单 TARGETS 驱动，防误切）。
 - **验收**：`find ... -name SKILL.md -not -path "*/.archive/*" -not -path "*/references/*" -size +100k | wc -l` 应为 0（references 外置件不算）。
+
+### 二轮瘦身 + 守夜扫描（2026-10-20 全库清零实测）
+
+- **二轮模式**：一轮 keep 40-50% 后仍 >90KB 的（如 laomo-knowledge 125KB），对剩余正文再切一轮 keep 30%，外置到 `references/split_overflow_2.md`；注意首轮正文已含「已外置章节索引」节，二轮切分前先把它从 head 拆出、拼回末尾，避免索引被当普通节重复外置。
+- **量化校验命令**：`find ~/.hermes/skills ~/.hermes/profiles/*/skills -maxdepth 3 -name "SKILL.md" -size +90k -not -path "*.archive*" | wc -l` 应为 **0**（90KB 是现行铁律，比旧的 100KB 更严——90KB 时加载已开始退化）。
+- **复发速度实测**：9-29 清零 → 10-20 涨回 9 个（共享根3+laomo×2+quant×1+zhenglishi×3，其中 3 个是首轮扫描深度不够漏掉的 maxdepth 之外的 profile 件）。**扫描必须覆盖全部 profile，不能只扫共享根**。
+- **守夜 cron 已挂**（`0de29218fdfd`，每周日 20:00，华哥批准）：find 非零才飞书告警，零个=静默不发包。同类复用模板见该 job 的 prompt。
 
 ## 共享正本模式（B 档确立的库形态）
 
@@ -55,6 +70,17 @@ cpr() {  # 1) umbrella references/ 收全档  2) .archive/ 可恢复副本
 - delete 后必须跑状态核对脚本（orig/umb/arc 三列文件数），发现 ORIG-STILL-LIVE 或 UMB-MISSING 立即用 `cp -R` 恢复 + `mv 原目录 /tmp/curator_removed_<ts>/` 隔离（避免二次 delete 再扫同名副本）
 
 ## profile 层实体拷贝去重 SOP（2026-09-29 B 档大整理实测，10 profile 2,330→1,610）
+
+### cron 机制债降级判据（2026-10-20 华哥定案，zhenglishi 111→81 实测）
+
+华哥原话：「如果是 cron 机制债，那如果项目调研任务已结束或删除，这个 skills 还有什么用。那就要沉淀降级。」——**cron 停 → 机制技能跟着降级，不等季度 pass**。可执行判据：
+
+1. **活跃 cron 对照**：读 `~/.hermes/cron/jobs.json` + 各 profile `cron/jobs.json`（enabled=true）提取项目关键词集合，技能挂靠的项目不在集合内=机制债。
+2. **DEMOTE 四类**：①`*-upgrade-pending-*` 尾缀（升级窗口已关的占位）②一次性复盘（r数字审计/canonical-skip 单次映射/test-* 占位）③**他人前缀托管件**（`heidou-*/laomo-*/maodou-*/xiaobao-*/quant-*` 出现在别人 profile 里）④已停项目专属机制（对照暂停令清单）。
+3. **KEEP 四类**：类目容器（devops/productivity/research…结构性目录）、现役工作流（名字含本 profile 名+cron/workflow）、通用工具坑（hermes-patch/write-file pitfall 等）、跨项目方法论（bounded-research-sprint 等）。
+4. **REVIEW 类定案参考**：描述以「通用方法论」开头的（如 ***SECRET***）→ KEEP；纯安全测试方法库 → KEEP。
+5. **执行纪律**：只 `mv` 进 `.archive/curator_pass_<ts>/`（可恢复），零删除；归档后验证三件套=archive 目录计数==移动数、无残留半删除、现役列表抽查。
+
 
 华哥拍板「共享正本模式」后的可复现流程：
 
