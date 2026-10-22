@@ -111,6 +111,18 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/渔芯独角兽/02-产品开发综合平台/00-综合开发平台"]
 trust_level = "trusted"
 
+[projects."/Users/hua/Documents/Codex/2026-10-22/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Desktop/广东引擎者结算"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/商住集装箱方案设计助手"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/系统资源监控"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
