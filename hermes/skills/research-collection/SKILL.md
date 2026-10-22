@@ -32,6 +32,8 @@ metadata:
 - 技术博客
 - API文档
 
+**支持文件**：`references/cron-research-toolchain.md` — cron 轮换调研一手采证工具链（web_extract 报 search-only 后端时的 curl+python 解析替代链、cron 终端 tirith 拦截形态与稳妥替代、OpenKnowledge 已验证事实库 2026-10-22、git 并发推拉纪律与 commit 归属审计一行流）。做官方 docs 抓取、GitHub API 仓库体检、git 归属审计前先读该文件。
+
 ## 输出格式
 
 ### 结构化调研报告
