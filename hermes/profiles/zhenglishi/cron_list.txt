@@ -14,6 +14,7 @@ jobs.json.bak.20260903-恢复正常
 logs
 output
 references
+rkr_staging
 scratch
 scripts
 skip_lines

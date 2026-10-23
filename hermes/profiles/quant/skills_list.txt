@@ -26,7 +26,6 @@ quant
 quant-data-source-research
 quant-workflow
 quantitative-research
-quick-holdings-curl-recipe
 red-teaming
 research
 sklearn-calibration-usage-2026-09-07.md

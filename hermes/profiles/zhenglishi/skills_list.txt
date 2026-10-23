@@ -25,7 +25,6 @@ edge-ai-hardware-spec-budget
 email
 excel-ledger-cross-audit
 external-ai-draft-integration
-external-cron-interleave-recovery
 finance-legal
 frontend-ui
 fuzz-testing
@@ -38,7 +37,6 @@ hermes-agent-maintenance
 hermes-cron-saturated-marginal-increment
 hermes-maintenance-sync
 hermes-patch-tool-pitfalls
-hermes-skill-library-skill-md-size-limit
 hermes-sync-cron-ops
 hermes-write-file-pitfalls
 huage-directive-resource-reallocation
@@ -62,11 +60,9 @@ project-deep-dive-cron
 purchase-comparison
 quant
 red-teaming
-references
 research
 research-cron-manual-fallback
 research-project-bootstrap
-short-name-map
 skill-library-curation
 skillmd-frozen-write-channel
 smart-home
@@ -81,5 +77,3 @@ yuxin-community-workbench-dev
 zhenglishi-cron-skip-daily-closeout
 zhenglishi-deep-dive-cron
 zhenglishi-noon-flash-briefing
-zhenglishi-per-pool-specialized-cron
-zhenglishi-workflow
