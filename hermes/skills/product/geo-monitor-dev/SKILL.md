@@ -6,6 +6,8 @@ description: 擎观 GEO 和擎索 SEO Monitor 项目开发维护。三功能架�
 # 擎观 GEO Monitor 开发技能
 
 > ⚠️ **2026-09-26 实测更正（老莫 GEO-01 心跳轮）**：本文档的本地开发形态已失效——`/Users/hua/6-产品研发/24-GEO/` 目录在本机**不存在**（技能早期版本路径口径）。**生产实例在阿里云 ECS 121.43.127.211**（容器 geo-backend-1，端口 8002 为**服务器本地视角**，GED_DEV_MODE=false，dev@geo.local 登录无效，认证用 users 表 api_key 作 Bearer）。运营任务（kanban GEO-* 队列：GEO-01 基线审计 / GEO-02 FAQ Schema 优化 / GEO-03 周报自动化）一律走生产 API → **先读 `references/production-ecs-deployment.md`**（SSH 方式、认证、API 契约实测、tirith 拦截绕过、GEO-01 进度、**§7 GEO-02 执行情报：两站真实服务链路 yuxinsim=3107 Next.js 容器 / lookforge=uvicorn 8642、faq-schema 契约、Next.js 预渲染页注入配方、进度台账**）。本文档其余部分仅适用于本地重建开发环境时参考。
+>
+> 📖 **官网公开演示面**：geo 另有对外门面 `lookforge.net/webapps/geo/`（移动Web只读演示，独立门禁通道 eqsim-session-gate:8033，2026-10-24 上架）——「geo 打不开/看不到」类问题先读 `references/webapp-public-face-gateway.md` 分清是运营 API 面还是官网演示面。
 
 ## 项目概览
 

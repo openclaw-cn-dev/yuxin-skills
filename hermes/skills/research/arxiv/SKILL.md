@@ -259,51 +259,6 @@ https://arxiv.org/pdf/<paper-id>.pdf
 
 ---
 
-## 已知坑点文献调研"
-
-## 🆕 非 cron 模式首选：browser_navigate + browser_console JS 批量提取（心跳 #N+12, 2026-09-01）
-
-**触发条件**：浏览器三件套（`browser_navigate` / `browser_console` / `browser_snapshot`）可用 + 想看 q-fin 最近一周全部论文
-
-**核心优势**：
-- 25-30 秒拿 4 篇完整摘要（含 list 页 ID 提取 + 单篇 /abs/ID 摘要）
-- 零 API 调用（避免 search_query=... 全返回 0 的坑）
-- 零解析代码（IIFE + DOM query 一次返回结构化数组）
-
-**4 步精简版**：
-1. `browser_navigate("https://arxiv.org/list/q-fin/recent")` —— 一次拿 50 篇标题+作者+类别
-2. `browser_console` IIFE 提取 `arXiv:NNNN.NNNNN` 形式 ID 列表
-3. 选 3-5 篇感兴趣的，逐个 `browser_navigate /abs/ID` 看完整摘要
-4. 写入 `evolution/` 报告 + `references/arxiv-quant-papers-YYYY-MM-DD.md` 笔记
-
-**完整工作流 + 性能对比 + 踩坑**：`references/browser-console-qfin-extract.md`
-
-**决策树汇总**（按工具可用性）：
-| 浏览器 | cron 模式 | 首选路径 |
-|---|---|---|
-| ✅ 可用 | ❌ 非 cron | **browser_navigate + browser_console JS（本次新增）** |
-| ✅ 可用 | ✅ cron | ❌ 浏览器 cron 下不可用，降级到 API/curl |
-| ❌ 不可用 | ❌ 非 cron | curl + `cat:q-fin.*` API |
-| ❌ 不可用 | ✅ cron | curl + HTML scrape fallback |
-
-## 🆕 作者附验证脚本 → 认证复现工作流（心跳 2026-09-03，2609.02447 实测）
-
-**触发条件**：abs 页面上有 `Ancillary files (details):` 区块（多半见 q-fin.CP / q-fin.MF / q-fin.ST 的"重型"理论论文）
-
-**核心洞见**：读到论文摘要 → 自建 PoC 黑箱验证这条路有**系统性假阴性风险**（离散化分辨率差 1-2 个数量级 + 优化器 `inf` 被误读为阴性结论）。**修正路线**：作者附了 verification scripts 时，先跑作者的，自建 PoC 降级为辅助理解工具。
-
-**4 步精简版**：
-1. **探测**：abs 页面查 `Ancillary files (details):` 区块
-2. **取源码**：`curl -sL -o src.tar.gz "https://arxiv.org/src/<ID>" && tar xzf src.tar.gz -C /tmp/`
-3. **跑 verify.py**：`python3 verify.py 2>/dev/null`（自动校验 manifest SHA256 + 在两个不同工作目录跑同一脚本比对输出）
-4. **解析 JSON 输出 + 校验 hash match**：用 raw_decode 解析多 JSON 输出，找含 `records` 的对象
-
-**完整工作流 + 输出比对坑 + macOS timeout 替代**：`references/***SECRET***.md`
-
-**实测收益**：2609.02447（非线性瞬态冲击操纵性），16/16 作者验证脚本在本机 PASS，manifest SHA256 校验通过，与 frozen 参考逐字节相同。校准指数负成本认证：−0.1096 / −0.1741 / −0.0443（40 位有向区间算术，volume=0 真零成交量往返）。
-
----
-
 ## 已知坑点
 
 | 坑点 | 解决方案 |

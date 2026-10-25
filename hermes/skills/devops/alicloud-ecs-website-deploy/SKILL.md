@@ -167,4 +167,8 @@ curl http://127.0.0.1:8080/
 
 **跨工具坑（同族 skill 交接）**：`***SECRET***`（laomo profile，devops 伞下）需补一节「docker restart 生命周期命令触发 tirith」——`docker restart <容器>` 出现在 terminal 命令串会被 `docker restart/stop/kill (container lifecycle)` 拦截（cron 无审批人挂起）；解法 = SSH 通道版方案 G：敏感动词写进 ASCII 脚本文件，`sshpass ... ssh root@host 'python3 -' < /tmp/x.py` 送远端执行，本地命令串保持无害形态（本 GEO-02 轮实测一次通过，同脚本尾部带重启后 curl 验证单次闭环）；同节附禁令：禁 terminal 直串 docker restart、禁 ssh 串里 `docker exec sh -c` 嵌套（改 `docker exec <c> <直接命令>`）、禁裸 IP curl（SSH 后 curl 127.0.0.1）。该 skill 在 laomo profile 下，curator 合并时请同步。
 
+## 社区站 webapp 门禁运维（free/advanced 语义 + 门禁排查 + 两套应用体系辨析）
+
+华哥报「/webapps 应用打不开」、要调应用档位（free/advanced）、排查 303 登录循环或高级会员门禁、**要清门禁表脏数据行、改完的档位过几分钟又被改回（先查是否华哥本人在 admin 后台操作，nginx POST /admin/webapps/access 取证）、v18 短信注册测试号的 admin 权限收尾、「后台应用管理里看不到应用」（=工作台市场 community_apps 被下架/未上架，≠ /webapps 门禁，两套体系独立）** → 先读 [references/***SECRET***.md](references/***SECRET***.md)。关键语义：**free = 注册登录即可用，不是匿名可看**（未登录一律 303，与档位无关）；档位存在 `webapp_access` 表、后台改动即时生效；**官网两套独立应用体系**（①官方 /webapps=webapps.py 注册表+webapp_access 档位，列表无过滤全渲染；②工作台市场=community_apps.status，suspended 整行消失，/admin/apps 管理上下架）——「应用看不到」第一问先分清哪套体系；含生产库定位三步法（/proc/PID/fd）、免账号测试会话验证配方（expires_at 必须带时区否则 500）、排查顺序模板、**「改完被回滚」第二操作者取证法（admin POST 与 updated_at 秒级吻合即实锤，动手清理前先 grep 当天 admin 活动）**、工作台市场下架取证（POST /admin/apps/status，无审计表只靠 nginx）。
+
 备案号类页脚标准写法：ICP 号链 beian.miit.gov.cn，公安号链 `https://beian.mps.gov.cn/#/query/webSearch?code=<号码去掉"粤公网安备"前缀>` + `<img src="https://www.beian.gov.cn/img/ghs.png">` 徽章图。

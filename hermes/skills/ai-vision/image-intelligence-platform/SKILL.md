@@ -516,3 +516,12 @@ python3 scripts/quality_check.py /path/to/images
 # 批量生成
 python3 scripts/batch_generate.py prompts.txt /output/path
 ```
+
+## 收纳会话档案（2026-10-23 curator 从 batch-file-renaming 移入）
+
+本 skill 的模块 1-4（OCR 直读 → 感知哈希分组 → 知识库匹配 → 批量重命名）与 batch-file-renaming skill 的 AI 名词卡片 3 阶段管线同源。两条实战会话档案已归位于本 skill references/：
+
+- `references/***SECRET***.md` — 华哥 2026-07-13 铁律：**必须解图片内容提取编号再重命名，严禁套用 TERM_MAP 预设表**（用户否决 lookup-table fallback 的原始会话记录，任何图片识别类任务先读这个）。
+- `references/flashcard-session-2026-07-13.md` — 79 张 AI 名词卡片重命名会话全记录（manifest 发现、T001-T020 编号规律、4 变体/词条）。
+
+通用管线 SOP 仍在 batch-file-renaming skill（`references/ai-flashcard-3stage-pipeline.md` + `scripts/rename_flashcards.py`）；本 skill 提供模块级实现与质量检测。

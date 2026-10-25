@@ -1,6 +1,6 @@
 ---
 name: cloud-gpu-automation
-description: 租用/自动化操作云端 GPU（AutoDL 实战）— 免浏览器 API 全流程：微信扫码登录逆向、开发者 Token、容器实例 Pro API、SSH 自动化、国内镜像加速、成本纪律。触发条件：需要租 GPU 跑模型/PoC/训练、AutoDL 登录被验证码拦截、租机/开关机自动化、云算力成本优化、微信扫码登录逆向、AutoDL OpenAPI 端点全表（references/cloud-gpu-rental/，2026-09-09 curator 收纳原 cloud-gpu-rental）。
+description: 租用/自动化操作云端 GPU（AutoDL 实战）— 免浏览器 API 全流程：微信扫码登录逆向、开发者 Token、容器实例 Pro API、SSH 自动化、国内镜像加速、成本纪律。触发条件：需要租 GPU 跑模型/PoC/训练、AutoDL 登录被验证码拦截、租机/开关机自动化、云算力成本优化、微信扫码登录逆向、AutoDL OpenAPI 端点全表（references/cloud-gpu-rental/，2026-09-09 curator 收纳原 cloud-gpu-rental）、生成类 AI 推理（数字人口播视频，2026-10-23 curator 收纳原 digital-human-generation → references/***SECRET***/）、本地小模型训练全流程（MPS/CUDA 选型-环境-训练-推理，2026-10-23 curator 收纳原 small-llm-training → references/local-llm-training-workflow/）。
 ---
 
 # 云 GPU 租用与自动化（AutoDL）
@@ -85,3 +85,13 @@ create 关键参数：`gpu_spec_uuid`（4090D→`"4090D"`、4090-48G→`v-48g`�
 - `scripts/corpus_chunker.py` — 训练语料预切块（按 token 窗口切 jsonl，绕过 dataloader 每篇截断；上传前必跑）
 - `templates/autodl_pipeline_driver.py` — 全流程驱动模板（balance/create/wait/info/deploy/run_wait/fetch/stop/release），复制改顶部常量
 - `references/autodl-api-endpoints.md` — 端点/payload/响应结构完整速查（含镜像 UUID 表、GPU 规格表）
+
+## 收纳包（2026-10-23 curator 合并 — 原独立 skill 整档收纳于此）
+
+> 🗂️ **`references/***SECRET***/`** — 原独立 skill `digital-human-generation` 整档并入。照片+语音→AI数字人口播视频完整工作流：素材评估 → 底片预处理质检 → EchoMimicV3-Flash-Pro 云端生成 → 长音频分片拼接 → 验收合规。含 autodl-china-gpu 机型速查、echomimicv3-flash-pro 推理参数、cloud_run_poc.sh / preprocess_base_photo.py / cloud_setup_env.sh 模板。触发词：数字人/虚拟人口播/照片驱动说话视频/24h人物状态库。
+
+> 🗂️ **`references/local-llm-training-workflow/`** — 原独立 skill `small-llm-training` 整档并入。本地小模型从零训练/微调端到端工作流：选型调研 → 环境搭建 → 数据切片（clean_corpus.py）→ 训练 → 推理演示（infer_demo.py）→ 归档复跑；含 local-llm-training 与 local-llm-training-macos 两个实战 reference 包（M4/16GB MiniMind 实测参数与 dashboard）。与本 skill 的 `references/macos-local-training-pitfalls.md` + `scripts/corpus_chunker.py` 互补：pitfalls 管排障，本包管全流程。触发词：造一个专用模型/训练小模型/MPS 训练/复现开源项目。
+
+## 归档位
+
+- `digital-human-generation`、`small-llm-training` 于 2026-10-23 curator pass 归档（存根见 `~/.hermes/skills/.archive/<name>/SKILL.md`，内容完整收纳于上方两个 references/ 包）。

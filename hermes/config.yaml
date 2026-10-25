@@ -402,6 +402,8 @@ approvals:
   : false
 command_allowlist:
 - script execution via -e/-c flag
+- recursive delete
+- stop/restart system service
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false

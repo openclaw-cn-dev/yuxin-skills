@@ -258,8 +258,8 @@ For AI knowledge card projects (each term has 4 variations):
 
 ## References
 
-- See `references/***SECRET***.md` for session details on user's explicit mandate to use OCR exclusively (no preset tables)
-- See `references/ai-knowledge-cards-2026-07-13.md` for detailed session notes on AI training platform knowledge card projects
+- See `ai-vision/image-intelligence-platform/references/***SECRET***.md` for session details on user's explicit mandate to use OCR exclusively (no preset tables) — moved 2026-10-23 to the image-intelligence-platform umbrella
+- See `ai-vision/image-intelligence-platform/references/flashcard-session-2026-07-13.md` for detailed session notes on AI training platform knowledge card projects — moved 2026-10-23 to the image-intelligence-platform umbrella
 - See `scripts/ocr_macos_vision.swift` for the macOS Vision Swift OCR script
 - See `references/***SECRET***.md` for token-saving strategies
 - See `scripts/smart_rename_ai_cards.py` — **DEPRECATED** by user mandate (2026-07-13), use macOS Vision OCR instead
