@@ -59,7 +59,10 @@ ECS实例的安全组默认不开放8080等端口，必须在阿里云控制台 
 
 ## 凭证找回（华哥的密码都发在飞书）
 
-华哥惯例直接飞书明文发服务器凭证（root密码/阿里云账号）。本地文件与 Hermes memory 工具都不存明文密码（memory 工具有 ssh_access 威胁模式拦截，写不进去）。丢了不要问华哥要——用 mnemosyne_recall 检索当时的飞书原话（如「网站geo要用的 Ssh 帐号」），会话库有原文。改密后旧凭证作废需重新登记。
+华哥惯例直接飞书明文发服务器凭证（root密码/阿里云账号）。本地文件与 Hermes memory 工具都不存明文密码（memory 工具有 ssh_access 威胁模式拦截，写不进去）。丢了不要问华哥要——两条找回路径（2026-10-25 实测，路径②更快）：
+
+1. **mnemosyne_recall 语义检索**：查当时的飞书原话关键词（如「网站geo要用的 Ssh 帐号」）。若命中的记忆卡注明 memory id（如「会话 id=991f2ab66c37c258 有原文」）——
+2. **mnemosyne_get(memory_id=...) 直接取原文**（首选）：凭 id 一步拿到含密码的 [USER] 原文，不用在 session_search FTS 里反复换关键词（FTS 常命中当天自己的会话噪音，绕远路）。改密后旧凭证作废需重新登记。
 
 ## 实例规格审计与扩容/复用决策（2026-09-05 新增）
 
@@ -171,4 +174,30 @@ curl http://127.0.0.1:8080/
 
 华哥报「/webapps 应用打不开」、要调应用档位（free/advanced）、排查 303 登录循环或高级会员门禁、**要清门禁表脏数据行、改完的档位过几分钟又被改回（先查是否华哥本人在 admin 后台操作，nginx POST /admin/webapps/access 取证）、v18 短信注册测试号的 admin 权限收尾、「后台应用管理里看不到应用」（=工作台市场 community_apps 被下架/未上架，≠ /webapps 门禁，两套体系独立）** → 先读 [references/***SECRET***.md](references/***SECRET***.md)。关键语义：**free = 注册登录即可用，不是匿名可看**（未登录一律 303，与档位无关）；档位存在 `webapp_access` 表、后台改动即时生效；**官网两套独立应用体系**（①官方 /webapps=webapps.py 注册表+webapp_access 档位，列表无过滤全渲染；②工作台市场=community_apps.status，suspended 整行消失，/admin/apps 管理上下架）——「应用看不到」第一问先分清哪套体系；含生产库定位三步法（/proc/PID/fd）、免账号测试会话验证配方（expires_at 必须带时区否则 500）、排查顺序模板、**「改完被回滚」第二操作者取证法（admin POST 与 updated_at 秒级吻合即实锤，动手清理前先 grep 当天 admin 活动）**、工作台市场下架取证（POST /admin/apps/status，无审计表只靠 nginx）。
 
+## 线上文件被覆盖·来源取证（2026-10-25/26 二次丢卡实战）
+
+华哥报「应用又不见了」且是**同模式复发**（热修后第二天又被覆盖）时，别只修文件——按取证链找「谁推的」：① 先排除后台 UI 操作（nginx access.log 全天 grep `POST /admin`，零记录=文件级覆盖）；② 文件 mtime 前后查 `/var/log/secure` 的 `Accepted publickey` 会话 + `ssh-keygen -lf` 逐行比对 authorized_keys 指纹定位是哪把钥匙；③ 排除服务器自身定时任务（crontab -l / /etc/cron.d / `systemctl list-timers --all`）证明服务器是被动接收方；④ 被推内容的卡片数比 release 原包还旧 → 实锤源头是华哥电脑打包源里的旧快照。完整六步取证链、二次丢卡时间线、华哥三选一拍板模式（A看门狗/B自愈/C等他查电脑）见 [references/***SECRET***.md](references/***SECRET***.md)。热修动作本身（含 CRLF/标记行/venv 校验坑）在 zhenglishi profile 的 yaml-safe-ops。
+
 备案号类页脚标准写法：ICP 号链 beian.miit.gov.cn，公安号链 `https://beian.mps.gov.cn/#/query/webSearch?code=<号码去掉"粤公网安备"前缀>` + `<img src="https://www.beian.gov.cn/img/ghs.png">` 徽章图。
+
+## 临时大文件公网分发通道（2026-10-25 DSHBox 112MB APK 实测打通）
+
+华哥在平板/外网要一个本地大文件（APK/安装包/数据集），飞书直传超限、又与 Mac 不同网段时——不找第三方网盘，走自家 ECS 出 https 链接：
+
+1. **传文件**：`expect` 包 `scp` 到 `/opt/yuxin/shared/downloads/`（目录已存在，root:root 644/755 即可，nginx worker 用户能读）
+2. **挂 nginx 路由**：改 `/etc/nginx/conf.d/tablet-test.yuxinsim.com.conf`（现成正式 Let's Encrypt 证书，无需动 DNS/安全组），加：
+   ```nginx
+   location = /dshbox.apk {
+       alias /opt/yuxin/shared/downloads/dshbox-v1.5.0-fix-release.apk;
+       default_type application/vnd.android.package-archive;
+       limit_except GET { deny all; }
+   }
+   ```
+   完整补丁脚本（幂等+自动备份）见 [references/ephemeral-download-route.md](references/ephemeral-download-route.md)
+3. **备份→`nginx -t`→reload**：`cp conf conf.bak-<用途>-<日期>` 先行；`nginx -t` 不过绝不 reload
+4. **两层验证缺一不可**：服务器内 `curl -k https://127.0.0.1/<路径> -H "Host: tablet-test.yuxinsim.com"` + **本机外网** `curl -sI https://tablet-test.yuxinsim.com/<路径>`（外网 200 才算通）
+5. **收尾**（华哥确认装好后）：删 `/opt/yuxin/shared/downloads/` 下临时文件 + 从 conf 摘除 location 块 + reload（有 .bak 可直接还原）
+
+**坑：同一 conf 有 80/443 两个 server 块，location 要两边都加**——只加 80 的话，`https://` 请求落进 443 块没匹配到精确 location，被 `location /` 代理到上游应用返回 404（页面型 404，nginx error.log 干净无痕）。排查口诀：`nginx -T | grep <路径名>` 看补丁落进了哪个 server 块，再分别 curl 80/443 带 Host 头对比。
+
+**坑：expect 内嵌 Python heredoc 会被 CRLF 毁掉**——SSH 远程执行多行 Python 时，heredoc 内容里的换行被 expect/tty 转成 `\r\n`，Python 报 `SyntaxError: EOL while scanning string literal`（且 nginx -t 照样 pass，静默假象）。**正解：本地 write_file 写 .py 脚本 → scp 上服务器 → ssh 执行 `python3 /tmp/x.py`**，命令串保持单行。另：md5 校验用本机 `md5 -q`、服务器 `md5sum` 对比（mac 无 md5sum）。

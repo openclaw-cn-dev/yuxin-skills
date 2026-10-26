@@ -109,6 +109,9 @@ ps -p $PID -o pid,state,%cpu,%mem,etime
 2. **background 模式必须设 notify_on_complete**：否则任务静默跑完后你不知道
 3. **delegate_task 超时**：子 agent 默认 50 次迭代，如果任务太长它会自动停止——用 `terminal background` 代替
 4. **不要在长时间任务中做复杂的上下文**：任务描述越精确越好，子 agent 没你的上下文历史
+5. **process(wait) 上限 300 秒，静默 clamp（2026-10-25 实测）**：`process(action='wait', timeout=N)` 的 N 会被截到 300s（请求 590 返回 "Requested wait of 590s was clamped to configured limit of 300s"，不报错）。大于 5 分钟的任务不要指望一次 wait 等完——循环调 `wait(timeout=300)` 直到 status=exited，或干脆靠 notify_on_complete 回调。实测 112MB GitHub APK 下载 18 分钟：background curl + notify_on_complete 起任务，期间 3 次 wait(300) 看 curl 进度行百分比即可，最后 wait 返回 exited + 完整输出。
+6. **大文件下载三步验收**：`curl -L --fail --retry 3 -o` 下载完成后，`file` 验格式 + `unzip -l` 验包结构（APK/jar/zip 看有没有 manifest/dex/classes）+ `shasum -a 256` 记指纹。只看 curl exit 0 不够——网络中间层可能给HTML错误页。
+7. **「下载完成」误报（2026-10-25 DSHBox APK 实痛）**：上一轮会话已报「下载完成 45MB」，本轮用户来要文件时实测该后台 curl **仍在下载**（先后读到 69M/93.8M/96.9M 三个"完成值"）。验收铁律：① `ps aux | grep curl` 确认无下载进程存活；② 间隔 ≥5s 两次 stat 大小一致；③ 与官方源核对字节数（GitHub：`api.github.com/repos/<o>/<r>/releases/tags/<tag>` → `assets[].size`）。历史会话说"完成"不算数——跨会话续接下载任务时一律重新验。
 
 ## 重启/中断后续接（Resume-after-restart，2026-09-04 验证）
 

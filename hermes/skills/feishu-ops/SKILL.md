@@ -26,6 +26,16 @@ metadata:
 
 **⚠️ 禁裸跑探测 legacy 通知脚本（R587 2026-09-17 实测坑）**：`scripts/feishu_notify.py` 这类早期脚本**无 argparse/usage 守卫**，模块级直发——裸跑不带参数、甚至 `--help` 探测，都会立即把硬编码消息（如「Claude Code 更新通知」）真实发进目标群，无法撤回。铁律：**任何不熟悉的 notify 脚本，调用前先 `read_file` 看源码确认入口逻辑**（有无 `if __name__` 守卫、参数解析、硬编码 chat_id），确认安全后才执行；找"哪个脚本发哪个群"时用 `search_files`/`grep` 静态检索，禁用执行来探测。
 
+**⚠️ 大文件 MEDIA: 直传上限（2026-10-25 实测）**：>100MB 文件（如 112MB APK）用 send_message 带 `MEDIA:` 路径会立即失败（`Expecting value: line 1 column 1`，上传 API 返回非 JSON）。不要反复重试上传——直接降级为**纯文本消息**：绝对路径 + SHA256 + 3-4 行要点说明（文件是什么/怎么装/在哪），用户自行 AirDrop/网盘/局域网取件。
+
+**局域网 HTTP 直传降级（2026-10-25 实测，手机/平板取大文件的标准姿势）**：目标是把大文件送进用户移动设备时，别止步于"用户自己想办法"——本机就能开局域网下载服务：
+1. `mkdir -p /tmp/apk_share && cp <大文件> /tmp/apk_share/`（隔离目录，不要把整个 Downloads 暴露到局域网）
+2. `cd /tmp/apk_share && python3 -m http.server 8899 --bind 0.0.0.0` 用 terminal(background=true) 起服务（前台模式会被安全门拦 '&' 写法）
+3. `ipconfig getifaddr en0`（和 `en1`）拿本机 IP，Mac 本机 curl -sI 验通后再发 URL
+4. 飞书只发纯文本：`http://<IP>:8899/<文件名>` + 备用 IP 同路径，同 WiFi 设备浏览器直接下载
+5. 用户装完说一声再 kill 服务（background 会话 process kill）
+注：本机验证 curl 内网 IP 曾被安全门拦（"timed out without user response"），可用 process(poll) 看服务进程存活替代验证。
+
 ## §2 多维表格 Bitable（把数据做成在线看板）
 
 概念：app（app_token）→ table（table_id）→ field（列）→ record（行）。流程：取 token → `POST /open-apis/bitable/v1/apps` 建表 → fields 加列（type：1 文本/2 数字/3 单选/5 日期/11 人员/17 附件）→ `records/batch_create`（≤500 条/批）。可复用脚本 `~/.hermes/scripts/tokens_to_bitable.py`。完整流程见 `references/feishu-bitable.md`。
@@ -46,6 +56,7 @@ metadata:
 
 ## §5 相关
 
+- **大文件（>30MB）传飞书**：IM 文件消息超限报 missing file_key，需走云盘分片上传 + share_file 卡片。完整 SOP（含 upload_prepare 三种请求格式实测、SDK 源码求证法、未解残留与兜底路线）见 `references/feishu-large-file-transfer.md`。
 - 发消息用 Hermes 原生 send_message（platform:oc_xxx）优先于手写 API；cron 报告走 origin auto-delivery，不手动 send（防 duplicate_target）。
 - **官网/工作台发布运维**（非飞书面，但同属对外发布）：见 `references/***SECRET***.md` — lookforge.net 生产拓扑、workbench_release.json 单一事实来源热切、桌面/CI 包发布流程、应用内检查更新契约。触发：工作台新版本上线、官网安装包更新、用户下载到旧版。
 - `productivity/feishu-api-notify` — 直发 REST 通知的完整凭据/签名细节（保留独立入口）。

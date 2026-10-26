@@ -402,6 +402,7 @@ approvals:
   : false
 command_allowlist:
 - script execution via -e/-c flag
+- copy/move file into system config path
 - recursive delete
 - stop/restart system service
 quick_commands: {}

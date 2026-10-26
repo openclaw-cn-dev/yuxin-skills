@@ -66,13 +66,13 @@ tags: [渔芯社区, lookforge-net, 生产运维, webapps, 门禁, 会话, nginx
 
 **热修 SOP**（在运行 release 内直接改，立即生效）：
 1. 备份：`cp webapps.py webapps.py.bak-<用途>-<时间戳>`
-2. 从好 release 抽卡片 dict：定位 `"slug": "<s>"` → 向前找 `    {` → 括号配对取整块
-3. 插入点：WEBAPPS 是 **tuple（`)` 收尾）**，geo 卡后有 `# ==== END 擎观 GEO 移动 Web 卡片 ====` 标记行——**用标记行定位插入点，勿猜 `]`**
+2. 从好 release 抽卡片 dict：定位 `"slug": "<s>"` → 向前找 `    {` → 括号配对取整块。**⚠️ CRLF 陷阱（10-26 实踩）**：house-v17/webapps.py 是 Windows 打包的 CRLF 文件，行级正则 `^    \{$` 全部落空——抽卡前必须先 `read().replace("\r\n", "\n")` 归一化
+3. 插入点：WEBAPPS 是 **tuple（`)` 收尾）**，geo 卡后有 `# ==== END 擎观 GEO 移动 Web 卡片 ====` 标记行——**用标记行定位插入点，勿猜 `]`**。**⚠️ 插入前必须 assert 标记行存在**：10-26 曾在 16 卡文件（无标记行）里走了"找最后一个 )"的兜底路径，把卡片插进了函数体，磁盘文件直接语法损坏——服务没重启所以线上无感，但差点演成事故。损坏时保留现场文件（.broken-insert-*）再从干净基底重做
 4. 幂等保护：写入前查目标 slug 已存在则 abort
-5. 验证：`py_compile` → 临时 import 跑 `all_apps()` 核对**总数 + 无重复 + 目标 slug 在列**
-6. `systemctl restart yuxin-community` → 公网 curl 端到端（匿名 303、带会话 200）
+5. 验证：`py_compile` → 临时 import 跑 `all_apps()` 核对**总数 + 无重复 + 目标 slug 在列**。**⚠️ import 必须用 app venv 的 python（`/opt/yuxin/venv/bin/python3`）且 cwd=release 目录**（webapps.py `import access` 是同目录模块；系统 python 3.6 连 subprocess capture_output 都没有）。验证不过立即从基底回滚
+6. `systemctl restart yuxin-community` → 公网 curl 端到端（匿名 303、带会话 200）。**公网 308/303 辨析**：本机 `curl 127.0.0.1/webapps/<s>/ -H "Host: lookforge.net"` 命中 nginx 的 308 是正常（可能无尾斜杠规则），判活看公网 curl 匿名 303
 7. 静态目录补齐：`cp -a <旧release>/webapps/<slug> <新release>/webapps/`（静态按请求读，无需重启）
-8. **热修是临时的**：下次从电脑打包若仍用旧快照会再丢一遍——根治须修打包基点（打包前从线上/v17 同步 webapps.py），用户下次部署时提醒跟进
+8. **热修是临时的，且已二次应验**：10-25 23:26 webapps.py 又被覆盖回 16 卡（SSH publickey 自 113.79.168.77=华哥深圳侧自动部署动作），昨天的 7 卡恢复全被打掉，同模式第二次发生。**根治唯一路径=修打包基点**。当前权威正本（23 卡）已存 `/opt/yuxin/backups/webapps.py.canonical-23cards-20261026*`，**任何打包前先把这份同步进打包源**，华哥下次发版前必须提醒
 
 **历史 release 是恢复源**：v17 等旧 release 的 webapps.py 与 webapps/ 静态目录是掉卡/掉文件的唯一拷回来源，**不可随手清理**。
 

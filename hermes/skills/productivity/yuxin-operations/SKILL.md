@@ -34,6 +34,7 @@ updated: 2026-09-01
 > 旧版 SKILL.md 内容已迁移至 `references/yuxin-operations-legacy.md`（保留 patrol 巡视细节、RKR pending 分析、cron 失败模式等历史知识点）
 > 参考文件（按日期逆序）：
 > - `references/***SECRET***.md` — **🆕 玉芬每日管理进化扫描实战参考**（8 项固定扫描模板 + 4 个新方法论盲区 + 12 章节报告骨架 + 10 条踩坑清单）
+> - `references/***SECRET***.md` — **🆕 10-25 扫描增量**: 报告断档可从 cron last_error 恢复全文 + quant 非停摆三判据(429 老账) + disabled 只看 enabled 字段 + $HOME 劫持致 docker 假 DOWN(显式 socket 金标准) + research_pointer 结构重置跨期不可比
 > - `references/***SECRET***.md` — **🆕 10-24 扫描增量**: 429 日重置自愈闭环验证(P0 复核降级纪律) + 研-* 权威路径修正(在 `~/6-产品研发/渔芯独角兽/01-开发中/`,Desktop 无) + tokens CSV 平铺在 reports/ 根(按 date 列聚合) + kanban.db 只读失败→拷贝副本金标准 + 死群判定必须 API 实测(delivery_error 缓存不可信) + _notify_boss 脚本模板复制即损坏(凭据行被脱敏)陷阱
 > - `references/***SECRET***.md` — **🆕 10-14 扫描增量**: profile 调度器死亡四联征判定 + state.db-shm mtime≠活跃 + 429 自愈复核路径 + emoji 触发 tirith 拦截的纯文本绕过 + tasks.db 库文件 mtime 判管道活性
 > - `references/patrol-2026-07-03-2008.md` — **🆕 20:08 DeepSeek 连续断流第 3 次出现 + LookForge MCP 仍不可用 + lull 模式确认 + execute_code cron 受阻**
