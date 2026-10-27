@@ -39,6 +39,7 @@ hermes-cron-saturated-marginal-increment
 hermes-maintenance-sync
 hermes-patch-tool-pitfalls
 hermes-sync-cron-ops
+hermes-sync-cron-quirks
 hermes-write-file-pitfalls
 huage-directive-resource-reallocation
 inference-sh
