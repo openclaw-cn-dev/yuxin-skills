@@ -1,0 +1,35 @@
+# System crontab template
+# Chinese version: cron-system.example.zh-CN
+#
+# Who it's for: environments with no built-in scheduler — system cron starts an
+# agent session at the set time.
+# Usage: adjust the times below, then paste the lines into crontab -e. The paths
+# are placeholders — swap in your machine's real paths.
+# Prerequisite: your agent has a command-line entry point that can run once with
+# a task brief. run-agent below is a made-up name — swap in your real command.
+# This hasn't been tested for you — run one manually first, then hook it to cron.
+#
+# Recommended times: daily run 06:00, early watchdog 06:20, late watchdog and
+# follow-up 08:12, weekly review Sunday 20:18.
+# Changing times is fine, keep the order: the watchdog must come after the daily
+# run starts.
+
+# Daily 06:00 daily run: today's manager starts work
+0 6 * * *  cd /path/to/auto-xhs && run-agent "Run today's daily run, following the text of Task 1 in orchestration/scheduling/cron-claude.example.md" >> /path/to/logs/daily.log 2>&1
+
+# Daily 06:20 early watchdog: only check whether today's log has the start stamp; if not, alert and send one extra round
+20 6 * * *  cd /path/to/auto-xhs && run-agent "Check whether today's daily run started, following the text of Task 2 in orchestration/scheduling/cron-claude.example.md" >> /path/to/logs/watchdog-early.log 2>&1
+
+# Daily 08:12 late watchdog: only check whether today was published; alert only, no re-send
+12 8 * * *  cd /path/to/auto-xhs && run-agent "Check whether today was published, following the text of Task 3 in orchestration/scheduling/cron-claude.example.md" >> /path/to/logs/watchdog-late.log 2>&1
+
+# Daily 08:12 post-publish follow-up: watch a full 2 hours in one run, checking every 30 minutes
+12 8 * * *  cd /path/to/auto-xhs && run-agent "Do the post-publish follow-up, following the text of Task 4 in orchestration/scheduling/cron-claude.example.md" >> /path/to/logs/followup.log 2>&1
+
+# Weekly Sunday 20:18 weekly review
+18 20 * * 0  cd /path/to/auto-xhs && run-agent "Do this week's review, following the text of Task 5 in orchestration/scheduling/cron-claude.example.md" >> /path/to/logs/review.log 2>&1
+
+# Notes:
+# - In semi-auto mode, the late watchdog seeing "accepted, awaiting publish" is normal — don't treat it as a fault.
+# - Follow-up and the late watchdog starting in the same minute is fine — the two jobs don't interfere.
+# - Cron doesn't retry on its own. If a line didn't run, read the last lines of its log, note the four elements, then fix it.
