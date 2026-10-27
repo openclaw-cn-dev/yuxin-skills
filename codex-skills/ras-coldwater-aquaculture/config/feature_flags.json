@@ -1,0 +1,16 @@
+{
+  "_comment": "System-wide feature flags controlling engine behavior. All flags overridable by environment variables of the same name uppercased and prefixed with RAS_ (e.g. RAS_ENABLE_KNOWLEDGE_CRAWL).",
+  "features": {
+    "enable_knowledge_crawl": true,
+    "enable_web_search": true,
+    "enable_degradation_banner": true,
+    "enable_chain_of_thought_routing": true,
+    "enable_quality_gate_autofix": true,
+    "enable_token_budget_enforcement": true,
+    "enable_dry_run_safe_mode": false,
+    "strict_evidence_tracing": true,
+    "max_skill_retries": 2,
+    "max_context_tokens": 90000,
+    "reserved_output_tokens": 4000
+  }
+}

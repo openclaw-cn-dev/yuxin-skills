@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ras-coldwater-aquaculture/schemas/verdict.schema.json",
+  "title": "Final RAS Advisor Verdict",
+  "type": "object",
+  "required": ["verdict", "disclosure", "early_warning_alerts", "water_treatment_procedure", "key_risks", "evidence_chain"],
+  "additionalProperties": true,
+  "properties": {
+    "verdict": { "type": "string", "enum": ["Optimal", "Adjust Required", "Critical Alert", "Inconclusive"] },
+    "disclosure": { "type": "string", "description": "Mandatory limitation/risk disclosure that MUST appear before the recommendation." },
+    "early_warning_alerts": { "type": "array", "items": { "type": "string" } },
+    "water_treatment_procedure": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step", "action"],
+        "properties": {
+          "step": { "type": "integer", "minimum": 1 },
+          "action": { "type": "string" },
+          "magnitude": { "type": "string" },
+          "safety_limit": { "type": "string" }
+        }
+      }
+    },
+    "scenarios": {
+      "type": "object",
+      "properties": {
+        "best": { "type": "string" },
+        "base": { "type": "string" },
+        "worst": { "type": "string" }
+      }
+    },
+    "key_risks": { "type": "array", "items": { "type": "string" } },
+    "evidence_chain": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "sources"],
+        "properties": {
+          "claim": { "type": "string" },
+          "sources": { "type": "array", "items": { "type": "string" } },
+          "tier": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "remediation": { "type": "array", "items": { "type": "string" } },
+    "degradation_level": { "type": "integer", "minimum": 0, "maximum": 4 }
+  }
+}

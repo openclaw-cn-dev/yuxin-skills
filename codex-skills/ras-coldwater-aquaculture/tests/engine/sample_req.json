@@ -1,0 +1,27 @@
+{
+  "species": "rainbow_trout",
+  "life_stage": "growout",
+  "wq": {
+    "T_C": 15.0,
+    "DO_mgL": 5.5,
+    "pH": 7.8,
+    "TAN_mgL": 1.2,
+    "NO2_mgL": 0.05,
+    "NO3_mgL": 30.0,
+    "alkalinity_mgL": 60.0,
+    "CO2_mgL": 18.0
+  },
+  "ras_config": {
+    "tank_volume_m3": 50.0,
+    "makeup_pct": 5.0,
+    "biofilter_type": "mbbr_kaldnes_k1",
+    "biofilter_area_m2": 300.0,
+    "flow_lpm": 500.0
+  },
+  "biomass_kg": 2000.0,
+  "feed_kg_day": 25.0,
+  "feed_protein_pct": 42.0,
+  "target_objective": "health_assessment",
+  "language": "en",
+  "notes": "Ingested from tests\\engine\\sample_water.csv at 2026-07-20T03:32:48.458784Z"
+}

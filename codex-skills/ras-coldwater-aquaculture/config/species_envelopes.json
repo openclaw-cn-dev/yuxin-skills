@@ -1,0 +1,98 @@
+{
+  "_comment": "Species-specific water-quality envelopes for cold-water RAS species. Values compiled from FAO/DFO/Freshwater Institute/SRAC/WOAH and peer-reviewed references in SECOND-KNOWLEDGE-BRAIN.md (Tier 1-2). Units: T_C=degC, DO_mgL=mg/L, NH3N_mgL=mg/L NH3-N, NO2N_mgL=mg/L NO2-N.",
+  "species_envelopes": {
+    "rainbow_trout": {
+      "common_name": "Rainbow trout (Oncorhynchus mykiss)",
+      "life_stages": {
+        "fry": {
+          "T_C": {"optimal": [10, 14], "safe": [8, 16], "lethal_above": 24},
+          "DO_mgL": {"floor": 8.0, "target_pct_sat": 90},
+          "pH": {"optimal": [6.5, 8.0], "safe": [6.0, 8.5]},
+          "TAN_mgL": {"alert": 1.0, "critical": 3.0},
+          "NH3N_mgL": {"chronic": 0.0125, "acute": 0.05},
+          "NO2N_mgL": {"alert": 0.05, "critical": 0.1},
+          "NO3N_mgL": {"alert": 50, "critical": 100},
+          "alkalinity_mgL_CaCO3": {"floor": 50, "target": 100},
+          "CO2_mgL": {"alert": 15, "critical": 30}
+        },
+        "growout": {
+          "T_C": {"optimal": [10, 16], "safe": [8, 18], "lethal_above": 24},
+          "DO_mgL": {"floor": 6.0, "target_pct_sat": 80},
+          "pH": {"optimal": [6.5, 8.5], "safe": [6.0, 9.0]},
+          "TAN_mgL": {"alert": 1.5, "critical": 4.0},
+          "NH3N_mgL": {"chronic": 0.0125, "acute": 0.05},
+          "NO2N_mgL": {"alert": 0.1, "critical": 0.2},
+          "NO3N_mgL": {"alert": 75, "critical": 150},
+          "alkalinity_mgL_CaCO3": {"floor": 40, "target": 100},
+          "CO2_mgL": {"alert": 20, "critical": 40}
+        }
+      }
+    },
+    "atlantic_salmon": {
+      "common_name": "Atlantic salmon (Salmo salar) - freshwater/smolt stage",
+      "life_stages": {
+        "parr": {
+          "T_C": {"optimal": [8, 14], "safe": [6, 16], "lethal_above": 22},
+          "DO_mgL": {"floor": 7.0, "target_pct_sat": 85},
+          "pH": {"optimal": [6.5, 7.8], "safe": [6.0, 8.2]},
+          "TAN_mgL": {"alert": 1.0, "critical": 3.0},
+          "NH3N_mgL": {"chronic": 0.01, "acute": 0.04},
+          "NO2N_mgL": {"alert": 0.05, "critical": 0.1},
+          "NO3N_mgL": {"alert": 50, "critical": 100},
+          "alkalinity_mgL_CaCO3": {"floor": 50, "target": 100},
+          "CO2_mgL": {"alert": 15, "critical": 25}
+        },
+        "smolt": {
+          "T_C": {"optimal": [8, 12], "safe": [4, 14], "lethal_above": 20},
+          "DO_mgL": {"floor": 7.0, "target_pct_sat": 90},
+          "pH": {"optimal": [6.5, 7.8], "safe": [6.0, 8.2]},
+          "TAN_mgL": {"alert": 1.0, "critical": 3.0},
+          "NH3N_mgL": {"chronic": 0.01, "acute": 0.04},
+          "NO2N_mgL": {"alert": 0.05, "critical": 0.1},
+          "NO3N_mgL": {"alert": 50, "critical": 100},
+          "alkalinity_mgL_CaCO3": {"floor": 50, "target": 100},
+          "CO2_mgL": {"alert": 15, "critical": 25}
+        }
+      }
+    },
+    "arctic_char": {
+      "common_name": "Arctic char (Salvelinus alpinus)",
+      "life_stages": {
+        "growout": {
+          "T_C": {"optimal": [6, 12], "safe": [4, 15], "lethal_above": 18},
+          "DO_mgL": {"floor": 7.0, "target_pct_sat": 85},
+          "pH": {"optimal": [6.5, 8.0], "safe": [6.0, 8.5]},
+          "TAN_mgL": {"alert": 1.0, "critical": 3.0},
+          "NH3N_mgL": {"chronic": 0.01, "acute": 0.04},
+          "NO2N_mgL": {"alert": 0.05, "critical": 0.1},
+          "NO3N_mgL": {"alert": 50, "critical": 100},
+          "alkalinity_mgL_CaCO3": {"floor": 50, "target": 100},
+          "CO2_mgL": {"alert": 15, "critical": 25}
+        }
+      }
+    },
+    "sturgeon": {
+      "common_name": "Sturgeon (Acipenser spp.) - juvenile/growout",
+      "life_stages": {
+        "growout": {
+          "T_C": {"optimal": [14, 18], "safe": [10, 22], "lethal_above": 28},
+          "DO_mgL": {"floor": 6.0, "target_pct_sat": 80},
+          "pH": {"optimal": [6.5, 8.5], "safe": [6.0, 9.0]},
+          "TAN_mgL": {"alert": 1.0, "critical": 3.0},
+          "NH3N_mgL": {"chronic": 0.015, "acute": 0.06},
+          "NO2N_mgL": {"alert": 0.1, "critical": 0.2},
+          "NO3N_mgL": {"alert": 75, "critical": 150},
+          "alkalinity_mgL_CaCO3": {"floor": 50, "target": 120},
+          "CO2_mgL": {"alert": 20, "critical": 35}
+        }
+      }
+    }
+  },
+  "biofilter_media": {
+    "mbbr_kaldnes_k1": {"specific_surface_area_m2_per_m3": 500, "ref_tan_capacity_g_per_m2_day": 1.5},
+    "mbbr_kaldnes_k3": {"specific_surface_area_m2_per_m3": 800, "ref_tan_capacity_g_per_m2_day": 1.2},
+    "fixed_film_trickling": {"specific_surface_area_m2_per_m3": 200, "ref_tan_capacity_g_per_m2_day": 0.8},
+    "fluidized_sand": {"specific_surface_area_m2_per_m3": 1500, "ref_tan_capacity_g_per_m2_day": 1.0},
+    "rbc": {"specific_surface_area_m2_per_m3": 150, "ref_tan_capacity_g_per_m2_day": 1.0}
+  }
+}

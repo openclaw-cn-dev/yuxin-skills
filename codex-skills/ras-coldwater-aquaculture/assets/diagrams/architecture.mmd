@@ -1,0 +1,28 @@
+%% ras-coldwater-aquaculture v2 architecture
+%% Render with: mermaid-cli (mmdc) or any Mermaid-compatible viewer
+flowchart TD
+    User[User query + water-quality snapshot] --> Router
+    subgraph Engine["ras_aqua engine"]
+        Router["Chain-of-Thought Router<br/>(context budget + intent classify)"]
+        Registry["Skill Registry<br/>resolve / validate / execute"]
+        Hooks["Lifecycle Hooks<br/>pre/post/emit/on_error"]
+        Tools["Tool Registry<br/>chemistry / biofilter / disease / KB"]
+        Router --> Registry
+        Registry --> Hooks
+        Hooks --> Tools
+    end
+    Registry --> S1["skill: gather_requirements"]
+    S1 --> S2["skill: evidence_collector"]
+    S2 --> S3["skill: water_quality_analysis"]
+    S3 --> S4["skill: biofilter_disease"]
+    S4 --> S5["skill: knowledge_updater"]
+    S5 --> S6["skill: ras_advisor"]
+    S6 --> Gate["Quality Gates U1-U6 + G1-G5<br/>auto-fix + 2-retry"]
+    Gate -->|pass| Report[Structured Report<br/>(verdict + evidence chain)]
+    Gate -->|fail after retries| Report
+    subgraph Data
+        Config["config/<br/>settings + envelopes"]
+        KB["SECOND-KNOWLEDGE-BRAIN.md"]
+        Refs["references/<br/>prompt templates"]
+    end
+    Data -.-> Engine

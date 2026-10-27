@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ras-coldwater-aquaculture/schemas/requirements.schema.json",
+  "title": "RAS Analysis Requirements",
+  "description": "Structured intake produced by sub-gather-requirements and consumed by downstream skills.",
+  "type": "object",
+  "required": ["species", "life_stage", "wq", "target_objective", "language"],
+  "additionalProperties": false,
+  "properties": {
+    "species": {
+      "type": "string",
+      "description": "Canonical species key (rainbow_trout, atlantic_salmon, arctic_char, sturgeon) or free-text awaiting normalization.",
+      "minLength": 1
+    },
+    "species_common_name": { "type": "string" },
+    "life_stage": {
+      "type": "string",
+      "description": "Life stage key present in the species envelope (e.g. fry, growout, parr, smolt)."
+    },
+    "ras_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tank_volume_m3": { "type": ["number", "null"], "minimum": 0 },
+        "makeup_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "biofilter_type": { "type": ["string", "null"] },
+        "biofilter_media_volume_m3": { "type": ["number", "null"], "minimum": 0 },
+        "biofilter_area_m2": { "type": ["number", "null"], "minimum": 0 },
+        "flow_lpm": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "wq": {
+      "type": "object",
+      "description": "Current water-quality readings. At minimum T_C, DO_mgL, pH, TAN_mgL must be present (quality gate G2/G3 require T and pH for NH3, T for DO saturation).",
+      "required": ["T_C", "DO_mgL", "pH", "TAN_mgL"],
+      "additionalProperties": false,
+      "properties": {
+        "T_C": { "type": "number" },
+        "DO_mgL": { "type": ["number", "null"], "minimum": 0 },
+        "pH": { "type": ["number", "null"], "minimum": 0, "maximum": 14 },
+        "TAN_mgL": { "type": ["number", "null"], "minimum": 0 },
+        "NO2_mgL": { "type": ["number", "null"], "minimum": 0 },
+        "NO3_mgL": { "type": ["number", "null"], "minimum": 0 },
+        "alkalinity_mgL": { "type": ["number", "null"], "minimum": 0 },
+        "CO2_mgL": { "type": ["number", "null"], "minimum": 0 },
+        "salinity_ppt": { "type": ["number", "null"], "minimum": 0, "default": 0 },
+        "timestamp": { "type": ["string", "null"] }
+      }
+    },
+    "biomass_kg": { "type": ["number", "null"], "minimum": 0 },
+    "feed_kg_day": { "type": ["number", "null"], "minimum": 0 },
+    "feed_protein_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+    "target_objective": {
+      "type": "string",
+      "enum": ["health_assessment", "design_check", "troubleshoot_excursion", "biofilter_sizing", "general_advice"]
+    },
+    "language": { "type": "string", "enum": ["en", "vi"] },
+    "notes": { "type": ["string", "null"] }
+  }
+}

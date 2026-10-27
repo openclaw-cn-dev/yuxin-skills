@@ -1,0 +1,48 @@
+{
+  "name": "whatsmyagentdoing",
+  "version": "0.3.1",
+  "description": "Live office for Claude Code, Codex, Gemini CLI and OMP sessions.",
+  "bin": {
+    "whatsmyagentdoing": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "public",
+    "assets",
+    "SKILL.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "codex",
+    "agents",
+    "dashboard",
+    "monitor"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Charonyuu/whatsmyagentdoing.git"
+  },
+  "homepage": "https://github.com/Charonyuu/whatsmyagentdoing#readme",
+  "bugs": {
+    "url": "https://github.com/Charonyuu/whatsmyagentdoing/issues"
+  },
+  "author": "cheoyu",
+  "devDependencies": {
+    "esbuild": "^0.25.12",
+    "playwright": "^1.62.1",
+    "three": "^0.186.1"
+  },
+  "scripts": {
+    "build": "esbuild web/office3d.js --bundle --format=esm --minify --target=es2020 --outfile=public/office3d.js --legal-comments=eof",
+    "start": "node bin/cli.js",
+    "test:ui": "node tests/ui.cjs",
+    "test:watcher": "node --test tests/watcher.cjs tests/omp.cjs",
+    "test:server": "node --test tests/server.cjs"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ras-coldwater-aquaculture/schemas/biofilter_risk.schema.json",
+  "title": "Biofilter & Disease Risk Assessment",
+  "type": "object",
+  "required": ["biofilter_capacity_status", "disease_early_warning", "recommended_treatments"],
+  "additionalProperties": true,
+  "properties": {
+    "tan_production_g_day": { "type": ["number", "null"], "minimum": 0 },
+    "biofilter_capacity_g_day": { "type": ["number", "null"], "minimum": 0 },
+    "loading_ratio": { "type": ["number", "null"] },
+    "nitrification_penalty_pct": { "type": ["number", "null"] },
+    "biofilter_capacity_status": { "type": "string", "enum": ["adequate", "marginal", "overloaded", "unknown"] },
+    "disease_early_warning": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["signal", "matched_conditions", "severity"],
+        "properties": {
+          "disease": { "type": "string" },
+          "signal": { "type": "string" },
+          "matched_conditions": { "type": "array", "items": { "type": "string" } },
+          "severity": { "type": "string", "enum": ["watch", "alert", "critical"] },
+          "woah_notifiable": { "type": "boolean" }
+        }
+      }
+    },
+    "recommended_treatments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action", "rationale", "magnitude"],
+        "properties": {
+          "action": { "type": "string" },
+          "rationale": { "type": "string" },
+          "magnitude": { "type": "string" },
+          "category": { "type": "string", "enum": ["biofilter", "chemical", "physical", "operational", "health"] }
+        }
+      }
+    },
+    "advanced_biofiltration_options": { "type": "array", "items": { "type": "string" } }
+  }
+}

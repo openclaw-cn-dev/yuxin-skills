@@ -1,0 +1,205 @@
+{
+  "description": "Cold-water species water-quality envelopes. Each entry holds life-stage-specific optimal ranges (temperature, dissolved oxygen, pH, TAN, un-ionized NH3-N, NO2-N, NO3-N, alkalinity, CO2) plus biofilter nitrification parameters and ammonia-sensitivity thresholds. Values reflect FAO/DFO/Freshwater Institute/SRAC/WOAH consensus and peer-reviewed aquaculture physiology; live verification against the cited authority is still required before acting.",
+  "species": {
+    "Oncorhynchus mykiss": {
+      "scientific_name": "Oncorhynchus mykiss",
+      "common_names": {"en": ["Rainbow trout"], "vi": ["Cá hồi vồng"]},
+      "family": "Salmonidae",
+      "category": "cold-water salmonid",
+      "warm_water": false,
+      "ammonia_sensitivity": "high",
+      "chronic_nh3n_mgL": 0.0125,
+      "acute_nh3n_mgL": 0.2,
+      "life_stages": {
+        "fry": {"T_C": {"min": 6, "opt": 12, "max": 16, "lethal": 24}, "DO_mgL_floor": 8.0, "DO_sat_pct_floor": 90, "pH": {"min": 6.5, "opt": 7.2, "max": 8.5}, "TAN_mgL_max": 0.5, "NO2N_mgL_max": 0.05, "NO3N_mgL_max": 50, "alkalinity_mgL_min": 75, "CO2_mgL_max": 10},
+        "fingerling": {"T_C": {"min": 6, "opt": 13, "max": 17, "lethal": 24}, "DO_mgL_floor": 7.5, "DO_sat_pct_floor": 85, "pH": {"min": 6.5, "opt": 7.3, "max": 8.5}, "TAN_mgL_max": 0.8, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 60, "alkalinity_mgL_min": 70, "CO2_mgL_max": 12},
+        "juvenile": {"T_C": {"min": 7, "opt": 14, "max": 18, "lethal": 25}, "DO_mgL_floor": 7.0, "DO_sat_pct_floor": 80, "pH": {"min": 6.5, "opt": 7.4, "max": 8.5}, "TAN_mgL_max": 1.0, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 75, "alkalinity_mgL_min": 70, "CO2_mgL_max": 15},
+        "growout": {"T_C": {"min": 8, "opt": 14, "max": 18, "lethal": 25}, "DO_mgL_floor": 6.0, "DO_sat_pct_floor": 80, "pH": {"min": 6.5, "opt": 7.4, "max": 8.5}, "TAN_mgL_max": 1.5, "NO2N_mgL_max": 0.15, "NO3N_mgL_max": 100, "alkalinity_mgL_min": 60, "CO2_mgL_max": 15},
+        "broodstock": {"T_C": {"min": 4, "opt": 9, "max": 14, "lethal": 22}, "DO_mgL_floor": 7.0, "DO_sat_pct_floor": 85, "pH": {"min": 6.5, "opt": 7.2, "max": 8.5}, "TAN_mgL_max": 0.8, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 60, "alkalinity_mgL_min": 70, "CO2_mgL_max": 12}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 7, "optimal_T_C_range": [25, 30], "cold_oversize_factor": 2.5, "min_DO_in_biofilter_mgL": 4.0},
+      "smoltification": false,
+      "notes": "Most widely cultured cold-water salmonid in RAS; chronic NH3-N threshold ~0.0125 mg/L (EPA cold-water criterion). Highly ammonia-sensitive; biofilter must be oversized at growout T (14C)."
+    },
+    "Salmo salar": {
+      "scientific_name": "Salmo salar",
+      "common_names": {"en": ["Atlantic salmon"], "vi": ["Cá hồi Atlantic"]},
+      "family": "Salmonidae",
+      "category": "cold-water salmonid",
+      "warm_water": false,
+      "ammonia_sensitivity": "high",
+      "chronic_nh3n_mgL": 0.0125,
+      "acute_nh3n_mgL": 0.2,
+      "life_stages": {
+        "fry": {"T_C": {"min": 6, "opt": 12, "max": 16, "lethal": 23}, "DO_mgL_floor": 9.0, "DO_sat_pct_floor": 95, "pH": {"min": 6.4, "opt": 7.1, "max": 8.4}, "TAN_mgL_max": 0.4, "NO2N_mgL_max": 0.05, "NO3N_mgL_max": 40, "alkalinity_mgL_min": 80, "CO2_mgL_max": 8},
+        "parr": {"T_C": {"min": 6, "opt": 12, "max": 16, "lethal": 23}, "DO_mgL_floor": 8.0, "DO_sat_pct_floor": 90, "pH": {"min": 6.4, "opt": 7.2, "max": 8.4}, "TAN_mgL_max": 0.6, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 50, "alkalinity_mgL_min": 75, "CO2_mgL_max": 10},
+        "smolt": {"T_C": {"min": 8, "opt": 13, "max": 16, "lethal": 22}, "DO_mgL_floor": 8.0, "DO_sat_pct_floor": 90, "pH": {"min": 6.5, "opt": 7.3, "max": 8.4}, "TAN_mgL_max": 0.8, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 60, "alkalinity_mgL_min": 70, "CO2_mgL_max": 12, "salinity_transfer_ppt": 25},
+        "post-smolt": {"T_C": {"min": 8, "opt": 13, "max": 15, "lethal": 20}, "DO_mgL_floor": 7.5, "DO_sat_pct_floor": 85, "pH": {"min": 6.5, "opt": 7.3, "max": 8.4}, "TAN_mgL_max": 1.0, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 75, "alkalinity_mgL_min": 70, "CO2_mgL_max": 15, "salinity_transfer_ppt": 30},
+        "growout_sea": {"T_C": {"min": 8, "opt": 12, "max": 16, "lethal": 20}, "DO_mgL_floor": 7.0, "DO_sat_pct_floor": 85, "pH": {"min": 6.5, "opt": 7.4, "max": 8.4}, "TAN_mgL_max": 1.2, "NO2N_mgL_max": 0.15, "NO3N_mgL_max": 100, "alkalinity_mgL_min": 60, "CO2_mgL_max": 15}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 7, "optimal_T_C_range": [25, 30], "cold_oversize_factor": 3.0, "min_DO_in_biofilter_mgL": 4.5},
+      "smoltification": true,
+      "notes": "Smoltification phase requires salinity transfer (25-30 ppt); pre-smolt in freshwater RAS, post-smolt in brackish/marine RAS. ISA / PD / CMS disease risk high in marine phase."
+    },
+    "Salvelinus alpinus": {
+      "scientific_name": "Salvelinus alpinus",
+      "common_names": {"en": ["Arctic char"], "vi": ["Cá Arctic char"]},
+      "family": "Salmonidae",
+      "category": "cold-water salmonid",
+      "warm_water": false,
+      "ammonia_sensitivity": "high",
+      "chronic_nh3n_mgL": 0.0125,
+      "acute_nh3n_mgL": 0.2,
+      "life_stages": {
+        "fry": {"T_C": {"min": 4, "opt": 10, "max": 14, "lethal": 20}, "DO_mgL_floor": 8.0, "DO_sat_pct_floor": 90, "pH": {"min": 6.5, "opt": 7.2, "max": 8.5}, "TAN_mgL_max": 0.4, "NO2N_mgL_max": 0.05, "NO3N_mgL_max": 40, "alkalinity_mgL_min": 75, "CO2_mgL_max": 8},
+        "juvenile": {"T_C": {"min": 5, "opt": 11, "max": 15, "lethal": 20}, "DO_mgL_floor": 7.5, "DO_sat_pct_floor": 85, "pH": {"min": 6.5, "opt": 7.2, "max": 8.5}, "TAN_mgL_max": 0.8, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 50, "alkalinity_mgL_min": 70, "CO2_mgL_max": 10},
+        "growout": {"T_C": {"min": 6, "opt": 12, "max": 16, "lethal": 21}, "DO_mgL_floor": 6.5, "DO_sat_pct_floor": 80, "pH": {"min": 6.5, "opt": 7.3, "max": 8.5}, "TAN_mgL_max": 1.0, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 75, "alkalinity_mgL_min": 60, "CO2_mgL_max": 12},
+        "broodstock": {"T_C": {"min": 3, "opt": 8, "max": 12, "lethal": 18}, "DO_mgL_floor": 7.0, "DO_sat_pct_floor": 85, "pH": {"min": 6.5, "opt": 7.1, "max": 8.5}, "TAN_mgL_max": 0.8, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 60, "alkalinity_mgL_min": 70, "CO2_mgL_max": 10}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 6, "optimal_T_C_range": [25, 30], "cold_oversize_factor": 3.5, "min_DO_in_biofilter_mgL": 4.0},
+      "smoltification": false,
+      "notes": "Very cold-tolerant; optimal growout 6-12C. Nitrification halts near 6C so biofilter oversize factor highest among salmonids here. Lower disease pressure than Atlantic salmon."
+    },
+    "Salmo trutta": {
+      "scientific_name": "Salmo trutta",
+      "common_names": {"en": ["Brown trout"], "vi": ["Cá hồi nâu"]},
+      "family": "Salmonidae",
+      "category": "cold-water salmonid",
+      "warm_water": false,
+      "ammonia_sensitivity": "high",
+      "chronic_nh3n_mgL": 0.0125,
+      "acute_nh3n_mgL": 0.2,
+      "life_stages": {
+        "fry": {"T_C": {"min": 5, "opt": 11, "max": 16, "lethal": 22}, "DO_mgL_floor": 8.0, "DO_sat_pct_floor": 90, "pH": {"min": 6.5, "opt": 7.2, "max": 8.5}, "TAN_mgL_max": 0.5, "NO2N_mgL_max": 0.05, "NO3N_mgL_max": 50, "alkalinity_mgL_min": 75, "CO2_mgL_max": 10},
+        "juvenile": {"T_C": {"min": 6, "opt": 12, "max": 18, "lethal": 23}, "DO_mgL_floor": 7.0, "DO_sat_pct_floor": 80, "pH": {"min": 6.5, "opt": 7.3, "max": 8.5}, "TAN_mgL_max": 0.9, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 70, "alkalinity_mgL_min": 70, "CO2_mgL_max": 12},
+        "growout": {"T_C": {"min": 7, "opt": 13, "max": 18, "lethal": 24}, "DO_mgL_floor": 6.0, "DO_sat_pct_floor": 80, "pH": {"min": 6.5, "opt": 7.3, "max": 8.5}, "TAN_mgL_max": 1.2, "NO2N_mgL_max": 0.15, "NO3N_mgL_max": 90, "alkalinity_mgL_min": 60, "CO2_mgL_max": 15}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 7, "optimal_T_C_range": [25, 30], "cold_oversize_factor": 2.5, "min_DO_in_biofilter_mgL": 4.0},
+      "smoltification": true,
+      "notes": "Sea-trout populations smoltify; freshwater-resident forms do not. Slightly more temperature-tolerant than rainbow trout."
+    },
+    "Salvelinus fontinalis": {
+      "scientific_name": "Salvelinus fontinalis",
+      "common_names": {"en": ["Brook trout", "Brookie"], "vi": ["Cá hồi suối"]},
+      "family": "Salmonidae",
+      "category": "cold-water salmonid",
+      "warm_water": false,
+      "ammonia_sensitivity": "high",
+      "chronic_nh3n_mgL": 0.0125,
+      "acute_nh3n_mgL": 0.2,
+      "life_stages": {
+        "fry": {"T_C": {"min": 5, "opt": 10, "max": 15, "lethal": 21}, "DO_mgL_floor": 8.0, "DO_sat_pct_floor": 90, "pH": {"min": 6.5, "opt": 7.2, "max": 8.5}, "TAN_mgL_max": 0.4, "NO2N_mgL_max": 0.05, "NO3N_mgL_max": 40, "alkalinity_mgL_min": 75, "CO2_mgL_max": 9},
+        "juvenile": {"T_C": {"min": 6, "opt": 11, "max": 16, "lethal": 22}, "DO_mgL_floor": 7.0, "DO_sat_pct_floor": 85, "pH": {"min": 6.5, "opt": 7.2, "max": 8.5}, "TAN_mgL_max": 0.8, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 60, "alkalinity_mgL_min": 70, "CO2_mgL_max": 12},
+        "growout": {"T_C": {"min": 7, "opt": 12, "max": 17, "lethal": 22}, "DO_mgL_floor": 6.0, "DO_sat_pct_floor": 80, "pH": {"min": 6.5, "opt": 7.3, "max": 8.5}, "TAN_mgL_max": 1.0, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 80, "alkalinity_mgL_min": 60, "CO2_mgL_max": 15}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 6, "optimal_T_C_range": [25, 30], "cold_oversize_factor": 3.0, "min_DO_in_biofilter_mgL": 4.0},
+      "smoltification": false,
+      "notes": "Cold-tolerant char; sensitive to temperature spikes. Salinity-tolerant in some populations (salters)."
+    },
+    "Acipenser baerii": {
+      "scientific_name": "Acipenser baerii",
+      "common_names": {"en": ["Siberian sturgeon"], "vi": ["Cá tầm Siberia"]},
+      "family": "Acipenseridae",
+      "category": "cold-water non-salmonid",
+      "warm_water": false,
+      "ammonia_sensitivity": "very_high",
+      "chronic_nh3n_mgL": 0.01,
+      "acute_nh3n_mgL": 0.15,
+      "life_stages": {
+        "larvae": {"T_C": {"min": 12, "opt": 17, "max": 20, "lethal": 25}, "DO_mgL_floor": 7.0, "DO_sat_pct_floor": 85, "pH": {"min": 6.8, "opt": 7.5, "max": 8.5}, "TAN_mgL_max": 0.3, "NO2N_mgL_max": 0.05, "NO3N_mgL_max": 30, "alkalinity_mgL_min": 80, "CO2_mgL_max": 10},
+        "juvenile": {"T_C": {"min": 13, "opt": 18, "max": 22, "lethal": 26}, "DO_mgL_floor": 6.0, "DO_sat_pct_floor": 80, "pH": {"min": 6.8, "opt": 7.5, "max": 8.5}, "TAN_mgL_max": 0.6, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 50, "alkalinity_mgL_min": 75, "CO2_mgL_max": 12},
+        "growout": {"T_C": {"min": 14, "opt": 18, "max": 22, "lethal": 27}, "DO_mgL_floor": 5.5, "DO_sat_pct_floor": 75, "pH": {"min": 6.8, "opt": 7.5, "max": 8.5}, "TAN_mgL_max": 0.8, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 70, "alkalinity_mgL_min": 70, "CO2_mgL_max": 15},
+        "broodstock": {"T_C": {"min": 10, "opt": 15, "max": 20, "lethal": 25}, "DO_mgL_floor": 6.0, "DO_sat_pct_floor": 80, "pH": {"min": 6.8, "opt": 7.4, "max": 8.5}, "TAN_mgL_max": 0.6, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 60, "alkalinity_mgL_min": 75, "CO2_mgL_max": 12}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 10, "optimal_T_C_range": [25, 30], "cold_oversize_factor": 2.0, "min_DO_in_biofilter_mgL": 4.0},
+      "smoltification": false,
+      "notes": "Slightly warmer than salmonids but still cold-water; very ammonia-sensitive (chronic threshold ~0.01 mg/L NH3-N). pH 7.5 optimum reduces NH3 fraction but sturgeon intolerant of pH swings."
+    },
+    "Acipenser transmontanus": {
+      "scientific_name": "Acipenser transmontanus",
+      "common_names": {"en": ["White sturgeon"], "vi": ["Cá tầm trắng"]},
+      "family": "Acipenseridae",
+      "category": "cold-water non-salmonid",
+      "warm_water": false,
+      "ammonia_sensitivity": "very_high",
+      "chronic_nh3n_mgL": 0.01,
+      "acute_nh3n_mgL": 0.15,
+      "life_stages": {
+        "larvae": {"T_C": {"min": 12, "opt": 17, "max": 20, "lethal": 25}, "DO_mgL_floor": 7.0, "DO_sat_pct_floor": 85, "pH": {"min": 6.8, "opt": 7.5, "max": 8.5}, "TAN_mgL_max": 0.3, "NO2N_mgL_max": 0.05, "NO3N_mgL_max": 30, "alkalinity_mgL_min": 80, "CO2_mgL_max": 10},
+        "juvenile": {"T_C": {"min": 13, "opt": 18, "max": 22, "lethal": 26}, "DO_mgL_floor": 6.0, "DO_sat_pct_floor": 80, "pH": {"min": 6.8, "opt": 7.5, "max": 8.5}, "TAN_mgL_max": 0.6, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 50, "alkalinity_mgL_min": 75, "CO2_mgL_max": 12},
+        "growout": {"T_C": {"min": 14, "opt": 19, "max": 23, "lethal": 27}, "DO_mgL_floor": 5.5, "DO_sat_pct_floor": 75, "pH": {"min": 6.8, "opt": 7.5, "max": 8.5}, "TAN_mgL_max": 0.8, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 70, "alkalinity_mgL_min": 70, "CO2_mgL_max": 15}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 10, "optimal_T_C_range": [25, 30], "cold_oversize_factor": 2.0, "min_DO_in_biofilter_mgL": 4.0},
+      "smoltification": false,
+      "notes": "Largest North American sturgeon; main caviar species in RAS. BKD and WSIV disease risk documented."
+    },
+    "Coregonus lavaretus": {
+      "scientific_name": "Coregonus lavaretus",
+      "common_names": {"en": ["Common whitefish", "European whitefish"], "vi": ["Cá trắng châu Âu"]},
+      "family": "Salmonidae",
+      "category": "cold-water coregonid",
+      "warm_water": false,
+      "ammonia_sensitivity": "high",
+      "chronic_nh3n_mgL": 0.0125,
+      "acute_nh3n_mgL": 0.2,
+      "life_stages": {
+        "fry": {"T_C": {"min": 6, "opt": 12, "max": 16, "lethal": 22}, "DO_mgL_floor": 8.0, "DO_sat_pct_floor": 90, "pH": {"min": 6.5, "opt": 7.2, "max": 8.5}, "TAN_mgL_max": 0.4, "NO2N_mgL_max": 0.05, "NO3N_mgL_max": 40, "alkalinity_mgL_min": 75, "CO2_mgL_max": 9},
+        "juvenile": {"T_C": {"min": 7, "opt": 13, "max": 17, "lethal": 22}, "DO_mgL_floor": 7.0, "DO_sat_pct_floor": 85, "pH": {"min": 6.5, "opt": 7.2, "max": 8.5}, "TAN_mgL_max": 0.8, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 60, "alkalinity_mgL_min": 70, "CO2_mgL_max": 12},
+        "growout": {"T_C": {"min": 8, "opt": 14, "max": 18, "lethal": 23}, "DO_mgL_floor": 6.0, "DO_sat_pct_floor": 80, "pH": {"min": 6.5, "opt": 7.3, "max": 8.5}, "TAN_mgL_max": 1.0, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 80, "alkalinity_mgL_min": 60, "CO2_mgL_max": 15}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 7, "optimal_T_C_range": [25, 30], "cold_oversize_factor": 2.5, "min_DO_in_biofilter_mgL": 4.0},
+      "smoltification": false,
+      "notes": "Lake whitefish grown in cold RAS for both meat and roach; highly sensitive to suspended solids."
+    },
+    "Thymallus thymallus": {
+      "scientific_name": "Thymallus thymallus",
+      "common_names": {"en": ["Grayling"], "vi": ["Cá graying"]},
+      "family": "Salmonidae",
+      "category": "cold-water salmonid",
+      "warm_water": false,
+      "ammonia_sensitivity": "high",
+      "chronic_nh3n_mgL": 0.0125,
+      "acute_nh3n_mgL": 0.2,
+      "life_stages": {
+        "juvenile": {"T_C": {"min": 6, "opt": 12, "max": 17, "lethal": 22}, "DO_mgL_floor": 7.0, "DO_sat_pct_floor": 85, "pH": {"min": 6.5, "opt": 7.3, "max": 8.5}, "TAN_mgL_max": 0.6, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 50, "alkalinity_mgL_min": 70, "CO2_mgL_max": 12},
+        "growout": {"T_C": {"min": 7, "opt": 13, "max": 18, "lethal": 23}, "DO_mgL_floor": 6.0, "DO_sat_pct_floor": 80, "pH": {"min": 6.5, "opt": 7.3, "max": 8.5}, "TAN_mgL_max": 1.0, "NO2N_mgL_max": 0.1, "NO3N_mgL_max": 70, "alkalinity_mgL_min": 60, "CO2_mgL_max": 15}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 7, "optimal_T_C_range": [25, 30], "cold_oversize_factor": 2.5, "min_DO_in_biofilter_mgL": 4.0},
+      "smoltification": false,
+      "notes": "Niche cold-water RAS species; very sensitive to organic load and turbidity."
+    },
+    "Esox lucius": {
+      "scientific_name": "Esox lucius",
+      "common_names": {"en": ["Northern pike"], "vi": ["Cá pik"]},
+      "family": "Esocidae",
+      "category": "cold-water predator",
+      "warm_water": false,
+      "ammonia_sensitivity": "moderate",
+      "chronic_nh3n_mgL": 0.02,
+      "acute_nh3n_mgL": 0.3,
+      "life_stages": {
+        "juvenile": {"T_C": {"min": 8, "opt": 16, "max": 22, "lethal": 28}, "DO_mgL_floor": 5.0, "DO_sat_pct_floor": 70, "pH": {"min": 6.5, "opt": 7.5, "max": 9.0}, "TAN_mgL_max": 1.0, "NO2N_mgL_max": 0.2, "NO3N_mgL_max": 100, "alkalinity_mgL_min": 50, "CO2_mgL_max": 20},
+        "growout": {"T_C": {"min": 8, "opt": 17, "max": 23, "lethal": 29}, "DO_mgL_floor": 4.5, "DO_sat_pct_floor": 65, "pH": {"min": 6.5, "opt": 7.5, "max": 9.0}, "TAN_mgL_max": 1.5, "NO2N_mgL_max": 0.3, "NO3N_mgL_max": 120, "alkalinity_mgL_min": 50, "CO2_mgL_max": 25}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 8, "optimal_T_C_range": [25, 30], "cold_oversize_factor": 2.0, "min_DO_in_biofilter_mgL": 4.0},
+      "smoltification": false,
+      "notes": "Cold-water predator; more ammonia/temperature tolerant than salmonids. Often used as a control for warm-water envelope comparison."
+    },
+    "Oreochromis niloticus": {
+      "scientific_name": "Oreochromis niloticus",
+      "common_names": {"en": ["Nile tilapia"], "vi": ["Cá rô phi"]},
+      "family": "Cichlidae",
+      "category": "warm-water cichlid",
+      "warm_water": true,
+      "ammonia_sensitivity": "moderate",
+      "chronic_nh3n_mgL": 0.05,
+      "acute_nh3n_mgL": 0.6,
+      "life_stages": {
+        "growout": {"T_C": {"min": 18, "opt": 28, "max": 32, "lethal": 36}, "DO_mgL_floor": 3.0, "DO_sat_pct_floor": 50, "pH": {"min": 6.0, "opt": 7.5, "max": 9.0}, "TAN_mgL_max": 3.0, "NO2N_mgL_max": 1.0, "NO3N_mgL_max": 200, "alkalinity_mgL_min": 40, "CO2_mgL_max": 30}
+      },
+      "biofilter_params": {"nitrification_min_T_C": 18, "optimal_T_C_range": [28, 30], "cold_oversize_factor": 1.0, "min_DO_in_biofilter_mgL": 3.0},
+      "smoltification": false,
+      "notes": "WARM-WATER reference species only — included to detect and flag accidental warm-water envelope application to a cold-water RAS (G5 guard). Never apply these setpoints to a salmonid/sturgeon RAS."
+    }
+  }
+}

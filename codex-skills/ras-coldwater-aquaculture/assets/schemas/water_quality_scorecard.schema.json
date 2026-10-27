@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ras-coldwater-aquaculture/schemas/water_quality_scorecard.schema.json",
+  "title": "Water-Quality Scorecard",
+  "type": "object",
+  "required": ["nh3_mgL", "nh3_status", "do_sat_pct", "do_status", "nitrification_status", "alkalinity_status", "co2_status", "deviations", "data_quality_flags"],
+  "additionalProperties": true,
+  "properties": {
+    "nh3_mgL": { "type": ["number", "null"], "description": "Un-ionized ammonia NH3-N in mg/L computed via Emerson (1975)." },
+    "nh3_fraction": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "nh3_status": { "type": "string", "enum": ["safe", "elevated", "toxic", "unknown"] },
+    "do_sat_pct": { "type": ["number", "null"] },
+    "do_status": { "type": "string", "enum": ["adequate", "low", "critical", "unknown"] },
+    "nitrification_status": { "type": "string", "enum": ["new", "mature", "stressed", "failing", "unknown"] },
+    "alkalinity_status": { "type": "string", "enum": ["sufficient", "deficient", "unknown"] },
+    "alkalinity_demand_mgL_CaCO3_per_day": { "type": ["number", "null"], "minimum": 0 },
+    "co2_status": { "type": "string", "enum": ["ok", "elevated", "critical", "unknown"] },
+    "deviations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["parameter", "value", "envelope", "severity"],
+        "properties": {
+          "parameter": { "type": "string" },
+          "value": { "type": ["number", "null"] },
+          "envelope": { "type": "string" },
+          "severity": { "type": "string", "enum": ["ok", "watch", "alert", "critical"] },
+          "delta": { "type": ["number", "null"] }
+        }
+      }
+    },
+    "trend": { "type": ["string", "null"] },
+    "data_quality_flags": { "type": "array", "items": { "type": "string" } }
+  }
+}
