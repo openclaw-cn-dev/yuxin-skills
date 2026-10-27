@@ -123,6 +123,9 @@ trust_level = "trusted"
 [projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/系统资源监控"]
 trust_level = "trusted"
 
+[projects."/Users/hua/codex-workspace/yuxin-skills"]
+trust_level = "trusted"
+
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
