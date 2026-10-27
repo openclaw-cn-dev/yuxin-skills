@@ -76,20 +76,16 @@ def redact_text(txt: str):
 
 
 def process(p: Path):
-    """字节级处理，保留原行尾符（text 模式会把 CRLF 洗成 LF）"""
+    """字节级处理 —— bytes.decode 不做换行转换，行尾符原样透传（铁律 147）"""
     raw = p.read_bytes()
     try:
         txt = raw.decode("utf-8")
     except UnicodeDecodeError:
         return None
-    # 保留原始行尾：用 newline='' 语义 —— 手动拆分
-    crlf = b"\r\n" in raw
-    txt = txt.replace("\r\n", "\n")
     new, n_appid, n_secret = redact_text(txt)
     if new == txt:
         return None
-    out = new.replace("\n", "\r\n") if crlf else new
-    p.write_bytes(out.encode("utf-8"))
+    p.write_bytes(new.encode("utf-8"))
     return n_appid, n_secret
 
 
