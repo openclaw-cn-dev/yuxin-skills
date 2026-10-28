@@ -43,6 +43,7 @@ hermes-sync-cron-quirks
 hermes-write-file-pitfalls
 huage-directive-resource-reallocation
 inference-sh
+iot-connectivity-design
 knowledge-base
 long-cycle-task-closure-audit
 management-scan-session-notes
@@ -53,6 +54,7 @@ meta
 mlops
 note-taking
 npm-local-prefix-upgrade
+ops-progress-briefing
 overseas-regulation-compliance-mapping
 pbt-x-llm-properties
 product
@@ -76,6 +78,7 @@ testing-methodology-triad
 verify-cron-state-existence
 yufen-operations-mandate
 yuxin-community-workbench-dev
+yuxin-paper-incubation
 zhenglishi-cron-skip-daily-closeout
 zhenglishi-deep-dive-cron
 zhenglishi-noon-flash-briefing
