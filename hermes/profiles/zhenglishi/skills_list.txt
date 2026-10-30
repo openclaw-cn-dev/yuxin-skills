@@ -15,7 +15,6 @@ cron-mode-tool-constraints
 cron-model-provider-troubleshooting
 cron-ops-brief-feishu
 cron-research-3projects
-cron-rolling-skip-research
 cron-tirith-traps
 data-science
 devops
