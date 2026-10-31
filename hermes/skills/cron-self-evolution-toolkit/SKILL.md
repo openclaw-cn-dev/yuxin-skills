@@ -1,12 +1,12 @@
 ---
 name: cron-self-evolution-toolkit
-description: "Cron self-evolution 饱和/降本/守夜/日间决策树工具集(跨 profile:黑豆/阿福/老莫/毛豆/小宝/宽博士/整理师)。三条件饱和判定;§1 全饱和静默兜底+软跳过+午间 mini+§1.4 守夜档极简(同日≥8档+二饱一鲜+晚间→≤4KB);§1.3 三种进化模式(起草/接力/治理)+PITFALL A-H;§1.5 分析型(全闭环+项目活跃→行业信号/闸门/备料);§1.6 早间接力型(凌晨+D-Day→3-5KB 倒计时刷新);§1.7 P-34 静默 HOME 劫持+空壳库吞错;§1.8 具象备料型(大纲+RACI+Mermaid,ROI 3x);§1.9 P-35 execute_code cron 禁用+sibling 冲突;§1.10 P-36 RACI 整合失真反向验证;§1.11 缺席合并验收型;§1.12 P-37 curl 管道被拦→两段式落盘解析+web_extract search-only 修复键(extract_backend 配置态);§1.13 拍板包产出型+删除先考古;§1.14 P-38 双活技能库双向漂移对账(canonical↔镜像缺文件/SKILL.md 分叉→diff 对账+分叉处置矩阵);§1.15 分析→反哺型·第 9 种进化模式;§1.16 跨 cron session 数据真实性铁律子库(原 ***SECRET*** 整档收纳);§1.17 $HOME 劫持绕过 SOP 子库(原 cron-home-hijack-bypass 整档收纳)。触发:cron 心跳无任务自进化、静默/降级判定、字节控制、evolution 报告结构、治理缺位、execute_code 被拒替代路径、web 全文实读被拦、跨 profile 技能库双向缺文件/分叉对账(P-38)、cron 数据真实性存疑/前次报告数字引用、$HOME 劫持检测绕过/docker socket/git ssh 同步路径错。"
+description: "Cron self-evolution 饱和/降本/守夜/日间决策树工具集(跨 profile:黑豆/阿福/老莫/毛豆/小宝/宽博士/整理师)。三条件饱和判定;§1 全饱和静默兜底+软跳过+午间 mini+§1.4 守夜档极简(同日≥8档+二饱一鲜+晚间→≤4KB);§1.3 三种进化模式(起草/接力/治理)+PITFALL A-H;§1.5 分析型(全闭环+项目活跃→行业信号/闸门/备料);§1.6 早间接力型(凌晨+D-Day→3-5KB 倒计时刷新);§1.7 P-34 静默 HOME 劫持+空壳库吞错;§1.8 具象备料型(大纲+RACI+Mermaid,ROI 3x);§1.9 P-35 execute_code cron 禁用+sibling 冲突;§1.10 P-36 RACI 整合失真反向验证;§1.11 缺席合并验收型;§1.12 P-37 curl 管道被拦→两段式落盘解析+web_extract search-only 修复键(extract_backend 配置态);§1.13 拍板包产出型+删除先考古;§1.14 P-38 双活技能库双向漂移对账(canonical↔镜像缺文件/SKILL.md 分叉→diff 对账+分叉处置矩阵);§1.15 分析→反哺型·第 9 种进化模式;§1.16 跨 cron session 数据真实性铁律子库(原 ***SECRET*** 整档收纳);§1.17 $HOME 劫持绕过 SOP 子库(原 cron-home-hijack-bypass 整档收纳)。触发:cron 心跳无任务自进化、静默/降级判定、字节控制、evolution 报告结构、治理缺位、execute_code 被拒替代路径、web 全文实读被拦、跨 profile 技能库双向缺文件/分叉对账(P-38)、cron 数据真实性存疑/前次报告数字引用、$HOME 劫持检测绕过/docker socket/git ssh 同步路径错、afu-self-evolution-protocol/heidou-self-evolve-cron/laomo-heartbeat/***SECRET***/***SECRET*** 任意原 skill 名命中（§1.18 整档收纳子库五件套）。"
 metadata:
   author: 渔芯科技
-  version: "1.11.0"
+  version: "1.12.0"
   created: "2026-09-17 curator consolidation"
   updated: "2026-10-09 · v1.11.0 curator 合并 — 新增 §1.16 吸收子库一(原独立 skill ***SECRET*** v1.24 整档收纳 references/***SECRET***/,含 §25-§35 全部数据真实性铁律) + §1.17 吸收子库二(原独立 skill cron-home-hijack-bypass 整档收纳 references/cron-home-hijack-bypass/,含 DOCKER_HOST/Git/SSH 专项+死区救回);description 同步扩展触发词 | 2026-09-27 · v1.10.0 新增 §1.15 分析→反哺型·第 9 种进化模式(毛豆 06 时档首例:决策弹药打光+核心职责同构情报流 → 同构三筛≤2条深挖 → curl 两段式实读(P-37) → patch domain skill 闭环,产出=skill bump+报告交叉引用,报告 3-6KB;区别于 §1.5 分析型停报告层不落 skill) | P-37 跨 profile 复现(毛豆同型通过)+web_extract 修复键(报错串'Set web.extract_backend to firecrawl/tavily/exa/parallel'=共享后端配置态,config owner 修复,未改前走两段式) | 2026-09-26 · v1.9.1 新增 §1.14 P-38 双活技能库双向漂移(canonical↔profile镜像互相缺文件+SKILL.md分叉两版本 → 全量diff -rq对账SOP+分叉处置矩阵:领先覆盖/保留分歧待审/双活入档/补齐验证;软守卫拦截退路=可写侧或/tmp再terminal cp;每次现跑diff不凭上次结论;小宝23时档首例46=46) | 2026-09-26 · v1.9.0 新增 §1.13 拍板包产出型·第 8 种进化模式 + 删除先考古前置（毛豆 18 时档首例：悬置 ≥2 档拍板任务零漂移 → 只读考古压缩成事实+≤4 选项+默认推荐拍板包 + desc 第 N 轮推进登记 + 静默守候纪律；去留类任务先 git 考古遗产三分类——已复活/已被取代/未回收，已删除≠已作废；references/***SECRET***.md） |2026-09-26 · v1.8.1 新增 §1.12 P-37 web 全文实读被安全扫描拦截(curl|python3 管道形态必挂起 → 两段式落盘解析:curl -o 落盘 + 另起调用解析;HTTP 明文站改走 HTTPS 镜像;小宝 17 时档首例) | 2026-09-26 · v1.8.0 新增 §1.11 缺席合并验收型·第 7 种进化模式(黑豆 17 时档 round 81 首例:D-Day 分时轴中段档缺席 → 当前档合并承担验收,缺席声明+逐项实测+硬闸可打勾清单,字节 4-8 KB;伴生「红灯路径时效过期变质原则」:窗口过期≠义务过期,按点执行→立即补做;references/***SECRET***.md) | 2026-09-26 · v1.7.1 新增 §1.7.5 P-34 第三种静默根因:被查任务库空壳化+脚本吞错(HOME 正常也发生,heartbeat 空输出三变种总表 + sqlite3 三源独立直查纪律 + prompt 引用 skill 缺失恢复路径 + 接力档验收实测纪律;黑豆 round 80 首例);references/***SECRET***.md | 2026-09-24 · v1.7.0 新增 §1.9 P-35 execute_code 禁用 + sibling subagent 文件冲突近失事故证据 (小宝 08 时档首例:execute_code 在 cron 中 BLOCKED 显式拒绝 + write_file _warning 字段 sibling 冲突不拒绝 + 3 道防线 SOP + 实操替代路径表);references/***SECRET***.md"
-  absorbed: [***SECRET***, ***SECRET***, ***SECRET***, ***SECRET***, ***SECRET***, cron-home-hijack-bypass]
+  absorbed: [***SECRET***, ***SECRET***, ***SECRET***, ***SECRET***, ***SECRET***, cron-home-hijack-bypass, afu-self-evolution-protocol, heidou-self-evolve-cron, laomo-heartbeat, ***SECRET***, ***SECRET***]
 ---
 
 # Cron Self-Evolution Toolkit — 饱和判定 · 守夜降本 · 日间节奏 · 报告结构
@@ -654,6 +654,21 @@ rm RACI_v0.1.md && write new RACI_v0.2.md
 > 🎯 **30 秒启动自检**（所有 cron 自进化会话第一次工具调用前必做）：`echo $HOME` → 期望 `/Users/hua`；若为 `/Users/hua/.hermes/profiles/<自己>/home/` → `export HOME=/Users/hua` + 全部路径改绝对路径。
 > 🔑 **专项速查**：① `docker ps` 报 no such file（默认 socket）→ `DOCKER_HOST=unix:///var/run/docker.sock` 直连；② Git/SSH 同步在劫持态下 git config / known_hosts 找不到 → 绝对路径 `GIT_SSH_COMMAND` + `git -C`；③ Python 脚本内 `Path.home()`/`expanduser("~")` 在 cron 会全部解析到 profile 镜像 home → 一律写死 `/Users/hua/...`；④ home 死区救回 5 步（定位 → 比对 → 迁移 → 校验 → 防复发）见其 SKILL.md 反向救回 SOP。
 > ⚠️ **与 §1.7 P-34 的关系**：P-34 防线检测「静默空输出」；本子库给出劫持**发生后的完整绕过 + 救回**执行层 SOP。两者配套使用：先 §1.7 检测，命中后走本子库绕过。
+
+## 1.18 🆕 吸收子库三：跨 profile 自进化协议与 SOP 五件套（2026-10-30 curator 整档收纳）
+
+> 本节收录 5 个原独立顶级 skill，全部整档保留在 `references/<原名>/`，包内相对路径原样、包内自引用绝对路径已改写为新位置。**canonical 伞 = 本 skill**；下列 skill 名命中即整档读对应 references/<名>/SKILL.md。
+>
+> | 子库（原 skill 名） | 整档位置 | 何时读 |
+> |---|---|---|
+> | **afu-self-evolution-protocol** v1.21 | `references/afu-self-evolution-protocol/`（SKILL.md 79KB + 35 references + scripts/verify_evolution.py） | 通用 5 步骤进化流程、6 文件级联升级、Pitfall 1-22、§1.1 承接纪律、§3.14 预告失信、§4.11 F1 HOME 污染 N 阈值、反向耦合盲区审计 —— 阿福系节奏与元数据治理权威 |
+> | **heidou-self-evolve-cron** v1.3.1 | `references/heidou-self-evolve-cron/`（SKILL.md + 30+ 坑-XX references + scripts/ + templates/） | 黑豆系 hourly 实战补丁流：D-N 前哨/双卡同档/待办螺旋 N 阈值/复合档字节公式/跨时档并发过期报告 #AY —— 决策树 v1.18（13 鸿沟类型）在其 references/ |
+> | **laomo-heartbeat** R747 | `references/laomo-heartbeat/`（SKILL.md + 70+ references + scripts/task_brief.sh 等） | 老莫心跳 R 轮次机制、执行序三步铁律（零 sqlite 前置）、wall 计数器/缩容配方、P#130-140 坑族、task_brief.sh 防 desc 全量 dump —— 脚本可直跑（路径已指向新位置） |
+> | *****SECRET***** v1.13 | `references/***SECRET***/`（SKILL.md + references/ + scripts/verify-skill-integrity.sh） | 任何 SKILL.md 升级纪律：4 步升级法、changelog 不实声明防御、§14.1-14.12（patch replace_all 灾难/缩进/列表前缀/跨 profile 写拦截）、§15 配套完整性自检 —— 写 skill 前必读 |
+> | *****SECRET***** | `references/***SECRET***/`（单 SKILL.md） | cron_mode 工具面 BLOCKED 实录（execute_code/process/delegate_task）+ 替代路径 —— 与 §1.9 P-35 同主题的 heidou 侧实证；zhenglishi 侧新形态见 profile 本地 `cron-mode-tool-constraints` |
+>
+> **互相关系速查**：afu 协议 = 流程骨架（5 步骤+承接纪律）；heidou SOP = hourly 补丁节律（本档实战补登模式）；laomo-heartbeat = 心跳轮机械防御（执行序优先于加载）；***SECRET*** = 写入纪律（升级必验）；toolkit 本体 = 饱和/模式决策树（§1.1-§1.15）。五者正交：流程 × 节律 × 防御 × 写入 × 路由。
+> ⚠️ **非激活说明**：阿福/黑豆/老莫 profile 心跳 cron 2026-10 现状多已停用（afu/heidou enabled=false、laomo 4 档改跑知识库巡检）——本节保留的是协议与坑族知识，供任何未来 cron 自进化会话复用；勿因 cron 停用而清掉这些坑族库。
 
 ---
 

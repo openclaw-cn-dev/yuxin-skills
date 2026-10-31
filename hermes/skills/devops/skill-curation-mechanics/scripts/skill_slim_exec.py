@@ -15,7 +15,7 @@ LIMIT = 90 * 1024
 # (path, keep_sections 或 None=长行压缩, 说明)
 TARGETS = [
     # 示例（跑前按当时实际 >100KB 文件清单重填）:
-    # ("/Users/hua/.hermes/skills/afu-self-evolution-protocol/SKILL.md", 3, "patch陷阱+HOME劫持防御外置"),
+    # ("/Users/hua/.hermes/skills/cron-self-evolution-toolkit/references/afu-self-evolution-protocol/SKILL.md", 3, "patch陷阱+HOME劫持防御外置"),  # 2026-10-30 curator: 已移入 toolkit 子库
 ]
 
 def split_by_sections(text, keep):

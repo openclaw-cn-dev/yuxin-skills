@@ -17,6 +17,8 @@ Manage Docker containers, images, volumes, networks, and Compose stacks using st
 - Debug a crashing container or analyze logs
 - Check Docker disk usage or free up space
 - **Run automated container cleanup & health checks** (see `references/auto-management.md`)
+- **Health-check + auto-remediation script design** for containerized stacks (cron patrol, worker pools, self-heal; Docker socket/HOME hijack pitfalls 15-17) → `references/***SECRET***/`（原独立 skill ***SECRET***，2026-10-30 curator 整档收纳；canonical 实例=RKR auto_ops.py V4）
+- **项目专用部署排障**（如建筑AI助手的中文目录 docker-compose 项目名坑、端口冲突先查在跑容器）→ 与下方 Quick Reference 排查表同型；历史案例存档于 `.archive/`（jianzhu-ai-deployment）
 - Review or optimize a Dockerfile
 - **Start a NEW project on the 渔芯 dev machine** (port-conflict aware)
 

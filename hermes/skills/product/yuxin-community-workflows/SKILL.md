@@ -1,6 +1,6 @@
 ---
 name: yuxin-community-workflows
-description: 渔芯社区工作流管理 — 硬件开发工作流（hardware_workflow.py）、新360行行业工作流（如反向代购/daigou_workflow.py）、07-软件项目开发优化。覆盖工作流自进化 cron、行业数据补充（industries.json）、新行业工作流原型创建。**渔芯社区工作台适配/独立应用上架必读**：双包体系（.yxf 工作流 vs .yxa 独立应用 yuxin.app/v1）、发布链（yxf-tools 打包→预检→投稿→审核→签名→上架）、适配选型铁律（完整应用打 .yxa 维持应用完整性，华哥 2026-10-14）、官方应用储备池管线。**curator 合并 2026-10-16**：原独立 skill workbench-yxf-publishing（工作台发布链 GUI 实操+0.3.0 源码构建）、yuxin-community-app-pipeline（上架管线）、yuxin-community-ops（lookforge.net 生产部署/workbench_release.json 热切）已整档收纳至本 skill references/，渔芯社区全链路（工作流管理+应用上架+官网与工作台部署运维）统一从本 skill 进入。触发条件：渔芯社区充实、新360行工作流、硬件开发工作流、反向代购、07软件项目开发优化、industries.json 补充、工作流付费/交易变现、工作流交易平台对标、把项目适配工作台上架社区仓库、.yxa/.yxf 打包投稿、渔芯工作台/官网代码结构、lookforge.net 模块、上线部署、重新上线、官网安装包更新、应用内直接更新、**华哥报「上传的应用在官网/移动WEB版块看不到了」（门禁/会话/上下架诊断 → references/***SECRET***.md）**。
+description: 渔芯社区工作流管理 — 硬件开发工作流（hardware_workflow.py）、新360行行业工作流（如反向代购/daigou_workflow.py）、07-软件项目开发优化。覆盖工作流自进化 cron、行业数据补充（industries.json）、新行业工作流原型创建。**渔芯社区工作台适配/独立应用上架必读**：双包体系（.yxf 工作流 vs .yxa 独立应用 yuxin.app/v1）、发布链（yxf-tools 打包→预检→投稿→审核→签名→上架）、适配选型铁律（完整应用打 .yxa 维持应用完整性，华哥 2026-10-14）、官方应用储备池管线。**curator 合并 2026-10-16 + 2026-10-30**：原独立 skill workbench-yxf-publishing（工作台发布链 GUI 实操+0.3.0 源码构建）、yuxin-community-app-pipeline（上架管线）、yuxin-community-ops（lookforge.net 生产部署/workbench_release.json 热切）已整档收纳至本 skill references/，渔芯社区全链路（工作流管理+应用上架+官网与工作台部署运维）统一从本 skill 进入。触发条件：渔芯社区充实、新360行工作流、硬件开发工作流、反向代购、07软件项目开发优化、industries.json 补充、工作流付费/交易变现、工作流交易平台对标、把项目适配工作台上架社区仓库、.yxa/.yxf 打包投稿、渔芯工作台/官网代码结构、lookforge.net 模块、上线部署、重新上线、官网安装包更新、应用内直接更新、**华哥报「上传的应用在官网/移动WEB版块看不到了」（门禁/会话/上下架诊断 → references/yuxin-community-site-ops/ 权威版 + references/***SECRET***.md 当日快照；原独立 skill yuxin-community-site-ops 已整档收纳）。**
 ---
 
 # 渔芯社区工作流管理
@@ -126,3 +126,8 @@ description: 渔芯社区工作流管理 — 硬件开发工作流（hardware_wo
 ## 已吸收：官网+工作台发布部署运维（curator 合并 2026-10-16 · 原独立 skill yuxin-community-ops 整档收纳）
 
 生产部署与仓库运营侧（lookforge.net 官网 + 工作台发版）已合并至 `references/yuxin-community-ops/`（原独立 skill v1.0；整理时原包误删损毁，现为恢复存根：发布五步铁律、workbench_release.json 语义、版本 bump 四处同步、ci-artifacts 回传通道均在；2026-10-14 发版实录 reference 可从当日会话记录考古回填）。触发：上线部署 / 重新上线 / 官网安装包更新 / 应用内直接更新 / 下载环境补齐。devops 分类下的同名 skill 已同步归档——渔芯社区全链路（官网部署 / 工作台发版 / 工作流管理 / 应用上架）现在统一从本 skill 进入。
+
+## 已吸收：官网生产运维·「应用看不到」排查（curator 合并 2026-10-30 · 原独立 skill yuxin-community-site-ops v1.1.0 整档收纳）
+
+lookforge.net 生产运维与「应用看不到/打不开/303跳登录」类问题的完整排查 SOP 已整档收纳至 `references/yuxin-community-site-ops/`（SKILL.md + 2 个 2026-10-24 实战 incident 文件：v18 registry 丢失事故、当日排查记录）。**与上方 webapps 门禁诊断节的关系**：`references/***SECRET***.md` 是 10-24 当日的诊断快照（同主题、更浓缩），`references/yuxin-community-site-ops/` 是体系化 v1.1 权威版（两套应用体系判定 + 会话门禁三通道架构 + nginx 日志取证法 + 带会话端到端实测法）——排查时以 site-ops 子包为主线，gating 快照作当日案例补充。触发：官网生产问题 / webapp_access 档位 / community_apps 上下架 / 会话失效 / releases 切流 / admin 操作归属取证。执行时先读 `references/yuxin-community-site-ops/SKILL.md`（生产实例=阿里云 ECS 121.43.127.211，本地路径口径已失效）。
+

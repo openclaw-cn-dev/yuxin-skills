@@ -1,6 +1,6 @@
 ---
 name: multi-cloud-llm-architecture
-description: 'Hermes Agent 多 LLM Provider 架构设计、配置、切换、健康检查。覆盖: 免费额度 Provider 池（Gemini/Groq/Mistral/GLM/OpenRouter）、智能路由框架（`multi_model_router.py` 配额感知+任务类型路由+自动 fallback）、模型轮换守护（`model_rotation_daemon.sh` 健康监控+自动切换）、gateway 开机自启+保活（`com.yuxin.hermes-gateway-*` LaunchAgent）、4-Provider 模式（minimax/deepseek/ollama）、`hermes config set` 写入 API key 最佳实践、跨 profile key 同步、config.yaml 并发写入坑、Claude Code CLI 通过 Gateway 接入、MiniMax Embedding API、Codex SSE 翻译。触发条件：用户说"加多模型"/"多模态优化"/"免费模型"/"智能路由"/"配额追踪"/"切到 deepseek"/"切本地"、"网关开机自启"/"掉线重启"、任何 LLM provider 拓扑调整、模型切换/轮换/fallback、**Codex 在非 OpenAI 后端丧失工具能力**。'
+description: 'Hermes Agent 多 LLM Provider 架构设计、配置、切换、健康检查。覆盖: 免费额度 Provider 池（Gemini/Groq/Mistral/GLM/OpenRouter）、智能路由框架（`multi_model_router.py` 配额感知+任务类型路由+自动 fallback）、模型轮换守护（`model_rotation_daemon.sh` 健康监控+自动切换）、gateway 开机自启+保活（`com.yuxin.hermes-gateway-*` LaunchAgent）、4-Provider 模式（minimax/deepseek/ollama）、`hermes config set` 写入 API key 最佳实践、跨 profile key 同步、config.yaml 并发写入坑、Claude Code CLI 通过 Gateway 接入、MiniMax Embedding API、Codex SSE 翻译。触发条件：用户说"加多模型"/"多模态优化"/"免费模型"/"智能路由"/"配额追踪"/"切到 deepseek"/"切本地"、"网关开机自启"/"掉线重启"、任何 LLM provider 拓扑调整、模型切换/轮换/fallback、**Codex 在非 OpenAI 后端丧失工具能力**、minimax-fallback-to-ollama（原独立 skill，2026-10-30 整档收纳 → references/minimax-fallback-to-ollama/，fallback 链路验证脚本 + config 解剖）。'
 triggers:
   - 加多模型 / 多模态优化 / 免费模型 / 智能路由
   - 配额追踪 / 配额耗尽 / 配额自动切换
@@ -1011,3 +1011,7 @@ wire_api = "chat_completions"
 2026-09-02 curator 合并：整档见 `references/vision-401-minimax-workaround/`
 
 - `references/local-llm-hardware-evo-x3.md` — **🆕 2026-09-05**：本地大模型硬件评估档案（极摩客 EVO-X3 / Strix Halo 128G）：DeepSeek-V4-Flash 284B-A13B Q3 量化 ~90-100GB 可跑（15-25 t/s）、能力排序与三层 fallback 分工、"挂网卖算力"=伪命题论证（CUDA 垄断/合规/电费）、OCuLink 外接 5090 扩展账、落地步骤。华哥购机/扩容咨询直接引用。与上文 §"视觉模型备用方案（GLM-4.6V-flash）"同属视觉 fallback 类：当 Hermes 内置 `vision_analyze` 返回 401 时，用 MiniMax-M3 vision API 直接处理图片绕过。
+
+## 已吸收：minimax→Ollama fallback 验证包（curator 合并 2026-10-30 · 原独立 skill minimax-fallback-to-ollama 整档收纳）
+
+minimax 套餐限额/429/401 时的 fallback 链路验证、配置解剖（三件套 fallback_providers + custom_providers + ollama 服务）、端到端验证脚本、4-provider 手动切换与健康检查脚本，已整档收纳至 `references/minimax-fallback-to-ollama/`（SKILL.md + 5 references + 3 scripts，`verify_fallback_chain.sh` 可直跑、路径已改写指向新位置；`yuxin_switch_provider.sh` / `yuxin_provider_health.sh` 与本 skill 正文 §切换脚本/§健康检查脚本 描述的是同一对脚本——权威副本以收纳包内为准，注意 2026-07-02 的"授权才切"硬约束现已被 2026-07-10 的"自动 fallback 授权"覆盖，与本文件 §架构总览 一致）。触发：minimax 429 / 401 / 套餐限额 / fallback_providers 配置 / ollama qwen2.5-coder / 4-provider 拓扑验证。

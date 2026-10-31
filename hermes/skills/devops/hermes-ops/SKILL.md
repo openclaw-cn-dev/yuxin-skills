@@ -26,10 +26,21 @@ Hermes 自身（CLI、skills、plugins、cron、gateway、state.db）的运维�
 
 ## 3.5 模型 / provider / 多云 LLM 配置 → `multi-cloud-llm-architecture`
 
-- Hermes 多 provider 架构、模型切换、免费额度 provider 池、401/402/429 余额与限流、provider 健康检查 → **`multi-cloud-llm-architecture`**（gateway 层面的故障定位仍在 `hermes-gateway-profile-ops`；本条只管「配置哪个模型/用哪家 provider」这一层）
+- Hermes 多 provider 架构、模型切换、免费额度 provider 池、401/402/429 余额与限流、provider 健康检查 → **`multi-cloud-llm-architecture`**（gateway 层面的故障定位仍在 `hermes-gateway-profile-ops`；本条只管「配置哪个模型/用哪家 provider」这一层；minimax→ollama fallback 验证/切换/健康检查脚本 2026-10-30 起也在该 skill 的 references/minimax-fallback-to-ollama/）
 
 ## 4. 沉淀区（未来吸收位）
 
 后续新发现的 Hermes 自身运维类坑，若不足以独立成 skill，先落在本节；积累成体系后再拆子 skill。
 
 - （空 — 2026-10-16 初版）
+
+## 5. 相邻 umbrella 边界（curator 2026-10-30 划定）
+
+| 域 | umbrella | 分工 |
+|---|---|---|
+| 团队架构（搭建/扩编/协作机制） | `productivity/multi-agent-team-architecture` | 改架构、加 agent、协作框架 → 那边 |
+| 团队日常运营（派单/验收/扫描） | `devops/company-ops-agent-management` | 玉芬每日管理动作 → 那边 |
+| 多 LLM provider / 模型切换 | `devops/multi-cloud-llm-architecture` | 配置哪个模型/哪家 provider（含 2026-10-30 并入的 minimax-fallback-to-ollama 验证包）→ 那边 |
+| macOS 本机自动化/磁盘健康 | `devops/macos-automation` | 系统层自动化与磁盘审计清理 → 那边 |
+| Docker 容器/自愈巡检 | `devops/docker-management` | 容器生命周期 + auto-remediation → 那边 |
+| cron 自进化协议 | `cron-self-evolution-toolkit` | 任何 agent 写 cron 自进化 SOP（含 afu/heidou/laomo/升级纪律四子库）→ 那边 |

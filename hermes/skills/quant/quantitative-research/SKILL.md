@@ -227,6 +227,8 @@ metadata:
 
 ### 1. 入口与抓取
 
+> 📎 **配套**：arXiv 检索的通用坑族（-L 跟随重定向、browser_navigate 主链路、snapshot timeout fallback、API 解析技巧）在 `research/arxiv` 类级 skill；q-fin 5 步完整 workflow 另见 `research/arxiv/references/q-fin-cron-workflow.md`（宽博士 2026-08-21 实测版）。本节是 quant 心跳专属的最新协议（N+162 endpoint 迁移等），冲突时以本节为准。
+
 ```bash
 # 1) 拉 q-fin 当周 listing(只取 ID)
 # 🚨 N+162 协议(2026-10-01 #N+140 实测):arXiv listing 已迁移到 /recent endpoint;

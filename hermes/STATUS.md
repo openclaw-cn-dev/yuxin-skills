@@ -1,11 +1,11 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-10-30 12:02:45
+> 导出时间: 2026-10-31 13:58:48
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 107
+- Skills: 103
 - Profiles: 11
-- Scripts: 167
+- Scripts: 168
 - Plugins: 1
 
 ## 版本
@@ -31,7 +31,6 @@ Update available: 2659 commits behind — run 'hermes update'
 ## Skills 清单
 - ad-creative
 - afu-customer-service
-- afu-self-evolution-protocol
 - agents-md
 - ai-training-platform
 - ai-vision
@@ -81,7 +80,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - ios-hig-design
 - jobs-to-be-done
 - knowledge-base
-- laomo-heartbeat
 - laomo-knowledge
 - lean-startup
 - lookforge
@@ -91,7 +89,6 @@ Update available: 2659 commits behind — run 'hermes update'
 - mcp
 - media
 - memory
-- minimax-fallback-to-ollama
 - mlops
 - module
 - negotiation
@@ -133,6 +130,5 @@ Update available: 2659 commits behind — run 'hermes update'
 - xiaobao-sales
 - xiaobao-workflow
 - xlsx
-- yuanbao
 - yuxin-code-iron-law
 - yuxin-self-evolution

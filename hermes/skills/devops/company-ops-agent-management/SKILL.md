@@ -4,9 +4,12 @@ description: |
   华哥 2026-09-18 授权玉芬全面运营公司后的多智能体团队管理方法论 — 通过 tasks.db 派单+验收闭环、运营总控 cron、待开发项目「资料够就开发小样」判定流程、项目资产盘点套路、每日管理进化扫描数据源与技术、profile gateway 恢复实操、旺财（Windows 远程 agent）故障诊断与模型切换；也覆盖按模型跨 profile 的 token 归因分析（华哥问「分析下 XX 模型 token 使用情况」）与全公司高频 cron 审计/关停（profile 私有 cron 库盲区）。触发条件：玉芬派任务给同事 agent（毛豆/小宝/阿福/老莫/黑豆/整理师）、验收交付物、盘点公司项目进展、华哥说「你来管」「盯一下进展」「够了就开发小样」、执行每日管理进化扫描、华哥令开启某 profile 网关、华哥报旺财不能用/要给旺财换大模型、华哥问某 provider/模型的 token 消耗与归因、华哥令关闭/暂停某高频 cron。
 related_skills:
   - ***SECRET***
+  - multi-agent-team-architecture
 ---
 
 # 多智能体团队管理与公司运营（玉芬）
+
+> 🧭 **与 `multi-agent-team-architecture` 的分工边界（curator 2026-10-30 划定）**：架构/搭建/改造层（9 profile 架构设计、core/domain 分类、协作框架、launchd 守护、加新 agent、$HOME 劫持防治、团队 token 优化）→ `multi-agent-team-architecture`；日常运营/派单/验收/扫描层（本 skill：tasks.db 派单验收、运营总控 cron、管理进化扫描、旺财诊断、token 归因、高频 cron 审计关停）→ 本 skill。架构坏了/要扩编走前者，团队在日常怎么管走后者。
 
 ## 授权边界（2026-09-18 华哥定）
 
@@ -28,7 +31,27 @@ related_skills:
 - 无异常输出一行「✅ 运营正常」+1 句要点；有停滞/新开发候选/待拍板事项→≤300 字清单
 - 每轮最多派 2 个新任务防过载；不新造高频 cron（查重铁律）
 
-每日管理进化扫描数据源与技术（2026-10-04 实测沉淀，10-06 补 cron 模式工具链，10-07 补 tokens 日报与飞书发送链路，10-15 补 per-profile 心跳 CSV 源/研项目产出路径/429 计数，10-16 补 kanban immutable/skill 审计过滤/state.db 列名，10-17 补 Bearer 掩码坑/迭代预算截断/429 全面扩散升级线/kanban created_at 异常，10-18 补 tokens 日报双向告警/notify 脚本绝对路径/发送脚本副本治理，10-20 补按模型跨 profile token 归因/billing 零值坑/高频 cron 校准/profile 私有库全量盘点基线/HTTP 529 新形态/skill 全量口径，10-21 补 jobs.json 顶层 dict 格式/kanban completed 口径/sessions end_reason 列名/deliver 别名形态/rkr 51G 基线/codex 超时长观察，10-22 补 skill 口径修正/假阳性复核配方/npm 同名包坑，10-23 补 429 缓解后单日复发判定/低消耗两成因分支/write_file 回显错乱 read_file 核实，10-29 补 pypi JSON 直查一日多版/per-profile split 索引/复合命令拦截面/跨 profile skill 第二编辑路径）
+## 同事供给线与资源守护 cron（2026-10-31 华哥令实战沉淀）
+
+### 「让同事持续丰富 X」供给线四件套模板
+华哥说「智谱套餐额度还剩很多，让其它同事帮你持续丰富〈养殖百科〉」时的标准落地（当日全程实测）：
+
+1. **轮换表落盘语料目录**：目标语料目录建 `00-主题轮换与进度.md`（大类轮换表 N 类×每类 M 个轮换点 + 进度登记表），写死条目模板与质量铁律（来源可核验/禁编造数字/防清洗管道垃圾档特征）。它是同事 cron 与验收的共同事实源。
+2. **研编 cron（同事执行）**：profile=同事（如 zhenglishi 吃智谱套餐）、model=套餐内 GLM、`enabled_toolsets=['web','file']`（cron_mode=deny 下 terminal 会被拦，研编/写作类只需搜索+写文件）、deliver=local、每天 1 轮错峰分钟数。prompt 结构=读轮换表→逐条 web_search 交叉核数→按模板落盘→更新进度登记表→简报，铁律「不碰数据库不碰管道脚本」。
+3. **零 token 入库链**：同事只落盘 .md；已有 LaunchAgent/脚本每日定时跑增量入库（如 baike-daily 06:26 → ingest_daily.py）。**新建供给线前先摸清已有入库链，别造第二条**。
+4. **首轮立即触发 + 一次性验证**：cronjob action=run 手动跑首轮不等排期；再建一个 ISO 时间点一次性 cron（repeat=once）到点检查产出目录条数并飞书简报华哥。
+
+### 资源守护 cron 模式（华哥令「定时清理内存，如 Chrome Helper」）
+- 形态：`no_agent=true` + 阈值门控 bash 脚本（`~/.hermes/scripts/memory_cleanup.sh`，每小时第 7 分）：`vm_stat` 算 Free+Purgeable，≥阈值（2GB）静默 exit 0（空 stdout=零投递不打扰）；<阈值才动手并输出一行摘要+追加落盘日志到 `~/.hermes/cron/output/memory_cleanup.log`。
+- 杀法纪律：华哥点名的目标（Chrome Helper）只杀 Helper 子进程（pkill -f "Google Chrome Helper"），主进程保留（标签页自动重载）；白名单写死脚本头（Hermes/Ollama/Docker/postgres/Lark/launchd 等）绝不碰。
+- 实测：水位 25MB 时清 34 个 Chrome Helper ≈ 2.3GB，Chrome 主进程无感。cron job_id=c31d5eae12c8。
+
+### 供给线/管道 Pitfall（当日实测）
+- **自动护栏中止 ≠ 真故障**：baike 增量入库被「语料真删除」漂移检测连停 2 天（约 100 篇挂起），实为 2 篇采集文件被原地改写（body_hash 变了但文件还在盘上）。修复=中止前逐篇回读磁盘，在盘按「原地改写」放行、真不在才中止。通用教训：**遇到自动护栏连续中止，先验地面真相**（文件在不在、新旧 hash 对比、新 hash 是否等于基线其它路径=改名）再修代码。
+- **采集「0 新增」≠ bug**：先查①链接是否全部 seen（源榨干）②主题是否已入库（`SELECT count(*) FROM documents WHERE source_url LIKE '%域%'`）。AKVA 实测 18 篇早已在库，0 新增是正确行为。
+- 修管道脚本前 `cp xxx.py xxx.py.bak-日期`；patch 后必跑 `py_compile` 再手动补跑一次全链路验证（实测 18.3 分钟跑完；terminal 超时改 background=true+notify_on_complete）。
+
+## 每日管理进化扫描
 
 > 可复用脚本： `scripts/management_scan_core.py`（cron 健康 + 7 日 token 趋势 + gateway 停转检测 + 任务队列滞留 + `--chats` 飞书测活）——⚠️ 10-15 实测该文件在 `~/.hermes/scripts/` 与本 skill 目录均不存在（pointer 失效），重建前扫描以手写只读 python3 单行为主，别空等脚本。**10-20 已验证的扫描配方**：write_file 三个 /tmp 脚本（scan1=cron健康+chat测活+state.db趋势+429计数；scan2=skill容量+kanban+tasks.db；scan3=调研节律+研产出freshness+心跳三源+版本），单轮跑完落盘报告，符合 ≤3 脚本预算纪律。**10-21 实跑又拆成 5 个**（scan1 主干 + scan1b 修复私有库/chat + scan2b 修复口径）——首轮脚本含 bug 时直接 write_file 修复版跑第二轮，别原地反复 patch。**10-22 实跑 4 个、10-28 实跑 5 个**（scan1/scan1b/scan2/scan2b/scan3），均在预算内。
 
@@ -57,7 +80,7 @@ related_skills:
 - **研项目产出面真值路径**（10-15 实测）：6 研项目产出在 `/Users/hua/6-产品研发/渔芯独角兽/01-开发中/研-<项目名>/`，**不在 rkr_staging/文档库**。freshness 双查：`-mtime -2` 计数 + 最新文件 mtime；批停遗留 vs 真停摆的分辨标准是「有没有对应现役 job/任务」。macOS 无 `-printf`，用 os.stat 遍历；glob 出非 ASCII 目录名时拼 find 用 json.dumps() 包路径。
 - **error 假阳性归类**：轮换调研类 job 的 last_error 里出现 RuntimeError 但内容是「产出已写入/已完成」的自述 = 假阳性，按产出落盘实据判 ok；真故障特征是 Script not found / 429 连续多轮不自愈。429 分型：周/月配额型=自愈型观察；Token Plan 套餐型（2056）=非自愈，计入高风险。
 - **报告同日双档碰撞**：若一天已有一份 YYYY-MM-DD.md，先 `mv 2026-MM-DD.md → 2026-MM-DD-HHMM档.md` 保档再写本轮，最后 cp 覆盖 latest.md——不删任何文件（玉芬铁律）。
-- **kanban.db 在 cron/异步会话下 ro-uri 打不开**（10-16 实测）：加 `immutable=1` 即读通。kanban schema：priority 是 INTEGER(0=P0/1=P1/2=P2)，assignee（不是 assigned_to），created_at 是 unix 秒。**created_at 字段异常**：天龄 >3650d 一律按字段损坏=未知处理。**完成态字段值是 `completed`（没有 'done'）**——活跃判定只取 `status IN ('pending','in_progress')`，否则 completed 全算成 active 假阻塞。**10-28 现状：活跃仅 3 条**——GEO-02 in_progress / GEO-03 pending（老莫停机连带）+ P0「情商助手v0.7前置调研」pending 59d（挂起第 9 天）。
+- **kanban.db 在 cron/异步会话下 ro-uri 打不开**（10-16 实测）：加 `immutable=1` 即读通。**表名是 `tasks` 不是 kanban_tasks**（10-30 实测：no such table: kanban_tasks，库内表为 tasks/task_links/task_comments/task_events/task_runs 等）。kanban schema：priority 是 INTEGER(0=P0/1=P1/2=P2) 或字符串 'P0'（tasks.db 同样双类型），assignee（不是 assigned_to），created_at 是 unix 秒。**created_at 字段异常**：天龄 >3650d 一律按字段损坏=未知处理。**完成态字段值 10-22 记为只有 `completed`，10-30 实测历史数据 `done`(17) 与 `completed`(13) 并存**——无论哪种口径，活跃判定只取 `status IN ('pending','in_progress')` 即可兜底，否则完成态全算成 active 假阻塞。**10-28 现状：活跃仅 3 条**——GEO-02 in_progress / GEO-03 pending（老莫停机连带）+ P0「情商助手v0.7前置调研」pending 59d（挂起第 9 天）。
 - **skill 容量审计必须排除隐藏目录**（10-16 实测）：`.curator_backups`+`.archive` 会被 os.walk 算进总量；过滤 `dirs[:] = [d for d in dirs if not d.startswith('.')]`。**口径警告（10-20/10-22 两度校准）**：把非 SKILL.md 资产计入会虚增 10 倍；**10-28 纯 SKILL.md 口径基线：1333 个 / 16.50MB（avg ~12.7KB）**——中央 190/4.31MB、zhenglishi 249/2.99MB、heidou 161、laomo 118、maodou 113、psychology 111、afu 96、default 89、community 88、xiaobao 68、quant 50/0.74MB。**环比必须同口径，混口径对比毫无意义，写报告时注明口径。**遍历代码坑：profile 库路径直接 glob('/Users/hua/.hermes/profiles/*/skills') 逐目录跑，别从父目录名二次推导（split 下标坑见上）。
 - **.curator_backups 真实路径（10-28 修正，此前基线路径有误）**：不在 `~/.hermes/` 顶层也不在 `profiles/<p>/` 顶层，而在**各 skills/ 目录下**——`/Users/hua/.hermes/skills/.curator_backups`（415MB）+ `/Users/hua/.hermes/profiles/<p>/skills/.curator_backups`（9 库各 3-280MB）+ maodou 额外一份 `evolution/.curator_backups`。按顶层路径 du 会报 No such file；找目录先 `find /Users/hua/.hermes -maxdepth 4 -name .curator_backups -type d`。**10-28 全公司合计 ~2.02GB**。回收策略（每库留最近 1 份）列华哥拍板，涉删不自行动。
 - **rkr_staging 基线（10-28）：47.8GB**，归档专项仍欠。**死区全量口径（10-28 首次全量 os.walk）**：全部 .md = 235,106 个，>30d 未动 = 226,116（96.2%）——此前各轮报的「400+ 个死区」是窄子集口径，**跨日对比必须注明口径别混**。

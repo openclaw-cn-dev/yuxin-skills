@@ -1,11 +1,12 @@
 ---
 name: macos-automation
-description: macOS 系统自动化与系统健康类级技能。当用户需要：自动化工作流、菜单栏工具、快捷键绑定、系统监控、定时任务、进程管理、磁盘空间审计与安全清理、丢失文件定位与恢复时使用。覆盖 Hammerspoon、launchd、AppleScript、Shortcuts、Karabiner-Elements、TCC 权限、磁盘清理（先扫描分级→华哥确认→绝不一键清）、ollama 模型库审计、mdfind 中文搜索、Chrome 书签追溯文件原位置、Claude Code 备份恢复已删除文件。
+description: macOS 系统自动化与系统健康类级技能。当用户需要：自动化工作流、菜单栏工具、快捷键绑定、系统监控、定时任务、进程管理、磁盘空间审计与安全清理、丢失文件定位与恢复时使用（含磁盘审计+安全清理+归档专项 macos-disk-audit-cleanup，2026-10-30 并入 → references/macos-disk-audit-cleanup/）。覆盖 Hammerspoon、launchd、AppleScript、Shortcuts、Karabiner-Elements、TCC 权限、磁盘清理（先扫描分级→华哥确认→绝不一键清）、ollama 模型库审计、mdfind 中文搜索、Chrome 书签追溯文件原位置、Claude Code 备份恢复已删除文件。
 ---
 
 # macOS 自动化工具箱
 
 > 🗂️ 2026-09-17 curator 合并：磁盘清理原 `macos-disk-cleanup`、文件恢复原 `macos-file-recovery`，整档见 `references/macos-disk-cleanup.md` / `references/macos-file-recovery.md`，脚本在 `scripts/`。小节速查如下，完整 Runbook 点进 reference。
+> 🗂️ 2026-10-30 curator 合并：原独立 skill `macos-disk-audit-cleanup`（2026-10-24 首轮实战沉淀：51G rkr_staging 归档 + Docker/go-build 清理，32G→68G）整档收纳至 `references/macos-disk-audit-cleanup/SKILL.md`。**新增四件套**：① 30 秒审计配方（df→du 一级→逐层钻取 + swap/快照）；② 字母菜单决策法（华哥回「a.c」=A+C 项，零风险/需核验/华哥手动/待批专项 四档分级）；③ zstd 归档配方（压缩→`zstd -t` 验证→抽验→才删原件；`tar -tf | head` broken pipe 是假警报）；④ 删除前置核验单（同名不同物看 `docker inspect` 挂载实据、`_dup1` 是入库主副本非重复、`docker system prune -f` 会删停用容器、已压缩格式再压零收益）。触发词并入：磁盘使用情况/空间去哪了、华哥批复清理选项字母、rkr_staging 归档专项。
 
 ## 磁盘清理速查（先扫描分级 → 华哥确认 → 绝不一键清）
 

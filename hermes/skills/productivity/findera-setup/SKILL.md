@@ -8,6 +8,8 @@ tags: [寻元, 采集, staging, RKR同步]
 
 # FindEra 寻元系统配置与维护
 
+> 🗓️ **2026-10-30 现状核验（curator）**：FindEra 容器已不在运行（`docker ps -a` 仅 baike/lookforge 4 容器）；`01-FindEra寻元/` 目录已不存在，RKR 独存于 `渔芯独角兽/02-产品开发综合平台/02-RKR知识库/`（有 docker-compose.yml，2026-10-12 起「RKR上云」方案推进中）；`~/rkr_staging` 仍有 47G（10-24 已归档首轮）。**本 skill 保留为历史运维档案**——容器全缺席/停机窗口/迁移路径等 SOP 的方法论仍适用于 RKR 知识库平台与任何 docker compose 项目；**跑任何恢复动作前先按下方「权威确认法」用 docker inspect 反查真实路径**，勿按本文路径直接执行。
+
 ## 云迁移评估（2026-09-05，待华哥定案）
 
 > 寻元+RKR 迁阿里云完整方案与实测数据见 [references/cloud-migration-plan-2026-09.md](references/cloud-migration-plan-2026-09.md)：官网机 121.43.127.211（4C8G 经济型e）升配 8C16G+100G 盘 ≈ ¥210-255/月 vs 新购 ¥565/月；12 容器峰值 8G 内存、40G 数据、amd64 重建、执行序列十步全在。华哥暂缓考虑中，**定案后直接按该文件执行，不要重新盘点**。通用云技术见 alicloud-ecs-website-deploy skill。

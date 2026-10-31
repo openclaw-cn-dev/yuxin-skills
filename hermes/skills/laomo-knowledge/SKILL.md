@@ -155,7 +155,7 @@ python3.9 (cron 沙箱默认) 不支持 inline `(?m)` + 双反斜杠组合,必�
    - ✅ `python3 /Users/hua/.hermes/scripts/heartbeat_check.py 老莫`
    - ✅ `python3 /tmp/r707_ground_truth_probe.py` (绝对路径, 不依赖 cwd, R707 复用 R704 探针 + 加 v5 公式计算)
    - ✅ `python3 /tmp/r707_postwrite_assert.py` (绝对路径, post-write dup 断言)
-   - ✅ `python3 /Users/hua/.hermes/skills/laomo-heartbeat/scripts/direct_prune_write.py /tmp/r707_entry.txt 1 697 707` (drop_n=1)
+   - ✅ `python3 /Users/hua/.hermes/skills/cron-self-evolution-toolkit/references/laomo-heartbeat/scripts/direct_prune_write.py /tmp/r707_entry.txt 1 697 707` (drop_n=1)
    - ❌ 禁 `python3 ~/.hermes/scripts/...` (R683 实证踩坑: 解析为 profile home 不存在)
    - ❌ 禁 `python3 $HOME/.hermes/...` 同型劫持
    - ❌ 禁 `pathlib.Path.home() / ".hermes" / ...` 拼路径 (AGENTS.md 严令)
@@ -221,7 +221,7 @@ python3.9 (cron 沙箱默认) 不支持 inline `(?m)` + 双反斜杠组合,必�
 
 3. **P#137 v2 投影本轮命中** — 落盘 1401 chars 投影：drop0 → margin 1537(×0.74)/964(×1.000) 均临界区；drop1 → 4170/3597 均充裕 → drop_n=1 → 实测 post margin 4316（保守方向命中，drop0 将落临界区，决策正确）。
 
-4. **写入器 canonical 确认** — `/Users/hua/.hermes/skills/laomo-heartbeat/scripts/direct_prune_write.py`（R745 实测成功）；laomo-knowledge/scripts/ 下 r534/r537/r540_direct_write.py 为历史模板（R745 首调 r534 无效），勿混淆。
+4. **写入器 canonical 确认** — `/Users/hua/.hermes/skills/cron-self-evolution-toolkit/references/laomo-heartbeat/scripts/direct_prune_write.py`（R745 实测成功）；laomo-knowledge/scripts/ 下 r534/r537/r540_direct_write.py 为历史模板（R745 首调 r534 无效），勿混淆。
 
 5. **断言脚本小坑入档** — drop 后 post-write 断言若硬编码预期起点（如 719）会误报不连续；期望区间取 chunk 首尾实际 R（720..745），勿由 drop 目标预设起点。
 
