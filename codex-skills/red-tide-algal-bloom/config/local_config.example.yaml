@@ -1,0 +1,68 @@
+---
+# Local Configuration Example for red-tide-algal-bloom-monitoring Skill
+# Copy this file to local_config.yaml and customize for your environment
+# local_config.yaml values override default_config.yaml
+
+# Development Environment Example
+llm:
+  model:
+    default: "claude-sonnet-4-6"
+    temperature: 0.8  # Higher temperature for more creative development
+
+logging:
+  level: "DEBUG"  # Verbose logging for development
+  telemetry:
+    enabled: true
+    trace_sample_rate: 1.0  # Full tracing in development
+
+# Performance Tuning for Development
+performance:
+  batch_size: 5  # Smaller batches for faster iteration
+  cache_size_mb: 256  # Smaller cache for development
+
+# Feature Flags for Testing
+features:
+  enable_beta_features: true  # Enable experimental features
+  enable_offline_mode: true  # Allow offline testing
+
+# Example: Production Environment Configuration
+# llm:
+#   model:
+#     default: "claude-opus-4-7"
+#     temperature: 0.3  # Lower temperature for consistent production behavior
+#
+# logging:
+#   level: "WARNING"  # Only log warnings and errors in production
+#   telemetry:
+#     enabled: true
+#     trace_sample_rate: 0.01  # Sample 1% of requests in production
+#
+# performance:
+#   batch_size: 20  # Larger batches for production efficiency
+#   cache_size_mb: 1024  # Larger cache for production
+#
+# security:
+#   rate_limiting:
+#     requests_per_minute: 120  # Higher rate limit for production
+#   api_key_rotation_days: 30  # More frequent key rotation in production
+
+# Example: Testing Environment Configuration
+# llm:
+#   model:
+#     default: "claude-haiku-4-5"  # Faster model for testing
+#     temperature: 0.5
+#
+# logging:
+#   level: "INFO"
+#   telemetry:
+#     enabled: false  # Disable telemetry in testing
+#
+# features:
+#   enable_ml_predictions: false  # Disable ML for faster tests
+#   enable_satellite_imagery: false  # Use mock data for tests
+
+# Environment Variable Override Examples
+# These can be set instead of using local_config.yaml:
+# RED_TIDE_SKILL_LLM_MODEL_DEFAULT=claude-opus-4-7
+# RED_TIDE_SKILL_LOGGING_LEVEL=DEBUG
+# RED_TIDE_SKILL_FEATURES_ENABLE_BETA_FEATURES=true

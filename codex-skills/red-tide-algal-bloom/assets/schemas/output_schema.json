@@ -1,0 +1,249 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://red-tide-skill.example.com/schemas/output.json",
+  "title": "RedTideSkillOutput",
+  "description": "Output schema for red-tide-algal-bloom-monitoring skill results",
+  "type": "object",
+  "required": ["metadata", "analysis", "evidence_chain", "conclusion", "disclosure"],
+  "properties": {
+    "metadata": {
+      "$ref": "#/definitions/Metadata"
+    },
+    "requirements": {
+      "$ref": "#/definitions/Requirements"
+    },
+    "evidence_bundle": {
+      "$ref": "#/definitions/EvidenceBundle"
+    },
+    "analysis": {
+      "$ref": "#/definitions/Analysis"
+    },
+    "knowledge_base": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/KnowledgeEntry"
+      }
+    },
+    "evidence_chain": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "$ref": "#/definitions/EvidenceLink"
+      }
+    },
+    "conclusion": {
+      "$ref": "#/definitions/Conclusion"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Recommendation"
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/definitions/Scenario"
+      }
+    },
+    "disclosure": {
+      "$ref": "#/definitions/Disclosure"
+    }
+  },
+  "definitions": {
+    "Metadata": {
+      "type": "object",
+      "required": ["skill_version", "timestamp", "language"],
+      "properties": {
+        "skill_version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+        "timestamp": {"type": "string", "format": "date-time"},
+        "language": {"type": "string", "enum": ["en", "vi", "es", "fr", "ja", "zh"]},
+        "processing_time_ms": {"type": "number", "minimum": 0},
+        "degradation_level": {"type": "integer", "minimum": 0, "maximum": 4}
+      }
+    },
+    "Requirements": {
+      "type": "object",
+      "properties": {
+        "object_of_analysis": {"type": "string"},
+        "scope": {"type": "string"},
+        "timeframe": {"type": "string"},
+        "available_inputs": {"type": "array", "items": {"type": "string"}},
+        "target_audience": {"type": "string"},
+        "language": {"type": "string"},
+        "analysis_type": {"type": "string"}
+      }
+    },
+    "EvidenceBundle": {
+      "type": "object",
+      "properties": {
+        "current_data": {
+          "type": "object",
+          "properties": {
+            "satellite_chl_a": {"type": "object"},
+            "sst": {"type": "object"},
+            "in_situ_counts": {"type": "object"},
+            "toxin_levels": {"type": "object"}
+          }
+        },
+        "authoritative_docs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DocumentRef"
+          }
+        },
+        "recent_news": {
+          "type": "array",
+          "items": {"type": "object"}
+        },
+        "reference_benchmarks": {
+          "type": "object"
+        }
+      }
+    },
+    "DocumentRef": {
+      "type": "object",
+      "required": ["source", "date", "tier"],
+      "properties": {
+        "source": {"type": "string"},
+        "url": {"type": "string", "format": "uri"},
+        "date": {"type": "string"},
+        "tier": {"type": "integer", "minimum": 1, "maximum": 4}
+      }
+    },
+    "Analysis": {
+      "type": "object",
+      "properties": {
+        "detection": {
+          "type": "object",
+          "properties": {
+            "bloom_status": {"type": "string", "enum": ["No Bloom", "Elevated", "Bloom", "Major Bloom", "Unknown"]},
+            "cell_concentration": {"type": "string"},
+            "species_identified": {"type": "array", "items": {"type": "string"}},
+            "confidence": {"type": "string", "enum": ["Very Low", "Low", "Medium", "High", "Very High"]}
+          }
+        },
+        "triggers": {
+          "type": "object",
+          "properties": {
+            "temperature": {
+              "type": "object",
+              "properties": {
+                "value": {"type": "number"},
+                "anomaly": {"type": "number"},
+                "unit": {"type": "string", "const": "°C"}
+              }
+            },
+            "nutrients": {
+              "type": "object",
+              "properties": {
+                "nitrogen": {"type": "number"},
+                "phosphorus": {"type": "number"},
+                "n_p_ratio": {"type": "number"}
+              }
+            },
+            "stratification": {"type": "string", "enum": ["Absent", "Weak", "Moderate", "Strong"]},
+            "upwelling": {"type": "string", "enum": ["Absent", "Weak", "Moderate", "Strong"]}
+          }
+        },
+        "toxin_risk": {
+          "type": "object",
+          "properties": {
+            "toxin_type": {"type": "array", "items": {"type": "string"}},
+            "risk_level": {"type": "string", "enum": ["Very Low", "Low", "Moderate", "High", "Critical"]},
+            "regulatory_limit_exceeded": {"type": "boolean"},
+            "regulatory_limits": {
+              "type": "object",
+              "properties": {
+                "brevetoxins": {"type": "string"},
+                "saxitoxins": {"type": "string"},
+                "okadaic_acid": {"type": "string"},
+                "domoic_acid": {"type": "string"}
+              }
+            }
+          }
+        },
+        "aquaculture_impact": {
+          "type": "object",
+          "properties": {
+            "species_affected": {"type": "array", "items": {"type": "string"}},
+            "vulnerability_level": {"type": "string", "enum": ["Low", "Moderate", "High", "Critical"]},
+            "economic_risk": {"type": "string", "enum": ["Low", "Moderate", "High", "Critical"]},
+            "harvest_closure_recommended": {"type": "boolean"},
+            "depuration_estimate_days": {"type": "number"}
+          }
+        }
+      }
+    },
+    "KnowledgeEntry": {
+      "type": "object",
+      "properties": {
+        "citation": {"type": "string"},
+        "tier": {"type": "integer", "minimum": 1, "maximum": 4},
+        "relevance": {"type": "string", "enum": ["Low", "Medium", "High", "Critical"]},
+        "doi": {"type": "string"},
+        "venue": {"type": "string"},
+        "year": {"type": "integer"},
+        "key_findings": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "EvidenceLink": {
+      "type": "object",
+      "properties": {
+        "claim": {"type": "string"},
+        "evidence": {"type": "array", "items": {"type": "string"}},
+        "confidence": {"type": "string", "enum": ["Low", "Medium", "High", "Very High"]},
+        "source_tier": {"type": "integer", "minimum": 1, "maximum": 4}
+      }
+    },
+    "Conclusion": {
+      "type": "object",
+      "required": ["category"],
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": [
+            "Low Risk",
+            "Normal",
+            "Monitor (elevated)",
+            "Critical Bloom Alert",
+            "Inconclusive"
+          ]
+        },
+        "summary": {"type": "string"},
+        "confidence": {"type": "string", "enum": ["Low", "Medium", "High"]},
+        "key_factors": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "Recommendation": {
+      "type": "object",
+      "properties": {
+        "action": {"type": "string"},
+        "priority": {"type": "string", "enum": ["Immediate", "High", "Medium", "Low"]},
+        "evidence": {"type": "array", "items": {"type": "string"}},
+        "deadline": {"type": "string"}
+      }
+    },
+    "Scenario": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string", "enum": ["Best Case", "Base Case", "Worst Case"]},
+        "probability": {"type": "string"},
+        "impact": {"type": "string"},
+        "mitigation": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "Disclosure": {
+      "type": "object",
+      "required": ["limitations", "uncertainties", "data_quality"],
+      "properties": {
+        "limitations": {"type": "array", "items": {"type": "string"}},
+        "uncertainties": {"type": "array", "items": {"type": "string"}},
+        "data_quality": {"type": "string", "enum": ["Poor", "Fair", "Good", "Excellent"]},
+        "assumptions": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

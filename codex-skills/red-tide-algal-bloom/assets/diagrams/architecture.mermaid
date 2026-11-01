@@ -1,0 +1,100 @@
+graph TB
+    subgraph "External Input"
+        USER[User Query]
+    end
+
+    subgraph "Pre-Flight"
+        LANG[Language Detection]
+    end
+
+    subgraph "Skill Harness"
+        MAIN[main.md - Orchestrator]
+
+        subgraph "Step 1 - Intake"
+            S1[sub-gather-requirements]
+        end
+
+        subgraph "Step 2 - Data Collection"
+            S2[sub-evidence-collector]
+            S2A[Satellite APIs]
+            S2B[In-Situ Sensors]
+            S2C[Authoritative Docs]
+        end
+
+        subgraph "Step 3 - Core Analysis"
+            S3[sub-core-analysis]
+            S3A[Bloom Detection]
+            S3B[Trigger Analysis]
+            S3C[Toxin Risk]
+            S3D[Aquaculture Impact]
+        end
+
+        subgraph "Step 4 - Knowledge"
+            S4[sub-knowledge-updater]
+            S4A[SECOND-KNOWLEDGE-BRAIN]
+        end
+
+        subgraph "Step 5 - Synthesis"
+            S5[sub-advisor]
+            S5A[Risk Synthesis]
+            S5B[Scenario Building]
+            S5C[Recommendations]
+        end
+    end
+
+    subgraph "Quality Gates"
+        QG[Quality Gate Review]
+        U1[U1-U6 Universal]
+        G1[G1-G4 Domain]
+    end
+
+    subgraph "Production Infrastructure"
+        CONFIG[config/ - Type-safe Config]
+        LOGS[scripts/structured_logger.py]
+        CACHE[scripts/context_manager.py]
+        DEGRADE[scripts/graceful_degradation.py]
+    end
+
+    subgraph "Automation"
+        SETUP[scripts/setup.py]
+        BATCH[scripts/batch_analysis.py]
+        EXPORT[scripts/export_results.py]
+        INGEST[scripts/data_ingestion.py]
+    end
+
+    subgraph "External Services"
+        COP[ai/Copernicus Marine]
+        NOAA[NOAA HAB-OFS]
+        IOC[IOC-UNESCO HAB]
+        SEM[SEM/Semantic Scholar]
+        ARXIV[ai/ArXiv]
+    end
+
+    USER --> LANG
+    LANG --> MAIN
+    MAIN --> S1
+    S1 --> S2
+    S2 --> S2A & S2B & S2C
+    S2A & S2B & S2C --> S3
+    S3 --> S3A & S3B & S3C & S3D
+    S3 --> S4
+    S4 --> S4A
+    S4 --> S5
+    S5 --> S5A & S5B & S5C
+    S5 --> QG
+    QG --> U1 & G1
+    U1 & G1 --> USER
+
+    S2A -.-> COP & NOAA
+    S2B -.-> IOC
+    S4A -.-> SEM & ARXIV
+
+    CONFIG -.-> MAIN
+    LOGS -.-> MAIN
+    CACHE -.-> MAIN
+    DEGRADE -.-> MAIN
+
+    SETUP -.-> CONFIG
+    BATCH -.-> MAIN
+    EXPORT -.-> S5
+    INGEST -.-> S4A

@@ -1,0 +1,11 @@
+# Python dependencies for red-tide-algal-bloom-monitoring
+# Install with:  pip install -r requirements.txt
+#
+# Runtime dependencies (imported by tools/ and scripts/):
+feedparser>=6.0.10
+python-dateutil>=2.8.2
+requests>=2.31.0
+pyyaml>=6.0
+
+# Test dependencies (only required for the pytest suite):
+pytest>=7.4.0

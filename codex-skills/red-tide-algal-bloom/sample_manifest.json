@@ -1,0 +1,43 @@
+{
+  "manifest_version": "1.0",
+  "created": "2026-07-16T16:34:01.390080",
+  "description": "Sample batch analysis manifest",
+  "cases": [
+    {
+      "case_id": "sample_001",
+      "query": "Analyze red tide risk for oyster farms in Apalachicola Bay",
+      "region": "Apalachicola Bay, Florida",
+      "timeframe": "next 7 days",
+      "target_audience": "aquaculture",
+      "language": "en",
+      "priority": "normal",
+      "options": {
+        "include_recommendations": true,
+        "include_scenarios": true,
+        "detail_level": "standard"
+      }
+    },
+    {
+      "case_id": "sample_002",
+      "query": "Assess current bloom status and toxin risk for shellfish harvest",
+      "region": "Puget Sound, Washington",
+      "timeframe": "current",
+      "target_audience": "public_health",
+      "language": "en",
+      "priority": "high"
+    },
+    {
+      "case_id": "sample_003",
+      "query": "Evaluate environmental triggers and bloom potential",
+      "region": "Gulf of Maine",
+      "timeframe": "next 14 days",
+      "target_audience": "researcher",
+      "language": "en",
+      "priority": "normal",
+      "options": {
+        "include_recommendations": false,
+        "detail_level": "comprehensive"
+      }
+    }
+  ]
+}

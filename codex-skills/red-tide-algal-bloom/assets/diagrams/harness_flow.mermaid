@@ -1,0 +1,98 @@
+sequenceDiagram
+    actor User
+    participant Main as main.md
+    participant Lang as Language Detector
+    participant Req as sub-gather-requirements
+    participant Ev as sub-evidence-collector
+    participant Core as sub-core-analysis
+    participant KB as sub-knowledge-updater
+    participant Adv as sub-advisor
+    participant Gate as Quality Gate
+
+    User->>Main: /red-tide-algal-bloom-monitoring [query]
+
+    rect rgb(240, 248, 255)
+        Note over Main,Lang: PRE-FLIGHT
+        Main->>Lang: detect_language(query)
+        Lang->>Lang: Analyze character set & keywords
+        Lang-->>Main: language_config
+    end
+
+    rect rgb(255, 250, 240)
+        Note over Main,Req: STEP 1 - REQUIREMENTS
+        Main->>Req: invoke(requirements)
+        Req->>Req: Parse query for object, scope, timeframe
+        Req-->>Main: structured_requirements
+        Main->>Main: Gate: object confirmed?
+    end
+
+    rect rgb(240, 255, 240)
+        Note over Main,Ev: STEP 2 - EVIDENCE COLLECTION
+        Main->>Ev: invoke(evidence, requirements)
+        Ev->>Ev: fetch_satellite_data()
+        Ev->>Ev: query_in_situ_sensors()
+        Ev->>Ev: fetch_authoritative_docs()
+        alt Live sources available
+            Ev-->>Main: evidence_bundle
+        else Sources down
+            Ev->>Ev: fallback to SECOND-KNOWLEDGE-BRAIN
+            Ev-->>Main: evidence_bundle + LIMITATION flag
+        end
+        Main->>Main: Gate: ≥1 source retrieved?
+    end
+
+    rect rgb(255, 245, 238)
+        Note over Main,Core: STEP 3 - CORE ANALYSIS
+        Main->>Core: invoke(analysis, evidence)
+        Core->>Core: detect_bloom(satellite + in-situ)
+        Core->>Core: analyze_triggers(T, nutrients, stratification)
+        Core->>Core: assess_toxin_risk(species, levels)
+        Core->>Core: evaluate_aquaculture_impact()
+        Core-->>Main: analysis_scorecard
+        Main->>Main: Gate: detection complete?
+    end
+
+    rect rgb(245, 240, 255)
+        Note over Main,KB: STEP 4 - KNOWLEDGE BASE
+        Main->>KB: invoke(knowledge, keywords)
+        KB->>KB: search SECOND-KNOWLEDGE-BRAIN
+        alt Found in KB
+            KB-->>Main: citations + tiers
+        else Gaps detected
+            KB->>KB: WebSearch gap-fill (max 2)
+            KB-->>Main: citations + gap_flags
+        end
+        Main->>Main: Gate: ≥1 citation surfaced?
+    end
+
+    rect rgb(255, 240, 240)
+        Note over Main,Adv: STEP 5 - SYNTHESIS
+        Main->>Adv: invoke(advisor, all_outputs)
+        Adv->>Adv: determine_conclusion_category()
+        Adv->>Adv: build_scenarios(best/base/worst)
+        Adv->>Adv: list_risks + evidence_chain
+        Adv->>Adv: prepend_disclosure()
+        Adv-->>Main: final_draft
+        Main->>Main: Gate: valid verdict + disclosure?
+    end
+
+    rect rgb(240, 240, 240)
+        Note over Main,Gate: STEP 6 - QUALITY GATE REVIEW
+        Main->>Gate: verify_all(gates)
+        loop Each gate U1-U6, G1-G4
+            Gate->>Gate: check_criterion()
+            alt Pass
+                Gate-->>Main: ✓
+            else Fail (retry ≤2)
+                Gate->>Gate: apply_auto_fix()
+                Gate->>Gate: recheck_criterion()
+                alt Recovered
+                    Gate-->>Main: ✓ (auto-fixed)
+                else Failed
+                    Gate-->>Main: ✗ LIMITATION FLAG
+                end
+            end
+        end
+    end
+
+    Main->>User: Final Report + Quality Gate Checklist

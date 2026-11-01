@@ -1,0 +1,139 @@
+---
+# Default Configuration for red-tide-algal-bloom-monitoring Skill
+# This file defines the default values for all configuration parameters
+# Environment-specific overrides can be placed in config/local_config.yaml
+
+# Skill Metadata
+skill:
+  name: "red-tide-algal-bloom-monitoring"
+  version: "2.1.0"
+  description: "Red Tide (Harmful Algal Bloom) Monitoring & Early Warning - HAB Monitoring & Aquaculture Safety analysis & decision-support harness"
+  author: "972026 Skill Library"
+  license: "MIT"
+
+# LLM Configuration
+llm:
+  model:
+    default: "claude-sonnet-4-6"
+    fallback: "claude-haiku-4-5"
+    temperature: 0.7
+    max_tokens: 8192
+
+  context:
+    window_size: 200000
+    reserved_output_tokens: 4096
+    max_input_tokens: 159804
+
+  token_management:
+    enable_caching: true
+    cache_ttl_seconds: 300
+    enable_compression: true
+    target_compression_ratio: 0.3
+
+# Processing Configuration
+processing:
+  timeout_seconds: 120
+  max_retries: 3
+  retry_delay_seconds: 2
+  parallel_subtasks: true
+  max_parallel_tasks: 4
+
+# Data Source Configuration
+data_sources:
+  satellite:
+    primary_provider: "copernicus"
+    fallback_providers: ["noaa", "nasa"]
+    refresh_interval_hours: 6
+    max_age_hours: 24
+
+  in_situ:
+    sensor_types: ["fluorometer", "ctd", "spectrometer"]
+    data_retention_days: 365
+    quality_threshold: 0.7
+
+  authoritative:
+    sources:
+      - name: "IOC-UNESCO"
+        url: "https://ioc-unesco.org"
+        priority: 1
+      - name: "NOAA HAB-OFS"
+        url: "https://hab.oceanweather.com"
+        priority: 2
+      - name: "Copernicus Marine"
+        url: "https://marine.copernicus.eu"
+        priority: 3
+
+# Quality Gate Configuration
+quality_gates:
+  universal:
+    enabled: true
+    strict_mode: false
+    max_auto_fix_attempts: 2
+
+  domain:
+    enabled: true
+    custom_thresholds:
+      evidence_sources_min: 3
+      authoritative_sources_min: 1
+      risk_disclosure_required: true
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "structured"
+  outputs:
+    - type: "console"
+      enabled: true
+    - type: "file"
+      enabled: true
+      path: "logs/skill.log"
+      max_size_mb: 100
+      backup_count: 5
+
+  telemetry:
+    enabled: true
+    metrics_port: 8080
+    trace_sample_rate: 0.1
+
+# Error Handling
+error_handling:
+  graceful_degradation:
+    enabled: true
+    levels: 5
+    default_level: 2
+
+  fallback:
+    enable_knowledge_base: true
+    enable_cache: true
+    enable_simplified_analysis: true
+
+  recovery:
+    max_retry_attempts: 3
+    exponential_backoff: true
+    max_backoff_seconds: 60
+
+# Feature Flags
+features:
+  enable_ml_predictions: true
+  enable_satellite_imagery: true
+  enable_alert_system: true
+  enable_multi_language: true
+  enable_offline_mode: false
+  enable_beta_features: false
+
+# Performance Optimization
+performance:
+  enable_async_operations: true
+  batch_size: 10
+  prefetch_enabled: true
+  cache_strategy: "lru"
+  cache_size_mb: 512
+
+# Security
+security:
+  encrypt_sensitive_data: true
+  audit_logging: true
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60
+  api_key_rotation_days: 90

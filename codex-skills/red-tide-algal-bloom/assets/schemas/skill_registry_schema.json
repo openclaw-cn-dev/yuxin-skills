@@ -1,0 +1,259 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://red-tide-skill.example.com/schemas/skill-registry.json",
+  "title": "SkillRegistrySchema",
+  "description": "Schema for the skill registry defining skill registration, resolution, and execution",
+  "type": "object",
+  "required": ["registry_version", "skills"],
+  "properties": {
+    "registry_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the skill registry format"
+    },
+    "skill_name": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Unique skill identifier in kebab-case"
+    },
+    "skills": {
+      "type": "object",
+      "description": "Map of skill names to their definitions",
+      "additionalProperties": {
+        "$ref": "#/definitions/SkillDefinition"
+      }
+    }
+  },
+  "definitions": {
+    "SkillDefinition": {
+      "type": "object",
+      "required": ["name", "description", "version", "entry_point", "triggers"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique skill name"
+        },
+        "description": {
+          "type": "string",
+          "description": "One-line summary of what the skill does and when to trigger it"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "entry_point": {
+          "type": "string",
+          "description": "Path to the main skill definition file relative to the skill directory"
+        },
+        "triggers": {
+          "$ref": "#/definitions/TriggerConfig"
+        },
+        "sub_skills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubSkillRef"
+          }
+        },
+        "hooks": {
+          "$ref": "#/definitions/HooksConfig"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ToolDefinition"
+          }
+        },
+        "quality_gates": {
+          "$ref": "#/definitions/QualityGatesConfig"
+        },
+        "degradation": {
+          "$ref": "#/definitions/DegradationConfig"
+        },
+        "input_schema": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Reference to the input JSON schema"
+        },
+        "output_schema": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Reference to the output JSON schema"
+        }
+      }
+    },
+    "TriggerConfig": {
+      "type": "object",
+      "properties": {
+        "keywords": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Keywords and phrases that should trigger this skill"
+        },
+        "context_patterns": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Regex patterns for matching context"
+        },
+        "domain_keywords": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Domain-specific terms that indicate relevance"
+        },
+        "exclusion_patterns": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Patterns that should NOT trigger this skill"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Resolution priority when multiple skills match"
+        },
+        "confidence_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Minimum confidence required to trigger"
+        }
+      }
+    },
+    "SubSkillRef": {
+      "type": "object",
+      "required": ["name", "entry_point", "execution_order"],
+      "properties": {
+        "name": {"type": "string"},
+        "entry_point": {"type": "string"},
+        "execution_order": {"type": "integer", "minimum": 1},
+        "required": {"type": "boolean", "default": true},
+        "depends_on": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Sub-skills that must complete before this one"
+        },
+        "timeout_seconds": {"type": "integer", "default": 60},
+        "retry_count": {"type": "integer", "default": 2}
+      }
+    },
+    "HooksConfig": {
+      "type": "object",
+      "properties": {
+        "pre_execution": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/HookDefinition"}
+        },
+        "during_execution": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/HookDefinition"}
+        },
+        "post_execution": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/HookDefinition"}
+        }
+      }
+    },
+    "HookDefinition": {
+      "type": "object",
+      "required": ["name", "event"],
+      "properties": {
+        "name": {"type": "string"},
+        "event": {
+          "type": "string",
+          "enum": [
+            "language_detection",
+            "requirement_validation",
+            "tool_availability",
+            "before_tool_call",
+            "after_tool_call",
+            "on_tool_failure",
+            "quality_gate_validation",
+            "evidence_verification",
+            "output_formatting"
+          ]
+        },
+        "handler": {"type": "string", "description": "Function or method name to invoke"},
+        "async": {"type": "boolean", "default": false}
+      }
+    },
+    "ToolDefinition": {
+      "type": "object",
+      "required": ["name", "description", "parameters", "response_schema"],
+      "properties": {
+        "name": {"type": "string"},
+        "description": {"type": "string"},
+        "parameters": {
+          "type": "object",
+          "description": "JSON Schema for tool parameters"
+        },
+        "response_schema": {
+          "type": "object",
+          "description": "JSON Schema for tool response"
+        },
+        "execution_handler": {"type": "string"},
+        "timeout": {"type": "integer", "default": 30},
+        "retry": {"type": "integer", "default": 3},
+        "cacheable": {"type": "boolean", "default": false},
+        "cache_ttl_seconds": {"type": "integer", "default": 300}
+      }
+    },
+    "QualityGatesConfig": {
+      "type": "object",
+      "properties": {
+        "universal": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "criterion"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^U[1-6]$"},
+              "criterion": {"type": "string"},
+              "auto_fix": {"type": "string"},
+              "exit_condition": {"type": "string"},
+              "max_retries": {"type": "integer", "default": 2}
+            }
+          }
+        },
+        "domain": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "criterion"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^G[1-4]$"},
+              "criterion": {"type": "string"},
+              "auto_fix": {"type": "string"},
+              "exit_condition": {"type": "string"},
+              "max_retries": {"type": "integer", "default": 1}
+            }
+          }
+        }
+      }
+    },
+    "DegradationConfig": {
+      "type": "object",
+      "properties": {
+        "levels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["level", "condition", "behavior"],
+            "properties": {
+              "level": {"type": "integer", "minimum": 0, "maximum": 4},
+              "name": {"type": "string"},
+              "condition": {"type": "string"},
+              "behavior": {"type": "string"},
+              "banner_template": {"type": "string"}
+            }
+          }
+        },
+        "triggers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "description": "Degradation level triggered by this failure"
+          }
+        }
+      }
+    }
+  }
+}

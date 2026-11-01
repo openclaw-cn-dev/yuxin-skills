@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://red-tide-skill.example.com/schemas/input.json",
+  "title": "RedTideSkillInput",
+  "description": "Input schema for red-tide-algal-bloom-monitoring skill invocation",
+  "type": "object",
+  "required": ["query"],
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "User's natural language query about HAB monitoring or aquaculture safety",
+      "minLength": 1,
+      "maxLength": 4096,
+      "examples": [
+        "Analyze red tide risk for oyster farms in Apalachicola Bay",
+        "What's the current bloom status off the coast of Maine?",
+        "Assess toxin risk for shellfish harvest in Puget Sound"
+      ]
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string",
+          "description": "Geographic region of interest",
+          "minLength": 1
+        },
+        "timeframe": {
+          "type": "string",
+          "description": "Analysis timeframe",
+          "pattern": "^(current|next \\d+ days|past \\d+ days|custom)$"
+        },
+        "target_audience": {
+          "type": "string",
+          "enum": ["aquaculture", "public_health", "researcher", "general", "government"]
+        },
+        "language": {
+          "type": "string",
+          "enum": ["en", "vi", "es", "fr", "ja", "zh"],
+          "default": "en"
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "include_recommendations": {
+          "type": "boolean",
+          "default": true
+        },
+        "include_scenarios": {
+          "type": "boolean",
+          "default": true
+        },
+        "detail_level": {
+          "type": "string",
+          "enum": ["brief", "standard", "comprehensive"],
+          "default": "standard"
+        }
+      }
+    }
+  }
+}
