@@ -1,5 +1,5 @@
-model_provider = "ZAI"
-model = "glm-5.3-flash"
+model_provider = "YUXIN"
+model = "deepseek-flash"
 model_reasoning_effort = "high"
 disable_response_storage = true
 wire_api = "responses"
@@ -10,9 +10,9 @@ sandbox_mode = "danger-full-access"
 approval_policy = "never"
 
 [model_providers]
-[model_providers.ZAI]
-name = "ZAI"
-base_url = "https://open.bigmodel.cn/api/v1"
+[model_providers.YUXIN]
+name = "渔芯网关"
+base_url = "https://lookforge.net/llm-gateway/openai/v1"
 wire_api = "responses"
 requires_openai_auth = true
 experimental_bearer_token = "<REDACTED>"
