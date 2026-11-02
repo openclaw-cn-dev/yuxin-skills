@@ -6,6 +6,8 @@ category: file-management
 
 # Batch File Renaming
 
+> **已吸收子管线（curator 合并 2026-10-16）**：AI 名词卡片批量重命名的 3 阶段智能识别管线（OCR 直读 → 感知哈希分组 → 知识库匹配，85-100% 识别率）原独立 skill `ai-flashcard-batch-rename` 已并入本 skill——管线 SOP 见 `references/ai-flashcard-3stage-pipeline.md`，可复用脚本 `scripts/rename_flashcards.py`，术语知识库 `references/terminology_knowledge_base.md`。触发词：图片重命名 / AI名词卡片 / tXXX 编号 / 乱码文件名 / 豆包生成图。
+
 ## Description
 
 Renaming multiple files systematically, especially when files contain embedded identifiers (knowledge cards, labeled images, sequentially generated content). Use this skill whenever you need to rename a batch of files based on their content rather than just their filenames or timestamps.
@@ -256,8 +258,8 @@ For AI knowledge card projects (each term has 4 variations):
 
 ## References
 
-- See `references/***SECRET***.md` for session details on user's explicit mandate to use OCR exclusively (no preset tables)
-- See `references/ai-knowledge-cards-2026-07-13.md` for detailed session notes on AI training platform knowledge card projects
+- See `ai-vision/image-intelligence-platform/references/***SECRET***.md` for session details on user's explicit mandate to use OCR exclusively (no preset tables) — moved 2026-10-23 to the image-intelligence-platform umbrella
+- See `ai-vision/image-intelligence-platform/references/flashcard-session-2026-07-13.md` for detailed session notes on AI training platform knowledge card projects — moved 2026-10-23 to the image-intelligence-platform umbrella
 - See `scripts/ocr_macos_vision.swift` for the macOS Vision Swift OCR script
 - See `references/***SECRET***.md` for token-saving strategies
 - See `scripts/smart_rename_ai_cards.py` — **DEPRECATED** by user mandate (2026-07-13), use macOS Vision OCR instead

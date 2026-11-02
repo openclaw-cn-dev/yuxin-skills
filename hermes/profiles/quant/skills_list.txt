@@ -1,10 +1,10 @@
 apple
+arxiv-qfin-digest
 autonomous-ai-agents
 creative
 data-science
 devops
 diagramming
-dogfood
 domain
 email
 frontend-ui
@@ -19,6 +19,7 @@ mlops
 mlops-toolkit
 note-taking
 pit-audit-protocol
+portfolio-review-protocol
 product
 productivity
 quant
@@ -27,7 +28,7 @@ quant-workflow
 quantitative-research
 red-teaming
 research
-sklearn-calibration-usage-2026-09-07.md
 smart-home
 social-media
 software-development
+vectorbt-research-workflow

@@ -304,3 +304,7 @@ approvals.cron_mode: approve only if this cron profile is intentionally trusted.
 - `references/***SECRET***.md` — full playbook for the **seven** profile-agent failure modes (HOME hijack / registry scope / stale skill腐化 / cross-profile write guard / cross-profile interface gap / **SOP-vs-AGENTS.md drift** / **compliance signal reconnaissance**), plus cron-mode tool pitfalls.
 - `templates/***SECRET***.md` — reusable 8-field contract template for the cross-profile "发起方侧单向接口卡" pattern (type 14). Copy and rename with sender/receiver names when a downstream profile is silent on a known handoff.
 - `scripts/skill-health-check.sh <profile-name>` — automated probe; runs the mtime scan, lists stale skills (>90 days), and reminds about L1 vs L3 registry scope.
+
+## UI Polish and Motion Design (absorbed 2026-10-16 · former frontend-ui-polish)
+
+Company-wide frontend UI polish and motion design capabilities — audit checklists for visual hierarchy, spacing, color, depth, and motion categories — live in `references/frontend-ui-polish/` (former standalone skill; the directory now holds a recovery stub rebuilt from pre-merge reading after the original package was lost to a consolidation tooling incident on 2026-10-16 — original three references need re-mining from sessions). When a task is "polish this UI / add polish and motion to the frontend," read `references/frontend-ui-polish/SKILL.md` first; this skill's own scope stays AGENTS.md/CLAUDE.md authoring.

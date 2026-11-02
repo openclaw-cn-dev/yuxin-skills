@@ -94,3 +94,15 @@ with sync_playwright() as p:
   - `element_discovery.py` - Discovering buttons, links, and inputs on a page
   - `static_html_automation.py` - Using file:// URLs for local HTML
   - `console_logging.py` - Capturing console logs during automation
+
+## QA 方法论（2026-10-23 curator 收纳原 dogfood skill）
+
+探索式 Web QA（找 bug、采证据、出报告）的 5 阶段方法论整档收纳于原 dogfood skill（2026-10-23 归档，存根见 `~/.hermes/skills/.archive/dogfood-2026-10-23/`）。核心流程：
+
+1. **Plan** — 定范围（URL、角色、关键流）、时间盒、判废标准
+2. **Explore** — 正常走主流程一遍记录真实行为，再走边缘路径（空输入、超长输入、刷新/回退、并发双开、断网恢复）
+3. **Collect Evidence** — 每个疑点立即固定证据：截图 + 网络面板 + console 报错 + 复现步骤；用 scripts/ 里的 Playwright 脚本自动化取证
+4. **Categorize** — 按 `references/issue-taxonomy.md` 分类（功能/数据/UI/性能/安全），按 严重度×复现率 排优先级
+5. **Report** — 用 `templates/dogfood-report-template.md` 出报告：每条 bug = 现象 + 证据 + 复现步骤 + 建议
+
+与本文档的分工：本文件管"怎么驱动浏览器测试"（工具面），上述方法论管"测什么、怎么判坏、怎么报告"（流程面）。

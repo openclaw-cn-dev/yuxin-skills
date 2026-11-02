@@ -4,7 +4,6 @@ creative
 data-science
 devops
 diagramming
-dogfood
 domain
 email
 gaming
@@ -21,4 +20,3 @@ research
 smart-home
 social-media
 software-development
-yuanbao

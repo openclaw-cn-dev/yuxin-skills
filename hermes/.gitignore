@@ -1,3 +1,4 @@
 skills/*/references/
 skills/*/assets/
 scripts/__pycache__/
+**/__pycache__/

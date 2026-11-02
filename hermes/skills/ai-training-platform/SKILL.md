@@ -46,7 +46,7 @@ DeepSeek V4 Pro（及其他 reasoning 模型）先输出 `reasoning_content`（�
 ## Quick Start
 
 > **项目别名**: 用户口中的「知渔」=「KnowHow知渔」= 本平台（品牌名 v5.x 起为「KnowHow知渔 · ai学习平台」）。
-> **当前主目录**: `/Users/hua/6-产品研发/ok-KnowHow知渔/`（旧路径 `23-ai培训教程` / `23-AI培训教程` 已废弃或为副本，以 `ok-KnowHow知渔` 为准）。
+> **当前主目录**: `/Users/hua/6-产品研发/渔芯社区/知渔/` — **2026-10-30 实测**：旧主目录 `ok-KnowHow知渔/` 与 `23-ai培训教程/` 均已不存在，项目已迁入渔芯社区工作区并升到 v5.5.0（Docker/Makefile 启动、pytest 560 passed，见该目录 CLAUDE.md；`make run` 默认 127.0.0.1:8520）。本 skill 以下正文的旧路径均为历史口径，动手前一律以磁盘现状为准（沿下方 DB 多候选纪律 find 重定位）。
 
 ```bash
 cd /Users/hua/6-产品研发/ok-KnowHow知渔
@@ -511,7 +511,7 @@ See `references/job-scraping-recipes.md` for concrete selectors and extraction p
 
 - `execute_code` is BLOCKED in cron mode — use `terminal` with `python3 -c` or write-file-then-execute instead
 - **Heredoc pitfall**: `python3 << 'PYEOF' ... PYEOF` in terminal may be flagged by the security scanner (confusable Unicode detection on CJK text mixed with ASCII). Workaround: use `write_file` to create a `.py` file, then execute it with `python3 /path/to/script.py`. This avoids the scanner entirely and produces a re-runnable artifact.
-- **`skill_view` name-resolution failure (2026-09-14 verified)**: `skills_list` can show a skill while `skill_view(name)` returns `not found` — registry names may differ from the on-disk directory (e.g. registered `cron-mode-tool-constraints` lives at `skills/devops/***SECRET***/`; retrying the same name loops forever). Workaround that always works: locate the file with `search_files` (`pattern: **/<name>/SKILL.md`, `path: /Users/hua/.hermes`) and `read_file` it directly. Same fallback for reading a sibling-profile skill you must consult but not modify.
+- **`skill_view` name-resolution failure (2026-09-14 verified)**: `skills_list` can show a skill while `skill_view(name)` returns `not found` — registry names may differ from the on-disk directory (example from 2026-09: registered `cron-mode-tool-constraints` lived at `skills/devops/***SECRET***/`; **2026-10-30 curator move: that directory now lives inside `cron-self-evolution-toolkit/references/***SECRET***/`**; retrying the same name loops forever). Workaround that always works: locate the file with `search_files` (`pattern: **/<name>/SKILL.md`, `path: /Users/hua/.hermes`) and `read_file` it directly. Same fallback for reading a sibling-profile skill you must consult but not modify.
 - Pipe-to-interpreter (`curl | python3`) triggers security approval — split into two steps: download to temp file, then process
 - `terminal` network requests may time out after 30s — use `--max-time` flag
 

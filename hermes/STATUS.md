@@ -1,11 +1,11 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-09-20 14:00:58
+> 导出时间: 2026-10-31 13:58:48
 > 主机: huadeMac-mini-3.local
 
 ## 统计
-- Skills: 90
+- Skills: 103
 - Profiles: 11
-- Scripts: 140
+- Scripts: 168
 - Plugins: 1
 
 ## 版本
@@ -31,63 +31,71 @@ Update available: 2659 commits behind — run 'hermes update'
 ## Skills 清单
 - ad-creative
 - afu-customer-service
-- afu-self-evolution-protocol
 - agents-md
 - ai-training-platform
 - ai-vision
-- algorithm
+- algorithmic-art
 - apple
 - aquaculture
 - autonomous-ai-agents
 - batch-file-renaming
+- blue-ocean-strategy
+- brand-guidelines
 - browser
 - bugfix
 - byted-supabase
-- cad-automation
-- candidate-chapter-a5-rollout
+- canvas-design
+- claude-api
 - commit
-- company-law-5y-paid-in-tracker
 - creative
-- cron-home-hijack-bypass
+- cro-methodology
 - cron-self-evolution-toolkit
+- crossing-the-chasm
 - data-science
+- design-everyday-things
+- design-sprint
 - devops
 - diagramming
+- doc-coauthoring
 - docx
 - domain
-- edtech
+- drive-motivation
 - email
 - feeds
 - feishu-ops
 - fetch
 - find-bugs
 - find-skills
-- frontend
+- frontend-design
 - frontend-ui
 - gaming
 - gifs
 - github
 - heidou
 - hermes-ecosystem-entry.md
+- hooked-ux
 - inference-sh
+- influence-psychology
+- internal-comms
+- ios-hig-design
+- jobs-to-be-done
 - knowledge-base
-- laomo-heartbeat
 - laomo-knowledge
-- laomo-openalex-known-dois-format-mismatch
+- lean-startup
 - lookforge
+- made-to-stick
 - maodou-product
 - maodou-workflow
-- marketing-from-simulation
 - mcp
 - media
 - memory
-- minimax-fallback-to-ollama
 - mlops
 - module
+- negotiation
 - note-taking
-- openclaw-gateway-setup
 - pdf
 - pptx
+- predictable-revenue
 - product
 - product-debugging
 - product-launch-playbook
@@ -95,27 +103,32 @@ Update available: 2659 commits behind — run 'hermes update'
 - productivity
 - project-monitoring-boundary
 - quant
-- red-teaming
 - refactoring-ui
 - research
 - research-collection
+- scorecard-marketing
 - search
 - security
 - security-review
 - skill-creator
 - skill-scanner
 - skill-writer
+- slack-gif-creator
 - smart-home
 - social-media
 - software-development
 - staging-helper
-- testing
+- storybrand-messaging
+- theme-factory
+- top-design
+- traction-eos
+- ux-heuristics
 - voice
-- voice-interaction-system
+- web-artifacts-builder
+- web-typography
 - webapp-testing
 - xiaobao-sales
+- xiaobao-workflow
 - xlsx
 - yuxin-code-iron-law
-- yuxin-coding-workflow
 - yuxin-self-evolution
-- yuxin-team-management

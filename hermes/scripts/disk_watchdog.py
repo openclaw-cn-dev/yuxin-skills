@@ -35,7 +35,7 @@ LOG_PATH = HOME / ".hermes/logs/disk_watchdog.log"
 LOCK_PATH = HOME / ".hermes/logs/disk_watchdog.lock"
 MOUNT = "/System/Volumes/Data"
 
-WARN_FREE_GB = 60.0
+WARN_FREE_GB = 84.0
 CRITICAL_FREE_GB = 30.0
 REALERT_HOURS = 12
 CLEAN_INTERVAL_HOURS = 6
