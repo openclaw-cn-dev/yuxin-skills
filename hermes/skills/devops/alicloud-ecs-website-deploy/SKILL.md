@@ -180,6 +180,31 @@ curl http://127.0.0.1:8080/
 
 备案号类页脚标准写法：ICP 号链 beian.miit.gov.cn，公安号链 `https://beian.mps.gov.cn/#/query/webSearch?code=<号码去掉"粤公网安备"前缀>` + `<img src="https://www.beian.gov.cn/img/ghs.png">` 徽章图。
 
+## 容器化全栈上云 SOP（2026-11-02 RKR 知识库 12→6 容器瘦身栈实战）
+
+把本地 Docker 全栈迁到官网机（或任何混部 ECS）的标准流程，完整案例见 [references/***SECRET***.md](references/***SECRET***.md)：
+
+1. **先实测云端余量再定方案**（勿信历史档案）：`docker ps | wc -l` + `docker stats --no-stream` 排内存 TOP + `free -h`——官网机容器数两个月从 13 涨到 29，可用内存 1.9G，方案从"能挤"变"必须升配"
+2. **瘦身优先于扩容**：逐项核对该服务是否真需要——ES 仅用于审计日志且有 try/except 兜底 → 去；Ollama embedding 有 cloud provider 备选（config.py 里 `EMBEDDING_PROVIDER=cloud`）→ 去；worker 多池合一、独立 nginx 层并入前端容器反代。12 容器压到 6 个、内存硬顶 6.3G，本地 M4 16GB 就不用陪跑
+3. **代码走 rsync 不走 git pull**（仓库无 remote）；排除项必须含：`node_modules .venv __pycache__ .git data/ logs/ backups/ .env* .github/` + 原始文档库（里面有超过 ext4 255 字节上限的超长爬虫文件名会让 rsync 大量报错，且知识已提炼进 pgdata，原件留本地档案）
+4. **数据走 pg_dump 自定义格式**（`pg_dump -Fc`），rsync 传云端后 **MD5 双端对账**（本机 `md5 -q`，服务器 `md5sum`）再恢复；恢复演练可以抢在升配前做——临时容器 `--memory=1g --oom-score-adj=800`（OOM 先杀它不杀老服务），验证 dump 可恢复性，"先测试不出错才动手"
+5. **恢复脚本密码不硬编码**：从 `.env.prod.cloud` grep 提取（与瘦身栈同源，改一处全生效）；⚠️ 本地 sed 把掩码写回脚本会静默毁文件（`POSTGRES_PASSWORD=***` 覆盖真值），改脚本用 write_file 全量重写
+6. **macOS rsync 旧版不认 `--info=progress2`**（打印 usage 后 exit 1，传输根本没发生）——用 `--progress`；传完必须 ls -lh 确认字节数
+7. **mem_limit 每容器必设** + `restart: unless-stopped`（上云 7×24 语义）：混部机上单个容器失控会拖垮全网服务
+8. **大传输/长恢复一律 background=true + notify_on_complete**：4.9G 跨境 15 分钟、pg_restore 10-30 分钟，前台等待会卡死会话；等待窗口并行做别的（写脚本/摸底环境）
+
+### docker compose config 校验坑（--env-file 与变量引用）
+
+`docker compose -f x.yml --env-file .env config --quiet` 只验语法不验变量存在性——`${POSTGRES_PASSWORD}` 没定义也静默通过，起容器时才炸。校验后加一步 `config | grep -c 'null'` 或直接起栈时盯第一个失败服务。
+
+### pg_restore 对账命令
+
+`pg_restore -l x.dump | grep "TABLE DATA"` 列出全部表——恢复前后都用它对表数；行数对账 SQL 写进恢复脚本尾部自动跑（documents/chunks/vectors/entities/relations/users/projects 七表）。
+
+### 华哥已登录控制台 → Chrome AppleScript 代操作到付款（2026-11-02 实测全通）
+
+「你操作到升配页面」类任务**首选 Chrome AppleScript 直操**（osascript execute javascript 接管华哥已开的 Chrome 登录态），全流程含控制台页面结构、选择器、多路线对比（computer_use 子代理无视觉不可用/browse CLI 对比/osascript `&` 拦截坑/用户并发操作探活纪律/搭售项付款核对）见 [references/***SECRET***.md](references/***SECRET***.md) 尾节。
+
 ## 临时大文件公网分发通道（2026-10-25 DSHBox 112MB APK 实测打通）
 
 华哥在平板/外网要一个本地大文件（APK/安装包/数据集），飞书直传超限、又与 Mac 不同网段时——不找第三方网盘，走自家 ECS 出 https 链接：

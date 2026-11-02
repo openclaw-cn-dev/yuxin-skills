@@ -306,7 +306,7 @@ print(t[:3500])"
 1. **语义验证**：华哥指令常带缩写代号（如 OPC），先 1 次 web_search 验证通行语义再动手，不反问（OPC=One Person Company 一人公司，非工业 OPC UA）
 2. **立项**：建 `~/6-产品研发/渔芯独角兽/01-开发中/研-<主题>/`（研-前缀=调研中，区别于 app-/卖-/学-），写 INDEX.md（定义/研究框架/产出规划/进度）
 3. **调研执行 → 汇总**：总报告命名 `00-总报告.md`（一句话结论先行+行动建议+来源）；分报告放 `02-调研/`
-4. **入库**：staging_save.py 必须用绝对路径 `/Users/hua/.hermes/scripts/` 调用且只收 `--title/--content/--source/--agent/--target`（无 --tag）；保存后检查输出路径是否被劫持到 profile home，是则手动 cp 到 `/Users/hua/rkr_staging/文档中转站/01-调研资料/` 并手写 `.md.meta.json`（详见 staging-helper 陷阱5 v1.5+）
+4. **入库**（v3 标准，2026-09-13 起 staging_save.py/staging_query.py 已废用——RKR scanner 停机，文件会死在 profile home 劫持路径或 ~/.hermes/staging/ 死区）：**直接 write_file/cp 到文档库落位目录**，一律绝对路径 /Users/hua/...，不经过任何中转站。落位速查：公司 AI/Agent 类调研→`/Users/hua/rkr_staging/文档库/A-渔芯科技/A2-公司运营/AI工具与Agent/`；通用知识→`Z-共享/Z1-通用学科知识/`贴切子目录；项目自有报告只放项目 01-研究报告/ 即可
 5. **飞书汇报**：结论先行+关键数字+建议+文件路径+**编号待定夺项**
 6. **数字批复语式**：华哥回"1"=执行第①项；"2 顺序进行"=对应项批准且按序推进。批复后直接落地，不重复确认
 
