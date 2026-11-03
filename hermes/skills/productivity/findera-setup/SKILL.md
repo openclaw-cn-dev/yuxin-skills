@@ -10,6 +10,10 @@ tags: [寻元, 采集, staging, RKR同步]
 
 > 🗓️ **2026-10-30 现状核验（curator）**：FindEra 容器已不在运行（`docker ps -a` 仅 baike/lookforge 4 容器）；`01-FindEra寻元/` 目录已不存在，RKR 独存于 `渔芯独角兽/02-产品开发综合平台/02-RKR知识库/`（有 docker-compose.yml，2026-10-12 起「RKR上云」方案推进中）；`~/rkr_staging` 仍有 47G（10-24 已归档首轮）。**本 skill 保留为历史运维档案**——容器全缺席/停机窗口/迁移路径等 SOP 的方法论仍适用于 RKR 知识库平台与任何 docker compose 项目；**跑任何恢复动作前先按下方「权威确认法」用 docker inspect 反查真实路径**，勿按本文路径直接执行。
 
+> 🟢 **2026-10-31 现役后继线**：采集→入库主链路已切到「渔芯养殖百科」管道（本机脚本 + `baike-postgres` 容器 + launchd 每日 06:26 零 token 自动入库，另挂 GLM 研编 cron 供条目、采集器 4 线程并发）。该线的架构、新板块三处同步铁律（scan/clean/relevance）、漂移误报修复、手动补跑配方、排障速查 → **`references/baike-ingest-pipeline.md`（现役，优先读）**；GLM 同事写条目用的 frontmatter 模板与 cron 骨架 → `templates/yankai-baike-entry.md`；本文其余部分按历史档案对待。
+>
+> 🟢 **2026-10-31 补**：研编供给线当日实跑闭环——学习助手 3 轮产 15 条（品种 8 + 水质 7），16 篇全 A 档入库（yx养06165-06179+），16:20 一次性验证 cron 已删。次日 06:26 起全自动，无需人工补跑。轮换表进度以 `研编条目/00-主题轮换与进度.md` 为准（类别1品种 8/8 ✅、类别2水质 7/8 → 下进类别3饲料）。
+
 ## 云迁移评估（2026-09-05，待华哥定案）
 
 > 寻元+RKR 迁阿里云完整方案与实测数据见 [references/cloud-migration-plan-2026-09.md](references/cloud-migration-plan-2026-09.md)：官网机 121.43.127.211（4C8G 经济型e）升配 8C16G+100G 盘 ≈ ¥210-255/月 vs 新购 ¥565/月；12 容器峰值 8G 内存、40G 数据、amd64 重建、执行序列十步全在。华哥暂缓考虑中，**定案后直接按该文件执行，不要重新盘点**。通用云技术见 alicloud-ecs-website-deploy skill。

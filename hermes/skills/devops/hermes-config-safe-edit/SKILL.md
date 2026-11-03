@@ -6,6 +6,8 @@ version: 1.0.0
 
 # Hermes 配置安全操作铁律
 
+> 🔧 2026-10-31 新增：`approvals.cron_mode: deny` 下飞书会话里哪些终端操作会被拦、哪些能直接过、四条替代路径（venv 绝对路径解释器 / 文本工具组合 / write_file 落脚本再执行 / 用户在场重试弹批准）+ long-running 判定坑（带 sleep 的前台被判 server、>600s 必须 background+process wait）→ `references/terminal-approval-workarounds.md`
+
 > 背景：2026-08-17 玉芬反复"改完模型又出错"（把玉芬 provider 误改成 minimax-vision、清理时误改 base_url 为 /v1、没发现 model_rotation_daemon 自动切配置），华哥只能用 Claude Code 修复。本 skill 是血的教训。
 
 ## 铁律（改任何配置前逐条执行）

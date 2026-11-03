@@ -28,6 +28,9 @@ Before running any browser commands, verify the CLI is available:
 which browse || npm install -g browse
 ```
 
+> ⚠️ **渔芯环境安装坑（2026-11-02 实测）**：default profile 下裸 `npm install -g browse` 撞权限错误（npm prefix 不可写 + $HOME 劫持）。可用装法：`npm install -g --prefix /Users/hua/.local browse`，二进制落在 `/Users/hua/.local/bin/browse`。
+> 另注：**华哥已登录某网站、要"代操作到某页面"的场景，优先考虑 Chrome AppleScript 直操**（osascript 接管已开 Chrome 的登录态，免启新浏览器免登录）——配方见 `devops/macos-automation`（浏览器代操作节）与 `devops/alicloud-ecs-website-deploy/references/***SECRET***.md` 尾节。本 CLI 适合全新干净会话/批量抓取/反爬站点。
+
 ## Environment Selection (Local vs Remote)
 
 The CLI supports explicit per-command environment flags. If you do nothing, the next session defaults to Browserbase when `BROWSERBASE_API_KEY` is set and to local otherwise.

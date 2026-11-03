@@ -46,11 +46,16 @@ AGENTS_FILES = [
 
 # 4 处候选 holdings.json 路径（含项目重命名前后）
 HOLDINGS_CANDIDATES = [
+    PROJECT_ROOT / "渔芯量化01" / "渔芯量化" / "06-持仓档案" / "holdings.json",   # 2026-10-21 实测真实路径(pitfall #37 第 5 次修正)
+    PROJECT_ROOT / "渔芯量化02" / "渔芯量化" / "06-持仓档案" / "holdings.json",   # 9-10 旧副本(仅校验,优先级低于 01)
     PROJECT_ROOT / "渔芯量化" / "06-持仓档案" / "holdings.json",          # 旧路径
     PROJECT_ROOT / "渔芯量化-海外" / "06-持仓档案" / "holdings.json",       # 新路径
     PROJECT_ROOT / "渔芯量化-海外" / "12-通用量化资料库" / "holdings.json",  # 推测路径
     PROJECT_ROOT / "渔芯量化-海外" / "12-通用量化资料库" / "华哥组合持仓档案.md",  # 旧档案
 ]
+
+# N+164 协议: 静态清单永不完备(已 3 次漂移), 运行时 find 兜底保证不假阴性
+FIND_FALLBACK = PROJECT_ROOT  # find maxdepth=7 -name holdings.json 取 mtime 最新
 
 # Dashboard 端口（A 股版 + KuanQuant 海外版）
 DASHBOARD_PORTS = [

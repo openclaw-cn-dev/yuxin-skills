@@ -207,6 +207,10 @@ allowed-tools: terminal, file, cron, skills, todo, send_message
 
 ### Cron 模式下 skill 引用静默跳过（2026-06-23 20:04 发现）
 
+**先查 profile 视角（2026-11-01 补充）**：上述金标准脚本遍历的是 `~/.hermes/profiles/*/cron/jobs.json`，**漏了中央 `~/.hermes/cron/jobs.json`**——而中央才是玉芬这类 default-profile cron 的真实调度源（06-20 已确认"主 cron jobs.json 是唯一调度源，profile jobs.json 是镜像"）。job 在 profile 视角 404 ≠ 不存在，先确认该 job 实际跑在中央还是 profile 再下"引用缺失"结论。
+
+**另一个易漏点**：`skills_list` 显示的是本 profile 激活命名空间的相对名（如 `productivity/yuxin-operations`），而 skill_manage / skill_view 用**短名**（`yuxin-operations`）即可命中；反之在 default profile 下用全限定名 patch 会报 "not found in active profile 'default'"。写 curator 脚本时两种名字都要兼容，别把"短名能找到"误判为"全限定名不存在=skill 缺失"。
+
 **核心问题**：cron prompt 中引用的 skill 名若**不存在**，Hermes 会**静默跳过**，
 不会报错也不会 fallback 到默认行为：
 ```
@@ -377,6 +381,7 @@ comm -23 /tmp/referenced_skills.txt <(sed 's|^|productivity/|' /tmp/installed_sk
 
 ### 版本检查捷径
 `hermes --version` 末行直接显示 "N commits behind — run 'hermes update'",不用自己 git fetch(外网常超时)。
+⚠️ **但升级差距报告以 registry 比对为准（2026-11-01 口径修正）**：commits-behind 是旧版安装的**本地 git 计数**（如 2659），与 pypi 版本差（本地 0.15.1 vs pypi 0.19.0）是两回事。管理扫描第 7 项报"hermes 落后多少"时引 pypi 比对，勿引 commits-behind 数字。版本号在 `hermes --version` **头几行**（如 `hermes-agent v0.15.1`），尾行只是更新提示。
 
 ## Pitfalls（实战教训）
 
