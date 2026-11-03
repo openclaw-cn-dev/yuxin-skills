@@ -366,6 +366,30 @@ docker logs --tail 50 -f rkr-celery-worker
 docker exec rkr-redis redis-cli -a PASSWORD LLEN celery
 ```
 
+## 容器 unhealthy 假警报诊断（healthcheck 连错 host）
+
+容器标 `unhealthy` 但任务本身在正常跑（日志里 Beat 调度、worker 处理都正常）时，**先别重启容器**——很可能是 healthcheck 脚本连错了地址，不是真故障。
+
+**2026-11-02 RKR 实测案例**：`rkr-celery` 一直标 unhealthy，但 celery 任务全在正常跑。根因是健康检查脚本写死了 `localhost:8000`，而 8000 是 **backend 容器**的服务，celery 容器内根本没有这个端口 → 每次都 `Errno 99 Cannot assign requested address`。
+
+诊断三步：
+
+```bash
+# 1. 看健康检查到底失败在哪（State.Health 里有每次失败的真实报错）
+docker inspect rkr-celery --format '{{json .State.Health}}' | python3 -m json.tool
+
+# 2. 看容器实际用的 healthcheck 命令（可能与 compose 文件当前内容不一致！）
+docker inspect rkr-celery --format '{{json .Config.Healthcheck}}' | python3 -m json.tool
+
+# 3. 从容器内实测「正确目标」是否可达（slim 镜像常无 curl，用 python urllib）
+docker exec rkr-celery python -c "import urllib.request; r=urllib.request.urlopen('http://backend:8000/api/v1/health', timeout=5); print(r.status)"
+```
+
+关键判断：
+- **`Errno 99 Cannot assign requested address`** + urllib/urlopen = 连了一个本容器内不存在的 `localhost:<port>`，几乎必然是「服务在别的容器，应写服务名当 hostname」。
+- **`.Config.Healthcheck` 与 compose 文件的 `healthcheck:` 不一致** = 容器是用旧 compose 配置启动的，compose 文件后来改过但容器没 recreate。这是「配置漂移」信号，别只改 compose 文件就以为会生效。
+- 修复 = 把 healthcheck 里的 `localhost:8000` 改成 `backend:8000`（服务名），然后 recreate 该容器。按华哥规矩，容器重启前先问一句再动手。
+
 ## RKR 平台 postgres 连接
 
 RKR 数据库名是 `rkr_knowledge`（不是 `rkr`），用户名 `rkr_user`，密码 `rkr_dev_2026`：
@@ -420,6 +444,7 @@ docker exec CONTAINER du -sh /app/staging 2>/dev/null
 | Edited `.env` but container config unchanged | `environment:` in `docker-compose.yml` **overrides `env_file:`**. Editing only `.env` is silently a no-op | See ⚠️ Pitfall 1 — edit both files, then `--force-recreate`. Verify with `docker exec NAME printenv YOUR_VAR` |
 | `docker compose restart` doesn't pick up new `.env` | `restart` reuses existing container, including its stored env vars | See ⚠️ Pitfall 2 — use `up -d --force-recreate --no-deps SVC` after editing config |
 | Redis queue ballooning with no log activity | Beat is still running but worker pool was stopped/removed without replacement | See ⚠️ Pitfall 3 — always recreate workers immediately; check `redis-cli LLEN celery` |
+| Container shows `unhealthy` but tasks run fine | healthcheck script connects to `localhost:<port>` whose service lives in ANOTHER container (e.g. celery checking `localhost:8000` = backend) | See **容器 unhealthy 假警报诊断** — check `.State.Health` + `.Config.Healthcheck`, fix target to `<service-name>:port`, recreate |
 
 ### Recovering a container's bind-mount source path
 

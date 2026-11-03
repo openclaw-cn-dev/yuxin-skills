@@ -1,6 +1,6 @@
 model:
-  default: GLM-5.3-flash
-  provider: custom:glm
+  default: deepseek-v4-pro
+  provider: custom:yuxin-gateway
 providers:
   deepseek-direct:
     api_key: "***"
@@ -401,9 +401,13 @@ approvals:
   mcp_reload_confirm: true
   : false
 command_allowlist:
-- script execution via -e/-c flag
-- delete in root path
 - stop/restart system service
+- force kill processes
+- docker restart/stop/kill (container lifecycle)
+- delete in root path
+- overwrite project env/config file
+- script execution via -e/-c flag
+- shell command via -c/-lc flag
 quick_commands: {}
 hooks: {}
 hooks_auto_accept: false
@@ -509,6 +513,16 @@ FEISHU_APP_SECRET: "***"
 replicate:
   token: "***"
 custom_providers:
+- name: yuxin-gateway
+  base_url: https://lookforge.net/llm-gateway/openai/v1
+  api_key: "***"
+  api_mode: chat_completions
+  models:
+    deepseek-v4-pro:
+      name: "DeepSeek V4 Pro (\u6E14\u82AF\u7F51\u5173)"
+    deepseek-flash:
+      name: "DeepSeek Flash (\u6E14\u82AF\u7F51\u5173)"
+  model: deepseek-v4-pro
 - name: glm
   base_url: https://open.bigmodel.cn/api/anthropic
   api_key: "***"
