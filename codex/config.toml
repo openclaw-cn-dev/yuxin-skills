@@ -1,33 +1,155 @@
-model_provider = "deepseek"
-model = "deepseek-v4-pro"
-model_reasoning_effort = "xhigh"
+model_provider = "YUXIN"
+model = "deepseek-flash"
+model_reasoning_effort = "high"
 disable_response_storage = true
 wire_api = "responses"
 model_catalog_json = "/Users/hua/.codex/cc-switch-model-catalog.json"
 
 notify = ["/Users/hua/系统文件夹/Codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+sandbox_mode = "danger-full-access"
+approval_policy = "never"
 
 [model_providers]
-[model_providers.deepseek]
-name = "deepseek"
+[model_providers.YUXIN]
+name = "渔芯网关"
 base_url = "http://127.0.0.1:15721/v1"
-experimental_bearer_token = "<REDACTED>"
 wire_api = "responses"
+requires_openai_auth = true
+experimental_bearer_token = "<REDACTED>"
 
 [projects]
 [projects."/Users/hua"]
 trust_level = "trusted"
 
-[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/研-网安技术与工具平台"]
+[projects."/Users/hua/6-产品研发/渔芯独角兽/18-手语学习与识别"]
 trust_level = "trusted"
 
-[projects."/Users/hua/Documents/Codex/2026-10-21/d"]
+[projects."/Users/hua/Documents/Codex/2026-09-03/new-chat"]
 trust_level = "trusted"
 
-[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中"]
+[projects."/Users/hua/Documents/Codex/2026-09-04/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/渔芯定制数字人平台"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/app-3d绳结"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/app-蹭饭搭子"]
+trust_level = "trusted"
+
+[projects."/private/tmp"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/00-基本完成/渔芯量化-海外"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Documents/Codex/2026-09-07/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/心理学专家底座"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/研-AI时代OPC出海"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/app-情商助手"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/opc-海外版"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/智囊团"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/渔芯RAS小模型"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/工程施工大模型"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Documents/Codex/2026-09-08/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/产品开发大模型"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/渔芯量化"]
 trust_level = "trusted"
 
 [projects."/Users/hua/6-产品研发/渔芯社区"]
+trust_level = "trusted"
+
+[projects."/Users/hua/.hermes/profiles/quant"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Documents/Codex/2026-09-17/re"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯科技/水产行业资讯"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Documents/Codex/2026-09-18/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/算东算西"]
+trust_level = "trusted"
+
+[mcp_servers.hive]
+command = "/tmp/hive-bin/hive-mcp-gateway"
+args = []
+startup_timeout_sec = 30
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/app-ai知识图谱"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Documents/Codex/2026-09-20/et"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯网站"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Documents/Codex/2026-09-21/ui-ai-ai-30-ai-ai"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/02-产品开发综合平台/00-综合开发平台"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Documents/Codex/2026-10-22/new-chat"]
+trust_level = "trusted"
+
+[projects."/Users/hua/Desktop/广东引擎者结算"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/商住集装箱方案设计助手"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/系统资源监控"]
+trust_level = "trusted"
+
+[projects."/Users/hua/codex-workspace/yuxin-skills"]
+trust_level = "trusted"
+
+[projects."/Users/hua/.hermes/profiles/zhenglishi/home/esp/esp-idf-v5.5.6"]
+trust_level = "trusted"
+
+[projects."/private/tmp/esp32-wifi-lib"]
+trust_level = "trusted"
+
+[projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/阿瑞斯"]
+trust_level = "trusted"
+
+[projects."/private/tmp/review/repo-codex"]
+trust_level = "trusted"
+
+[projects."/private/tmp/review/repo-codex-0160"]
+trust_level = "trusted"
+
+[projects."/private/tmp/review/repo-codex-0161"]
+trust_level = "trusted"
+
+[projects."/private/tmp/review/repo-codex-0161b"]
 trust_level = "trusted"
 
 [projects."/Users/hua/6-产品研发/渔芯独角兽/01-开发中/渔芯知识库"]
@@ -36,54 +158,6 @@ trust_level = "trusted"
 [tui]
 [tui.model_availability_nux]
 "gpt-5.5" = 2
-
-[desktop]
-computerUseAlwaysHidePictureInPicture = true
-followUpQueueMode = "queue"
-worktree-upstream-refresh-mode = "best-effort"
-
-[marketplaces.openai-bundled]
-last_updated = "2026-11-03T16:34:28Z"
-source_type = "local"
-source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
-
-[plugins."codex-app-tools@openai-bundled"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."chrome@openai-bundled"]
-enabled = true
-
-[plugins."visualize@openai-bundled"]
-enabled = true
-
-[plugins."build-web-apps@openai-api-curated"]
-enabled = true
-
-[plugins."coderabbit@openai-api-curated"]
-enabled = true
-
-[plugins."figma@openai-api-curated"]
-enabled = true
-
-[plugins."linear@openai-api-curated"]
-enabled = true
-
-[plugins."sentry@openai-api-curated"]
-enabled = true
-
-[plugins."superpowers@openai-api-curated"]
-enabled = true
-
-[plugins."github@openai-api-curated"]
-enabled = true
-
-[features]
-computer_use = false
-js_repl = false
-memories = true
 
 [mcp_servers.node_repl]
 args = []
@@ -104,11 +178,71 @@ BROWSER_USE_CODEX_APP_VERSION = "26.814.41957"
 NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/hua/.codex/plugins/cache/openai-bundled/browser/26.814.41957/scripts/browser-service.mjs"}'
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
-[memories]
-generate_memories = true
-use_memories = true
+[desktop]
+followUpQueueMode = "queue"
+computerUseAlwaysHidePictureInPicture = true
 
-[mcp_servers.hive]
-command = "/tmp/hive-bin/hive-mcp-gateway"
-args = []
-startup_timeout_sec = 30
+[marketplaces.openai-bundled]
+last_updated = "2026-11-03T15:15:20Z"
+source_type = "local"
+source = "/Users/hua/系统文件夹/Codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-09-10T09:23:21Z"
+source_type = "local"
+source = "/Users/hua/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[plugins."codex-app-tools@openai-bundled"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."superpowers@openai-api-curated"]
+enabled = true
+
+[plugins."build-web-apps@openai-api-curated"]
+enabled = true
+
+[plugins."coderabbit@openai-api-curated"]
+enabled = true
+
+[plugins."figma@openai-api-curated"]
+enabled = true
+
+[plugins."linear@openai-api-curated"]
+enabled = true
+
+[plugins."sentry@openai-api-curated"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."github@openai-api-curated"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[features]
+js_repl = false
+computer_use = false
