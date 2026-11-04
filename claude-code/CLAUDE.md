@@ -71,3 +71,10 @@ L6 回流     → Redis缓冲 + 中转站/user_content/ .md文件
 ### 为什么
 Docker Desktop 在 macOS 上跑在 Linux VM 里。内存不足时 macOS 杀掉 VM → 重启后 VM 是新的 → 命名卷全部清空。
 宿主机路径不受影响。
+
+## 🔄 多机多智能体同步铁律（2026-11-02 新增）
+
+- **完工必更 / 开工必读**：项目仓根 `STATUS.md` 是该项目进度唯一权威——完工先更 STATUS.md 再汇报/推送；开工先 `git pull` + 读 STATUS.md 头部 30 行再动代码。
+- **规则跟仓库走**：项目仓根 `AGENTS.md` 对所有智能体生效（Codex/Claude Code/DeepSeek harness/workbuddy/Hermes 通用），优先级高于各智能体全局配置。
+- **个人记忆统一走 `~/claude-memory`**（GitHub openclaw-cn-dev/claude-memory，各机 `~/.claude/projects/*/memory` 软链至仓内）：SessionStart/Stop hooks 自动 pull/push；敏感闸门与 path-guard 在仓内 `memory-sync.sh`，Windows 无软链走 junction。
+- 方案正本：《Hive-多机多智能体同步方案-20261102.md》（三阶段：过渡层→Hive收口→H/I/J/K 四特性）。

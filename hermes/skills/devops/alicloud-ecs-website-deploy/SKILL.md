@@ -38,6 +38,8 @@ nginx -c /tmp/nginx-min.conf  # 自定义配置，不走systemd
 ### 4. 安全组端口必须手动开放
 ECS实例的安全组默认不开放8080等端口，必须在阿里云控制台 → ECS → 安全组 → 入方向规则手动添加。
 
+**华哥已登录控制台时用 Chrome AppleScript 自动加规则**（2026-11-02 RKR 8643 放行实测全通）——别让他手动点。核心：直达详情页 `https://ecs.console.aliyun.com/securityGroupDetail/region/cn-hangzhou/groupId/<sg-id>/detail/`；「增加规则」按钮必须派发完整鼠标事件序列（`pointerdown/mousedown/pointerup/mouseup/click`，单发 `click()` 不触发 React onClick）；表单 3 个 rc-select combobox 按数组索引 `ins[1]=访问来源 ins[2]=端口`（`aria-owns` 编号与索引不一致）；填值用原生 `HTMLInputElement` value setter + input/change 事件，再点可见 `[role=option]`；提交后本机 `nc -z` + `curl -w '%{http_code}'` 实测外网连通。完整配方（含顶部搜索框误填「暂无数据」坑、选中状态判定）见 [references/***SECRET***.md](references/***SECRET***.md)。
+
 ### 5. SSH连接超时（banner exchange阶段）
 > **2026-09-05 复测更新**：SSH root 密码登录**一次成功**——banner 超时是历史/瞬态现象，先直接试 SSH，失败再走 WebTerminal/云助手。服务器档案（实例规格/磁盘/运行容器/凭证识别陷阱）见 `references/official-server-inventory.md`。
 **现象：** `ssh root@121.43.127.211` 报 `Connection timed out during banner exchange`，但 `nc -z` 显示端口22开放，HTTP 8080正常。
@@ -66,7 +68,7 @@ ECS实例的安全组默认不开放8080等端口，必须在阿里云控制台 
 
 ## 实例规格审计与扩容/复用决策（2026-09-05 新增）
 
-无控制台凭证时 SSH 进实例查 metadata（`http://100.100.100.200/latest/meta-data/instance/instance-type`）免控制台拿精确实例规格。经济型 e 实例（ecs.e-c1m2.*）无 CPU 积分、可族内原地升配（4C8G→8C16G 仅 +¥150-170/月），**复用现有 ECS + 增值服务通常比新购省一半**。完整审计命令、价格表、凭证前缀陷阱（AKLT=火山引擎≠阿里云）、Mac→ECS 容器迁移清单见 [references/ecs-spec-audit-and-resize.md](references/ecs-spec-audit-and-resize.md)。
+无控制台凭证时 SSH 进实例查 metadata（`http://100.100.100.200/latest/meta-data/instance/instance-type`）免控制台拿精确实例规格。经济型 e 实例（ecs.e-c1m2.*）无 CPU 积分、可族内原地升配（4C8G→8C16G 仅 +¥150-170/月），**复用现有 ECS + 增值服务通常比新购省一半**。内存瓶颈（跑本地大模型/向量化）只加内存选 **c1m4 同核数档**（8C16G→8C32G，CPU 不动），别顺手翻 CPU。完整审计命令、价格表、c1m4 升配表、凭证前缀陷阱（AKLT=火山引擎≠阿里云）、Mac→ECS 容器迁移清单见 [references/ecs-spec-audit-and-resize.md](references/ecs-spec-audit-and-resize.md)。
 
 ## 标准部署流程
 
@@ -191,7 +193,8 @@ curl http://127.0.0.1:8080/
 5. **恢复脚本密码不硬编码**：从 `.env.prod.cloud` grep 提取（与瘦身栈同源，改一处全生效）；⚠️ 本地 sed 把掩码写回脚本会静默毁文件（`POSTGRES_PASSWORD=***` 覆盖真值），改脚本用 write_file 全量重写
 6. **macOS rsync 旧版不认 `--info=progress2`**（打印 usage 后 exit 1，传输根本没发生）——用 `--progress`；传完必须 ls -lh 确认字节数
 7. **mem_limit 每容器必设** + `restart: unless-stopped`（上云 7×24 语义）：混部机上单个容器失控会拖垮全网服务
-8. **大传输/长恢复一律 background=true + notify_on_complete**：4.9G 跨境 15 分钟、pg_restore 10-30 分钟，前台等待会卡死会话；等待窗口并行做别的（写脚本/摸底环境）
+8. **大传输/长恢复一律 background=true + notify_on_complete**：4.9G 跨境 15 分钟、pg_restore 10-30 分钟，前台等待会卡死会话；等待窗口并行做别的（写脚本/摸底环境）。SSH 长任务（如 nohup 远端跑脚本）命令串本身可能触发 300s 前台超时（exit 124 但远端已启动）——after 启动后用短探针 `ssh 'tail -5 日志'` 轮询，别重发启动命令
+9. **Docker 镜像首次云端构建（无缓存）耗时以小时计**：`docker compose up -d --build` 的 backend pip 依赖层实测 1.5h+，期间 `docker images | grep rkr` 无产物是正常的（buildkit executor 目录在涨=还在干活）；判断构建是否活着看 `ps aux | grep 'runc --log'` 行数与 `/var/lib/docker/buildkit/executor/` 目录大小增长，**别中途 kill 重跑**（重跑浪费且 pip 层无缓存）
 
 ### docker compose config 校验坑（--env-file 与变量引用）
 
@@ -201,9 +204,45 @@ curl http://127.0.0.1:8080/
 
 `pg_restore -l x.dump | grep "TABLE DATA"` 列出全部表——恢复前后都用它对表数；行数对账 SQL 写进恢复脚本尾部自动跑（documents/chunks/vectors/entities/relations/users/projects 七表）。
 
+### 恢复后接正式栈的三个必踩坑（2026-11-02 RKR 实测，修复口诀）
+
+1. **pgdata 容器内路径必须精确挂到挂载点子目录**：临时恢复容器 `-v /opt/rkr/data/pgdata:/var/lib/postgresql/data`（挂父目录 `/opt/rkr/data` 会让 initdb 撞上 minio/redis 等兄弟目录报 "exists but is not empty"）；compose 里的路径写什么就挂什么，两处不一致=恢复进错地方
+2. **alembic `CREATE TYPE xxx already exists` ≠ 要跑迁移**：`pg_dump -Fc` 不带 alembic_version 表，恢复完业务表全在（23 张），alembic 还想从头跑 → 建表插当前版本标记即可：`CREATE TABLE alembic_version (version_num VARCHAR(32) NOT NULL, CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num)); INSERT INTO alembic_version VALUES ('<最新revision>');`（revision 从 `alembic/versions/` 最大编号文件 grep `revision:` 得）。先 `\dt` 数表再决定，别盲目 drop database 重来
+3. **uvicorn/alembic console-script 报 `No module named 'app'`**：console-script 不含 WORKDIR 的 sys.path，compose environment 加 `PYTHONPATH: /app` 一行即修（celery 不炸是因为 celery 自己注入 CWD——「celery 活着 backend 死循环重启」就是此症状）
+
+### LLM/embedding 供应商切换的实测先行纪律（2026-11-02 智谱切换教训）
+
+> RKR 已于 2026-11-02 正式切到火山方舟（双管道实测全通），完整切换清单/密钥写入配方/compose 热修陷阱见 [references/rkr-ark-switch-20261102.md](references/rkr-ark-switch-20261102.md)；方舟 key 格式鉴别与模型开通探测见 `devops/volcengine-ark-integration` 技能。
+
+### 知识库垃圾清理 + 重嵌入（可回滚软删除 + 迁移 reset 语义，2026-11-03）
+
+华哥拍板「先暂停、清理、再重嵌入」时，对 pgvector 知识库做**可回滚批量清理**（metadata jsonb 软删除标记，不物理删）再重嵌入的标准流程、6 条清理规则（去重/.json/外语/乱码/日报索引/废弃文档）、以及三个关键坑——**迁移 wrapper 只在 status=paused/error/completed 时重算 total**（kill running 进程重启会复用旧 total，改的查询不生效，须先手动置 paused）、**SQL `!=` 排除 NULL**（`embedding_model != :new` 漏掉 NULL 行）、**detached ssh 后台进程防挂起**（`setsid bash -c "..." < /dev/null > /dev/null 2>&1 &`）。完整配方见 [references/rkr-kb-cleanup-reembed.md](references/rkr-kb-cleanup-reembed.md)。实测：661,099 条 71.9% 是垃圾，清理后重嵌入 ¥441→≈¥100。
+
+华哥令「大模型全改用智谱套餐」时，切换前必须先实测 key × 端点 × 模型三维矩阵，勿直接改配置：
+- 智谱套餐 key 实测：anthropic 端点（`/api/anthropic/v1/messages`，x-api-key 头）通；**OpenAI 兼容端点 `/api/paas/v4` 的 chat/completions 和 embeddings 全返回 1113 余额不足**（套餐不含该通道）
+- 应用代码全走 OpenAI SDK 时（AsyncOpenAI → /chat/completions + /embeddings），anthropic 端点再通也用不上——先读代码确认协议再选通道
+- 换 embedding 供应商前必查存量向量维度：`SELECT vector_dims(embedding) FROM vectors LIMIT 1;`（RKR=1024=embo-01），新模型维度不符就要重建向量列，成本完全不同
+- 结论写给华哥时附「影响面切分」：存量检索不受影响（查询不走 LLM）vs 新文档管道被挡——他基于此选 a/b/c 更快
+
 ### 华哥已登录控制台 → Chrome AppleScript 代操作到付款（2026-11-02 实测全通）
 
 「你操作到升配页面」类任务**首选 Chrome AppleScript 直操**（osascript execute javascript 接管华哥已开的 Chrome 登录态），全流程含控制台页面结构、选择器、多路线对比（computer_use 子代理无视觉不可用/browse CLI 对比/osascript `&` 拦截坑/用户并发操作探活纪律/搭售项付款核对）见 [references/***SECRET***.md](references/***SECRET***.md) 尾节。
+
+**核心配方（速查版）**：
+1. 华哥说"我登录了，你操作到 X 页面" → `osascript -e 'tell application "Google Chrome" to get URL of active tab of front window'` 先看他在哪页，再 `set URL of active tab ... to "<目标URL>"` 直达
+2. 页面状态探测用注入 JS 读 `document.body.innerText` 找关键词（"运行中"/"调整配置"等），比截图省 token 且稳
+3. 点按钮：先 `[...document.querySelectorAll('a,button,div,span')]` 找 `innerText === '按钮文案'` 的元素，有 `href` 就 `set URL` 导航，没有就注入 `el.click()`；阿里云的 select 下拉用 `querySelector('.cor-spec-selector').click()` 展开后从 `.***SECRET***` 里按文本匹配目标项再 click
+4. **多行 osascript 必须走 write_file 写 .applescript 文件再 `osascript /tmp/x.applescript`**——heredoc/命令串里的引号嵌套会被 shell 撕碎，且 terminal 审批层会把脚本文本里的 `&` 误判为后台符直接拒单（实测两次）
+5. 付款页（支付宝收银台）出现即停手：先读订单明细文本（含搭售项要向华哥预警核对），飞书发他金额+明细，他自己在浏览器完成扫码/密码
+6. **探活纪律**：等华哥操作期间用只读探针（`osascript get URL`、`grep 订单号`）确认进展，勿盲目重复点击——他可能已经自己点过去了（本次实测：探测时发现已到支付页）
+7. delegate computer_use 子代理在此环境不可用（截图返回空、GLM 系模型输出 invalid_json），不要浪费轮次重试；browse CLI 未装时也无需 `npm install -g`（$HOME 劫持会污染安装）——osascript 路线零依赖
+
+### ECS 重启/升配后的三步恢复检查（2026-11-02 升配实测）
+
+升配付款后实例自动重启（断 3-5 分钟），恢复检查按序：
+1. **SSH 探活 + 规格验证**：`nproc` + `free -h` 确认新规格生效，`docker ps | wc -l` 确认容器全恢复（restart: unless-stopped/always 的都会自动起）
+2. **双站探活**：`curl -w '%{http_code}' https://yuxinsim.com` + `https://lookforge.net`——**重启后最常见故障是 httpd.socket 抢 80 致 nginx failed**（全站 403），修复：`systemctl stop httpd && systemctl stop httpd.socket && systemctl disable httpd.socket && systemctl start nginx && systemctl enable nginx`（只 stop httpd 不够，httpd.socket 会重新拉起它占 80；`systemctl is-enabled httpd nginx` 可见双激活）
+3. 再跑原定部署任务（本例为 RKR 恢复+起栈），不要把「升配完成」直接等同于「可以继续部署」
 
 ## 临时大文件公网分发通道（2026-10-25 DSHBox 112MB APK 实测打通）
 
