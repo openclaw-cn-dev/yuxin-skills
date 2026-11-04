@@ -85,9 +85,18 @@ VERT = set([
     "red-tide-algal-bloom",
     # 自媒体运营线
     "auto-xhs", "xiaohongshu-skills", "douyin-comments", "guizang-social-card",
+    "last30days-cn",
     # 太上老君内容系列
     "taishang-laojun", "tslj-idea", "tslj-monetize", "tslj-open",
     "tslj-script", "tslj-select", "tslj-series", "tslj-title",
+    # 1104 新增 — 短剧/漫剧/去AI味内容垂类（short-drama-factory 兄弟cron装，manju 21题材 + unslop 本cron装）
+    "short-drama-factory", "unslop",
+    "chongsheng-manju", "chuanyue-manju", "dushi-manju", "gongdou-manju",
+    "jiating-manju", "minsu-manju", "moshi-manju", "niandai-manju",
+    "quanmou-manju", "shangzhan-manju", "tianchong-manju", "wuxia-manju",
+    "xiaoyuan-manju", "xihuan-manju", "xingji-manju", "xitong-manju",
+    "xuanhuan-manju", "xuanyi-manju", "yule-manju", "zhaidou-manju",
+    "zhongtian-manju",
 ])
 
 
