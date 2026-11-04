@@ -244,6 +244,18 @@ curl http://127.0.0.1:8080/
 2. **双站探活**：`curl -w '%{http_code}' https://yuxinsim.com` + `https://lookforge.net`——**重启后最常见故障是 httpd.socket 抢 80 致 nginx failed**（全站 403），修复：`systemctl stop httpd && systemctl stop httpd.socket && systemctl disable httpd.socket && systemctl start nginx && systemctl enable nginx`（只 stop httpd 不够，httpd.socket 会重新拉起它占 80；`systemctl is-enabled httpd nginx` 可见双激活）
 3. 再跑原定部署任务（本例为 RKR 恢复+起栈），不要把「升配完成」直接等同于「可以继续部署」
 
+## 安全移除服务器项目 SOP（反向·卸载，2026-11-03 RKR 知识库移除实战）
+
+华哥说「把服务器上的 X 项目移除」= 反向上云卸载，不是删几个文件。标准序列（完整配方见 [references/safe-project-removal.md](references/safe-project-removal.md)）：
+
+1. **先 dump 再删**：移除前对最新数据做一次完整 `pg_dump -Fc` 快照（即使 backups 已有旧 dump——旧 dump 可能 stale，本例 pre_slim 备份停在 Oct 12，而数据 Nov 2 才恢复）。dump 66 万向量约 15 分钟、产物 ~4.6G，**必须 background=true + notify_on_complete**，前台 wait 会被 clamp 到 300s 卡死
+2. **侦察四连**：`du -sh /opt/<项目>/*` + `docker ps -a | grep <项目>` + `ls -lh backups/` + `docker exec <pg容器> env | grep POSTGRES_`（拿 DB 名/用户，dump 要写对目标库）
+3. **判卷类型**：grep compose 的 `volumes:` 看有状态数据是 bind mount（本例 `/opt/rkr/data/*`）还是 named volume——**bind mount 时 `docker compose down` 不删数据，须手动 `rm -rf` 数据目录**；named volume 才需 `down --volumes`
+4. **移除序列**：`docker compose down --remove-orphans` → 删孤儿网络 → `rm -rf` app/data/certs/旧dump/部署脚本 → **只保留最新 dump 当安全网**
+5. **收尾验证**：全量 `docker ps` 确认**其他项目（官网/llm-gateway/harbor/geo/edai 等）一个没动** + `df -h` 报磁盘净回收数给华哥
+
+**决策留白给华哥**：dump 备份删不删留一句话选项（「删」=彻底清空 /「留」=等新项目迁移数据），不替他拍板删不可恢复的数据。
+
 ## 临时大文件公网分发通道（2026-10-25 DSHBox 112MB APK 实测打通）
 
 华哥在平板/外网要一个本地大文件（APK/安装包/数据集），飞书直传超限、又与 Mac 不同网段时——不找第三方网盘，走自家 ECS 出 https 链接：
