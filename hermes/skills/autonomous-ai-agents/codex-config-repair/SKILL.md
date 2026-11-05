@@ -8,6 +8,7 @@ description: 修复被 CC Switch 改坏的 Codex config.toml（ChatGPT 报「无
 ## 触发条件（症状）
 
 - ChatGPT 桌面版报「无法加载 config.toml：Model provider `ZAI`/`deepseek`/`custom` not found」
+- 报「stream disconnected before completion: **模型不存在，请检查模型代码**」（2026-11-04 实证）——这是智谱 API 的错误文案，含义 = **provider 与 model 错配**：`model_provider="ZAI"`（请求发往智谱）但 `model=` 留着 deepseek 系模型代码（智谱不认识）。诊断时直接比对三要素（provider/model/base_url），不用查网络。**华哥确认的准确归因：CC Switch 的「路由」开关没开时切模型，配置只写一半（provider 切了、model 没跟上）→ 错配；开路由再切即正常**
 - codex 掉线重连、卡死、内存拉满、对话串无法继续
 - 华哥说"codex 又爆内存" / "恢复 zai" / "codex 桌面版修复好了告诉我"
 
@@ -62,13 +63,18 @@ experimental_bearer_token = "<key>"   # 智谱 Coding 包月 key，49 位
 
 ## 智谱 key 现状（2026-08-29 实测，会变）
 
-- `93b825...Oivb`（Coding 包月，49 位）→ 之前 401「令牌已过期」，端点 `/api/v1/responses`、`/api/anthropic`、`/api/paas/v4` 全 401
-- `2a7c...Whvd`（个人 Pro 包月，49 位）→ 1113「余额不足或无可用资源包」
+- `93b825...Oivb`（Coding 包月，49 位）→ ~~401 过期~~ **2026-11-04 实测已恢复有效**（`/api/v1/models` 200，`glm-5.3`/`glm-5.3-flash` 均真实出 token）
+- `2a7c...Whvd`（个人 Pro 包月，49 位）→ ~~1113 余额不足~~ **2026-11-04 实测已恢复有效**（glm-5.3 出 token 正常）
+- ⚠️ `/api/v1/models` 返回 0 个模型 ≠ key 失效（套餐 key 不暴露模型列表）；判活必须 POST `/api/v1/responses` 实测出 token
 
-**修复结构 ≠ 修复 key**：即使 config 结构修好，key 失效仍会 401。修复后必须实测；若 401/1113，需华哥去智谱开放平台（open.bigmodel.cn）核实 Coding 包月续费。
+## YUXIN 渔芯网关形态（2026-11-04 新增）
+
+Codex 第三种常用形态：`model_provider="YUXIN"` + `[model_providers.YUXIN]` name="渔芯网关" + base_url=`https://lookforge.net/llm-gateway/openai/v1`（**公网域名，已替代旧的 `http://127.0.0.1:18888/openai/v1`**）+ token `yxk_` 开头 52 位。model 用网关侧别名 `deepseek-flash`（**不在 models.json/cc-switch catalog 里，会报 "Model metadata not found" 降级警告，能跑不影响**）。2026-11-04 实测：SSE 流完整 + codex exec 32k tokens 成功。诊断此形态直接 curl `base_url + /responses`（stream:true）看 `response.completed` 事件。
 
 ## 坑点
 
+0. **CC Switch「路由」代理对 DeepSeek thinking 模型多轮对话有 bug（2026-11-04 实证）**：开路由走本地代理 15721 时，DeepSeek 的 `deepseek-v4-pro`/`deepseek-flash`（**两个都是 thinking 模型，chat/responses 均返回 reasoning_content，关不掉 reasoning**）多轮对话（tool call 循环第二轮起）会报 `upstream_status: HTTP 400; cause: The reasoning_content in the thinking mode must be passed back to the API`——CC Switch 翻译层没把上一轮 reasoning_content 回传给 DeepSeek。**绕开代理直连 `https://api.deepseek.com/` 即正常**（实测直连 /responses 多轮 200 + codex exec 32k tokens 多轮通过）。修法：config.toml 改 `model_provider="deepseek"` + base_url 直连 + 真 key；并建议华哥**关掉 CC Switch 路由开关**（路由开着时切档案会把 base_url 强指回 15721 代理，再次触发此 bug）。注意：直连 chat completions 协议多轮**不回传** reasoning_content 也 200（宽容），只有 responses 协议 thinking 多轮才硬要求回传。
+0. **CC Switch 档案名字与内容可能错位（2026-11-04 实证，最隐蔽的坑）**：`~/.cc-switch/cc-switch.db` 的 `providers` 表里，档案名和 `settings_config` 内容可能完全对不上——实测「DeepSeek」档案的 config 模板是 `model_provider="ZAI"`（智谱）、auth key 贴成智谱 key；「glm-5.3-flash」档案内容却是 YUXIN 网关。诊断「模型不存在/403」时**读 db 的 settings_config 三处**（config 模板的 model_provider/base_url、auth.OPENAI_API_KEY、modelCatalog），别信档案名。修法：`sqlite3` 直接 UPDATE settings_config 换 key/模板（先 `cp` 备份 db）。CC Switch 本地代理(15721)的 key 是**实时读 db、非缓存**——改完 db 立即生效，无需重启代理。
 1. **改前必备份** `.bak-时间戳`（脚本已内置）
 2. **CC Switch 会反复覆盖**——根治方案 A（停开机自启）已于 2026-08-30 华哥拍板执行：`osascript -e 'tell application "System Events" to delete login item "CC Switch"'`。⚠️ CC Switch 的自启在 macOS「登录项」（System Events 的 login items），**不在 ~/Library/LaunchAgents/ 的 plist 里**（那里查不到）。app 本体保留 `/Applications/CC Switch.app`，华哥手动打开仍可切模型。停自启**不影响同事**——8 个同事 agent（afu/maodou/laomo/heidou/xiaobao/quant/zhenglishi/wangcai）走各自 `~/.hermes/profiles/<名>/config.yaml` 的 MiniMax-M3（minimax-cn），玉芬走 GLM-5.3-flash，均与 CC Switch 无关。若 config 再被改坏，先查华哥是否手动打开过 CC Switch 切了模型（此时需切回 ZAI/glm-5.3），不再默认归咎于自启。
 3. **停自启后 config 仍可能被改（2026-08-30 晚复现新变体）**：CC Switch 自启已停、进程未运行时，config.toml 仍被改成 `model_provider="custom"` + `[model_providers.custom] base_url="https://open.bigmodel.cn/api/anthropic"`（anthropic 端点）+ **key 整个丢失**（无 experimental_bearer_token）。此变体元凶疑似 ChatGPT 桌面端自己在「模型切换」时重写 config（非 CC Switch）。遇此变体需从 ChatGPT 桌面端「模型设置」入手根治，而非反复改文件。
