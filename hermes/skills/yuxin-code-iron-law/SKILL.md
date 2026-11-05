@@ -349,6 +349,7 @@ codex exec "需求: ..." --sandbox danger-full-access
 - **🆕 Claude Code 实操**:`references/***SECRET***.md` — 5/5 任务成功的完整 prompt 模板 + 验证命令
 - **🆕 Codex CLI 实操**:`references/codex-exec-working-pattern.md` — 2026-08-03 实测 Codex 写 243 行 JSON 整合任务的完整 reproduction
 - **🆕 铁律固化工作流**:`references/***SECRET***.md` — 新增/修改铁律并同步 9 profile 的标准流程(备份约定/插入点/幂等批量补丁/grep 验证),2026-08-29 UI 铁律固化实战验证
+- **🆕 主文档编辑与同步**:`references/iron-law-document-editing.md` — 《渔芯铁律》主文档三层定位(事实源/同步仓库/remote)、24章结构、编辑SOP(改事实源→版本号→版本历史→sync.sh→验证)、sync.sh死锁坑(--force-local修复)
 - **❌ 过时参考**:`references/***SECRET***.md` — v1.1 误判 delegate_task 唯一论,已被 v1.2 实测推翻
 
 ---

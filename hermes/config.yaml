@@ -61,6 +61,14 @@ terminal:
   docker_extra_args: []
   : false
   persistent_shell: true
+  :
+    - ORCA_AGENT_PANE
+    - ORCA_AGENT_LAUNCH
+    - ORCA_TAB_ID
+    - ORCA_WORKTREE_ID
+    - 
+    - ORCA_AGENT_HOOK_ENV
+    - 
 web:
   backend: ''
   search_backend: ''
@@ -550,3 +558,6 @@ mcp_servers:
     - --token-mode
     - user_access_token
     - --oauth
+plugins:
+  enabled:
+    - orca-status

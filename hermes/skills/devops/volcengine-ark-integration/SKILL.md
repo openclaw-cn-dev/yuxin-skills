@@ -51,7 +51,9 @@ description: 火山方舟(Volcano Ark) API 接入/排障类级技能 — key 格
 - `$ENVVAR` 出现在双引号/ssh 远程命令里 → 被扫描器改写成 `$***` → 远端拿到空值（曾致云端 env key 为空，报 `Illegal header value b'Bearer '`，排查半天）
 - 对策：① 变量名拼接绕匹配：`KEY=$(grep "VOLC"'_ARK_API_KEY' file | cut -d= -f2-)` ② 密钥 base64 后**作为命令参数**传远端 decode（**非 stdin 管道**——terminal 工具不透传 ssh stdin）③ 落盘文件 chmod 600、用完即删
 
-## 6. RKR 已切方舟（2026-11-02 闭环）
+## 6. RKR 已切方舟（2026-11-02 闭环）→ 2026-11-05 已回退本地+智谱
+
+> ⚠️ **时效警告**：2026-11-02 RKR 切方舟「双管道」，但 **2026-11-05 已回退**到「本地 bge-small + 智谱 glm」，方舟已不再被 RKR 调用（见 §8）。读本节历史细节前先看 §8 的当前态。
 
 RKR 知识库切换细节（env 沿用 MINIMAX_* 旧名承载方舟配置、DB active_embedding_model 覆盖陷阱、compose up 吃掉 docker cp 热修补丁等运维坑）见 `alicloud-ecs-website-deploy` 技能下 `references/rkr-ark-switch-20261102.md`。
 
@@ -66,6 +68,53 @@ RKR 知识库切换细节（env 沿用 MINIMAX_* 旧名承载方舟配置、DB a
 **token/字符随长度递减**（关键，粗估失准根因）：短文本（中文密集）~0.68，长文本（空白/格式化多）~0.30，RKR 加权 0.446。方舟 doubao-embedding-vision 按 0.7元/百万 token（¥0.0007/千）计。
 
 **重嵌前先查内容质量**（否则 7 成钱烧在垃圾上）。RKR 实测：66.1 万 chunk 中 **68.6% 是重复**（`COUNT(DISTINCT text_content)` 只有 20.8 万）、37,625 个 deprecated 文档（7.3 万 chunk）、FindEra 爬虫抓入大量无关内容（阿拉伯语宗教/展会/爬虫技术文档/乱码）。查法：`COUNT(*)` vs `COUNT(DISTINCT text_content)`、`is_deprecated` 标记、`source` 来源分布、语言/乱码特征。结论：先清理（去重 + 删废弃 + 清无关）再重嵌，省 ~70% 费用，还顺带治检索返回几百条重复结果的问题。
+
+## 8. 成本溯源：谁在烧钱 + 向量维度陷阱（2026-11-05 实测）
+
+华哥问「火山欠费谁在用 / KB API 能否切智谱」时的标准排查路径，结论可直接复用。
+
+### 8.1 RKR 知识库当前架构（已是「本地 + 智谱」，零火山）
+
+| 部件 | 模型 | 来源 |
+|---|---|---|
+| 向量化 | `BAAI/bge-small-zh-v1.5`（512 维） | 本地，46.8 万块全本地生成 |
+| 问答 LLM | `glm-5.3-flash` | 智谱（经 18888 网关 → open.bigmodel.cn） |
+
+`kb.env` 关键项：`EMBED_MODEL=BAAI/bge-small-zh-v1.5`、`LLM_BASE_URL=http://127.0.0.1:18888/openai/v1`、`LLM_MODEL=glm-5.3-flash`。全程 LLM 成本仅 ~$0.013（33 次调用）。**KB 的「API 调用部分」早就是智谱了，别再切。**
+
+### 8.2 向量维度 ≠ 模型身份（本 session 最易误判的坑）
+
+`pg` 里 chunks.embedding 是 **1024 维**，但**不是 doubao**——是 **bge-small 512 维零填充到 1024**（`embedder.py` 里 padding，余弦不变）。**看到 1024 维就以为在烧 doubao 是错的**。判模型身份看 `kb.env` 的 `EMBED_MODEL` + release 文档，别只看 DB 列宽。查维度：`docker exec yuxin-kb-db psql -U postgres -d yuxin_kb -tAc "SELECT attname,atttypmod FROM pg_attribute WHERE attrelid=(SELECT oid FROM pg_class WHERE relname='chunks') AND attname LIKE '%embed%';"`（atttypmod 4×1024 附近 = 1024 维；若 -1 = 无维度限定）。
+
+### 8.3 火山消费方全图（谁真在烧火山）
+
+服务器 + 本地 Mac 上的火山消费点只有两个，且都近乎闲置：
+
+| 消费方 | 火山服务 | 计费 | 现状 |
+|---|---|---|---|
+| 语音 ASR | `doubao-seed-asr-2.0`（`wss://openspeech.bytedance.com/api/v3/sauc/bigmodel_nostream`） | 按时长 `volc.seedasr.sauc.duration` | voice-gateway 8670 进程 3 天仅 19s CPU，基本闲置 |
+| 方舟 Ark | `VOLC_ARK_API_KEY`（网关 .env） | token 计费 | 网关 meter 全时段**零 doubao/ark 请求** |
+| 生图 | 豆包 Seedream | 按张 | 无进程/脚本/日志 |
+
+`YUSHU_TTS_ENGINE=edge`（TTS 已走 edge，不烧火山）、`YUSHU_NLU_*` 走 deepseek-chat。**结论：火山欠费是历史账单（11-02「全走火山」那波），不是当前持续消费。** 服务器侧查不到账单金额（火山管理 API 需 AK/SK 且被拒），金额明细须华哥在控制台看。
+
+### 8.4 网关成本溯源 recipe（「谁在烧钱」的标准答案）
+
+网关计量库在容器 `yuxin-llm-gateway` 内 `/hermes/state/llm_meter.db`（宿主挂载 `/opt/yuxin-llm-gateway/hermes/state/`）。表 `request_log` / `daily_rollup`，列名是 **`input_tokens` / `output_tokens`（不是 prompt/completion_tokens）**、`total_cost_usd`、`cost_known`、`provider`、`backend_name`、`model`、`client`。查法（宿主直接 sqlite3）：
+
+```bash
+# 按 provider+model 汇总（全时段成本排名）
+sqlite3 -header -column /opt/yuxin-llm-gateway/hermes/state/llm_meter.db \
+ "SELECT provider, model, COUNT(*) n, SUM(input_tokens) inp, SUM(output_tokens) outp,
+         ROUND(SUM(total_cost_usd),4) cost FROM request_log
+  GROUP BY provider, model ORDER BY cost DESC;"
+
+# 按 client 汇总（哪个 agent/应用在烧）
+sqlite3 -header -column /opt/yuxin-llm-gateway/hermes/state/llm_meter.db \
+ "SELECT client, COUNT(*) n, ROUND(SUM(total_cost_usd),4) cost FROM request_log GROUP BY client ORDER BY cost DESC;"
+```
+
+模型路由映射在 `llm_model_pool.py`（`glm-openai`→endpoint `glm`/open.bigmodel.cn、`doubao-openai`→endpoint `doubao` 等），网关 `.env` 里 `ZHIPUAI_API_KEY`/`VOLC_ARK_API_KEY` 是各自凭证。`meter_config.json` 是预算熔断（`budgets.daily_usd/monthly_usd`），`llm_alert.py` 每小时推飞书（但当前 `缺少飞书凭证或 chat_id` 推不出，见日志）。
 
 ## 重叠提示
 

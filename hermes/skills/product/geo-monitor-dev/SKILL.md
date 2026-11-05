@@ -9,6 +9,53 @@ description: 擎观 GEO 和擎索 SEO Monitor 项目开发维护。三功能架�
 >
 > 📖 **官网公开演示面**：geo 另有对外门面 `lookforge.net/webapps/geo/`（移动Web只读演示，独立门禁通道 eqsim-session-gate:8033，2026-10-24 上架）——「geo 打不开/看不到」类问题先读 `references/webapp-public-face-gateway.md` 分清是运营 API 面还是官网演示面。
 
+## ⭐ 13-GEO 迁移包（2026-11-04 新增 · GEO-M4 v0.9.1）
+
+> 华哥从 Windows（旺财 `E:\渔芯科技\...\GEO`）迁来的**新版专业迁移包**，取代失效的 24-GEO 本地形态。
+> - **路径**：`/Users/hua/6-产品研发/渔芯独角兽/01-开发中/渔芯科技全维度运营计划/13-GEO/GEO-M4/`（项目在 `project/` 子目录）
+> - **版本**：v0.9.1（擎观 GEO Monitor）· **端口 8015**（非 8001/8002）· Python 3.11 venv
+> - **登录**：`dev@geo.local` / `dev123456`（GED_DEV_MODE=true 时 auto-seed，见 auth/dependencies.py）
+
+### 迁移包结构与解密 SOP
+
+```
+13-GEO/
+├── GEO-M4/                          ← 解压后的项目
+├── GEO-M4-code-*.zip                ← 代码（366 源文件）
+├── GEO-M4-sensitive-*.zip.aesgcm    ← 敏感数据（689 文件，AESGCM+PBKDF2 加密）
+├── CHECKSUMS.sha256 / build-report.json / manifest.json / TRANSFER-README.txt
+```
+
+解密（**系统 python 已有 cryptography，可不等 venv 装完，并行解密**）：
+```bash
+cd GEO-M4
+GEO_MIGRATION_PASSWORD='<华哥提供>' /opt/homebrew/bin/python3.11 \
+  tools/decrypt_sensitive.py --archive ../GEO-M4-sensitive-*.zip.aesgcm --extract-to project
+# 成功输出 "Restored 689 sensitive/runtime files."
+```
+
+### 安装坑（关键，重新踩过）
+
+1. **pip 官方源国内仅 30KB/s → 必换清华镜像**（37MB/s，快 1000 倍）：
+   `pip install -r requirements.lock -i https://pypi.tuna.tsinghua.edu.cn/simple`
+2. **GBK 编码中文文件名**：Windows 打包的中文文件名（如 `01_快速监测.py`）macOS 直接 unzip 会乱码，用 `ditto -x -k` 解压。
+3. 依赖含 playwright → 装完跑 `playwright install chromium`（配 npmmirror，~95MB）。
+
+### LLM key 现状（设计如此，非迁移丢失）
+
+`.env` 里 `GED_LLM_API_KEY` 被注释，注释写「DeepSeek 官方请在工具内『配置大模型』填写」——key 由用户运行时在 UI 填，不预置。
+真实监测需补 key：主 LLM（DeepSeek）+ 国内引擎（deepseek/千问/kimi/百度）key 均空；
+Perplexity key 是 `sk-647` 开头（非官方 `pplx-` 格式）+ api.perplexity.ai 国内不可达。
+补 key 途径：① `POST /api/settings/llm`（写 .env + 即时生效，无需重启）② 走公司 Hermes gateway 18888（需华哥批准签发 client 令牌，见 yuxin-llm-gateway-protection 技能）。
+
+### 启动命令（本地）
+
+```bash
+cd .../13-GEO/GEO-M4/project/backend
+GED_DEV_MODE=true GED_PORT=8015 .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8015
+# 页面 http://127.0.0.1:8015/geotool  · 123 端点 · 三功能架构（monitor/optimize/improve/cycle）齐全
+```
+
 ## 项目概览
 
 | 项 | 值 |
