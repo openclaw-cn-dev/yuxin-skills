@@ -45,6 +45,12 @@ DEV = set([
     "llm-wiki-manager",
     # 审查 / 评审（1101 归位）
     "simple-reviewer-v1",
+    # 1105-1106 落盘补全（CAD/3D/图标/办公/图像 → DEV）
+    "stack-diagram", "parametric-3d-printing", "digital-human-koubo",
+    "kubai-icons", "solidworks-automation", "codex-images", "myoffice",
+    "open3d-alpha-cutout", "open3d-cursor-rig", "open3d-exploded-view",
+    "open3d-frame-capture", "open3d-motion-assets", "open3d-scroll-film",
+    "open3d-site-check", "open3d-threejs-scene",
 ])
 
 # 沿铁律 112 — mkt 集合（营销 / 内容 / 增长 / SEO）
@@ -75,6 +81,8 @@ MKT = set([
     "cida", "zh-tech-writing", "super-research",
     # 营销运营类垂类（1101 cron 归位：转化追踪/外链/营销逆向拆解）
     "conversion-tracking", "link-building", "reverse-engineer-marketing",
+    # 1106 旺财 lane（mkt-hub 168⭐ 中文双语 + 钩子库）
+    "ugc-video", "conversational-sales", "cold-outreach", "viral-hooks",
 ])
 
 # 1101 新增 — VERT 集合（4 业务线垂类：养殖 / 自媒体发布 / 内容 IP 系列）
@@ -97,6 +105,21 @@ VERT = set([
     "xiaoyuan-manju", "xihuan-manju", "xingji-manju", "xitong-manju",
     "xuanhuan-manju", "xuanyi-manju", "yule-manju", "zhaidou-manju",
     "zhongtian-manju",
+    # 1105-1106 落盘补全（drama 12 + video-agent 13 + chubbyskills 14 + koubo）
+    "short-drama", "short-drama-assets", "short-drama-breakdown",
+    "short-drama-develop", "short-drama-edit", "short-drama-image-prompts",
+    "short-drama-novel-analyze", "short-drama-produce", "short-drama-review",
+    "short-drama-storyboard", "short-drama-video-prompts", "short-drama-write",
+    "broll", "clips", "steal", "outliers", "editing", "publish",
+    "short-editing", "short-translate", "studio-script", "studio-setup", "vox",
+    "insta-audit", "chubby-bilibili-transcribe", "chubby-content-enrich",
+    "chubby-douyin-transcribe", "chubby-industry-intelligence-radar",
+    "chubby-knowledge-base-management", "chubby-learning-notes-automation",
+    "chubby-podcast-transcribe", "chubby-tiktok-transcribe",
+    "chubby-wechat-article-ingest", "chubby-weibo-transcribe",
+    "chubby-xiaohongshu-ingest", "chubby-x-ingest",
+    "chubby-youtube-transcribe", "chubby-zhihu-transcribe",
+    "cartoon-3d-short",
 ])
 
 
