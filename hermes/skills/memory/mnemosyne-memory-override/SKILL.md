@@ -50,6 +50,10 @@ When moving data from legacy memory to Mnemosyne:
 2. Then REMOVE the old entry from `memory` with `memory(action="remove")`
 3. This prevents stale duplicates and confusion
 
+## Architecture / "L3 预算超限" 排查
+
+Mnemosyne 记忆分三层：L1 工作记忆（facts/preferences，按需 recall）→ L2 长文档（`~/hermes/memory_store/`）→ **L3 Persona 层**（always-on 注入 system prompt 的行为规则，tier ∈ permanent/long_term/working）。L3 有 token 上限 `MNEMOSYNE_PERSONA_TOKEN_CAP`（默认 1500），超限时按 importance 静默裁剪、低优先级不注入——「L3 预算超限」即指此。完整架构、源码位置、当前状态、排查命令见 `references/***SECRET***.md`。
+
 ## Enforcement
 
 If you catch yourself typing `memory(action=` for durable data:

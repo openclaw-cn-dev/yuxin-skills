@@ -1,5 +1,4 @@
 apple
-arxiv-qfin-digest
 autonomous-ai-agents
 creative
 data-science

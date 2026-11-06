@@ -109,6 +109,19 @@ ps -ef | grep "llm_gateway.py" | grep -v grep
 
 ---
 
+## 🔔 LLM 用量预警系统（llm_alert.py）— Gateway 熔断的另一半
+
+Gateway 的另一半是 **用量预警/熔断系统**（`llm_alert.py` + `meter_config.json` + `meter_guard.json`）。
+按 **L1/L2/L3 三级告警**（提示50% / 警告80% / 严重100%），预算项 = 日 / 月 / 单客户端日 三项（额度是可变状态，华哥会调，**以 `meter_config.json` 现值为准**，别信硬编码数字；2026-11-05 调至 日 $100 / 月 $200 / 单客户端 $50）。
+
+⚠️ **术语坑（2026-11-05 实测踩过）**：渔芯里「L1/L2/L3」有两套含义——**记忆分层**（L1工作/L2长文档/L3 persona，见 `memory_layer.py`）和 **LLM 告警级别**（本系统）。「**L3 预算超限**」= 后者；看到「预算」二字别往记忆层想。
+
+⚠️ 告警消息头里的「（熔断已开 · L3 预算超限将拒绝请求）」是**固定说明文案**，不代表 L3 真触发；真实告警看消息体里的 🟡/🟠/🔴 行。
+
+诊断收到「预算/L3」告警：`tail ~/.hermes/logs/llm_alert.log` + `cat ~/.hermes/state/{meter_config,meter_guard,llm_alert_state}.json`。完整细节见 `references/llm-alert-metering.md`。
+
+---
+
 ## 📌 关联资源
 
 - L0 共享记忆:`~/.hermes/memory_store/shared/02_iron_rules.md` (5 大铁律 v2.0)

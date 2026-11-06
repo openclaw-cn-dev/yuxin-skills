@@ -133,6 +133,7 @@ with urllib.request.urlopen(req, timeout=10) as resp:
 |-------|---------|--------|-------|
 | 总经理 | `***SECRET***` | **dissolved_save** (R191 08:14) | 华哥 owner；`im/v1/chats` 列表仍返此群名「总经理」但发送直接返 `232009 chat dissolved` — **此群已解散**，**不可用** |
 | 渔芯科技（大群） | `***SECRET***` | ❌ Bot **不在此群**（R191 实测 `im/v1/chats` 不返此 chat_id） | 旧 SKILL 标注的「大群」已不归 Bot 所有 |
+| 渔芯管理群 | `***SECRET***` | ✅ **normal 可达 (2026-11-06 Codex sync cron 实测 code:0)** | 探活脚本自动命中此群并投递成功；R191「所有群已解散」结论已过时，Bot 现已重新入群 |
 | 华哥私聊 | `***SECRET***` | ✅ **CONFIRMED 可达 (2026-09-05 玉芬 tenant_token 直发 code:0)** | R191 的「待验证」已闭环——群探活脚本不列 DM chat,但按 chat_id 直发成功;同日 gateway live adapter 经此 chat_id 投递 30+ 次亦全部成功 |
 | 产品群 | `***SECRET***` | ❌ 同大群，Bot 不在 | |
 | 商务运营群（小宝） | `***SECRET***` | **dissolved**（同总经理群） | 旧 SKILL 误标注「同大群」，实际是总经理群 |
