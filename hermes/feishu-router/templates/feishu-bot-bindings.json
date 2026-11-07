@@ -1,0 +1,36 @@
+{
+  "_comment": "Feishu bot × group binding registry. Update after GUI 拉机器人进群. Source of truth for 'which bot is in which group'.",
+  "agents": {
+    "agent-sales": {
+      "app_id": "cli_填入",
+      "purpose": "飞书销售群自动接单/报价/跟进",
+      "groups": [
+        {"name": "群名", "chat_id": "oc_填入"}
+      ]
+    },
+    "agent-rd": {
+      "app_id": "cli_填入",
+      "purpose": "飞书研发群技术答疑/写方案",
+      "groups": [
+        {"name": "群名", "chat_id": "oc_填入"}
+      ]
+    },
+    "agent-prod": {
+      "app_id": "cli_填入",
+      "purpose": "飞书生产群排产/工单/调度",
+      "groups": [
+        {"name": "群名", "chat_id": "oc_填入"}
+      ]
+    },
+    "agent-cs": {
+      "app_id": "cli_填入",
+      "purpose": "飞书客服群售后/退换货/FAQ",
+      "groups": [
+        {"name": "群名", "chat_id": "oc_填入"}
+      ]
+    }
+  },
+  "common": {
+    "_comment": "全公司共用群（如老板总控）放这里"
+  }
+}

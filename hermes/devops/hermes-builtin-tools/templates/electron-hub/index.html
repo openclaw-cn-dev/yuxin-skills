@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hermes 桌面</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+    }
+    .header {
+      padding: 14px 20px;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid #334155;
+      display: flex; align-items: center; gap: 12px;
+      backdrop-filter: blur(8px);
+    }
+    .header h1 {
+      font-size: 18px; font-weight: 600;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .header .status { margin-left: auto; font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
+    .header .status::before {
+      content: ''; width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e; box-shadow: 0 0 8px #22c55e;
+    }
+    .header .status.offline::before { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+    .chat-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .msg {
+      max-width: 75%; padding: 12px 16px; border-radius: 14px;
+      line-height: 1.6; font-size: 14px; white-space: pre-wrap; word-wrap: break-word;
+    }
+    .msg.user { align-self: flex-end; background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; }
+    .msg.assistant { align-self: flex-start; background: #1e293b; border: 1px solid #334155; color: #e2e8f0; }
+    .msg.error { align-self: flex-start; background: #7f1d1d; border: 1px solid #dc2626; color: #fecaca; }
+    .input-bar {
+      padding: 14px 20px;
+      background: rgba(15, 23, 42, 0.8);
+      border-top: 1px solid #334155;
+      display: flex; gap: 10px;
+    }
+    .input-bar textarea {
+      flex: 1; background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
+      padding: 10px 14px; border-radius: 10px; font-size: 14px; font-family: inherit;
+      resize: none; max-height: 120px; outline: none; transition: border-color 0.2s;
+    }
+    .input-bar textarea:focus { border-color: #60a5fa; }
+    .input-bar button {
+      background: linear-gradient(135deg, #3b82f6, #6366f1); border: none; color: white;
+      padding: 0 22px; border-radius: 10px; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: transform 0.1s, opacity 0.2s;
+    }
+    .input-bar button:hover { transform: translateY(-1px); }
+    .input-bar button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .input-bar .model-sel {
+      background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
+      padding: 0 12px; border-radius: 10px; font-size: 13px; outline: none;
+    }
+    .typing::after { content: '▊'; animation: blink 1s infinite; color: #60a5fa; }
+    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🪶 Hermes 桌面</h1>
+    <div class="status" id="status">在线</div>
+  </div>
+  <div class="chat-area" id="chat"></div>
+  <div class="input-bar">
+    <select class="model-sel" id="model">
+      <option value="MiniMax-M3">MiniMax-M3</option>
+      <option value="MiniMax-Text-01">MiniMax-Text-01</option>
+    </select>
+    <textarea id="input" rows="1" placeholder="跟小弟说点什么…（Enter 发送，Shift+Enter 换行）"></textarea>
+    <button id="send">发送</button>
+  </div>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
+    const modelSel = document.getElementById('model');
+    const status = document.getElementById('status');
+    const messages = [];
+
+    function addMsg(role, text) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + role;
+      div.textContent = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+      return div;
+    }
+
+    async function send() {
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      input.style.height = 'auto';
+      addMsg('user', text);
+      messages.push({ role: 'user', content: text });
+      sendBtn.disabled = true;
+      const thinking = addMsg('assistant', '');
+      thinking.classList.add('typing');
+
+      try {
+        const resp = await window.hermes.chat({ messages, model: modelSel.value });
+        const reply = resp.choices?.[0]?.message?.content || '[空响应]';
+        thinking.textContent = reply;
+        thinking.classList.remove('typing');
+        messages.push({ role: 'assistant', content: reply });
+        status.classList.remove('offline');
+        status.textContent = '在线';
+      } catch (e) {
+        thinking.className = 'msg error';
+        thinking.textContent = '❌ ' + e.message;
+        status.classList.add('offline');
+        status.textContent = '离线';
+      }
+      sendBtn.disabled = false;
+      input.focus();
+    }
+
+    sendBtn.onclick = send;
+    input.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
+    input.oninput = () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 120) + 'px'; };
+
+    addMsg('assistant', '老大好,我是小弟。\n- 直接打字开聊(Enter 发送)\n- 模型在左下角切换\n- 关窗口不退出,会缩到右下角托盘');
+  </script>
+</body>
+</html>
