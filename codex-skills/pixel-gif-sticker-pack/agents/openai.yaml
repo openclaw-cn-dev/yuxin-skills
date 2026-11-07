@@ -1,0 +1,4 @@
+interface:
+  display_name: "GIF 表情包工作室"
+  short_description: "Create character GIFs and mascot-led brand films"
+  default_prompt: "使用 $pixel-gif-sticker-pack，根据参考角色制作 GIF 表情包，或把已认可的吉祥物做成品牌宣传片。"
