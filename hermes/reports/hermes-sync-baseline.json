@@ -1,0 +1,7 @@
+{
+  "last_sync": "2026-10-05T14:53:18+08:00",
+  "skills": 120,
+  "profiles": 11,
+  "scripts": 144,
+  "broken_known": "13 placeholder dirs (only DESCRIPTION.md) + 3 empty dirs (apple has README only; frontend/red-teaming/testing empty); leaf dirs w/o SKILL.md listed in weekly report"
+}
