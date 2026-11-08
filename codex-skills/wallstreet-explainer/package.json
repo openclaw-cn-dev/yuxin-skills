@@ -1,0 +1,14 @@
+{
+  "name": "wallstreet-explainer",
+  "version": "1.0.0",
+  "description": "Claude Code skill: Wall-Street-style finance/tech explainer videos — renderer and news snapshot tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.58.2"
+  },
+  "license": "MIT"
+}

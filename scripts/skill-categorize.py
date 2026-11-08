@@ -83,6 +83,8 @@ MKT = set([
     "conversion-tracking", "link-building", "reverse-engineer-marketing",
     # 1106 旺财 lane（mkt-hub 168⭐ 中文双语 + 钩子库）
     "ugc-video", "conversational-sales", "cold-outreach", "viral-hooks",
+    # 1108 旺财 lane（wallstreet-explainer 628⭐ 财经/科技解读短片 + vibe-knowledge-film 1123⭐ 无旁白知识短片）
+    "wallstreet-explainer", "vibe-knowledge-film",
 ])
 
 # 1101 新增 — VERT 集合（4 业务线垂类：养殖 / 自媒体发布 / 内容 IP 系列）
@@ -124,7 +126,9 @@ VERT = set([
     "ray-sticker-shop", "pixel-gif-sticker-pack",
     "zach-d-films", "stick-figure", "minimalistic-graphics",
     "map-route", "breakdown", "graph",
-    # 1108 旺财 lane（cinecode 代码拍片垂类：quick/film 双模式 + references 19 册）
+    # 1108 旺财 lane（wallstreet-explainer 628⭐ 财经/科技解读短片=A股线 + vibe-knowledge-film 1123⭐ 无旁白知识短片=抖音线，沿 cartoon-3d-short 先例归 VERT）
+    "wallstreet-explainer", "vibe-knowledge-film",
+    # 1108 兄弟 lane（cinecode 代码拍片垂类：quick/film 双模式）
     "cinecode",
 ])
 
