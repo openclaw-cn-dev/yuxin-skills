@@ -124,6 +124,8 @@ VERT = set([
     "ray-sticker-shop", "pixel-gif-sticker-pack",
     "zach-d-films", "stick-figure", "minimalistic-graphics",
     "map-route", "breakdown", "graph",
+    # 1108 旺财 lane（cinecode 代码拍片垂类：quick/film 双模式 + references 19 册）
+    "cinecode",
 ])
 
 
