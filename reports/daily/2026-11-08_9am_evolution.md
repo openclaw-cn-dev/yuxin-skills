@@ -28,5 +28,12 @@
 ## 需老大决策（累计）
 1. Codex CLI 0.166.0 → 0.167.0（N=1 minor 跳级，双源一致，第 2 天）
 2. Hermes 本地 0.19.0 → 上游 v0.23.0（落后 4 minor，cron 不动，需手动）
-3. yuxin-skills 分叉合并（回「拉」即可）
-4. 桌面 catalog 0.142.5（125 天 P1）
+3. 桌面 catalog 0.142.5（125 天 P1）
+
+## 第二轮 · 旺财 lane 增量（09:45 并入，commit 本文件同推）
+- **push 分叉已自愈（铁律 158）**：merge-tree 预检 0 冲突 → merge origin/main --no-edit（收编 b03a62d+00c30c5）→ 日报存活三查（铁律 171 全在）→ secret 扫描 pending 0 命中 → **push 791ea74，ahead 0 behind 0**。决策项 3「回拉」作废，老大不用动手。
+- **fs 修正：243 → 241**：本轮装的 last30days-skill-cn / guizang-social-card-skill 与早间 lane 工作拷贝（last30days-cn / guizang-social-card）重复，删重复命名拷贝保留工作拷贝（早间已 npm install + __pycache__ 实跑痕迹）。wallstreet-explainer / vibe-knowledge-film 保留为正式装。
+- **分类器 MKT 86→88**：wallstreet-explainer（628⭐ 华尔街式财经解读短片，A股线）+ vibe-knowledge-film（1123⭐ 抖音无旁白知识短片）落盘 MKT/VERT 集合，双拷贝 md5 一致，实跑 DEV 62 / MKT 88 / VERT 87 / OTHER 4 收敛 exit=0。
+- **plugin enabled 实算 34**（primary 5 + bundled 7 + curated 22）vs 1107 = 47，-13 触发铁律 124 → 分市场聚合实锤 **curated 35→22 第 3 次整组换血**（铁律 165 二次实证：CLI 0.166.0 不变市场自己换——16 商务插件下架，19 开发组保留，render/cloudflare/expo 3 个复活 = 19+3=22 闭环，开发能力零损失）。not-installed 158 本日失真（远端 catalog 请求失败），禁跨日对比。
+- **镜像补齐 4+2**：1107 装机 codex-hygiene + content-boom-monitor 入仓（铁律 154 修复，21 文件）；image-prompt-reverse + parametric-3d-printing 游离目录补齐（铁律 154 二次修复，33 文件，sync bot 历史误删重放回未 commit）。新装 3 仓镜像 guizang-social-card / wallstreet-explainer / vibe-knowledge-film（170 文件，排 node_modules/examples/kit-gif 省 70MB）。
+- **垂类搜索（铁律 152）当日产出**：xiaohongshu+skill 维捞 4 候选全装全镜像（guizang 8016⭐ 早间已装 / last30days 2078⭐ 早间已装 / vibe 1123⭐ / wallstreet 628⭐ 本轮装）。
