@@ -51,6 +51,9 @@ DEV = set([
     "open3d-alpha-cutout", "open3d-cursor-rig", "open3d-exploded-view",
     "open3d-frame-capture", "open3d-motion-assets", "open3d-scroll-film",
     "open3d-site-check", "open3d-threejs-scene",
+    # 1109 旺财 lane（solo-to-team-skills 256⭐ 一人成队 + chubbyskills 框架壳）
+    "dispatch-accept-verify", "evidence-before-done", "beginner-ops-writing",
+    "ops-case-notes", "chubbyskills",
 ])
 
 # 沿铁律 112 — mkt 集合（营销 / 内容 / 增长 / SEO）
@@ -85,6 +88,10 @@ MKT = set([
     "ugc-video", "conversational-sales", "cold-outreach", "viral-hooks",
     # 1108 旺财 lane（wallstreet-explainer 628⭐ 财经/科技解读短片 + vibe-knowledge-film 1123⭐ 无旁白知识短片）
     "wallstreet-explainer", "vibe-knowledge-film",
+    # 1111 旺财 lane（article2media 11 件套 59⭐：文章/视频→小红书卡片/公众号/长图/口播视频）
+    "article2media", "article-comic", "article-fetch", "article-rewrite",
+    "article-translate", "explainer-video", "image-cards", "logic-whiteboard",
+    "long-image", "video-transcript", "wechat-layout",
 ])
 
 # 1101 新增 — VERT 集合（4 业务线垂类：养殖 / 自媒体发布 / 内容 IP 系列）
