@@ -125,3 +125,26 @@ sqlite3 <shared db> "SELECT substr(content,1,40) FROM working_memory"
 1. **中文记忆必须换 embedding**：默认 `bge-small-en-v1.5` 英文优化，中文召回不准。config.yaml 设 `embedding_model: BAAI/bge-small-zh-v1.5`。
 2. **fastembed 缓存要软链共享**：每个 profile 的 HERMES_HOME 不同，会各自下载 ~100MB 模型。给各 profile 建 `cache/fastembed` → 软链到 default 的 `~/.hermes/cache/fastembed`。
 3. **安装目录区分**：default 的 db 在 `~/.hermes/mnemosyne/data/`，profile 的在 `~/.hermes/profiles/<名>/mnemosyne/data/`，靠 `MNEMOSYNE_DATA_DIR` 环境变量定位。
+
+## 八、迁移后必做：运行面验证（数据完整 ≠ 系统能用，2026-11-10 新家实测）
+
+迁移/搬家只搬了数据；**运行环境（插件、嵌入库、cron 脚本）不随数据走**，换机后必须单独恢复。验证分两层：
+
+### 数据面（sqlite 直查，确认搬运完整）
+- 各 profile db 行数与向量覆盖：`SELECT COUNT(*), SUM(CASE WHEN embedding IS NOT NULL THEN 1 ELSE 0 END) FROM working_memory` — 有行无向量 = fastembed 没装/模型没下。
+- L2 `memory_store/`、L1 `.bak` 备份、最新写入链路（最新几条应带向量）。
+
+### 运行面（最容易漏，且故障是静默的）
+1. **插件安装状态**：`hermes memory status` — `Provider=mnemosyne` 但 **Plugin: NOT installed** 是典型迁移缺口：数据躺在库里，但 `mnemosyne_recall` 语义检索会**静默回退到 L1 文件直读，不报错、不易察觉**，直到召回质量明显变差才暴露。修复：`mnemosyne-hermes --hermes-home <home> install --force` + `pip install fastembed`。⚠️ Windows 两坑：① Program Files 系统目录无管理员权限写不进，pip 落到用户 Roaming 后安装器探测不到 → 建**专用 venv**（`<home>\.mnemosyne-venv` 装 mnemosyne-hermes+mnemosyne-memory+fastembed+sqlite-vec）wrapper 模式安装；② 安装器给各 profile 建 symlink 需特权、Windows 批量失败 → 手动 NTFS junction 免特权补齐：`cmd //c mklink //J <profile>\plugins\mnemosyne <home>\plugins\mnemosyne`。
+2. **cron 脚本平台兼容**：Mac 时代 launchd+.sh 的 cron（如 mnemosyne_health.sh 压缩守护）迁到 Windows 后**每个 tick 都失败**（`last_status=error: Script exited with code 1`）。⚠️ `repeat.completed` 是历史累计数，会掩盖"迁移后从未成功过"——判断健康要看 `last_run_at` 是否 ≥ 迁移日期。⚠️ 另坑：迁移打包可能把脚本带成 **0 字节**（isfile=True 但读出为空）——移植前先验文件非空。修复：脚本换 Windows 兼容版（.py）并立即手动跑一次清积压（实测积压后果：L1 涨到 98% 无人压缩）。
+3. **嵌入模型缓存**：新机 fastembed 缓存为空，中文 `BAAI/bge-small-zh-v1.5` 需重新下载——国内走镜像 `HF_ENDPOINT=https://hf-mirror.com`（实测 ~42s）或从旧机拷 `cache/fastembed`。补嵌入缺口数要精确统计：`SELECT COUNT(*) FROM working_memory wm LEFT JOIN memory_embeddings e ON e.memory_id=wm.id WHERE e.memory_id IS NULL`——按表抽查估算会严重低估（实测估 41 实为 229：quant 122+zhenglishi 106+laomo 1）。
+4. **垃圾文件**：迁移打包常带进 0 字节怪名文件（实测 `memories/~`），顺手清理。
+
+### 修复顺序
+① 插件 install（解锁语义检索，最先）→ ② fastembed + 缓存 → ③ 补嵌入 → ④ cron 脚本移植 + 手动触发 → ⑤ 清垃圾。①不修则整个 Mnemosyne 只剩"能写不能语义查"。
+
+📎 完整命令级修复实录（venv+junction 安装、hf-mirror 下载、229 条补嵌脚本、cron 移植坑）见 `references/windows-runtime-repair.md`。
+
+## 九、公司级资产迁移盘点（数据完整性审计另见姊妹技能）
+
+记忆库验证只是迁移审计的一小块。**全公司范围**的"数据是不是都迁过来了"审计（公司树/94 git 仓/符号链接分类/数据库双层比对/打包残留识别/分级报告）照 `machine-migration-audit` 技能执行——git 跨机 dubious ownership 批量豁免、断链甄别（128 断链里真数据仅 7 条）等坑都在那边。

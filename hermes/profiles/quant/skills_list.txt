@@ -23,10 +23,11 @@ product
 productivity
 quant
 quant-data-source-research
-quant-workflow
 quantitative-research
+quant-workflow
 red-teaming
 research
+scripts
 smart-home
 social-media
 software-development

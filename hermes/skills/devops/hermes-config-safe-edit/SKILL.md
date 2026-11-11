@@ -8,6 +8,8 @@ version: 1.0.0
 
 > 🔧 2026-10-31 新增：`approvals.cron_mode: deny` 下飞书会话里哪些终端操作会被拦、哪些能直接过、四条替代路径（venv 绝对路径解释器 / 文本工具组合 / write_file 落脚本再执行 / 用户在场重试弹批准）+ long-running 判定坑（带 sleep 的前台被判 server、>600s 必须 background+process wait）→ `references/terminal-approval-workarounds.md`
 
+> 🔧 2026-11-10 新增：GLM-5.3-flash 思考模型 max_tokens 陷阱（探活 max_tokens 太小全被 thinking 块吃掉 = 假空回复）+ Windows 宿主机适配（HERMES_HOME=D:\yuxin\hermes 路径映射、WSL terminal 坏时 execute_code 全替代）→ 见「关键结论」GLM 条目与「Windows 宿主机环境适配」节
+
 > 背景：2026-08-17 玉芬反复"改完模型又出错"（把玉芬 provider 误改成 minimax-vision、清理时误改 base_url 为 /v1、没发现 model_rotation_daemon 自动切配置），华哥只能用 Claude Code 修复。本 skill 是血的教训。
 
 ## 铁律（改任何配置前逐条执行）
@@ -439,6 +441,16 @@ hermes config show model  # model.default 应该没变（这次只换 key 不换
 - 新 key `sk-cfb...1ea1` 实测有效（`/v1/models` 返回 3 模型：deepseek-v4-flash / deepseek-v4-pro / deepseek-v4-flash-vision-exp；chat 端点 HTTP 200）。旧 key `sk-9...9e51` 已 401 作废。
 - ⚠️ `deepseek-v4-pro` 是 reasoner 模型，`chat/completions` 返回的 `choices[0].message.content` 可能为空（内容在 reasoning_content）——判 key/模型有效性只看 HTTP 200 + usage，别被空 content 误导成"模型坏了"。
 
+### 🔴 GLM-5.3-flash 思考模型的 max_tokens 探活陷阱（2026-11-10 Windows 实测）
+
+GLM-5.3-flash 是**思考型模型**（anthropic 格式响应里返回 `type:"thinking"` 块）。用小 `max_tokens`（如 16/100）探活时，token 全被思考块消耗 → HTTP 200、`usage.output_tokens` 正常计数、但 `content` 里**没有 text 块** = 看起来像"模型没输出"。max_tokens=100 实测 3 秒返回但正文为空；max_tokens=2000 才拿到完整正文（思考块 ~2600 字符 + 正文，耗时 ~40 秒）。
+
+**探活正确姿势**：
+- `max_tokens` 至少给 2000，别用默认小值；判活看 `stop_reason=="end_turn"` + text 块非空，而不是只看 HTTP 200
+- 若只想快速探活（不计较正文），看 `usage.output_tokens>0` 即可认定通道+key 有效，别误判成"空回复故障"
+- 该模型单次响应 ~40 秒（思考块开销）——对延迟敏感的场景（飞书对话、探活脚本 timeout）要预留，timeout 至少 60s
+- 如嫌慢可关思考：请求体加 `thinking: {"type": "disabled"}`（待实测），或换非思考版模型
+
 ## 智谱 Coding Plan 端点矩阵（2026-08-28）
 
 完整端点矩阵、Codex 直连已知良好配置、测活脚本、当日事故时间线见 **[references/zhipu-coding-plan-endpoints.md](references/zhipu-coding-plan-endpoints.md)**。速记：
@@ -846,6 +858,25 @@ custom_providers:
 - 本机无 `pwsh` → .ps1 没法直接实测。把脚本内嵌的 Python 重写逻辑抽出来，在模板 config 的临时副本上**仿真验证**（断言改后字段正确 + 二次运行输出一致=幂等 + "旧配置无该块"场景也能跑通），通过才算数。
 - tirith 对 `$var | python3` / `| python` 管道直译直接 HIGH 拦截（交互上下文会弹审批打断华哥）→ 脚本内用 `Set-Content` 写临时 .py 文件再 `python <file>`，不做管道直译。
 - patch 多行 old_string 报 "Found 2 matches" 时（`grep -c` 可能只数到 1），继续扩充上下文行直到唯一，别用 replace_all 瞎换。
+
+## Windows 宿主机环境适配（2026-11-10 实测，玉芬新机器）
+
+Hermes 也可跑在 Windows 上，此时本 skill 里所有 macOS 假设都要替换：
+
+| macOS 假设 | Windows 实际（2026-11-10 实测） |
+|---|---|
+| `~/.hermes/config.yaml` | `D:\yuxin\hermes\config.yaml`（HERMES_HOME=D:\yuxin\hermes） |
+| `~/.hermes/.env` | `D:\yuxin\hermes\.env` |
+| `~/.hermes/logs/gateway.log` | `D:\yuxin\hermes\logs\gateway.log`（含 feishu 连接 + memory_monitor 行） |
+| `launchctl kickstart` 重启 gateway | **不适用**；Windows 上 gateway 是独立进程，重启方式需现场确认（进程管理器 / 手动） |
+| model_rotation_daemon (launchd) | 不存在——Windows 宿主无此守护，但改 model 前仍要排查 cron 类改写者 |
+| terminal 跑 bash | 系统提示声明 bash/git-bash，**实测 WSL/POSIX 工具链可能不可用**（本会话 terminal 连接失败）；此时 `execute_code`（Python hermes_tools：read_file/write_file/terminal）是全功能替代，路径用原生 `D:\...` + `r""` 字符串 |
+
+**实测要点**：
+- 读 .env 拿 key 时直接 `open(r"D:\yuxin\hermes\.env")` 逐行解析，与 macOS 逻辑相同
+- 探活脚本用 `urllib.request`（标准库），不依赖 curl；Python 源码里路径写 `r"D:\yuxin\hermes\config.yaml"`（raw string 防 `\` 转义）
+- YAML 校验 `yaml.safe_load`；Windows 下 config 顶层结构相同（model.default / model.provider / providers / custom_providers）
+- 当前 Windows 配置基准（2026-11-10）：`model.default=GLM-5.3-flash` + `model.provider=custom:glm`（base_url=`https://open.bigmodel.cn/api/anthropic`，anthropic 格式 + `x-api-key`），custom_providers 另有 yuxin-gateway（lookforge.net，已挂勿用）/ deepseek-cn / local-ollama
 
 ## 学习助手 = 玉芬双重保障（2026-08-17）
 

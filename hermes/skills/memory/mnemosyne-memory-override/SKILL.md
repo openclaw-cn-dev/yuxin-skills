@@ -1,15 +1,31 @@
 ---
 name: mnemosyne-memory-override
 description: |
-  Hard rule override that forces Mnemosyne for all durable memory storage.
-  The legacy memory tool is DEPRECATED for user preferences, credentials,
-  and project conventions. Use memory ONLY for ephemeral session state.
+  Stricter, user-selected override that forces Mnemosyne for all durable memory
+  storage, including small standing rules. Apply it only when the user has
+  consciously chosen this policy; installation, this skill appearing in the
+  skills index, or an ordinary memory task is not that choice. Without it, the
+  default applies: bulk durable facts go to Mnemosyne, and small standing rules
+  and context anchors may stay in the always-injected memory tier.
 trigger: |
-  Whenever you would use memory(action="add|replace|remove") for anything
-  that should survive across sessions, STOP and use the Mnemosyne memory tools instead.
+  Only when the user has explicitly selected the strict Mnemosyne-only memory
+  policy, and you would use memory(action="add|replace|remove") for anything
+  that should survive across sessions.
 ---
 
 # Mnemosyne Memory Override
+
+## Activation and precedence
+
+This skill is a stricter policy than Mnemosyne's default. It is in effect only
+when the user has consciously selected it. Installing the plugin, finding this
+skill in the skills index, or being asked to remember something does not select
+it. When it is not selected, follow the default: use Mnemosyne for bulk durable
+facts, preferences, and insights, and leave small standing rules and context
+anchors in the always-injected memory tier, which is bounded and loaded per
+session.
+
+Once the user has selected it, the rules below replace that default exception.
 
 ## CRITICAL RULE
 
@@ -45,14 +61,13 @@ If no (temp flag, todo state) → `memory` is acceptable
 
 ## Migration Cleanup
 
+Migrate only under this selected policy. Under the default, small standing rules
+and context anchors stay in the always-injected tier and are not migrated.
+
 When moving data from legacy memory to Mnemosyne:
 1. Save to Mnemosyne first with `mnemosyne_remember`
 2. Then REMOVE the old entry from `memory` with `memory(action="remove")`
 3. This prevents stale duplicates and confusion
-
-## Architecture / "L3 预算超限" 排查
-
-Mnemosyne 记忆分三层：L1 工作记忆（facts/preferences，按需 recall）→ L2 长文档（`~/hermes/memory_store/`）→ **L3 Persona 层**（always-on 注入 system prompt 的行为规则，tier ∈ permanent/long_term/working）。L3 有 token 上限 `MNEMOSYNE_PERSONA_TOKEN_CAP`（默认 1500），超限时按 importance 静默裁剪、低优先级不注入——「L3 预算超限」即指此。完整架构、源码位置、当前状态、排查命令见 `references/***SECRET***.md`。
 
 ## Enforcement
 

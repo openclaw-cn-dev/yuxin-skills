@@ -15,12 +15,14 @@ feishu
 frontend-ui
 gaming
 gifs
+github
 heidou-admin
 hermes-ecosystem-entry.md
 inference-sh
 laomo-knowledge
 maodou-product
 mcp
+media
 mlops
 module
 negotiation-voss-techniques

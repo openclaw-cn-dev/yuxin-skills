@@ -1,55 +1,44 @@
 #!/bin/bash
-# 玉芬巡视 — no_agent 模式，零token消耗
-# 检查所有同事gateway状态 + kanban任务
-# 异常才出声，正常静默
+# 玉芬巡视 v2 — Windows 版 (2026-11-10 迁移重写, 零 token)
+# 检查所有同事 gateway 状态 + kanban 任务
+# 异常才出声，正常静默 (stdout 空 = cron 静默)
+# 依赖: git-bash tasklist / python kanban_task_ops.py
 
-KANBAN_DB="$HOME/.hermes/kanban.db"
+OPS="D:/yuxin/hermes/scripts/kanban_task_ops.py"
+PROFILES="maodou laomo xiaobao heidou afu quant zhenglishi"
+
+# 1. gateway 进程检测 (Windows: hermes.exe 全体, 再按 profile 数对 PID)
+TL=$(tasklist //FI "IMAGENAME eq hermes.exe" 2>/dev/null)
+HERMES_PIDS=$(echo "$TL" | grep -c "hermes.exe")
+DEAD=""
+for p in $PROFILES; do
+  # 通过 gateway status 单查太慢; 用端口法不可靠; 折中: 只要 hermes.exe 总数 >= 7 就认为全体在
+  :
+done
+if [ "$HERMES_PIDS" -ge 7 ]; then
+  GW_OK=true
+else
+  GW_OK=false
+  DEAD="hermes.exe 进程数=$HERMES_PIDS (<7), 疑有同事 gateway 掉线"
+fi
+
+# 2. kanban 任务面 (调 python ops)
+SUP_OUT=$(python "$OPS" supervise 2>&1)
+SUP_CODE=$?
+
+# 3. 汇总: 全正常 → 静默(空输出); 有异常 → 输出告警
+FAIL_LINES=$(echo "$SUP_OUT" | grep -E "❌|⚠️" )
+if [ "$GW_OK" = true ] && [ "$SUP_CODE" -eq 0 ] && [ -z "$FAIL_LINES" ]; then
+  # 静默: 什么都不输出
+  exit 0
+fi
 
 echo "【玉芬巡视】$(date '+%Y-%m-%d %H:%M')"
 echo ""
-
-# 1. 检查同事 gateway 进程
-echo "=== Gateway 状态 ==="
-ALL_OK=true
-for p in maodou laomo xiaobao heidou afu quant zhenglishi; do
-  pid=$(launchctl list 2>/dev/null | awk -v lbl="ai.hermes.gateway-$p" '$3==lbl {print $1}')
-  if [ -n "$pid" ]; then
-    echo "✅ $p (launchd PID=$pid)"
-  else
-    # 也查手动进程
-    manual_pid=$(ps aux | grep "hermes.*gateway.*$p" | grep -v grep | awk '{print $2}')
-    if [ -n "$manual_pid" ]; then
-      echo "⚠️ $p (manual PID=$manual_pid, 建议注册launchd)"
-    else
-      echo "❌ $p (未运行)"
-      ALL_OK=false
-    fi
-  fi
-done
-
-echo ""
-
-# 2. 检查 kanban 任务
-if [ -f "$KANBAN_DB" ]; then
-  TASKS=$(sqlite3 "$KANBAN_DB" "SELECT assignee, status, title FROM tasks WHERE status IN ('pending','in_progress') ORDER BY assignee, status" 2>/dev/null)
-  if [ -n "$TASKS" ]; then
-    echo "=== 任务池 ==="
-    echo "$TASKS" | while IFS='|' read -r assignee status title; do
-      ICON="📋"
-      [ "$status" = "in_progress" ] && ICON="🔄"
-      echo "$ICON $assignee: [$status] $title"
-    done
-  else
-    echo "任务池：空"
-  fi
-else
-  echo "⚠️ kanban.db 不存在"
+if [ "$GW_OK" != true ]; then
+  echo "=== Gateway 异常 ==="
+  echo "❌ $DEAD"
+  echo ""
 fi
-
-echo ""
-echo "=== 汇总 ==="
-if $ALL_OK; then
-  echo "✅ 所有gateway正常运行"
-else
-  echo "⚠️ 有gateway未运行，需关注"
-fi
+echo "=== 任务池/资源 ==="
+echo "$SUP_OUT"

@@ -54,4 +54,3 @@ software-development
 terminal-ascii-art
 testing
 xiaobao-sales
-yuwei-research-protocol

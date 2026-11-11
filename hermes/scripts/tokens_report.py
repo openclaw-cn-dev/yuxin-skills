@@ -19,8 +19,10 @@ from collections import defaultdict
 _h = os.path.expanduser("~")
 # cron 环境下 $HOME 可能被改写为 profile home (~/.hermes/profiles/<name>/home)，
 # 此时 expanduser("~") 解析到错误目录导致读不到数据。回退到真实用户 home。
-HOME = "/Users/hua" if (os.sep + ".hermes") in _h else _h
-HERMES_HOME = os.path.join(HOME, ".hermes")
+# 2026-11-11 Windows 迁移: 优先 HERMES_HOME 环境变量, 兜底 D:/yuxin/hermes (真实数据所在)。
+# 旧 Mac 硬编码 /Users/hua 在 Windows 上解析到空壳 C:/Users/<user>/.hermes 导致读不到 state.db。
+HOME = os.environ.get("HERMES_HOME") or ("/Users/hua" if (os.sep + ".hermes") in _h else _h)
+HERMES_HOME = HOME if os.path.isdir(os.path.join(HOME, "profiles")) and os.path.exists(os.path.join(HOME, "state.db")) else os.path.join(HOME, ".hermes")
 
 
 def find_state_dbs():

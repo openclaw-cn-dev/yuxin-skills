@@ -10,27 +10,31 @@ import sqlite3
 from datetime import datetime
 
 def get_kanban_db_path():
-    """获取kanban.db路径 - 支持多profile环境"""
-    # 系统默认 kanban.db 是真源（profile 下的通常是空壳）
-    default_kanban = "/Users/hua/.hermes/kanban.db"
+    """获取kanban.db路径 - 支持多环境 (Windows 迁移 2026-11-10)"""
+    # Windows 主机: D:/yuxin/hermes/kanban.db (公司真源)
+    win_kanban = "D:/yuxin/hermes/kanban.db"
+    if os.path.exists(win_kanban):
+        return win_kanban
+
+    # 系统 default kanban.db
+    default_kanban = os.path.expanduser("~/.hermes/kanban.db")
     if os.path.exists(default_kanban):
         return default_kanban
 
     # fallback：profile 下的 kanban.db
-    profile_home = os.path.expanduser("~")
-    profile_kanban = os.path.join(profile_home, ".hermes", "kanban.db")
+    profile_kanban = os.path.join(os.path.expanduser("~"), ".hermes", "kanban.db")
     if os.path.exists(profile_kanban):
         return profile_kanban
 
     return None
 
 def get_tasks_db_path():
-    """获取桌面tasks.db路径（历史遗留）"""
-    return "/Users/hua/Desktop/渔芯科技/团队协作/tasks.db"
+    """获取桌面tasks.db路径（历史遗留; Windows 上不存在返回空）"""
+    return "C:/Users/渔芯科技/Desktop/渔芯科技/团队协作/tasks.db"
 
 def get_hermes_tasks_db_path():
-    """获取hermes内置tasks.db路径（创业项目等任务）"""
-    return "/Users/hua/.hermes/tasks.db"
+    """获取hermes内置tasks.db路径（创业项目等任务; Windows 迁移 2026-11-10）"""
+    return "D:/yuxin/hermes/tasks.db"
 
 def query_kanban_tasks(agent_name, db_path):
     """查询kanban.db中的待处理任务"""

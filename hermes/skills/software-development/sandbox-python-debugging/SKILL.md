@@ -185,6 +185,20 @@ r = subprocess.run(
 )
 ```
 
+## Windows (git-bash) 环境 execute_code/terminal 陷阱（2026-11-10 实测）
+
+**shell=True 管道命令污染**：Hermes terminal 在 Windows 走 git-bash，但 `subprocess.run(..., shell=True)` 从 execute_code 里发起时可能落到 cmd.exe，`head`/`tail` 等报乱码「不是内部或外部命令」。
+**修复**：git 命令一律列表参数 + `-C` 指定仓路径，不用 shell 管道：
+```python
+r = subprocess.run(["git", "-C", repo, "status", "--porcelain"], capture_output=True, timeout=15)
+```
+
+**f-string 反斜杠语法错**：Python < 3.12 的 f-string 表达式段不能含反斜杠，`fp.replace(r"D:\yuxin", "")` 直接 SyntaxError。**修复**：替换逻辑提出到变量再进 f-string。
+
+**中文文件名 read_file 误报**：`read_file` 工具对中文路径（如 `资产迁移台账.md`）可能报 File not found 但文件存在。**修复**：用 execute_code 的 python `open(path, encoding="utf-8")` 直读。
+
+**os.walk 统计遇断链炸**：迁移来的 Mac 符号链接使裸 `os.path.getsize` 抛 FileNotFoundError。**修复**：`os.walk(p, onerror=lambda e: None)` + getsize 包 try/except（详见 machine-migration-audit 技能）。
+
 ## 中文/特殊字符安全扫描绕过
 
 **症状**：`python3 -c "..."` 执行含中文字符串的 Python 代码时被 tirith 安全扫描拦截，提示 confusable_text / homograph / mixed-script hostname 误报。

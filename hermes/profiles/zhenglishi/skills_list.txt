@@ -13,6 +13,7 @@ cron-tirith-traps
 data-science
 devops
 diagramming
+directory-governance
 domain
 edge-ai-device-upgrade-tiering
 edge-ai-hardware-spec-budget
@@ -35,10 +36,14 @@ huage-directive-resource-reallocation
 inference-sh
 iot-connectivity-design
 knowledge-base
+local-llm-gateway-loopback-repair-20261111
+local-llm-stack-memory-tuning
 long-cycle-task-closure-audit
+management-evolution-scan
 management-scan-session-notes
 mcp
 media
+memory
 meta
 mlops
 note-taking
@@ -47,8 +52,8 @@ ops-progress-briefing
 overseas-regulation-compliance-mapping
 pbt-x-llm-properties
 product
-product-management
 productivity
+product-management
 purchase-comparison
 quant
 research
@@ -66,3 +71,4 @@ yufen-operations-mandate
 yuxin-community-workbench-dev
 yuxin-paper-incubation
 zhenglishi-deep-dive-cron
+zhenglishi-mgmt-scan-20261111-merge-debt

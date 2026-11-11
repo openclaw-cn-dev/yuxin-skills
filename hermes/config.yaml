@@ -1,6 +1,8 @@
 model:
-  default: deepseek-v4-pro
-  provider: custom:yuxin-gateway
+  default: GLM-5.3-flash
+  provider: custom:glm
+  ollama_num_ctx: 65536
+  context_length: 131072
 providers:
   deepseek-direct:
     api_key: "***"
@@ -18,7 +20,36 @@ providers:
     api_key: "***"
     base_url: https://open.bigmodel.cn/api/paas/v4
     model: glm-5.3-flash
-fallback_providers: '[]'
+  local-ollama:
+    base_url: http://127.0.0.1:11434/v1
+    api_key: "***"
+    api_mode: chat_completions
+    model: llama3.1:8b
+    context_length: 131072
+    models:
+      llama3.1:8b:
+        name: Llama3.1-8B 本地（128K，工具✓）
+        context_length: 131072
+      mistral-small3.2:24b:
+        name: Mistral-Small-3.2-24B 本地（128K，工具✓）
+        context_length: 128000
+      qwen2.5-32b-local:
+        name: Qwen2.5-32B 本地（32K，Hermes 需≥64K，暂仅直连用）
+        context_length: 65536
+      qwen2.5-vl-7b-local:
+        name: Qwen2.5-VL-7B 本地（128K，无工具）
+        context_length: 128000
+  yuxin-local:
+    base_url: http://127.0.0.1:18890/v1
+    api_key: "***"
+    api_mode: chat_completions
+    model: qwen2.5-32b
+    context_length: 65536
+    models:
+      qwen2.5-32b:
+        name: Qwen2.5-32B 本地网关(18890, 64K)
+        context_length: 65536
+fallback_providers: []
 : {}
 toolsets:
 - hermes-cli
@@ -29,15 +60,15 @@ agent:
   api_max_retries: 3
   service_tier: ''
   : auto
-  : true
-  environment_probe: true
-  environment_hint: ''
   : 900
   clarify_timeout: 600
   : 180
   : 3600
   image_input_mode: auto
   disabled_toolsets: []
+  : true
+  environment_probe: true
+  environment_hint: ''
 terminal:
   backend: local
   modal_mode: auto
@@ -69,6 +100,8 @@ terminal:
   - 
   - ORCA_AGENT_HOOK_ENV
   - 
+  shell_encoding: utf-8
+  shell: C:\Program Files\Git\bin\bash.exe
 web:
   backend: ''
   search_backend: ''
@@ -117,12 +150,12 @@ tool_output:
     : 5
 compression:
   enabled: true
-  threshold: 0.5
+  threshold: 0.85
   target_ratio: 0.2
   protect_last_n: 20
   : 400
   protect_first_n: 3
-  : false
+  : true
 prompt_caching:
   cache_ttl: 5m
 openrouter:
@@ -150,71 +183,71 @@ auxiliary:
     extra_body: {}
     download_timeout: 30
   web_extract:
-    provider: auto
-    model: ''
+    provider: custom:glm
+    model: GLM-5.3-flash
     base_url: ''
     api_key: "***"
     timeout: 360
     extra_body: {}
   compression:
-    provider: auto
-    model: ''
+    provider: custom:glm
+    model: GLM-5.3-flash
     base_url: ''
     api_key: "***"
     timeout: 120
     extra_body: {}
   skills_hub:
-    provider: auto
-    model: ''
+    provider: custom:glm
+    model: GLM-5.3-flash
     base_url: ''
     api_key: "***"
     timeout: 30
     extra_body: {}
   approval:
-    provider: auto
-    model: ''
+    provider: custom:glm
+    model: GLM-5.3-flash
     base_url: ''
     api_key: "***"
     timeout: 30
     extra_body: {}
   mcp:
-    provider: auto
-    model: ''
+    provider: custom:glm
+    model: GLM-5.3-flash
     base_url: ''
     api_key: "***"
     timeout: 30
     extra_body: {}
   title_generation:
-    provider: auto
-    model: ''
+    provider: custom:glm
+    model: GLM-5.3-flash
     base_url: ''
     api_key: "***"
     timeout: 30
     extra_body: {}
   triage_specifier:
-    provider: auto
-    model: ''
+    provider: custom:glm
+    model: GLM-5.3-flash
     base_url: ''
     api_key: "***"
     timeout: 120
     extra_body: {}
   kanban_decomposer:
-    provider: auto
-    model: ''
+    provider: custom:glm
+    model: GLM-5.3-flash
     base_url: ''
     api_key: "***"
     timeout: 180
     extra_body: {}
   profile_describer:
-    provider: auto
-    model: ''
+    provider: custom:glm
+    model: GLM-5.3-flash
     base_url: ''
     api_key: "***"
     timeout: 60
     extra_body: {}
   curator:
-    provider: auto
-    model: ''
+    provider: custom:glm
+    model: GLM-5.3-flash
     base_url: ''
     api_key: "***"
     timeout: 600
@@ -229,9 +262,7 @@ display:
   : 3
   : true
   busy_input_mode: interrupt
-  interface: cli
   : false
-  tui_agents_nudge: true
   bell_on_complete: false
   show_reasoning: false
   streaming: false
@@ -240,7 +271,6 @@ display:
   persistent_output: true
   : 200
   inline_diffs: true
-  : true
   : true
   show_cost: false
   skin: default
@@ -266,6 +296,9 @@ display:
     - context_pct
     - cwd
   copy_shortcut: auto
+  interface: cli
+  tui_agents_nudge: true
+  : true
 dashboard:
   theme: default
   : false
@@ -363,10 +396,10 @@ curator:
   min_idle_hours: 2
   stale_after_days: 30
   archive_after_days: 90
-  prune_builtins: true
   backup:
     enabled: true
     keep: 5
+  prune_builtins: true
 honcho: {}
 timezone: ''
 slack:
@@ -446,22 +479,19 @@ kanban:
   : 1
   : ''
   default_assignee: ''
-  : null
   auto_decompose: true
   : 3
   : 14400
+  : null
 code_execution:
   mode: project
-tools:
-  tool_search:
-    enabled: auto
-    threshold_pct: 10
-    : 5
-    max_search_limit: 20
 logging:
   level: INFO
   max_size_mb: 5
   backup_count: 3
+  memory_monitor:
+    enabled: true
+    interval_seconds: 300
 model_catalog:
   enabled: true
   url: https://hermes-agent.nousresearch.com/docs/api/model-catalog.json
@@ -474,13 +504,6 @@ gateway:
   : []
   trust_recent_files: true
   : 600
-streaming:
-  enabled: false
-  transport: auto
-  edit_interval: 0.8
-  buffer_threshold: 24
-  cursor: " \u2589"
-  : 60.0
 sessions:
   auto_prune: false
   retention_days: 90
@@ -518,6 +541,19 @@ secrets:
 : 5
 : 2000
 _config_version: 26
+tools:
+  tool_search:
+    enabled: auto
+    threshold_pct: 10
+    : 5
+    max_search_limit: 20
+streaming:
+  enabled: false
+  transport: auto
+  edit_interval: 0.8
+  buffer_threshold: 24
+  cursor: ' ▉'
+  : 60.0
 FEISHU_APP_ID: "***"
 FEISHU_APP_SECRET: "***"
 replicate:
@@ -529,9 +565,9 @@ custom_providers:
   api_mode: chat_completions
   models:
     deepseek-v4-pro:
-      name: "DeepSeek V4 Pro (\u6E14\u82AF\u7F51\u5173)"
+      name: DeepSeek V4 Pro (渔芯网关)
     deepseek-flash:
-      name: "DeepSeek Flash (\u6E14\u82AF\u7F51\u5173)"
+      name: DeepSeek Flash (渔芯网关)
   model: deepseek-v4-pro
 - name: glm
   base_url: https://open.bigmodel.cn/api/anthropic
@@ -547,22 +583,37 @@ custom_providers:
   model: deepseek-v4-pro
   models:
     deepseek-v4-pro:
-      name: "DeepSeek V4 Pro (\u534E\u54E5\u6388\u6743\u5207\u6362)"
+      name: DeepSeek V4 Pro (华哥授权切换)
   name: deepseek-cn
+- name: ollama-local
+  base_url: http://127.0.0.1:11434/v1
+  api_key: "***"
+  api_mode: chat_completions
+  models:
+    bge-m3:
+      name: BGE-M3 向量模型 (本地零成本)
+    qwen2.5-32b-local:
+      name: Qwen2.5-32B 本地杂活
+    qwen2.5-vl-7b-local:
+      name: Qwen2.5-VL-7B 本地视觉
+    mistral-small3.2:24b:
+      name: Mistral-Small-24B 本地
+    llama3.1:8b:
+      name: Llama3.1-8B 本地轻量
+  model: qwen2.5-32b-local
 mcp_servers:
   lookforge:
     enabled: true
     command: /Users/hua/.hermes/hermes-agent/venv/bin/python3
     args:
-    - "/Users/hua/Desktop/\u6E14\u82AF\u79D1\u6280/6-\u4EA7\u54C1\u7814\u53D1/02-LookForge/backend/app/mcp/.py"
+    - /Users/hua/Desktop/渔芯科技/6-产品研发/02-LookForge/backend/app/mcp/.py
     - --token-mode
     - user_access_token
     - --oauth
   yuxin-kb:
     command: /usr/bin/python3
     args:
-    - "/Users/hua/6-\u4EA7\u54C1\u7814\u53D1/\u6E14\u82AF\u72EC\u89D2\u517D/01-\u5F00\
-      \u53D1\u4E2D/\u6E14\u82AF\u77E5\u8BC6\u5E93/services/mcp/kb_mcp.py"
+    - /Users/hua/6-产品研发/渔芯独角兽/01-开发中/渔芯知识库/services/mcp/kb_mcp.py
     env:
       KB_API_BASE: https://lookforge.net
       KB_MCP_READ_MODE: http
@@ -572,25 +623,22 @@ mcp_servers:
 plugins:
   enabled:
   - orca-status
-
-# ── Fallback Model ────────────────────────────────────────────────────
-# Automatic provider failover when primary is unavailable.
-# Uncomment and configure to enable. Triggers on rate limits (429),
-# overload (529), service errors (503), or connection failures.
-#
-# Supported providers:
-#   openrouter   (OPENROUTER_API_KEY)  — routes to any model
-#   openai-codex (OAuth — hermes auth) — OpenAI Codex
-#   nous         (OAuth — hermes auth) — Nous Portal
-#   zai          (ZAI_API_KEY)         — Z.AI / GLM
-#   kimi-coding  (KIMI_API_KEY)        — Kimi / Moonshot
-#   kimi-coding-cn (KIMI_CN_API_KEY)   — Kimi / Moonshot (China)
-#   minimax      (MINIMAX_API_KEY)     — MiniMax
-#   minimax-cn   (MINIMAX_CN_API_KEY)  — MiniMax (China)
-#   bedrock      (AWS IAM / boto3)     — AWS Bedrock (Converse API)
-#
-# For custom OpenAI-compatible endpoints, add base_url and key_env.
-#
-# fallback_model:
-#   provider: openrouter
-#   model: anthropic/claude-sonnet-4
+platform_toolsets:
+  cli:
+  - browser
+  - clarify
+  - code_execution
+  - computer_use
+  - cronjob
+  - delegation
+  - file
+  - image_gen
+  - memory
+  - messaging
+  - session_search
+  - skills
+  - terminal
+  - todo
+  - tts
+  - vision
+  - web

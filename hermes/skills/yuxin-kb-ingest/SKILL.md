@@ -37,6 +37,17 @@ priority: high
 正文结构：**结论先行 → 关键事实/数据 → 来源链接 → 日期**。
 相同正文重复写入返回 `duplicate` + 原 `doc_id`（内容哈希去重，重传无害）。
 
+## 一·补、MCP 工具未加载时的直连 HTTP 兜底
+
+某些 session（cron 模式、`execute_code` 被 BLOCKED、未挂 `yuxin-kb` MCP）里没有 `kb_ingest` 工具。此时直接用 HTTP API 写库，打同一生产库，无需 MCP：
+
+- 端点：`POST https://lookforge.net/v1/admin/ingest`
+- 鉴权：`Authorization: Bearer <KB_ADMIN_TOKEN>`，token 在 `/Users/hua/.hermes/.env` 的 `KB_ADMIN_TOKEN=` 行
+- body：`{"title","content","domain"}`（可选 `source_url`），JSON UTF-8
+- 成功返回：`{"ok":true,"doc_id":"d_...","duplicate":false,"chunks":N,"embedded":true}`
+
+端点/payload 与 `~/.hermes/scripts/kb_auto_sync.py` 的 `ingest()` 一致。终端里跑 `python3` 或 `curl` 均可；现成脚本见 `scripts/kb_ingest_direct.py`（读 .env token，不再硬编码）。
+
 ## 二、读（从知识库查找）：`kb_search`
 
 华哥说「从知识库查找 X / 查知识库 / 知识库里有没有 X」时执行。

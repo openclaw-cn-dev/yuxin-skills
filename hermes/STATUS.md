@@ -1,19 +1,19 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-11-08 13:48:22
-> 主机: huadeMac-mini-3.local
+> 导出时间: 2026-11-11 12:02:31
+> 主机: ����˹
 
 ## 统计
 - Skills: 105
 - Profiles: 11
-- Scripts: 179
+- Scripts: 186
 - Plugins: 2
 
 ## 版本
 Hermes Agent v0.15.1 (2026.5.29)
-Project: /Users/hua/.hermes/hermes-agent
-Python: 3.11.15
+Project: C:\Program Files\Python311\Lib\site-packages
+Python: 3.11.9
 OpenAI SDK: 2.24.0
-Update available: 2659 commits behind — run 'hermes update'
+Update available: 1 commit behind — run 'pip install --upgrade hermes-agent'
 
 ## Profiles
 - afu
@@ -98,9 +98,9 @@ Update available: 2659 commits behind — run 'hermes update'
 - predictable-revenue
 - product
 - product-debugging
+- productivity
 - product-launch-playbook
 - product-management
-- productivity
 - project-monitoring-boundary
 - python-project-audit
 - quant
@@ -125,9 +125,9 @@ Update available: 2659 commits behind — run 'hermes update'
 - traction-eos
 - ux-heuristics
 - voice
+- webapp-testing
 - web-artifacts-builder
 - web-typography
-- webapp-testing
 - xiaobao-sales
 - xiaobao-workflow
 - xlsx

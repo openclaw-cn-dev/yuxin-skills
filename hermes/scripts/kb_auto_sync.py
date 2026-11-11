@@ -19,10 +19,10 @@ import hashlib
 import urllib.request
 import urllib.error
 
-ROOT = "/Users/hua/rkr_staging/文档库"
-ENV = "/Users/hua/.hermes/.env"
+ROOT = "D:/yuxin/company/03-库/01-知识库/文档库"
+ENV = "D:/yuxin/hermes/.env"
 API = "https://lookforge.net/v1/admin/ingest"
-STATE = "/Users/hua/.hermes/scripts/.kb_sync_state.json"
+STATE = "D:/yuxin/hermes/scripts/.kb_sync_state.json"
 LOOKBACK_DAYS = 7  # 只同步最近 N 天内落盘的新笔记（增量兜底，旧笔记已在全量入库）
 
 # 不扫描的目录（基础设施/未分类/管道产物/低质碎片/旧顶层/备份）
@@ -124,7 +124,7 @@ def main():
     dry = "--dry-run" in sys.argv
     token = load_token()
     if not token:
-        print("✗ KB_ADMIN_TOKEN 缺失（/Users/hua/.hermes/.env）")
+        print("✗ KB_ADMIN_TOKEN 缺失（D:/yuxin/hermes/.env）")
         sys.exit(1)
 
     state = load_state()
