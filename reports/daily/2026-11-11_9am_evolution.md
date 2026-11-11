@@ -11,7 +11,7 @@
 - **CLI 0.167.0 实测**（vs 1109 报 0.166.0 → **跳级已发生**，缺口期自动升级沿铁律 99）。npm latest 0.167.1，alpha 0.169.0-alpha.9（报双值）。
 - **Hermes 上游 v0.23.0 维持**，本地 0.19.0 落后 4 minor，cron 不升级（铁律 18）。
 - fs **256 目录 / 255 skill**（1109 报 241 → +11 本 lane 装，+4 差额待兄弟 lane 合流核对）。
-- 分类器 **DEV 67 / MKT 99 / VERT 87 / OTHER 4 = 257 收敛 exit=0**。OTHER 9→4：顺手清偿 1109 兄弟 lane 欠账（solo-to-team 4 支 + chubbyskills 归 DEV）。三拷贝（yuxin + Hermes devops + 知识库 scripts）md5 统一 1 哈希（铁律 169）。
+- 分类器最终 **DEV 67 / MKT 97 / VERT 75 / OTHER 4 = 243 收敛 exit=0**，与磁盘顶层 243 严格对账。ad-hoc verify 5/5 抓出并修正 **3 处历史 bug**：① wallstreet-explainer + vibe-knowledge-film MKT/VERT 双写（1108 双 lane 各落一笔，VERT 为终归属）② chubby-* 14 个 phantom 名（1106 写的带前缀名磁盘不存在——chubbyskills 是单仓 router，14 件是子目录不是顶层 skill）③ aida phantom（1101 引入即无实体）。三拷贝 md5 统一 1 哈希。修正 commit **471a59d**。
 - plugin enabled 未实算（2MB+ 大输出按铁律 167 需后台落盘，时间盒内跳过，沿用 1109=34 标 N/A）。
 - C 盘 166G/201G = 83%，可用 35G，无告警。
 - version.json 0.142.5 stale P1 维持（128 天）。
