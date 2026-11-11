@@ -35,7 +35,8 @@ DEV = set([
     "subagent-driven-development", "systematic-debugging",
     "test-driven-development", "using-git-worktrees", "using-superpowers",
     "verification-before-completion", "verify-output-readback", "writing-plans",
-    "writing-skills", "web-artifacts-builder", "tokencut", "aida",
+    "writing-skills", "web-artifacts-builder", "tokencut",
+    # 1111 修正：aida 为 phantom 条目（磁盘从未存在该 skill 目录，1101 引入时即无实体），移除
     "trace-harness-launch-failure", "script-exec-blocked", "autoprompt",
     "no-negative-echo", "remove-ai-marks", "sloptrim",
     # 视觉 / 媒体生成
@@ -87,7 +88,7 @@ MKT = set([
     # 1106 旺财 lane（mkt-hub 168⭐ 中文双语 + 钩子库）
     "ugc-video", "conversational-sales", "cold-outreach", "viral-hooks",
     # 1108 旺财 lane（wallstreet-explainer 628⭐ 财经/科技解读短片 + vibe-knowledge-film 1123⭐ 无旁白知识短片）
-    "wallstreet-explainer", "vibe-knowledge-film",
+    # 1111 修正：这两支曾与 VERT 重复（1108 双 lane 各写一笔），VERT 为最终归属，MKT 侧移除
     # 1111 旺财 lane（article2media 11 件套 59⭐：文章/视频→小红书卡片/公众号/长图/口播视频）
     "article2media", "article-comic", "article-fetch", "article-rewrite",
     "article-translate", "explainer-video", "image-cards", "logic-whiteboard",
@@ -115,19 +116,17 @@ VERT = set([
     "xuanhuan-manju", "xuanyi-manju", "yule-manju", "zhaidou-manju",
     "zhongtian-manju",
     # 1105-1106 落盘补全（drama 12 + video-agent 13 + chubbyskills 14 + koubo）
+    # 1111 修正：chubbyskills 14 件装在 chubbyskills/ 单仓子目录（router 根入口 name=chubbyskills），
+    # 子 skill 名（bilibili-transcribe 等）是仓库内子目录不是顶层 skill——
+    # 1106 写的 chubby-* 前缀名 + 1111 第一版改的裸名都是顶层不存在的 phantom，统一移除，
+    # 由 DEV 桶 chubbyskills 一支代表全部 14 件（铁律 157：报数以顶层目录实跑为准）
     "short-drama", "short-drama-assets", "short-drama-breakdown",
     "short-drama-develop", "short-drama-edit", "short-drama-image-prompts",
     "short-drama-novel-analyze", "short-drama-produce", "short-drama-review",
     "short-drama-storyboard", "short-drama-video-prompts", "short-drama-write",
     "broll", "clips", "steal", "outliers", "editing", "publish",
     "short-editing", "short-translate", "studio-script", "studio-setup", "vox",
-    "insta-audit", "chubby-bilibili-transcribe", "chubby-content-enrich",
-    "chubby-douyin-transcribe", "chubby-industry-intelligence-radar",
-    "chubby-knowledge-base-management", "chubby-learning-notes-automation",
-    "chubby-podcast-transcribe", "chubby-tiktok-transcribe",
-    "chubby-wechat-article-ingest", "chubby-weibo-transcribe",
-    "chubby-xiaohongshu-ingest", "chubby-x-ingest",
-    "chubby-youtube-transcribe", "chubby-zhihu-transcribe",
+    "insta-audit",
     "cartoon-3d-short",
     # 1107 旺财 lane（表情包定制 + GIF 贴纸 + reels 动画 6 件，全自媒体内容垂类）
     "ray-sticker-shop", "pixel-gif-sticker-pack",
