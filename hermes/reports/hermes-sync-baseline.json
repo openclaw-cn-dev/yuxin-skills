@@ -1,9 +1,9 @@
 {
-  "last_sync": "2026-11-12T12:03:06+08:00",
-  "commit": "afe3ba6e",
+  "last_sync": "2026-11-12T12:53:45+08:00",
+  "commit": "eff26c2e",
   "skills": 105,
   "profiles": 11,
   "scripts": 187,
   "host": "windows-d-yuxin",
-  "broken_known": "14 empty umbrella dirs (apple data-science diagramming domain email feeds frontend-ui gaming gifs inference-sh mcp note-taking smart-home social-media) - historical constants, no new breakage 2026-11-12"
+  "broken_known": "13 empty umbrella dirs (apple data-science diagramming domain email feeds gaming gifs inference-sh mcp note-taking smart-home social-media) - historical constants; frontend-ui has lowercase skill.md (make-interfaces-feel-better), counted empty by case-sensitive find only; 6 mlops/* + productivity/ocr-and-documents are DESCRIPTION.md placeholders, historical; no new breakage 2026-11-12"
 }
