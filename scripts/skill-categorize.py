@@ -103,7 +103,7 @@ VERT = set([
     "red-tide-algal-bloom",
     # 自媒体运营线
     "auto-xhs", "xiaohongshu-skills", "douyin-comments", "guizang-social-card",
-    "last30days-cn",
+    "last30days-cn", "anatomy",
     # 太上老君内容系列
     "taishang-laojun", "tslj-idea", "tslj-monetize", "tslj-open",
     "tslj-script", "tslj-select", "tslj-series", "tslj-title",
