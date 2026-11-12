@@ -34,7 +34,7 @@ providers:
         name: Mistral-Small-3.2-24B 本地（128K，工具✓）
         context_length: 128000
   yuxin-local:
-    base_url: http://127.0.0.1:18890/v1
+    base_url: http://127.0.0.1:18891/v1
     api_key: "***"
     api_mode: chat_completions
     model: qwen2.5-32b
@@ -43,6 +43,7 @@ providers:
       qwen2.5-32b:
         name: Qwen2.5-32B 本地网关(18890, 64K)
         context_length: 65536
+    default_model: qwen2.5-32b
 fallback_providers: []
 : {}
 toolsets:
