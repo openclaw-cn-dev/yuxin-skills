@@ -1,7 +1,9 @@
 {
-  "last_sync": "2026-10-05T14:53:18+08:00",
-  "skills": 120,
+  "last_sync": "2026-11-12T12:03:06+08:00",
+  "commit": "afe3ba6e",
+  "skills": 105,
   "profiles": 11,
-  "scripts": 144,
-  "broken_known": "13 placeholder dirs (only DESCRIPTION.md) + 3 empty dirs (apple has README only; frontend/red-teaming/testing empty); leaf dirs w/o SKILL.md listed in weekly report"
+  "scripts": 187,
+  "host": "windows-d-yuxin",
+  "broken_known": "14 empty umbrella dirs (apple data-science diagramming domain email feeds frontend-ui gaming gifs inference-sh mcp note-taking smart-home social-media) - historical constants, no new breakage 2026-11-12"
 }
