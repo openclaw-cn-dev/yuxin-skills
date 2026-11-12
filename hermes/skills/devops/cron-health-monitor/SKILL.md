@@ -1,6 +1,6 @@
 ---
 name: cron-health-monitor
-description: Cron健康监控与自愈 - 诊断任务失败、修复安全扫描拦截、恢复异常任务、LLM cron 超限后报告未落盘的 jobs.json last_error 恢复、paused_reason=None 批量暂停原因溯源（迁移窗口保护 vs 故障，勿臆测为额度耗尽）、cron 库瘦身 A/B/C/D 分档批量治理（空转/降频/合并/僵尸，2026-10-12 103→80 job LLM 运行 -78% 实战）、额度刷新后批量恢复 SOP（16 个 resume 对账纪律）、调研类「1天1轮+时间片流水线」降频（18 个 job 每日定点错峰、撞车扫查、76→18 次/天）、执行后全量清单二次确认（search_files 直查 jobs.json 绕审批）、xlsx 可编辑清单交付（华哥回传制：I列处理指令）、暂停区全删清零 SOP（2026-10-12 晚 80→46 暂停归零，还原点纪律）
+description: Cron健康监控与自愈 - 诊断任务失败、修复安全扫描拦截、恢复异常任务、LLM cron 超限后报告未落盘的 jobs.json last_error 恢复、固定 token 数 Context exceeded=启动期链路故障误判（修链路不压上下文）、paused_reason=None 批量暂停原因溯源（迁移窗口保护 vs 故障，勿臆测为额度耗尽）、cron 库瘦身 A/B/C/D 分档批量治理（空转/降频/合并/僵尸，2026-10-12 103→80 job LLM 运行 -78% 实战）、额度刷新后批量恢复 SOP（16 个 resume 对账纪律）、调研类「1天1轮+时间片流水线」降频（18 个 job 每日定点错峰、撞车扫查、76→18 次/天）、执行后全量清单二次确认（search_files 直查 jobs.json 绕审批）、xlsx 可编辑清单交付（华哥回传制：I列处理指令）、暂停区全删清零 SOP（2026-10-12 晚 80→46 暂停归零，还原点纪律）
 trigger: Cron任务失败报警、安全扫描拦截、需要诊断cron问题、玉芬每4小时巡视、cron库瘦身/降本/清理僵尸任务/调度唤醒次数过高
 ---
 
@@ -140,7 +140,7 @@ prompt="执行心跳检查，有结果时汇报"
 |---------|---------|---------|
 | **Gateway SIGKILL (exit -9)** | `launchctl list \| grep gateway` 显示 `-9` | Mac mini内存不足OOM导致；重启：`hermes gateway start --profile=<agent>` |
 | 安全扫描拦截 | prompt含curl/wget/python -c | 抽取为script或改写prompt |
-| 飞书投递失败 | `[230002] Bot/User can NOT be out of the chat.` | Bot被移出群聊，需华哥重新拉群；检查deliver目标是否正确 |
+| 飞书投递失败 | `[230002] Bot/User can NOT be out of the chat.` | Bot被移出群聊，需华哥重新拉群；检查deliver目标是否正确。**origin 会话解散同属此类**（2026-11-11 总经理会话解散实战，2 个 deliver=origin job 每轮失败）：§1 的死群校验同样要覆盖 `origin.chat_id`；扫描异常提醒的 fallback 走已知可达通道（华哥私聊 dm），不要临场拼 send_message 新语法——本次 fallback 即因语法错误失败、1 行提醒未送达 |
 | **Provider key 401（认证失效，无 fallback）** | `last_error: Error code: 401 - Authentication Fails, Your api key: ****xxxx is invalid` + profile `fallback_providers: []` | key 在 gateway/配置层失效，LLM 侧无法自愈；高频 job 会每轮空转烧额度。**先止损**：暂停该 job（CLI 与 jobs.json 脱节时直编文件+`.bak` 备份，见 datasources 参考 §1b-bis），修 key 后改回 `enabled=true, state=scheduled`。2026-09-06 阿福-自我进化 (83324ccd34bf) 3 天连败实战 |
 | **Sync timeout under 429 rate-limit** | `terminal("docker exec ... sync_staging_to_rkr")` 在 90s/300s 退出码 124，stdout 含 `[RKR-Upload] 频率限制(429)，第N次重试` | 来自 `app/services/rkr_bridge.py` 的 `_do_upload_with_retry(retry_delay=5.0, max_retries=3)` — 单文档 429 就多花 15s，20 篇文档轻松超 90s。**这是静默情况，不是告警**（见 `feishu-api-notify` 的 Silent vs. Alert 决策表）：上游 FindEra 健康，pushed=0 是限流所致，下游 RKR 也健康。**不要发"同步完成"通知**。若队列长期堆积（pending > 50k），考虑：① 减小 `limit` 到 5；② 后台运行 `terminal(background=True, notify_on_complete=True)` 避开 foreground 600s 上限；③ 联系 RKR 侧调高配额。**若 429 重试循环导致 OOM（exit 137）且 `docker-compose.yml` 无 `restart:` 策略，容器会停摆数小时无任何告警**——见 `references/findera-container-watchdog.md` Pitfall #2/#5。 |
 | **MiniMax Token Plan 配额耗尽（误判"没事"）** | 日志频繁 `🔌 Provider: minimax-cn` + `⚠️ API call failed ... RateLimitError [HTTP 429]` + `已达到 Token Plan 用量上限：请升级 Token Plan 套餐或购买积分补充用量` | **不要被 `response ready` 行骗**——gateway 在多次 429 重试后偶尔成功不代表配额健康。**正确判定**：① `grep -c "已达到 Token Plan" ~/.hermes/logs/gateway.log` ≥ 1 = 配额用完；② 非 default Profile 的 `response time` 普遍 ≥ 30s（多次重试）= 配额边角料。**根因**：MiniMax Token Plan 是**包月套餐**（非 token 余额），用完只能升级或买积分。**用户问"配额没用完吧"时必须先 grep log 再答**，不可凭"今天跑得顺"断言。`MINIMAX_CN_API_KEY` env 变量驱动 hermes-agent 内置 provider，**不要在 yaml 写 `custom_providers` 段**（会和 env 冲突致 404）——见 `devops/hermes-profile-llm-routing` skill。 |
@@ -162,6 +162,7 @@ prompt="执行心跳检查，有结果时汇报"
 | no_agent脚本错误 | 查看cron输出日志 | 检查脚本语法和路径 |
 | **LLM cron 超限：报告未落盘但全文留存 last_error** | 下游汇总 cron 发现昨日 report 文件缺失，但 jobs.json 该 job `last_run_at` 是昨夜 + `last_status: error` + `last_error` 以 `RuntimeError: ` 开头且长度=完整报告 | **勿直接信 prompt 的"未运行"fallback**——先查 last_run_at 判定"跑了但没落盘"还是"真没跑"；从 last_error 剥前缀补盘到日期文件 + latest.md，配方见 `references/***SECRET***.md`（2026-09-05 实战） |
 | **Provider 配置错 → zlib DecodingError（最误导报错）** | `last_error: Error -3 while decompressing data: incorrect header check` + agent.log `Streaming failed before delivery` 行尾 `model=`（空）+ output 目录所有 FAILED 文件同字节数 | 看似数据损坏，实为 LLM provider 404（openai client 把错误响应体当压缩流解压）。gateway base_url 禁带 `/v1`、model 必须在 gateway 模型列表内；诊断链 + openai SDK 验证配方见 `references/provider-404-zlib-decoding.md`（2026-09-05 阿福-自我进化 84 连败实战） |
+| **固定 token 数 Context length exceeded = 启动期链路故障，不是会话膨胀（2026-11-11 小宝心跳实战）** | 每小时 job 连续失败，报错**逐字节相同**（如 `RuntimeError: Context length exceeded (5,442 tokens). Cannot compress further.`）；5,442 ≪ 64K 窗口，且数字不变 | 报错数字恒定 = 每次「启动即死」——skill+系统提示词本来就 ~5K tokens，压缩器根本无事可做。真根因在 LLM 链路（该案：网关/模型返回异常被 error_classifier 误判为 context_overflow）。**诊断三步**：① 报错数字是否逐次相同（相同→链路故障，别调上下文参数）；② state.db sessions 表查每次失败用的 model/provider（该案 02:00-12:00 全走 qwen2.5-32b@18890 网关，13:06 自动 fallback 到 Ollama mistral 即恢复）；③ 真实探窗口——绕开 Hermes 输出脱敏，write_file 写探测脚本（读 nginx 白名单真 key）直打网关 1.8万/4.5万 tokens 大 prompt，全过=链路健康=当时故障已修复。**修链路，别动上下文参数** |
 
 ### 4. 重建被拦截的任务
 
@@ -1077,7 +1078,15 @@ launchctl list | grep "ai.hermes.gateway-laomo"
   3. 每次 update 返回后核对 `name`/`profile` 字段才进行下一个。
 - **关键 job_id 对照**（易混对，2026-09-27 时点）：宽博士自我进化=`7b7693454f0f`(quant profile) vs 小宝自我进化=`b59a872a31cd`(xiaobao profile)。
 
-### 39. **"Stuck task" 心跳必须做真实 API 烟测，别只查 env 变量 + 文件存在（2026-08-31 老莫 #11 实战）**
+### 43. **api_key 占位符字面 `***` 写进 config（2026-11-11 Windows 机实战）**
+
+- **症状**：profile config.yaml 里 yuxin-local provider 的 `api_key: "***"`——**不是脱敏显示，是字面三个星号**（od -c 验证磁盘字节）。所有走该 provider 的调用被 nginx 网关 401。
+- **根因**：迁移/重建配置时把「工具输出里的脱敏串」当真实值复制进了配置文件。真 key 只存在于网关白名单（如 `D:/yuxin/tools/nginx/conf/nginx.conf` 的 `"Bearer sk-xxx" N;` 行）。
+- **诊断**：`grep -A6 '<provider>:' <profile>/config.yaml`——若值恰好是 `***` 三字符（len==3），即为占位符污染。工具输出里 key 显示为 `***` 是 Hermes 显示层脱敏，不代表磁盘内容。
+- **修复**：从网关白名单读真实 key（`re.search(r'"Bearer (sk-[^"]+)"\s+N;\s*# <用途>', text)`），写回 profile config.yaml。
+- **配套坑：探测脚本脱敏陷阱**——在 execute_code/terminal 的 inline Python 里引用含 key 的变量，脚本传到 shell 前就被脱敏替换成 `***`，导致「短 prompt 成功、长 prompt 401」的诡异假象。**正确姿势**：`write_file` 写探测脚本到磁盘（脚本自己 `open()` 读 nginx.conf 提取 key，不在代码里出现 key 字面量），再 `terminal python <脚本>` 执行。
+
+
 
 **症状**：一个 P1 任务在 `tasks.db` 里 `in_progress` 几周甚至几个月，`description` 累积了十几轮"自愈完成 + 阻塞未变"的心跳记录，historical blockers 列了一长串（"Replicate token 未配置 / replicate 包未安装 / 小程序前端未建"……）。每次心跳都是「infra 完好 + 阻塞仍是 XX」一句话收尾。看起来"无事可做"，但任务实质零进展。
 

@@ -1,9 +1,9 @@
 ---
 name: yuxin-operations
 description: 玉芬（渔芯科技运营助手）操作自动化技能集 — 监控、通知、运维巡检、每日管理进化扫描（8 项扫描 + 脚本）、每日 AI 领域增量研究 cron。触发条件：玉芬执行运营任务、自动化工作流、定时巡检、管理进化扫描、华哥说「扫一遍全公司状态」「持续研究 X 方向」「每日增量研究」。 含玉芬管理进化扫描完整 SOP（原 yuxin-management-scan v2 独立版 + 12 个扫描脚本已并入）+ 每日 AI 研究 cron 技能集（原 yuxin-daily-research-cron 已并入 references/）。
-version: 1.24.0
+version: 1.25.0
 created: 2026-05-26
-updated: 2026-09-01
+updated: 2026-11-12
 ---
 
 # 玉芬运营助手 — 操作自动化技能集
@@ -34,6 +34,7 @@ updated: 2026-09-01
 > 旧版 SKILL.md 内容已迁移至 `references/yuxin-operations-legacy.md`（保留 patrol 巡视细节、RKR pending 分析、cron 失败模式等历史知识点）
 > 参考文件（按日期逆序）：
 > - `references/***SECRET***.md` — **🆕 玉芬每日管理进化扫描实战参考**（8 项固定扫描模板 + 4 个新方法论盲区 + 12 章节报告骨架 + 10 条踩坑清单）
+> - `references/***SECRET***.md` — **🆕 华哥临时问「汇报一下现在的工作进展」多源聚合 SOP**（5 数据源=cronjob list/kanban summary/最新管理进化报告/项目开发日志/tokens_report + 4 段报告骨架 + 未拍板决策跨日重提纪律 + error cron 先对照已知误报清单再报）
 > - `references/***SECRET***.md` — **🆕 11-05 扫描增量**: tokens 终值金标准第 3 次被违反 → 规则升级「报昨日终值 + 今日只报 partial」(当天 CSV 当日行永不完整) + 报告断档根因(本 job 504 瞬态自愈) + 研目录 41 非 51 口径修正 + skill 计数必须排除 .archive/.curator_backups + gateway 启动竞态 ERROR 非故障
 > - `references/***SECRET***.md` — **🆕 11-02 扫描增量**: tokens CSV 逐日终值金标准(禁读旧 CSV 早间截面,11-01 报告"305M→9.4M"无据已自纠) + codex npm 包名=@openai/codex(裸 codex-cli 是无关包) + gateway.log 429 匹配排除时间戳毫秒 + Codex 自我进化超时自愈("连续 2 次再处置"首次实证)
 > - `references/***SECRET***.md` — **🆕 11-01 扫描增量**: kanban.db schema 修正(无 updated_at、created_at 是 epoch 秒、可用 SELECT 模板) + gateway.log 权威路径(logs/ 下) + tokens CSV 首行表头过滤 + hermes commits-behind≠pypi 版本差 + 研-空气处理已迁移新址(渔芯社区/官方应用) + Codex 自我进化超时「连续 2 次再处置」纪律

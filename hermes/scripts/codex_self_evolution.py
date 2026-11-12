@@ -34,7 +34,7 @@ GITHUB_USER = "openclaw-cn-dev"
 GITHUB_REPO = "yuxin-skills"
 GITHUB_URL = f"git@github.com:{GITHUB_USER}/{GITHUB_REPO}.git"
 CODEX_SUBDIR = "codex"                              # yuxin-skills/codex/
-SYNC_WORK_DIR = Path("/tmp") / f"{GITHUB_REPO}-codex-sync"
+SYNC_WORK_DIR = Path(os.environ.get("HERMES_HOME", "D:/yuxin/hermes")) / "tmp" / f"{GITHUB_REPO}-codex-sync"
 GITHUB_LOG = HERMES_HOME / "logs" / "codex_github_sync.log"
 
 def log(msg: str) -> None:
@@ -273,7 +273,7 @@ def sync_to_github(version_info: dict, plugins_info: dict) -> dict:
             shutil.rmtree(SYNC_WORK_DIR)
             rc, _, err = _run_git(
                 ["clone", "--depth", "1", GITHUB_URL, str(SYNC_WORK_DIR)],
-                Path("/tmp"), timeout=120,
+                Path(os.environ.get("HERMES_HOME", "D:/yuxin/hermes")) / "tmp", timeout=120,
             )
             if rc != 0:
                 _gh_log(f"  ❌ clone 失败: {err[:300]}")
@@ -284,7 +284,7 @@ def sync_to_github(version_info: dict, plugins_info: dict) -> dict:
         _gh_log(f"  clone: {SYNC_WORK_DIR}")
         rc, _, err = _run_git(
             ["clone", "--depth", "1", GITHUB_URL, str(SYNC_WORK_DIR)],
-            Path("/tmp"), timeout=120,
+            Path(os.environ.get("HERMES_HOME", "D:/yuxin/hermes")) / "tmp", timeout=120,
         )
         if rc != 0:
             _gh_log(f"  ❌ clone 失败: {err[:300]}")

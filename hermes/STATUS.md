@@ -1,12 +1,12 @@
 # Hermes Agent 状态快照
-> 导出时间: 2026-11-11 12:02:31
+> 导出时间: 2026-11-12 12:03:06
 > 主机: ����˹
 
 ## 统计
 - Skills: 105
 - Profiles: 11
-- Scripts: 186
-- Plugins: 2
+- Scripts: 187
+- Plugins: 3
 
 ## 版本
 Hermes Agent v0.15.1 (2026.5.29)

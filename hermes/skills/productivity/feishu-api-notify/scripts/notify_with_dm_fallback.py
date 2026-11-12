@@ -3,14 +3,19 @@
 """Feishu notify with group-probe + DM fallback (field-tested 2026-09-16).
 
 Usage:
-    python3 notify_with_dm_fallback.py <message_file> [dm_chat_id]
+    python3 notify_with_dm_fallback.py <message_file> [target_chat_id]
 
 Flow (implements the 必跑 SOP from SKILL.md Pitfall #33 + refinement):
   1. Read message text (UTF-8) from <message_file>  — write it with write_file
      (emoji/CJK survive; only inline terminal strings trip the security scan).
-  2. Probe Bot's group chats (GET /im/v1/chats). Print every chat with status.
-  3. Send to first chat whose status != dissolved_save.
-  4. If zero active groups, fall back to DM chat_id direct send
+  2. If [target_chat_id] given: direct send there FIRST — explicit destination
+     = PRIMARY recipient (2026-11-12 lesson: a cron spec that names a chat_id
+     means THAT chat, not "first active group"). Probe fanout is only the
+     fallback when the explicit target fails.
+  3. No target given: probe Bot's group chats (GET /im/v1/chats). Print every
+     chat with status; send to first chat whose status != dissolved_save.
+  4. If zero active groups (or explicit target failed), fall back to DM
+     chat_id direct send
      (default: 华哥私聊, CONFIRMED reachable 2026-09-05 and 2026-09-16).
   5. Print one result line per step; exit 0 = delivered, 1 = all paths failed.
 
@@ -24,12 +29,20 @@ credential linter (Pitfall #12 变种5). No shell $() extraction — Python read
 file directly (Pitfall #32).
 """
 import json
+import os
 import re
 import sys
 import urllib.request
 
 DEFAULT_DM = "***SECRET***"  # 华哥私聊 (confirmed 09-05 & 09-16)
-ENV_PATH = "/Users/hua/.hermes/.env"
+# ENV_PATH candidates: macOS canonical first, then Windows host (D:\yuxin\hermes),
+# overridable via FEISHU_ENV_PATH env var. First existing path wins.
+ENV_CANDIDATES = [
+    os.environ.get("FEISHU_ENV_PATH", ""),
+    "/Users/hua/.hermes/.env",
+    "D:/yuxin/hermes/.env",
+]
+ENV_PATH = next(p for p in ENV_CANDIDATES if p and os.path.exists(p))
 BASE = "https://open.feishu.cn/open-apis"
 
 
@@ -68,12 +81,24 @@ def send_text(tok, chat_id, msg):
 
 def main():
     if len(sys.argv) < 2:
-        sys.exit("usage: notify_with_dm_fallback.py <message_file> [dm_chat_id]")
+        sys.exit("usage: notify_with_dm_fallback.py <message_file> [target_chat_id]")
     with open(sys.argv[1], encoding="utf-8") as f:
         msg = f.read().strip()
-    dm = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_DM
+    explicit = sys.argv[2] if len(sys.argv) > 2 else None
 
     tok = get_token(*creds())
+
+    # Explicit target = PRIMARY recipient (2026-11-12 lesson): a cron spec that
+    # names a chat_id means THAT chat. Send there first; probe fanout below is
+    # only the fallback when the explicit send fails.
+    if explicit:
+        r = send_text(tok, explicit, msg)
+        print("SEND->explicit %s: code=%s" % (explicit, r.get("code")))
+        if r.get("code") == 0:
+            print("NOTIFY OK")
+            return
+        print("EXPLICIT TARGET FAILED (%s %s) -> probe fanout fallback"
+              % (r.get("code"), r.get("msg")))
 
     active = []
     try:
@@ -96,8 +121,8 @@ def main():
         print("SEND->group %s: code=%s" % (target, r.get("code")))
     else:
         print("NO ACTIVE GROUP -> DM fallback")
-        r = send_text(tok, dm, msg)
-        print("SEND->DM %s: code=%s" % (dm, r.get("code")))
+        r = send_text(tok, DEFAULT_DM, msg)
+        print("SEND->DM %s: code=%s" % (DEFAULT_DM, r.get("code")))
 
     if r.get("code") == 0:
         print("NOTIFY OK")

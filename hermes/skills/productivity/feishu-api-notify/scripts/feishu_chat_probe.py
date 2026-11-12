@@ -22,14 +22,22 @@ Pitfalls 规避 (Pitfall #12 变种 5 + Pitfall #32):
       - 不走 shell $(...) 提取 secret，避免 secret 含 shell 元字符时 bash 解析中断
       - Python 直读 .env，regex 提取 credential，全程不暴露在 shell history / process list
 """
-import re, urllib.request, json, sys
+import re, urllib.request, json, sys, os
 
 # 用 chr() 拼出 "FEISHU_APP_" prefix 和 "FEISHU_APP_SECRET" key 名
 PFX = "FEISHU_" + chr(65) + chr(80) + chr(80) + "_"
 K_ID = PFX + "ID"
 K_SEC = PFX + chr(83) + chr(69) + chr(67) + chr(82) + chr(69) + chr(84)
 
-with open("/Users/hua/.hermes/.env") as f:
+# 跨平台路径候选（Pitfall #34a：硬编码 macOS 路径在 Windows 宿主机必炸）。
+# FEISHU_ENV_PATH 环境变量覆盖 > macOS canonical > Windows 宿主机。
+_ENV_CANDIDATES = [
+    os.environ.get("FEISHU_ENV_PATH", ""),
+    "/Users/hua/.hermes/.env",
+    "D:/yuxin/hermes/.env",
+]
+ENV_PATH = next(p for p in _ENV_CANDIDATES if p and os.path.exists(p))
+with open(ENV_PATH) as f:
     text = f.read()
 A = re.search(r"^" + K_ID + r"=(\S+)", text, re.M).group(1)
 B = re.search(r"^" + K_SEC + r"=(\S+)", text, re.M).group(1)

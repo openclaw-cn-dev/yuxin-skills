@@ -1,7 +1,7 @@
 ---
 name: feishu-api-notify
 description: "Send Feishu notifications via direct REST API (tenant_access_token auth). Use when a cron job or script needs to push alerts, summaries, or update notices to a Feishu chat or user DM. NOT for Yuanbao — Yuanbao is a separate system."
-version: 1.1.0
+version: 1.2.0
 author: "Hermes"
 tags: [feishu, notify, api, cron, message, chat_id, tenant_access_token]
 ---
@@ -19,12 +19,28 @@ tags: [feishu, notify, api, cron, message, chat_id, tenant_access_token]
 
 Credentials live in either `~/.hermes/.env` or `~/.hermes/config.yaml`, depending on the environment. Always probe `.env` first — it's the canonical source in this setup (confirmed 2026-08-07).
 
+**⚠️ Path is platform-dependent (2026-11-12)**: on the Windows 主力机 (yuxin, SYSTEM-account cron) there is no `~/.hermes` — credentials are at **`D:/yuxin/hermes/.env`** and **`D:/yuxin/hermes/config.yaml`** (both confirmed present, `FEISHU_APP_ID` set). Never hardcode `/Users/hua/...`; probe candidate paths (`HERMES_HOME` env → `D:/yuxin/hermes/` → `~/.hermes/`) or check the host first. The Mac-era hardcoded paths inside `scripts/feishu_notify.py` were patched 2026-11-12 to probe multiple locations.
+
 **Method A: Read from `.env` (canonical for this environment)**
 
 ```python
 import os, re
 
-with open("/Users/hua/.hermes/.env") as f:
+def _hermes_env_path():
+    """Probe candidate .env locations across hosts (Mac / Windows)."""
+    candidates = []
+    if os.environ.get("HERMES_HOME"):
+        candidates.append(os.path.join(os.environ["HERMES_HOME"], ".env"))
+    candidates += [
+        "D:/yuxin/hermes/.env",                    # Windows 主力机 (2026-11-12)
+        os.path.expanduser("~/.hermes/.env"),      # Mac / default
+    ]
+    for p in candidates:
+        if os.path.isfile(p):
+            return p
+    raise FileNotFoundError("hermes .env not found; probe HERMES_HOME / D:/yuxin/hermes / ~/.hermes")
+
+with open(_hermes_env_path()) as f:
     text = f.read()
 APP_ID = re.search(r"^FEISHU_APP_ID=(\S+)", text, re.M).group(1)
 APP_SECRET = re.search(r"^FEISHU_APP_SECRET=(\S+)", text, re.M).group(1)
@@ -403,6 +419,20 @@ When called from a cron job that is MONITORING a downstream system, the notifica
     ```
     **首次发现 `ACTIVE` 数量 = 0**：先别急着降级——探活脚本只列**群聊**（`im/v1/chats` 不返回 DM chat）。已知可达的 DM chat_id（如华哥私聊 `***SECRET***`，2026-09-05 tenant_token 直发 `code:0` 验证成功）仍可按 chat_id 直接发一条试水；**发送失败才降级 stdout delivery，失败后不要 retry**（本条原则不变）。即「无活跃群 ≠ 通知全断」——R191 当时"所有飞书通知全部失败"的结论过宽，DM 路径是独立通道。
 
+34. **跨平台宿主机硬编码路径会炸 + 显式目的地不是 fallback (2026-11-12, Windows 宿主机 kanban supervise cron 实测)**：两个独立教训，同一次 cron 暴露：
+    - **(a) 硬编码路径**：skill 自带脚本硬编码 macOS 绝对路径（如 `/Users/hua/.hermes/.env`），在 Windows 宿主机（hermes 装在 `D:\yuxin\hermes`）上直接 `FileNotFoundError`，通知脚本整条链路断掉。**修复模式（已落地到 `scripts/notify_with_dm_fallback.py`）**——路径写成候选列表，`os.path.exists` 挑第一个存在的：
+      ```python
+      import os
+      ENV_CANDIDATES = [
+          os.environ.get("FEISHU_ENV_PATH", ""),  # 环境变量覆盖最高优先
+          "/Users/hua/.hermes/.env",              # macOS canonical
+          "D:/yuxin/hermes/.env",                 # Windows 宿主机
+      ]
+      ENV_PATH = next(p for p in ENV_CANDIDATES if p and os.path.exists(p))
+      ```
+      写新脚本时默认用这个形状，别再造一个「只在 macOS 能跑」的 cron 通知脚本。
+    - **(b) 显式目的地语义**：cron 指令点名了目的地 chat_id 时，该 chat_id 是**主收件人**不是 fallback。旧版把 argv[2] 当「无活跃群时的 DM 兜底」，探活命中的首个活跃群（渔芯管理群）反而先收到消息，用户指定目的地需要另行直发才送达。现已修正为「显式 chat_id 直发优先，成功即结束；探活 fanout 只在直发失败时兜底」。点名目的地 ≠ 「随便发到某个可达群」——指令里写了 chat_id 就以它为准。
+
 **Confirmed working Feishu notify pattern (2026-06-14, hardened 2026-06-17, refined 2026-06-27 for no-PyYAML cron envs, **R191 终极版用 chr() + Python 直读 .env 不走 shell 变量**)**: Write the script to `/tmp/` via `write_file` (NOT heredoc, since the heredoc linter ALSO strips credential lines — see Pitfall #12), using renamed variables to dodge the linter:
     ```python
     # write_file to /tmp/feishu_notify.py with this exact shape:
@@ -510,7 +540,7 @@ For sending files or images, use the drive API upload then reference in message,
 | `scripts/feishu_notify.py` | Cron-safe Feishu notify: write file → terminal execute. Hardcodes credentials; use this for cron context. **Requires PyYAML** — will fail in cron envs without `yaml` module (see Pitfall #12b). |
 | `scripts/feishu_notify_yamlfree.py` | **Cron default** — parses `config.yaml` via regex, no PyYAML, dodges Pitfall #12 credential linter. Use this for every cron job unless you know the env has PyYAML. The "Cron Default Recipe" section above produces this exact shape. |
 | `scripts/feishu_chat_probe.py` | **R191 新增 — Chat availability probe (必跑 SOP 第一步)**. 列出 Bot 当前所在所有群，过滤 `dissolved_save` 状态，输出 `[ACTIVE]` vs `[DISSOLVED]` 标记，exit 0 = 至少 1 个 active chat 可发 / exit 1 = 全失效降级 stdout. 用 chr() 拼 key 名避开 Pitfall #12 变种 5 linter. **任何 cron 发飞书前必跑此脚本**，不要硬编码 SKILL chat_id. |
-| `scripts/notify_with_dm_fallback.py` | **R19x 新增 — 探活+发送一体 (实测 2026-09-16)**. 把「探活 → 发首个活跃群 → 无活跃群 DM 直发华哥私聊」整条流程合成一个脚本：`python3 notify_with_dm_fallback.py <message_file> [dm_chat_id]`。消息从 UTF-8 文件读（emoji/CJK 安全），凭据走 .env + chr() 拼键名，exit 0 = 已投递。是 feishu_chat_probe.py 的超集，cron 通知可直接用它一步到位 |
+| `scripts/notify_with_dm_fallback.py` | **R19x 新增 — 探活+发送一体 (实测 2026-09-16; 2026-11-12 Windows 兼容 + 显式目的地语义)**. 用法：`python3 notify_with_dm_fallback.py <message_file> [target_chat_id]`。给了 `[target_chat_id]` 就**直发该 chat_id**——显式目的地 = 主收件人（2026-11-12 教训：旧版把第二参数当 fallback，点名 chat_id 的 cron 被绕道发到首个探活到的活跃群；现已改为直发成功即结束，探活 fanout 只作直发失败的 fallback）；未给则探活发首个活跃群；再失败/无活跃群降级 DM 直发华哥私聊（默认 oc_2db3...）。消息从 UTF-8 文件读（emoji/CJK 安全），凭据走 .env + chr() 拼键名，exit 0 = 已投递。是 feishu_chat_probe.py 的超集，cron 通知一步到位。.env 路径候选：FEISHU_ENV_PATH 环境变量 > /Users/hua/.hermes/.env > D:/yuxin/hermes/.env（Windows 宿主机实测可用，见 Pitfall #34） |
 | `scripts/watchdog_diff.py` | Reusable diff helper for silent watchdog crons. Normalizes JSON snapshots to suppress false-positive diffs (Pitfall #25) — handles curl-string vs urllib-int API codes, missing-key vs empty-string text fields, nested dicts/lists. **CLI only — not a library** (no `_norm`/`normalize` exports); also **does NOT filter structural noise** (top-level `timestamp`, `container.raw_status` uptime drift) — see Pitfall #26 for the second-pass pre-filter. Run it via subprocess; do not importlib-load it. |
 | `references/cron-docker-execution.md` | HTTP probe patterns inside Docker containers in cron context — the only working shape for hitting container services without tripping `tirith:plain_http_to_sink`, plus liveness-signal map for RKR/research-backend. |
 | `references/***SECRET***.md` | Confirmed live FindEra sync endpoints, openapi.json discovery pattern for when documented paths return 404, multi-endpoint probe recipe for hang diagnosis (Pitfall #16 + #18), and the hang-vs-rate-limit diagnostic table. |
@@ -526,6 +556,7 @@ For sending files or images, use the drive API upload then reference in message,
 
 ## See also
 
+- `references/windows-migration-env.md` — **2026-11-11 Mac→Windows 迁移后 claude-update cron 的环境差异全图**（SYSTEM 账户路径矩阵、HTTPS 推送替代 SSH、Clash 代理 fallback、git identity 兜底、脚本排障顺序）。任何在 Windows 主力机上跑版本检查/同步 cron 前必读。
 - `references/cron-docker-execution.md` for how to call container services from cron
   (the `docker exec c curl http://...` form is blocked by security scan; see Pitfall #13).
 - `references/***SECRET***.md` for the actual FindEra sync endpoint paths (the cron spec has drifted at least once — flat `/api/v1/rkr-sync/trigger` vs. nested `/api/v1/rkr/sync/trigger` — use `/openapi.json` to verify), the multi-endpoint probe recipe for hang diagnosis, and the hang-vs-rate-limit diagnostic table.

@@ -15,6 +15,9 @@ triggers:
   - hermes config set DEEPSEEK_API_KEY / GOOGLE_API_KEY / 跨 profile key 同步
   - keep_alive / Ollama 自动卸载
   - 同事配置新模型 / 批量更新 profile provider
+  - 三同事用哪个模型 / 为什么不是 32B / 18890 网关 / yuxin-local / qwen2.5-32b / mistral-small 24b 切换
+  - api_key 显示 *** / 占位符 key / key 是不是真的 / 401 排查
+  - hermes -z 无输出 / 验证模型切换 / hermes -z 超时 / CC Switch 关了影响模型吗
   - volc-ark 迁移到 volcengine-agent-plan
   - 模型速度测试 / 模型性能监控 / model_monitor / 套餐监控
   - 哪个模型最快 / 模型排名 / 语音交互推荐模型
@@ -777,6 +780,9 @@ hermes config show | grep -E "Model:|provider" | head -3
 | **ChatGPT 进程需全杀才能生效 config 修改** | 改了 config.toml 但 Codex 仍用旧模型 | ChatGPT.app 在内存中缓存 config。`pkill -9 -f "ChatGPT"` + 重开 app |
 | **DeepSeek V4 Pro SSE 全在 reasoning_content** | Gateway 直连 DeepSeek 时，Codex 回复闪没或显示 XML 工具标签 | 推理模型把内容放 reasoning_content。Gateway 需缓冲 reasoning + 等 content 或流结束 fallback。详见 `hermes-gateway-profile-ops/references/deepseek-v4-reasoning-sse.md` |
 | **hermes config set 不带 --profile 走 active_profile** | 以为在改 default，实际改到了 zhenglishi | `hermes config set` 无 `--profile` 时写到 `active_profile` 指向的 profile。批量操作必须显式加 `--profile` |
+| **沙箱脱敏显示 ≠ 文件真实内容——别据脱敏输出下「假 key」结论（2026-11-11）** | config.yaml 的 `api_key` 在工具输出里显示字面 `***` → 误判「8 个 profile 是占位符假 key，打本地网关必 401」；实测 11 个 profile 真 key（`len(key)`=17）打 18890 **全部 HTTP 200** | 判断 key 真伪只有两条路：① `repr(key)` + `len(key)`（真 key >10 字符）；② 拿去打真实端点看状态码。**脱敏显示不是值的内容**。详见 `references/***SECRET***.md` |
+| **config.yaml 顶层 `provider:` 行可能藏在文件中部——单点替换=切换假成功（2026-11-11 quant 案例）** | 按头部模式替换 `provider: local-ollama`→`yuxin-local` 后 `yaml.safe_load` 复验 `cfg.get("provider")` 仍是旧值——quant 的顶层 provider 行有**两处**（头部一处 + `model:` 块后第 17 行一处），YAML 重复键后者覆盖前者 | 改 provider 前先 `re.findall(r'^provider: .+$', text, re.M)` 扫全部顶层行逐一替换；改完三字段复验 `provider` / `model.default` / `model.provider` 全对才算成功 |
+| **Windows 机 `hermes -z` 验证：管道无输出 + CPU 推理超慢（2026-11-11）** | `hermes -z ... | head` 全程空输出像是挂死；timeout 45s 掐死真在跑的请求 | ① 输出重定向到文件再 cat（管道缓冲不刷新）；② 核显机（无独显）llama.cpp 走 CPU：短 prompt 175-244s、29K 上下文单次 call 639.8s，timeout ≥300s；③ 「挂死」先查 `profiles/<名>/logs/agent.log` 尾部的 `latency=` 实录分辨慢跑 vs 真死。`--no-tools` 参数不存在（用 `-t ""`），`prompt` 子命令不存在（用 `-z`） |
 | **LLM Gateway /openai 路由默认走火山** | Codex 通过 Gateway 发请求，底层实际打到火山引擎 → 配额耗尽 429 或 responses→chat 转换 400 | Gateway `ROUTES` 的 `/openai` 默认 `primary: volc-openai`。火山返回 HTTP 400 不触发 fallback（只有 429/402/5xx 才切）。**批量切换时需手动 swap**：改 `llm_gateway.py` 的 `ROUTES` 字典，把 `ds-openai` 设为 primary、`volc-openai` 设为 fallback，然后 `kill` + 重启 Gateway。详见 `references/mass-model-migration-deepseek.md` |
 | **Claude Code CLI 本地拒绝 `--model claude-sonnet-4-20250514`** | CLI 启动时本地白名单校验直接报错，不发请求。retired 模型和 `claude-3-*` 一样被拒 | 必须用现代 codename：`opus` / `sonnet` / `claude-sonnet-5` / `claude-opus-5` 等。Gateway 配置 `MODEL_ALIASES` 覆盖这些 codename → 后端真实模型。本质上是**CLI 校验 + Gateway 改写**双层架构 |
 | **LLM Gateway SSE 翻译层完全丢弃 `delta.tool_calls` + `delta.reasoning_content` → Codex 在非 OpenAI 后端丧失工具能力 + 看不到 thinking（2026-07-29 22:48 已全面修复）** | 华哥在 Codex 跑"全面分析测试审查项目"任务，Codex TUI 只看到模型纯文本回复（"我将使用 ls 命令..."），**不执行任何命令**；MiniMax 完全支持 OpenAI 工具调用格式但 Codex 永远收不到 `response.function_call` 事件 | 根因：`llm_gateway.py` 的 `sse_stream_response` 函数（行 485-500）只处理 `delta.content`（→ `response.output_text.delta`）和 `delta.reasoning_content`（**完全丢弃**），**完全没处理 `delta.tool_calls[]`**（`grep "tool_calls" llm_gateway.py` 返 0 行）。**修复实施**：① 新增 7 个 build_sse_* helper（3 reasoning + 4 function_call）② tool_calls 按 `index` 累积 buffer（id/name/arguments 分块拼接）③ finish_reason=tool_calls 时仍发 response.completed（让 Codex 自己判断进下一轮）④ **关键新发现**：MiniMax-M3 把推理放在 `delta.content` 字段里包着 `<think>...</think>` 标记（不是 `delta.reasoning_content` 字段），需要 content_buf + in_think 状态机跨 chunk 切碎防护 ⑤ Codex 端加 `model_reasoning_summary = "auto"` 才显示 reasoning。**修复后实测**：Mock 测试 7/7 关键事件通过 + 真实 Codex exec `ls -la /tmp | head -3` 看到真实 macOS 目录输出 + Codex 显示完整 `## Reasoning` 块（包含 AGENTS.md 安全分析）。**完整修复实施 + 代码模板 + Mock 验证脚本** 见 `hermes-gateway-profile-ops/references/***SECRET***.md`；诊断阶段 + Codex 期望事件清单反查见 `references/***SECRET***.md` |
@@ -985,7 +991,9 @@ wire_api = "chat_completions"
 - `scripts/model_monitor.py` — 模型套餐监控脚本（自动测试所有模型响应速度）
 - `scripts/probe_codex_expected_events.py` — 用 `strings` 反查 Codex native binary（路径：`~/.local/lib/node_modules/@openai/codex/.../bin/codex`）支持的所有 `response.*` 事件类型、内 struct 名、相关配置项（`hide_agent_reasoning`/`show_raw_agent_reasoning`/`model_reasoning_effort`）。扩 Gateway SSE 翻译层前必跑，避免又漏事件类型
 
+- `references/***SECRET***.md` — **🆕 2026-11-11**：Mac→Win 迁移后三同事（xiaobao/quant/heidou）切回 qwen2.5-32b@18890 实录：①沙箱脱敏误判「占位符 key」的推翻过程与验证规则；②隐藏重复顶层 provider 键致切换假成功的排查法；③Windows 侧 `hermes -z` 管道缓冲/超时预算/agent.log 分辨慢跑真死三坑；④32B(CPU 推理) vs 24B(Ollama) 性能对照表 + CC Switch 与 Hermes 模型分配的拓扑边界
 - `references/***SECRET***.md` — **🆕 2026-08-28**：GLM-5.3-flash 切换实录：`provider: glm` 解析到内置 zai 插件（api.z.ai 国际端点）而非自定义 zhipu provider、key 在 launchctl 全局环境而非 .env、智谱国内包月 vs z.ai 国际额度区分、tokens_watchdog 红色预警溯源 SQL 与处置判据
+- `references/***SECRET***.md` — **🆕 2026-11-12**：Windows 机（EVO-X3 / AMD 8060S 核显）本地模型全家桶端口规划：llama-server 8080(32B 主力)→18890 nginx 聚合 /v1/、8081→/vl/、8082→/asr/、8083→/tts/、8084→/emb/；五件套清单/启动参数/「待启动≠缺失」排查法（模型文件已在盘，8081-8084 空载只是服务没拉起，`netstat` 先查再下结论）
 
 ---
 

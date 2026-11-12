@@ -2,4 +2,6 @@ jobs.json
 jobs.json.bak-20261015_171702_pre-rebuild
 jobs.json.bak-20261024_084249-glm切换
 jobs.json.bak-20261110
+jobs.json.bak-20261111-scriptpath-fix
+jobs.json.bak-20261111-scriptrange-fix
 output

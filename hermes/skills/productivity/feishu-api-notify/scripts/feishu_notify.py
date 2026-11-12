@@ -7,13 +7,29 @@ Usage:
 Reads credentials from ~/.hermes/config.yaml at runtime.
 """
 
-import sys, json, yaml, urllib.request
+import sys, json, os, re, urllib.request
+
+def _find_config_file():
+    """Locate config.yaml across environments (Mac vs Windows yuxin host)."""
+    candidates = [
+        os.path.join(os.environ.get("HERMES_HOME", ""), "config.yaml") if os.environ.get("HERMES_HOME") else None,
+        "D:/yuxin/hermes/config.yaml",            # Windows 主力机 (2026-11-12)
+        os.path.expanduser("~/.hermes/config.yaml"),  # Mac / generic
+    ]
+    for p in candidates:
+        if p and os.path.isfile(p):
+            return p
+    raise FileNotFoundError("config.yaml not found in HERMES_HOME, D:/yuxin/hermes/, or ~/.hermes/")
 
 def send_feishu_message(msg: str, receive_id: str, receive_id_type: str = "chat_id") -> str:
-    with open("/Users/hua/.hermes/config.yaml") as f:
-        cfg = yaml.safe_load(f)
-    APP_ID = cfg["FEISHU_APP_ID"]
-    APP_SECRET = cfg["FEISHU_APP_SECRET"]
+    cfg_path = _find_config_file()
+    with open(cfg_path, encoding="utf-8") as f:
+        text = f.read()
+    # config.yaml uses `KEY: value` (YAML-ish); .env uses `KEY=value`.
+    m = re.search(r"^FEISHU_APP_ID\s*[:=]\s*(\S+)", text, re.M) or re.search(r"FEISHU_APP_ID\s*[:=]\s*(\S+)", text)
+    APP_ID = m.group(1).strip().strip('"\'')
+    m = re.search(r"^FEISHU_APP_SECRET\s*[:=]\s*(\S+)", text, re.M) or re.search(r"FEISHU_APP_SECRET\s*[:=]\s*(\S+)", text)
+    APP_SECRET = m.group(1).strip().strip('"\'')
 
     # Step 1: Get token
     req = urllib.request.Request(

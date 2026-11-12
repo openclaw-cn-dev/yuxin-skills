@@ -897,6 +897,8 @@ Hermes 也可跑在 Windows 上，此时本 skill 里所有 macOS 假设都要�
   跑完让华哥贴输出回来对账；报「未找到旺财 profile」= 那台机器还没装过配置，改发完整 config.yaml 覆盖方案。
 - **`/model` 飞书命令边界**：只对接了飞书 bot 的 agent 生效且**仅当前会话有效**（新会话/重启回退到 config 默认）；旺财这类没接飞书的 agent 用不了，只能改配置文件。
 
+> **2026-11-12 拓扑更新**：Windows 机已入 Tailscale mesh（IP **100.65.195.9**，见 devops/remote-machine-access skill）。旺财等远程机一旦入同一 tailnet，即可从 Mnemosyne 记忆面中转升级为 mesh IP 直连（SSH/文件通道/网关调用）。改远程配置前先 `tailscale status` 查目标机在不在网：在线 → 直连手术；不在网 → 继续走下方三段式 Mnemosyne playbook。「唯一通路 = Mnemosyne」是入网前的状态，不是永久约束。
+
 ## 重启同事 gateway 让配置生效 SOP（2026-09-30 实战）
 
 - **先测后重启（批量场景必做）**：重启前先实测目标 provider key 健康（诊断脚本走 /tmp 文件，只输出 len+前缀+HTTP 状态），HTTP 200 才放行——否则 N 个同事同时 401/402（9-23 custom:glm 被判不健康的复刻风险）。

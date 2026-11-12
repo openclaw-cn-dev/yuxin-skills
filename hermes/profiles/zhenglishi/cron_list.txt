@@ -14,6 +14,8 @@ jobs.json.bak-20261003-xianyu2
 jobs.json.bak-20261020-关research-all-day
 jobs.json.bak-20261025
 jobs.json.bak-20261110
+jobs.json.bak-20261111-scriptpath-fix
+jobs.json.bak-20261111-scriptrange-fix
 output
 references
 rkr_staging
@@ -23,3 +25,4 @@ skip_lines
 state
 tmp_r3932
 tmp_r3938
+tmp_r4156
