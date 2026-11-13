@@ -108,16 +108,71 @@ export function qaInPage(opts) {
   for (const img of document.images) {
     if (!img.naturalWidth) issues.push({ level: 'error', where: where(img), msg: `图片加载失败：${img.src.slice(0, 80)}` });
   }
-  const failed = [...document.fonts].filter((f) => f.status === 'error').map((f) => f.family);
-  const loaded = [...document.fonts].filter((f) => f.status === 'loaded').length;
-  if (failed.length && !loaded) issues.push({ level: 'warn', where: '字体', msg: `网络字体加载失败（${[...new Set(failed)].join(', ')}），已回退到系统字体` });
+  // Web fonts, per declared family (a partial fallback used to be silent). A family counts as not loaded when
+  //   - its stylesheet did not load (no @font-face for a family the @import names, or a local sheet that is empty), or
+  //   - some of its faces failed or are still loading.
+  // Faces left "unloaded" are fine: no text on the page needs that slice. Families nothing on the page uses are skipped.
+  {
+    const norm = (s) => String(s).replace(/^\s*['"]|['"]\s*$/g, '').trim();
+    const faces = {}; // family → { loaded, error, loading }
+    for (const f of document.fonts) { const k = norm(f.family); (faces[k] ||= { loaded: 0, error: 0, loading: 0, unloaded: 0 })[f.status]++; }
+    const declared = new Set(), known = new Set(), deadSheets = [];
+    const walk = (sheet) => {
+      let rules;
+      try { rules = sheet.cssRules; } catch { return null; } // a cross-origin sheet cannot be read
+      for (const r of rules) {
+        if (r instanceof CSSFontFaceRule) { const k = norm(r.style.getPropertyValue('font-family')); declared.add(k); known.add(k); }
+        if (!(r instanceof CSSImportRule)) continue;
+        let named = [];
+        try { named = new URL(r.href, location.href).searchParams.getAll('family').map((v) => v.split(':')[0].trim()).filter(Boolean); } catch {}
+        for (const k of named) { declared.add(k); known.add(k); } // Google Fonts urls name their families
+        const inner = r.styleSheet ? walk(r.styleSheet) : 0;
+        if (inner === 0) deadSheets.push(r.href); // readable (local) but without a single rule: the file is missing
+        if (inner === null && !named.length) {
+          // A remote sheet that does not name its families: resource timing tells whether it arrived.
+          const e = performance.getEntriesByName(r.href)[0];
+          if (e && (e.responseStatus >= 400 || (!e.responseStatus && !e.decodedBodySize))) deadSheets.push(r.href);
+        }
+      }
+      return rules.length;
+    };
+    for (const sheet of document.styleSheets) walk(sheet);
+    for (const k of Object.keys(faces)) declared.add(k);
+    // A face from a sheet we could not read means that sheet did load: do not blame unreadable remote sheets then.
+    const unexplained = Object.keys(faces).some((k) => !known.has(k));
+    const used = new Set();
+    const seen = new Set();
+    for (const el of document.body.querySelectorAll('*')) {
+      const ff = getComputedStyle(el).fontFamily;
+      if (seen.has(ff)) continue;
+      seen.add(ff);
+      for (const k of ff.split(',')) used.add(norm(k).toLowerCase());
+    }
+    const gone = [], partial = [];
+    for (const k of declared) {
+      if (!used.has(k.toLowerCase())) continue;
+      const f = faces[k];
+      if (!f) gone.push(k);
+      else if (f.error || f.loading) (f.loaded ? partial : gone).push(f.loaded ? `${k}（${f.error + f.loading} 个分片没加载）` : k);
+    }
+    const tip = '先运行 article2media 的 fonts.mjs 把字体下载到本地，出图就不再依赖网络';
+    if (gone.length) issues.push({ level: 'warn', where: '字体', msg: `字体没有加载：${gone.join('、')}，这些字已回退到系统字体，版面会和样张不同。${tip}` });
+    if (partial.length) issues.push({ level: 'warn', where: '字体', msg: `字体只加载了一部分：${partial.join('、')}，部分文字回退到了系统字体。${tip}` });
+    const dead = deadSheets.filter((h) => !/^https?:/.test(h) || !unexplained);
+    if (dead.length && !gone.length) issues.push({ level: 'warn', where: '字体', msg: `字体样式表没有加载：${dead.map((h) => decodeURIComponent(h.split('/').slice(-2).join('/')).slice(0, 60)).join('、')}，相关文字已回退到系统字体。${tip}` });
+  }
 
   // 5a) Card figures that had to shrink below a readable scale
   if (typeof window.__fit === 'function') window.__fit();
   for (const card of document.querySelectorAll('[data-card][data-dropped]')) {
-    if (card.dataset.dropped) {
-      issues.push({ level: 'warn', where: where(card.querySelector('.c-body')), msg: `放不下，已自动省略：${card.dataset.dropped}（想保留就缩短 card.text，或用 "mode": "split"）` });
+    if (card.dataset.dropped && card.dataset.dropped !== '图注') {
+      const fix = card.dataset.kind === 'cover' ? '想保留就缩短 cover.subtitle、减少 cover.points，或把标题写短' : card.dataset.kind === 'end' ? '想保留就缩短各节的 takeaway 或 cover.summary' : card.dataset.kind === 'stages' || card.dataset.kind === 'guard' ? '想保留就缩短清单项或 paragraphs[0]' : '想保留就缩短 card.text，或用 "mode": "split"';
+      issues.push({ level: 'warn', where: where(card.querySelector('.c-body')), msg: `放不下，已自动省略：${card.dataset.dropped}（${fix}）` });
     }
+  }
+  for (const card of document.querySelectorAll('[data-card][data-fill]')) {
+    const f = Number(card.dataset.fill);
+    if (card.dataset.fill && f < 0.6) issues.push({ level: 'warn', where: where(card.querySelector('.c-body')), msg: `内容只占了卡片的 ${Math.round(f * 100)}%，有一大块空着：把这张卡的正文写满做法（card.text 60–90 字）、加 1–2 条 bullets，或换一张能画得更满的图` });
   }
   for (const box of document.querySelectorAll('.c-fig-box[data-scale]')) {
     if (box.closest('[hidden]')) continue;

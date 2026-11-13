@@ -41,7 +41,7 @@
 {
   "part": "第一部分 · 技能、市场与团队",  // 标题下方的彩色副标题
   "intro": "Dan Koe 是…第一页讲…第二页讲…",  // 2–3 句导语，可加粗；≤ 120 字
-  "sections": [ Section, … ],          // 每页 3–4 节（checklist 节算 2 节）
+  "sections": [ Section, … ],          // 每页 3–4 节（checklist 节算 2 节）；放不下时加一页（最多 4 页），不要删原文的节
   "closing": "**注意力是技能，品牌是留住它的东西。**第二页：访谈、挖掘、规划。"  // 页尾收束句 + 下一页预告；≤ 60 字
 }
 ```
@@ -54,7 +54,7 @@
 {
   "label": "技能",                     // 显示为 "01 / 技能"，编号自动生成、跨页连续
   "heading": "注意力\n决定一切",          // ≤ 16 字，可用 \n 控制断行
-  "paragraphs": ["…", "…"],            // 1–3 段，每段 ≤ 90 字
+  "paragraphs": ["…", "…"],            // 1–3 段，每段 60–90 字，合计不少于 100 字
   "bullets": ["…", "…"],               // 0–3 条，每条 ≤ 30 字
   "takeaway": "无论你做什么，能不能卖出去都由注意力决定。",  // 一句收束金句，≤ 26 字
   "figures": [ Figure, Figure ],       // 0–2 张，推荐正好 2 张；类型见 figures.md
@@ -121,13 +121,27 @@
 
 ```jsonc
 {
-  "cover": { "title": "…", "kicker": "…", "subtitle": "…", "points": ["…"], "summary": "…", "cta": "…" },
+  "cover": { "style": "hook|number|versus|quote|image|toc", "title": "…", "kicker": "…", "subtitle": "…", "points": ["…"],
+             "number": { "value": "413", "unit": "个文件", "label": "…" },             // style: number
+             "versus": { "left": { "label": "…", "value": "…", "note": "…" }, "right": { "…": "…" } },   // style: versus
+             "by": "…", "summary": "…", "cta": "…" },
   "xhs": { "title": "≤ 20 字", "caption": "≤ 1000 字", "tags": ["…"] },
   "pages": [{ "sections": [{
     "…": "…",
-    "card": { "mode": "single|split|skip", "text": "…", "bullets": ["…"], "figure": 0, "panel": false }
+    "card": { "mode": "single|split|skip", "text": "…", "bullets": ["…"], "figure": 0, "panel": false,
+              "style": "quote|number|image", "quote": "…", "number": { "value": "…", "unit": "…", "label": "…" } }   // 整页卡型，给一组图做节奏
   }] }]
 }
+```
+
+封面备选、轻量形态和期号（都可选，写法见 xhs-guide 第 2.5 节）：
+
+```jsonc
+"issue": 12,                                             // 期号，页眉和封面显示"第 12 期"
+"cover": { "…": "…", "alts": [{ "title": "…" }, { "style": "number", "number": { "…": "…" } }] },   // --covers 时逐个出图
+"quotes": ["一句话", { "text": "一句话", "by": "谁说的" }],   // --form quotes；缺省用每节的 takeaway
+"onepage": { "title": "…", "subtitle": "…", "points": [{ "title": "…", "text": "…" }] },             // --form onepage；缺省自动取
+"qa": [{ "q": "问题 ≤ 24 字", "a": "回答 ≤ 70 字" }]       // --form qa，必须写
 ```
 
 ## 公众号专用字段（可选）
@@ -143,6 +157,22 @@
 }
 ```
 
+## 发布用的备选标题（可选）
+
+`publish.titles`：每个平台 3 个**角度不同**的备选标题（给结果、给数字、点反常识…），供发布清单 `publish.md` 列出来让用户挑；不影响任何渲染。`xhs.title` / `wechat.title` 仍是默认用的那个，备选里不用重复它。要出卡片或公众号时就写。
+
+```jsonc
+"publish": {
+  "titles": {
+    "xhs":    ["≤ 20 个字符", "…", "…"],     // 和 xhs.title 同一个上限（字母、空格也算）
+    "wechat": ["≤ 64 字", "…", "…"],
+    "x":      ["一句话帖子文案", "…", "…"]     // 也可以写 douyin、channels、weibo
+  }
+}
+```
+
+每个平台 1–5 个、不能重复、不能换行；写法同各平台标题的要求（不夸大，不写"保姆级""全网最全"）。
+
 ## AI 插画（可选）
 
 用户要插画时才写，生成方法见 `figures.md` 的 illustration 一节。
@@ -157,7 +187,9 @@
 | 原文长度 | 页数 | 每页节数 |
 |---|---|---|
 | < 1,500 英文词 / 3,000 汉字 | 1 页 | 3–4 |
-| 1,500–3,000 词 | 2 页 | 4 |
-| > 3,000 词 | 3 页（最多 4 页） | 3–4 |
+| 1,500–3,000 英文词 / 3,000–6,000 汉字 | 2 页 | 4 |
+| > 3,000 英文词 / 6,000 汉字 | 3 页（最多 4 页） | 3–4 |
+
+长度按整篇正文算，提示词、代码块也算（它们常是这类文章最有用的部分）；文末的个人介绍、推广链接不算。
 
 每页渲染出来高度应在 2,600–4,200 px（CSS 像素，宽 1,200）之间；render 会在超出时提示。

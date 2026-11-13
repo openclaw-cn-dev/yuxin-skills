@@ -111,7 +111,7 @@
   "left": { "title": "参考", "items": ["模式", "原理", "结构"] },
   "right": { "title": "照抄", "items": ["同一条帖子", "一字一句", "别人的故事"] } }
 ```
-- 左边打 ✓，右边打 ✗；每边 2–4 项。
+- 左边打 ✓，右边打 ✗；每边 2–4 项。**只用于"对 vs 错"**（做 vs 不做、新做法 vs 老毛病）。两条都成立的路径（接商单 vs 卖服务、日常巡检 vs 加急）不要用它，✗ 会让读者以为其中一条是错的；用 `stack`、`grid` 或 `cards` 面板。
 
 ### cycle：循环
 ```json
@@ -146,6 +146,7 @@ node ${CLAUDE_SKILL_DIR}/scripts/illustrate.mjs <content.json> --theme all      
 node ${CLAUDE_SKILL_DIR}/scripts/illustrate.mjs <content.json> --dry-run         # 只看拼好的提示词
 node ${CLAUDE_SKILL_DIR}/scripts/illustrate.mjs <content.json> --provider mock   # 离线占位图，只用来检查版式
 ```
+- 选中的服务因登录、额度或不可用失败时，会自动换下一个可用的并提示；内容被拒绝时直接报告，不换服务。模型和服务可用 `ARTICLE2MEDIA_IMAGE_MODEL_CODEX|OPENAI|GEMINI`、`ARTICLE2MEDIA_IMAGE_PROVIDER` 或 `~/.config/article2media/config.json` 指定。
 - 服务商：有 Codex CLI（`codex login`）就用它（默认模型 `gpt-6-astra`，不需要 key）；否则 `OPENAI_API_KEY`（`gpt-image-1`）；再否则 `GEMINI_API_KEY` / `GOOGLE_API_KEY`（`gemini-3.1-flash-image`）。Gemini 免费层没有图像额度，需要开通付费。
 - 换主题渲染时，如果该主题还没有对应插画，会借用其他主题已生成的版本并提示。
 

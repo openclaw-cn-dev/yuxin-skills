@@ -136,6 +136,9 @@ VERT = set([
     "wallstreet-explainer", "vibe-knowledge-film",
     # 1108 兄弟 lane（cinecode 代码拍片垂类：quick/film 双模式）
     "cinecode",
+    # 1113 旺财 lane（ste80-humanizer 460⭐ 去AI味 ASD-STE100 双 pass / line-art-animation 589⭐ SVG线稿动画组件
+    # / xuehui-shortvideo 92⭐ 薛辉短视频营销体系 455 视频 317.9h 全量蒸馏 13 册，全自媒体内容垂类）
+    "ste80-humanizer", "line-art-animation", "xuehui-shortvideo",
 ])
 
 

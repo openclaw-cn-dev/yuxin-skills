@@ -4,6 +4,8 @@ import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { localizeHtmlFile, readManifest } from './fonts.mjs';
+import { fileURLToPath } from 'node:url';
 
 const HOME = os.homedir();
 export const CACHE_DIR =
@@ -134,7 +136,11 @@ export async function launchBrowser() {
   if (!exe) throw new Error(NO_CHROME_HELP);
   const headlessShell = /headless[-_]shell/.test(exe);
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'a2i-chrome-'));
-  const diskCache = path.join(CACHE_DIR, 'http-cache'); // keeps web-font slices between runs
+  // Remote web fonts: one HTTP cache shared between runs keeps the font slices (two renders at once then share it,
+  // which is why parallel renders were discouraged). With local fonts installed (fonts.mjs) nothing needs caching:
+  // the cache stays inside this process's own profile and parallel renders are independent.
+  const shared = !Object.keys(readManifest().imports).length || process.env.ARTICLE2MEDIA_FONTS === 'remote';
+  const diskCache = shared ? path.join(CACHE_DIR, 'http-cache') : path.join(userDataDir, 'http-cache');
   fs.mkdirSync(diskCache, { recursive: true });
   const args = [
     headlessShell ? '--headless' : '--headless=new',
@@ -164,7 +170,14 @@ export async function launchBrowser() {
       if (m) { clearTimeout(t); resolve(m[1]); }
     });
     proc.on('error', (e) => { clearTimeout(t); reject(e); });
-    proc.on('exit', (code) => { clearTimeout(t); reject(new Error(`Chrome 意外退出（code ${code}）\n${log.slice(-800)}`)); });
+    proc.on('exit', (code) => {
+      clearTimeout(t);
+      // Agent sandboxes (Codex's workspace-write, macOS seatbelt) commonly forbid launching a browser.
+      const hint = process.env.CODEX_SANDBOX || /sandbox|seatbelt|Operation not permitted/i.test(log)
+        ? '\n看起来是在沙箱里运行，沙箱不允许启动 Chrome：给这条出图命令单独放行（允许启动浏览器、写缓存目录），或在沙箱外运行出图这一步。'
+        : '';
+      reject(new Error(`Chrome 意外退出（code ${code}）${hint}\n${log.slice(-800)}`));
+    });
   });
 
   const ws = new WebSocket(wsUrl);
@@ -204,10 +217,15 @@ async function newPage(cdp) {
       await s('Emulation.setUserAgentOverride', { userAgent, acceptLanguage: 'zh-CN,zh;q=0.9,en;q=0.8' });
     },
     async goto(url, { timeout = 60000 } = {}) {
+      // Every pipeline loads its built page from disk through here: point the page's font @imports at the local
+      // copies (when fonts.mjs installed them) before Chrome reads it. Imports without a local copy stay remote.
+      if (/^file:.*\.html?$/i.test(url)) { try { localizeHtmlFile(fileURLToPath(url)); } catch {} }
       const loaded = cdp.waitForEvent('Page.loadEventFired', sessionId, timeout);
       const r = await s('Page.navigate', { url });
       if (r.errorText) throw new Error(`打开页面失败：${r.errorText}（${url}）`);
-      await loaded;
+      try { await loaded; } catch (e) {
+        throw new Error(`${e.message}：页面没在 ${Math.round(timeout / 1000)} 秒内加载完，常见原因是网络图片（例如原文配图）加载慢。再运行一次；经常这样就把图下载到工作目录，用相对路径引用`);
+      }
     },
     async evaluate(fn, arg) {
       const expression = typeof fn === 'function' ? `(${fn.toString()})(${JSON.stringify(arg ?? null)})` : fn;
